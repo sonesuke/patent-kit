@@ -47,14 +47,30 @@ Compare the Spec (Elements) with the Primary Reference (D1).
 | A | ... | Yes/No | ... |
 | B | ... | Yes/No | ... |
 
-## 7. Conclusion
+## 7. Published Application Amendment Risk (If Applicable)
+
+**Note**: Skip this section if all references are granted patents.
+
+For published patent applications (not yet granted), assess the risk of claim amendments based on embodiments:
+
+| Doc Number | Application Status | Embodiment Scope | Amendment Risk | Assessment |
+| :--- | :--- | :--- | :--- | :--- |
+| D1 | Published/Pending | (Describe broader features in embodiments) | High/Medium/Low | (Could claims be amended to cover broader scope?) |
+
+**Reasoning**:
+- Constitution VI states: "Consider the Detailed Description and embodiments as potential scope for future amendments."
+- Evaluate whether embodiments disclose features that could be added to claims during examination.
+- High risk: Embodiments clearly describe broader features that would strengthen infringement case.
+- Low risk: Embodiments are consistent with current claims or narrower.
+
+## 8. Conclusion
 
 - **Novelty/Invalidity**: (Pass/Fail)
 - **Reasoning**: ...
 
 ---
 
-## Quality Gates
+## 9. Quality Gates
 
 - [ ] All top results reviewed.
 - [ ] Claim chart completed for the closest prior art.
