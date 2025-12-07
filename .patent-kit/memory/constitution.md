@@ -47,9 +47,9 @@ For Infringement/FTO analysis, accurate understanding of the target product is c
 
 Invalidity searches MUST respect the target patent's effective filing/priority date.
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
-- **Requirement**: Use the `--before` flag in `google-patent-cli` with the correct date (YYYY-MM-DD).
+- **Requirement**: Use the `--before` flag in `google-patent-cli` or `arxiv-cli` with the correct date (YYYY-MM-DD).
 
-- **Requirement**: Use the `--before` flag in `google-patent-cli` with the correct date (YYYY-MM-DD).
+- **Requirement**: Use the `--before` flag in `google-patent-cli` or `arxiv-cli` with the correct date (YYYY-MM-DD).
 
 ### VIII. Adaptive Strategy Selection
 
@@ -61,10 +61,25 @@ Unless the user explicitly specifies a strategy:
     3. If *Product Features* are NOT found, but *Claim Elements* are -> Switch to **Invalidation Logic**.
 - **Requirement**: The final report must clearly state which logic was successfully applied.
 
-### IX. Tool Integrity & Execution
+### IX. Search Query Optimization
+
+Long or overly complex queries often return zero results in both `google-patent-cli` and `arxiv-cli`.
+- **Rule**: Start with broad, essential keywords (2-4 terms maximum).
+- **Rule**: If a search returns zero results, progressively simplify the query:
+    1. Remove technical modifiers and adjectives.
+    2. Break compound concepts into separate searches.
+    3. Try synonyms or broader terms.
+- **Example**:
+  - ❌ Too long: `"interactive bidirectional real-time data visualization dashboard"`
+  - ✅ Better: `"interactive visualization"` OR `"data dashboard"`
+- **Requirement**: Document the query evolution in your report (what worked, what didn't).
+- **Requirement**: If multiple simplified queries are needed, save each result separately with descriptive filenames.
+
+### X. Tool Integrity & Execution
 
 Strictly adhere to the capabilities of provided tools.
 - **Rule**: Do NOT hallucinate command options (e.g., `--country`). Check `--help` if unsure.
+- **Rule**: Use `google-patent-cli` for patent literature and `arxiv-cli` for non-patent literature (academic papers).
 - **Rule**: STOP immediately if a command execution fails. Do not simulate results or proceed with the workflow.
 - **Requirement**: Verify command success (exit code 0) before reading outputs.
 
@@ -83,10 +98,10 @@ Strictly adhere to the capabilities of provided tools.
 - [ ] Does every Grade A result have a corresponding claim chart or mapping?
 - [ ] Are all dates verified (Priority date vs Publication date)?
 
-### X. Output Management
+### XI. Output Management
 
-To maintain context window efficiency, large outputs from `google-patent-cli` MUST be handled via files.
-- **Rule**: `google-patent-cli` output MUST be redirected to a JSON file.
+To maintain context window efficiency, large outputs from CLI tools MUST be handled via files.
+- **Rule**: `google-patent-cli` and `arxiv-cli` output MUST be redirected to a JSON file.
   - Path: `investigations/<patent-id>/json/<patent-id>.json` (for single patent)
   - Path: `investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)
 - **Requirement**: Do NOT read the output from stdout.
