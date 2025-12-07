@@ -21,6 +21,7 @@ Your task is to Execute the Plan and Report Findings.
      - *Check*: Did we find Patent Elements? -> **Adopt Invalidation**.
    - **CRITICAL**: Use `--before <priority-date>`.
      - *Warning**: Do NOT use unsupported flags (e.g., `--country`).
+   - **Requirement**: Save output to `investigations/<patent-id>/json/search_results_<desc>.json`.
    - **Check**: Did the command succeed? IF NO -> **STOP** and Debug.
 4. **Analyze**: Determine the winning logic.
 5. **Draft Report**: Fill `.patent-kit/templates/prior-template.md`.
