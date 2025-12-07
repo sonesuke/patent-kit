@@ -19,7 +19,7 @@ Your task is to Analyze the Patent and create the Specification.
     ```bash
 
     mkdir -p investigations/<patent-id>/json
-    google-patent-cli search --patent "<patent-id>" > investigations/<patent-id>/json/<patent-id>.json
+    google-patent-cli fetch "<patent-id>" > investigations/<patent-id>/json/<patent-id>.json
     ```
 
 3. **Analyze**: Identify Constituent Elements.
