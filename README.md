@@ -12,12 +12,13 @@ This kit provides structured commands to automate:
 
 ## Prerequisites
 
-This kit requires `google-patent-cli` to be installed and available in your PATH.
+This kit requires `google-patent-cli` and `arxiv-cli` to be installed and available in your PATH.
 
 ### Installation
 
 ```bash
 cargo install --git https://github.com/sonesuke/google-patent-cli.git
+cargo install --git https://github.com/sonesuke/arxiv-cli.git
 ```
 
 ## Usage
