@@ -1,0 +1,31 @@
+---
+description: "Phase 1: Evaluation"
+---
+
+# Phase 1: Evaluation
+
+Your task is to Analyze the Patent and create the Specification.
+
+## Input
+
+- **Patent ID**: `<patent-id>`
+
+## Process
+
+1. **Initialize**: Read `.patent-kit/memory/constitution.md` to understand the
+   core principles.
+2. **Retrieve Data**:
+
+    ```bash
+
+    mkdir -p investigations/<patent-id>/json
+    google-patent-cli search --patent "<patent-id>" > investigations/<patent-id>/json/<patent-id>.json
+    ```
+
+3. **Analyze**: Identify Constituent Elements.
+4. **Draft**: Fill `.patent-kit/templates/evaluation-template.md`.
+5. **Save**: `investigations/<patent-id>/evaluation.md`.
+
+## Next Step
+
+Run Phase 2 (Infringement).
