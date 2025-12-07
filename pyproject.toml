@@ -1,0 +1,18 @@
+[project]
+name = "patent-kit"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pymarkdownlnt>=0.9.33",
+    "typer>=0.20.0",
+]
+
+[tool.pymarkdown]
+plugins.md013.enabled = false
+plugins.md024.siblings_only = true
+plugins.md041.enabled = false
+plugins.md033.enabled = false
+extensions.front-matter.enabled = true
+
