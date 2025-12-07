@@ -51,19 +51,24 @@ cargo install --git https://github.com/sonesuke/arxiv-cli.git
 ### 1. Patent Evaluation
 
 Evaluate the strength of a patent (Novelty & Inventive Step).
+
 - Claude: `/eval <patent-id>`
 **Output**: `<patent-id-dir>/evaluation.md`
 
 ### 2. Infringement Check
 
 Check if your product infringes on a specific patent.
+
 - Claude: `/infringement <patent-id>`
-*Note: The agent will ask you for details about your product before generating the report.*
+# Note: The agent will ask you for details about your product before generating
+the report
+
 **Output**: `<patent-id-dir>/infringement.md`
 
 ### 3. Prior Art Search
 
 Find prior art relevant to a specific patent.
+
 - Claude: `/prior <patent-id>`
 **Output**: `<patent-id-dir>/prior.md`
 
@@ -87,8 +92,20 @@ JP2023-123456/
 
 ### Linting
 
-This project uses `pymarkdown` for Markdown linting. To check for errors:
+This project uses `rumdl` for Markdown linting. To install:
 
 ```bash
-uv run pymarkdown scan -r README.md .patent-kit .claude
+cargo install rumdl
+```
+
+To check for errors:
+
+```bash
+rumdl README.md .patent-kit .claude
+```
+
+To automatically fix issues:
+
+```bash
+rumdl --fix README.md .patent-kit .claude
 ```

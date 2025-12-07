@@ -15,12 +15,14 @@ Every infringement or validity analysis MUST test the target invention against t
 ### II. Unified Search Scope
 
 Investigations MUST cover the "Big 4" jurisdictions unless explicitly restricted.
+
 - **Rule**: Always consider US, EP, JP, and CN references.
 - **Mechanism**: Use machine translation for CN/JP if native language skills are unavailable.
 
 ### III. Comprehensive Literature Coverage
 
 Prior art searches MUST cover both patent literature and non-patent literature.
+
 - **Rule**: Use BOTH `google-patent-cli` and `arxiv-cli` for every prior art investigation.
 - **Rationale**: Comprehensive invalidity analysis requires checking academic papers, conference proceedings, and technical publications alongside patents.
 - **Requirement**: Document search results from both sources in the final report.
@@ -28,24 +30,28 @@ Prior art searches MUST cover both patent literature and non-patent literature.
 ### IV. Evidence-Based Reporting
 
 Every assertion in a report MUST be backed by specific citations.
+
 - **Rule**: Never say "This feature is known."
 - **Requirement**: Say "This feature is disclosed in [Patent ID], Column X, Line Y."
 
 ### V. Risk-Averse Screening
 
 When in doubt during screening, err on the side of inclusion.
+
 - **Rule**: If a reference is "borderline", grade it as 'B' (Relevant) rather than 'D' (Noise).
 - **Rationale**: Missing a risk is worse than reviewing an extra document.
 
 ### VI. Breadth of Published Applications
 
 For published applications (not yet granted), assume rights may be broadly secured based on the embodiments.
+
 - **Rule**: Do not judge solely based on current claims.
 - **Requirement**: Consider the "Detailed Description" and embodiments as potential scope for future amendments.
 
 ### VII. User "Hearing" for Infringement
 
 For Infringement/FTO analysis, accurate understanding of the target product is crucial.
+
 - **Rule**: You MUST interview the user to get a detailed description of the product/service.
 - **Requirement**: Do not proceed until you have a clear definition of the "Target Product" to compare against the claim elements.
 - **Requirement**: Do not proceed until you have a clear definition of the "Target Product" to compare against the claim elements.
@@ -53,6 +59,7 @@ For Infringement/FTO analysis, accurate understanding of the target product is c
 ### VIII. Prior Art Cutoff Date
 
 Invalidity searches MUST respect the target patent's effective filing/priority date.
+
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
 - **Requirement**: Use the `--before` flag in `google-patent-cli` or `arxiv-cli` with the correct date (YYYY-MM-DD).
 
@@ -63,19 +70,24 @@ Invalidity searches MUST respect the target patent's effective filing/priority d
 Unless the user explicitly specifies a strategy:
 - **Rule**: Dynamically determine the best path (FTO vs Invalidation) *during* the search.
 - **Process**:
-    1. Start broad.
-    2. If *Product Features* are found -> Switch to **FTO Logic** (Easier/Safer).
-    3. If *Product Features* are NOT found, but *Claim Elements* are -> Switch to **Invalidation Logic**.
+
+  1. Start broad.
+  2. If *Product Features* are found -> Switch to **FTO Logic** (Easier/Safer).
+  3. If *Product Features* are NOT found, but *Claim Elements* are -> Switch to **Invalidation Logic**.
+
 - **Requirement**: The final report must clearly state which logic was successfully applied.
 
 ### X. Search Query Optimization
 
 Long or overly complex queries often return zero results in both `google-patent-cli` and `arxiv-cli`.
+
 - **Rule**: Start with broad, essential keywords (2-4 terms maximum).
 - **Rule**: If a search returns zero results, progressively simplify the query:
-    1. Remove technical modifiers and adjectives.
-    2. Break compound concepts into separate searches.
-    3. Try synonyms or broader terms.
+
+  1. Remove technical modifiers and adjectives.
+  2. Break compound concepts into separate searches.
+  3. Try synonyms or broader terms.
+
 - **Example**:
   - ❌ Too long: `"interactive bidirectional real-time data visualization dashboard"`
   - ✅ Better: `"interactive visualization"` OR `"data dashboard"`
@@ -85,6 +97,7 @@ Long or overly complex queries often return zero results in both `google-patent-
 ### XI. Tool Integrity & Execution
 
 Strictly adhere to the capabilities of provided tools.
+
 - **Rule**: Do NOT hallucinate command options (e.g., `--country`). Check `--help` if unsure.
 - **Rule**: Use `google-patent-cli` for patent literature and `arxiv-cli` for non-patent literature (academic papers).
 - **Rule**: STOP immediately if a command execution fails. Do not simulate results or proceed with the workflow.
@@ -108,6 +121,7 @@ Strictly adhere to the capabilities of provided tools.
 ### XII. Output Management
 
 To maintain context window efficiency, large outputs from CLI tools MUST be handled via files.
+
 - **Rule**: `google-patent-cli` and `arxiv-cli` output MUST be redirected to a JSON file.
   - Path: `investigations/<patent-id>/json/<patent-id>.json` (for single patent)
   - Path: `investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)

@@ -1,0 +1,11 @@
+[package]
+name = "patent-kit"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+
+[[bin]]
+name = "ftoc"
+path = "src/bin/ftoc.rs"

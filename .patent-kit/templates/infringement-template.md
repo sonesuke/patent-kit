@@ -25,6 +25,7 @@ Compare the Product Features against the Patent Elements.
 ## 4. Suggested Strategy (Optional)
 
 (Agent's recommendation based on risk, can be overridden during Prior phase)
+
 - [ ] **Strategy A (FTO/Safety)**: Recommended if product uses standard tech.
 - [ ] **Strategy B (Invalidation)**: Recommended if patent seems overly broad.
 
