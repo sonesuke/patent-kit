@@ -51,6 +51,12 @@ Unless the user explicitly specifies a strategy:
     3. If *Product Features* are NOT found, but *Claim Elements* are -> Switch to **Invalidation Logic**.
 - **Requirement**: The final report must clearly state which logic was successfully applied.
 
+### IX. Tool Integrity & Execution
+Strictly adhere to the capabilities of provided tools.
+- **Rule**: Do NOT hallucinate command options (e.g., `--country`). Check `--help` if unsure.
+- **Rule**: STOP immediately if a command execution fails. Do not simulate results or proceed with the workflow.
+- **Requirement**: Verify command success (exit code 0) before reading outputs.
+
 ### Evaluation Gate
 - [ ] Are all constituent elements (A+B+C...) clearly defined?
 - [ ] Is the objective (FTO vs Invalidation) explicitly selected?
