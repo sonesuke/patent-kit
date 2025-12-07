@@ -82,3 +82,12 @@ Strictly adhere to the capabilities of provided tools.
 
 - [ ] Does every Grade A result have a corresponding claim chart or mapping?
 - [ ] Are all dates verified (Priority date vs Publication date)?
+
+### X. Output Management
+
+To maintain context window efficiency, large outputs from `google-patent-cli` MUST be handled via files.
+- **Rule**: `google-patent-cli` output MUST be redirected to a JSON file.
+  - Path: `investigations/<patent-id>/json/<patent-id>.json` (for single patent)
+  - Path: `investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)
+- **Requirement**: Do NOT read the output from stdout.
+- **Action**: Use `jq` or file reading tools to access specific fields from the generated JSON file only when needed.
