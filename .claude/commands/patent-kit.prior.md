@@ -22,10 +22,11 @@ Your task is to Execute the Plan and Report Findings.
    - **CRITICAL**: Use `--before <priority-date>` for both `google-patent-cli` and `arxiv-cli`.
      - *Warning**: Do NOT use unsupported flags (e.g., `--country`).
    - **Requirement**: Save output to `investigations/<patent-id>/json/search_results_<desc>.json`.
-   - **Tools**:
-     - Use `google-patent-cli` for patents (default).
-     - Use `arxiv-cli` for academic papers (Non-Patent Literature).
+   - **Tools** (Both Required):
+     - **MUST** use `google-patent-cli` for patent literature.
+     - **MUST** use `arxiv-cli` for non-patent literature (academic papers).
        - Example: `arxiv-cli search --query "<query>" --before "<priority-date>" --limit 10`.
+     - Run searches with BOTH tools to ensure comprehensive coverage.
    - **Check**: Did the command succeed? IF NO -> **STOP** and Debug.
 4. **Analyze**: Determine the winning logic.
 5. **Draft Report**: Fill `.patent-kit/templates/prior-template.md`.

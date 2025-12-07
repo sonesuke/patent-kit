@@ -18,32 +18,39 @@ Investigations MUST cover the "Big 4" jurisdictions unless explicitly restricted
 - **Rule**: Always consider US, EP, JP, and CN references.
 - **Mechanism**: Use machine translation for CN/JP if native language skills are unavailable.
 
-### III. Evidence-Based Reporting
+### III. Comprehensive Literature Coverage
+
+Prior art searches MUST cover both patent literature and non-patent literature.
+- **Rule**: Use BOTH `google-patent-cli` and `arxiv-cli` for every prior art investigation.
+- **Rationale**: Comprehensive invalidity analysis requires checking academic papers, conference proceedings, and technical publications alongside patents.
+- **Requirement**: Document search results from both sources in the final report.
+
+### IV. Evidence-Based Reporting
 
 Every assertion in a report MUST be backed by specific citations.
 - **Rule**: Never say "This feature is known."
 - **Requirement**: Say "This feature is disclosed in [Patent ID], Column X, Line Y."
 
-### IV. Risk-Averse Screening
+### V. Risk-Averse Screening
 
 When in doubt during screening, err on the side of inclusion.
 - **Rule**: If a reference is "borderline", grade it as 'B' (Relevant) rather than 'D' (Noise).
 - **Rationale**: Missing a risk is worse than reviewing an extra document.
 
-### V. Breadth of Published Applications
+### VI. Breadth of Published Applications
 
 For published applications (not yet granted), assume rights may be broadly secured based on the embodiments.
 - **Rule**: Do not judge solely based on current claims.
 - **Requirement**: Consider the "Detailed Description" and embodiments as potential scope for future amendments.
 
-### VI. User "Hearing" for Infringement
+### VII. User "Hearing" for Infringement
 
 For Infringement/FTO analysis, accurate understanding of the target product is crucial.
 - **Rule**: You MUST interview the user to get a detailed description of the product/service.
 - **Requirement**: Do not proceed until you have a clear definition of the "Target Product" to compare against the claim elements.
 - **Requirement**: Do not proceed until you have a clear definition of the "Target Product" to compare against the claim elements.
 
-### VII. Prior Art Cutoff Date
+### VIII. Prior Art Cutoff Date
 
 Invalidity searches MUST respect the target patent's effective filing/priority date.
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
@@ -51,7 +58,7 @@ Invalidity searches MUST respect the target patent's effective filing/priority d
 
 - **Requirement**: Use the `--before` flag in `google-patent-cli` or `arxiv-cli` with the correct date (YYYY-MM-DD).
 
-### VIII. Adaptive Strategy Selection
+### IX. Adaptive Strategy Selection
 
 Unless the user explicitly specifies a strategy:
 - **Rule**: Dynamically determine the best path (FTO vs Invalidation) *during* the search.
@@ -61,7 +68,7 @@ Unless the user explicitly specifies a strategy:
     3. If *Product Features* are NOT found, but *Claim Elements* are -> Switch to **Invalidation Logic**.
 - **Requirement**: The final report must clearly state which logic was successfully applied.
 
-### IX. Search Query Optimization
+### X. Search Query Optimization
 
 Long or overly complex queries often return zero results in both `google-patent-cli` and `arxiv-cli`.
 - **Rule**: Start with broad, essential keywords (2-4 terms maximum).
@@ -75,7 +82,7 @@ Long or overly complex queries often return zero results in both `google-patent-
 - **Requirement**: Document the query evolution in your report (what worked, what didn't).
 - **Requirement**: If multiple simplified queries are needed, save each result separately with descriptive filenames.
 
-### X. Tool Integrity & Execution
+### XI. Tool Integrity & Execution
 
 Strictly adhere to the capabilities of provided tools.
 - **Rule**: Do NOT hallucinate command options (e.g., `--country`). Check `--help` if unsure.
@@ -98,7 +105,7 @@ Strictly adhere to the capabilities of provided tools.
 - [ ] Does every Grade A result have a corresponding claim chart or mapping?
 - [ ] Are all dates verified (Priority date vs Publication date)?
 
-### XI. Output Management
+### XII. Output Management
 
 To maintain context window efficiency, large outputs from CLI tools MUST be handled via files.
 - **Rule**: `google-patent-cli` and `arxiv-cli` output MUST be redirected to a JSON file.
