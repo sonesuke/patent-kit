@@ -16,10 +16,10 @@ This kit requires `google-patent-cli` and `arxiv-cli` to be installed and availa
 
 ### Installation
 
-```bash
-cargo install --git https://github.com/sonesuke/google-patent-cli.git
-cargo install --git https://github.com/sonesuke/arxiv-cli.git
-```
+Please install the required CLI tools following their official documentation:
+
+- **google-patent-cli**: [Installation Guide](https://github.com/sonesuke/google-patent-cli#installation) (Pre-built binaries recommended)
+- **arxiv-cli**: [Installation Guide](https://github.com/sonesuke/arxiv-cli#installation)
 
 ## Usage
 
