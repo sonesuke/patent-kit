@@ -41,15 +41,19 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
             artifact_name: ftoc
             asset_name: ftoc-linux-x86_64.tar.gz
-          - os: macos-13
+          - os: macos-14
+            target: x86_64-apple-darwin
             artifact_name: ftoc
             asset_name: ftoc-macos-x86_64.tar.gz
           - os: macos-14
+            target: aarch64-apple-darwin
             artifact_name: ftoc
             asset_name: ftoc-macos-arm64.tar.gz
           - os: windows-latest
+            target: x86_64-pc-windows-msvc
             artifact_name: ftoc.exe
             asset_name: ftoc-windows-x86_64.zip
 
@@ -59,22 +63,24 @@ jobs:
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
 
       - name: Build
-        run: cargo build --release --bin ftoc
+        run: cargo build --release --bin ftoc --target ${{ matrix.target }}
 
       - name: Compress binary
         shell: bash
         run: |
-          cd target/release
+          cd target/${{ matrix.target }}/release
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            7z a ${{ matrix.asset_name }} ${{ matrix.artifact_name }}
+            7z a ../../../${{ matrix.asset_name }} ${{ matrix.artifact_name }}
           else
-            tar -czf ${{ matrix.asset_name }} ${{ matrix.artifact_name }}
+            tar -czf ../../../${{ matrix.asset_name }} ${{ matrix.artifact_name }}
           fi
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: target/release/${{ matrix.asset_name }}
+          files: ${{ matrix.asset_name }}
