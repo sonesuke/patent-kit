@@ -16,14 +16,39 @@ This kit requires `google-patent-cli` and `arxiv-cli` to be installed and availa
 
 ### Installation
 
-Please install the required CLI tools following their official documentation:
+1. **Install `ftoc` (Project Manager)**
+
+   ```bash
+   cargo install --path .
+   ```
+
+2. **Install Dependencies**
+
+   Please install the required CLI tools following their official documentation:
 
 - **google-patent-cli**: [Installation Guide](https://github.com/sonesuke/google-patent-cli#installation) (Pre-built binaries recommended)
 - **arxiv-cli**: [Installation Guide](https://github.com/sonesuke/arxiv-cli#installation)
 
 ## Usage
 
-### Workflow (Spec-Driven Development)
+### 1. Initialize Project
+
+Create a new project or initialize an existing one with the necessary configuration files.
+
+```bash
+# Create a new project for Claude
+ftoc init my-project --ai claude
+
+# Initialize existing project for Copilot
+ftoc init . --ai copilot
+```
+
+This command sets up:
+- **.patent-kit**: Common templates and memory bank.
+- **.claude** (if `--ai claude`): Claude-specific slash commands.
+- **.copilot** (if `--ai copilot`): GitHub Copilot prompts.
+
+### 2. Workflow (Spec-Driven Development)
 
 1. **Phase 1: Evaluation (Spec)**: Analyze the patent.
 
@@ -45,32 +70,6 @@ Please install the required CLI tools following their official documentation:
     /patent-kit.prior investigations/JP2023-123456/infringement.md
     # Output: investigations/JP2023-123456/prior.md
     ```
-
-## Commands
-
-### 1. Patent Evaluation
-
-Evaluate the strength of a patent (Novelty & Inventive Step).
-
-- Claude: `/eval <patent-id>`
-**Output**: `<patent-id-dir>/evaluation.md`
-
-### 2. Infringement Check
-
-Check if your product infringes on a specific patent.
-
-- Claude: `/infringement <patent-id>`
-# Note: The agent will ask you for details about your product before generating
-the report
-
-**Output**: `<patent-id-dir>/infringement.md`
-
-### 3. Prior Art Search
-
-Find prior art relevant to a specific patent.
-
-- Claude: `/prior <patent-id>`
-**Output**: `<patent-id-dir>/prior.md`
 
 ## Output Structure
 
@@ -101,11 +100,11 @@ cargo install rumdl
 To check for errors:
 
 ```bash
-rumdl README.md .patent-kit .claude
+rumdl README.md src/templates/common src/templates/claude src/templates/copilot
 ```
 
 To automatically fix issues:
 
 ```bash
-rumdl --fix README.md .patent-kit .claude
+rumdl --fix README.md src/templates/common src/templates/claude src/templates/copilot
 ```

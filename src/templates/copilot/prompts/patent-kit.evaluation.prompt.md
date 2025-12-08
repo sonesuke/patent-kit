@@ -23,8 +23,8 @@ Your task is to Analyze the Patent and create the Specification.
     ```
 
 3. **Analyze**: Identify Constituent Elements.
-4. **Draft**: Fill `.patent-kit/templates/evaluation-template.md`.
-5. **Save**: `investigations/<patent-id>/evaluation.md`.
+3. **Draft**: Fill `.patent-kit/templates/evaluation-template.md`.
+4. **Save**: `investigations/<patent-id>/evaluation.md`.
 
 ## Next Step
 
