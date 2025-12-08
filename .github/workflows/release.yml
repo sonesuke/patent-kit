@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Format
+        run: cargo fmt --all -- --check
+
+      - name: Check
+        run: cargo check
+
+      - name: Clippy
+        run: cargo clippy -- -D warnings
+
+      - name: Test
+        run: cargo test
+
+  build:
+    name: Build and Release
+    needs: check
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: ftoc
+            asset_name: ftoc-linux-x86_64.tar.gz
+          - os: macos-13
+            artifact_name: ftoc
+            asset_name: ftoc-macos-x86_64.tar.gz
+          - os: macos-14
+            artifact_name: ftoc
+            asset_name: ftoc-macos-arm64.tar.gz
+          - os: windows-latest
+            artifact_name: ftoc.exe
+            asset_name: ftoc-windows-x86_64.zip
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build
+        run: cargo build --release --bin ftoc
+
+      - name: Compress binary
+        shell: bash
+        run: |
+          cd target/release
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            7z a ${{ matrix.asset_name }} ${{ matrix.artifact_name }}
+          else
+            tar -czf ${{ matrix.asset_name }} ${{ matrix.artifact_name }}
+          fi
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: target/release/${{ matrix.asset_name }}
