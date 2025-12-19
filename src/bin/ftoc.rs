@@ -90,9 +90,9 @@ fn init_project(path: PathBuf, ai: AiAssistant) -> Result<()> {
                 // Try to fallback or check if directory exists in embed even if empty
                 // rust-embed doesn't list directories easily, but we know the structure
                 // If we just copy "copilot" folder content
-                copy_embedded_dir("copilot", &target_dir.join(".copilot"))?;
+                copy_embedded_dir("copilot", &target_dir.join(".github"))?;
             } else {
-                copy_embedded_dir("copilot", &target_dir.join(".copilot"))?;
+                copy_embedded_dir("copilot", &target_dir.join(".github"))?;
             }
         }
     }
