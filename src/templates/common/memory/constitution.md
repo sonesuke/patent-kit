@@ -23,7 +23,7 @@ Investigations MUST cover the "Big 4" jurisdictions unless explicitly restricted
 
 Prior art searches MUST cover both patent literature and non-patent literature.
 
-- **Rule**: Use BOTH `google-patent-cli` and `arxiv-cli` for every prior art investigation.
+- **Rule**: Use BOTH `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli` for every prior art investigation.
 - **Rationale**: Comprehensive invalidity analysis requires checking academic papers, conference proceedings, and technical publications alongside patents.
 - **Requirement**: Document search results from both sources in the final report.
 
@@ -61,9 +61,9 @@ For Infringement/FTO analysis, accurate understanding of the target product is c
 Invalidity searches MUST respect the target patent's effective filing/priority date.
 
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
-- **Requirement**: Use the `--before` flag in `google-patent-cli` or `arxiv-cli` with the correct date (YYYY-MM-DD).
+- **Requirement**: Use the `--before` flag in `./.patent-kit/bin/google-patent-cli` or `./.patent-kit/bin/arxiv-cli` with the correct date (YYYY-MM-DD).
 
-- **Requirement**: Use the `--before` flag in `google-patent-cli` or `arxiv-cli` with the correct date (YYYY-MM-DD).
+- **Requirement**: Use the `--before` flag in `./.patent-kit/bin/google-patent-cli` or `./.patent-kit/bin/arxiv-cli` with the correct date (YYYY-MM-DD).
 
 ### IX. Adaptive Strategy Selection
 
@@ -79,7 +79,7 @@ Unless the user explicitly specifies a strategy:
 
 ### X. Search Query Optimization
 
-Long or overly complex queries often return zero results in both `google-patent-cli` and `arxiv-cli`.
+Long or overly complex queries often return zero results in both `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli`.
 
 - **Rule**: Start with broad, essential keywords (2-4 terms maximum).
 - **Rule**: If a search returns zero results, progressively simplify the query:
@@ -99,7 +99,7 @@ Long or overly complex queries often return zero results in both `google-patent-
 Strictly adhere to the capabilities of provided tools.
 
 - **Rule**: Do NOT hallucinate command options (e.g., `--country`). Check `--help` if unsure.
-- **Rule**: Use `google-patent-cli` for patent literature and `arxiv-cli` for non-patent literature (academic papers).
+- **Rule**: Use `./.patent-kit/bin/google-patent-cli` for patent literature and `./.patent-kit/bin/arxiv-cli` for non-patent literature (academic papers).
 - **Rule**: STOP immediately if a command execution fails. Do not simulate results or proceed with the workflow.
 - **Requirement**: Verify command success (exit code 0) before reading outputs.
 
@@ -122,7 +122,7 @@ Strictly adhere to the capabilities of provided tools.
 
 To maintain context window efficiency, large outputs from CLI tools MUST be handled via files.
 
-- **Rule**: `google-patent-cli` and `arxiv-cli` output MUST be redirected to a JSON file.
+- **Rule**: `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli` output MUST be redirected to a JSON file.
   - Path: `investigations/<patent-id>/json/<patent-id>.json` (for single patent)
   - Path: `investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)
 - **Requirement**: Do NOT read the output from stdout.
