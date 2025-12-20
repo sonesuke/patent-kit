@@ -4,7 +4,7 @@ use flate2::read::GzDecoder;
 use rust_embed::RustEmbed;
 use std::fs;
 use std::fs::File;
-use std::io::{self, BufRead, BufReader, Cursor};
+use std::io::{self, Cursor};
 use std::path::{Path, PathBuf};
 use tar::Archive;
 use zip::ZipArchive;
@@ -18,19 +18,7 @@ struct Asset;
 #[command(about = "Generate Table of Contents for Markdown files or initialize project", long_about = None)]
 struct Args {
     #[command(subcommand)]
-    command: Option<Commands>,
-
-    /// Markdown file to process (backwards compatibility for default TOC behavior)
-    #[arg(value_name = "FILE")]
-    file: Option<PathBuf>,
-
-    /// Minimum heading level to include (default: 1)
-    #[arg(long, default_value = "1")]
-    min_depth: usize,
-
-    /// Maximum heading level to include (default: 6)
-    #[arg(long, default_value = "6")]
-    max_depth: usize,
+    command: Commands,
 }
 
 #[derive(Subcommand, Debug)]
@@ -61,15 +49,7 @@ fn main() -> Result<()> {
     let args = Args::parse();
 
     match args.command {
-        Some(Commands::Init { path, ai, insecure }) => init_project(path, ai, insecure),
-        None => {
-            if let Some(file) = args.file {
-                generate_toc(file, args.min_depth, args.max_depth)
-            } else {
-                // Should be unreachable due to required_unless_present, but good fallback
-                anyhow::bail!("No file specified or command provided")
-            }
-        }
+        Commands::Init { path, ai, insecure } => init_project(path, ai, insecure),
     }
 }
 
@@ -262,56 +242,4 @@ fn download_and_install_tool(
     }
 
     anyhow::bail!("Binary not found in archive")
-}
-
-fn generate_toc(file_path: PathBuf, min_depth: usize, max_depth: usize) -> Result<()> {
-    let file = fs::File::open(&file_path)
-        .with_context(|| format!("Failed to open file {:?}", file_path))?;
-    let reader = BufReader::new(file);
-
-    let mut toc_entries = Vec::new();
-    let mut in_frontmatter = false;
-    let mut frontmatter_count = 0;
-
-    for line in reader.lines() {
-        let line = line?;
-        let trimmed = line.trim();
-
-        // Handle YAML frontmatter
-        if trimmed == "---" {
-            frontmatter_count += 1;
-            if frontmatter_count <= 2 {
-                in_frontmatter = !in_frontmatter;
-                continue;
-            }
-        }
-
-        if in_frontmatter {
-            continue;
-        }
-
-        // Parse headings
-        if trimmed.starts_with('#') {
-            let level = trimmed.chars().take_while(|&c| c == '#').count();
-
-            if level >= min_depth && level <= max_depth {
-                let title = trimmed[level..].trim();
-                let anchor = title
-                    .to_lowercase()
-                    .replace(|c: char| !c.is_alphanumeric() && c != ' ' && c != '-', "")
-                    .replace(' ', "-");
-
-                toc_entries.push((level, title.to_string(), anchor));
-            }
-        }
-    }
-
-    // Print the table of contents
-    println!("## Table of Contents\n");
-    for (level, title, anchor) in toc_entries {
-        let indent = "  ".repeat(level - min_depth);
-        println!("{}- [{}](#{anchor})", indent, title);
-    }
-
-    Ok(())
 }
