@@ -48,23 +48,23 @@ This command sets up:
 ftoc init . --ai claude --insecure
 ```
 
-### 2. Workflow (Spec-Driven Development)
+### 2. Workflow
 
-1. **Phase 1: Evaluation (Spec)**: Analyze the patent.
+1. **Phase 1: Evaluation**: Analyze the patent.
 
     ```bash
     /patent-kit.evaluation JP2023-123456
     # Output: investigations/JP2023-123456/evaluation.md
     ```
 
-2. **Phase 2: Infringement (Plan)**: Define search strategy.
+2. **Phase 2: Infringement**: Define search strategy.
 
     ```bash
     /patent-kit.infringement investigations/JP2023-123456/evaluation.md
     # Output: investigations/JP2023-123456/hearing.md -> infringement.md
     ```
 
-3. **Phase 3: Prior (Execute)**: Run search and report.
+3. **Phase 3: Prior**: Run search and report.
 
     ```bash
     /patent-kit.prior investigations/JP2023-123456/infringement.md
