@@ -12,7 +12,7 @@ This kit provides structured commands to automate:
 
 ## Prerequisites
 
-This kit requires `google-patent-cli` and `arxiv-cli` to be installed and available in your PATH.
+This kit requires `google-patent-cli` and `arxiv-cli`, which are **automatically downloaded** to the project directory during initialization.
 
 ### Installation
 
@@ -21,13 +21,6 @@ This kit requires `google-patent-cli` and `arxiv-cli` to be installed and availa
    ```bash
    cargo install --path .
    ```
-
-2. **Install Dependencies**
-
-   Please install the required CLI tools following their official documentation:
-
-- **google-patent-cli**: [Installation Guide](https://github.com/sonesuke/google-patent-cli#installation) (Pre-built binaries recommended)
-- **arxiv-cli**: [Installation Guide](https://github.com/sonesuke/arxiv-cli#installation)
 
 ## Usage
 
@@ -45,8 +38,15 @@ ftoc init . --ai copilot
 
 This command sets up:
 - **.patent-kit**: Common templates and memory bank.
+  - **bin/**: Contains automatically downloaded `google-patent-cli` and `arxiv-cli`.
 - **.claude** (if `--ai claude`): Claude-specific slash commands.
 - **.copilot** (if `--ai copilot`): GitHub Copilot prompts.
+
+**Note**: If you are behind a corporate proxy or have SSL certificate issues, use the `--insecure` flag to skip SSL verification during download:
+
+```bash
+ftoc init . --ai claude --insecure
+```
 
 ### 2. Workflow (Spec-Driven Development)
 

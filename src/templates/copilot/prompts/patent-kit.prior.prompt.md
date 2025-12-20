@@ -20,13 +20,13 @@ Your task is to Execute the Plan and Report Findings.
 - Start with broad keywords.
 - *Check*: Did we find Product Features? -> **Adopt FTO**.
 - *Check*: Did we find Patent Elements? -> **Adopt Invalidation**.
-- **CRITICAL**: Use `--before <priority-date>` for both `google-patent-cli` and `arxiv-cli`.
+- **CRITICAL**: Use `--before <priority-date>` for both `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli`.
 - *Warning**: Do NOT use unsupported flags (e.g., `--country`).
 - **Requirement**: Save output to `investigations/<patent-id>/json/search_results_<desc>.json`.
 - **Tools** (Both Required):
-- **MUST** use `google-patent-cli` for patent literature.
-- **MUST** use `arxiv-cli` for non-patent literature (academic papers).
-- Example: `arxiv-cli search --query "<query>" --before "<priority-date>" --limit 10`.
+- **MUST** use `./.patent-kit/bin/google-patent-cli` for patent literature.
+- **MUST** use `./.patent-kit/bin/arxiv-cli` for non-patent literature (academic papers).
+- Example: `./.patent-kit/bin/arxiv-cli search --query "<query>" --before "<priority-date>" --limit 10`.
 - Run searches with BOTH tools to ensure comprehensive coverage.
 - **Check**: Did the command succeed? IF NO -> **STOP** and Debug.
 

@@ -19,12 +19,12 @@ Your task is to Analyze the Patent and create the Specification.
     ```bash
 
     mkdir -p investigations/<patent-id>/json
-    google-patent-cli fetch "<patent-id>" > investigations/<patent-id>/json/<patent-id>.json
+    ./.patent-kit/bin/google-patent-cli fetch "<patent-id>" > investigations/<patent-id>/json/<patent-id>.json
     ```
 
 3. **Analyze**: Identify Constituent Elements.
-3. **Draft**: Fill `.patent-kit/templates/evaluation-template.md`.
-4. **Save**: `investigations/<patent-id>/evaluation.md`.
+4. **Draft**: Fill `.patent-kit/templates/evaluation-template.md`.
+5. **Save**: `investigations/<patent-id>/evaluation.md`.
 
 ## Next Step
 
