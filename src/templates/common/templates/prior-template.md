@@ -38,6 +38,11 @@ Select the most relevant documents.
 | :--- | :--- | :--- | :--- | :--- |
 | D1 | ... | ... | ... | ... |
 
+### 5.2 Non-Patent Literature (NPL)
+| NPL ID | Title | Authors | Pub Date | Relevance | Note |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| NPL1 | ... | ... | ... | ... | ... |
+
 ## 6. Comparison (Claim Chart)
 
 Compare the Spec (Elements) with the Primary Reference (D1).
@@ -46,6 +51,11 @@ Compare the Spec (Elements) with the Primary Reference (D1).
 | :--- | :--- | :--- | :--- |
 | A | ... | Yes/No | ... |
 | B | ... | Yes/No | ... |
+
+### 6.2 Non-Patent Literature Analysis (if applicable)
+| Element | NPL Disclosure | Match? | Note |
+| :--- | :--- | :--- | :--- |
+| A | ... | Yes/No | ... |
 
 ## 7. Published Application Amendment Risk (If Applicable)
 
@@ -73,5 +83,8 @@ For published patent applications (not yet granted), assess the risk of claim am
 ## 9. Quality Gates
 
 - [ ] All top results reviewed.
+- [ ] All non-patent literature top results reviewed.
+- [ ] Grade A NPL candidates analyzed in detail.
 - [ ] Claim chart completed for the closest prior art.
+- [ ] Final report documents BOTH patent and non-patent literature findings (Constitution III).
 - [ ] Conclusion is supported by the comparison.
