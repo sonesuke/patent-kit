@@ -98,7 +98,7 @@ Long or overly complex queries often return zero results in both `./.patent-kit/
 
 Strictly adhere to the capabilities of provided tools.
 
-- **Rule**: Do NOT hallucinate command options (e.g., `--country`). Check `--help` if unsure.
+- **Rule**: Do NOT hallucinate command options. Check `--help` if unsure.
 - **Rule**: Use `./.patent-kit/bin/google-patent-cli` for patent literature and `./.patent-kit/bin/arxiv-cli` for non-patent literature (academic papers).
 - **Rule**: STOP immediately if a command execution fails. Do not simulate results or proceed with the workflow.
 - **Requirement**: Verify command success (exit code 0) before reading outputs.
@@ -125,5 +125,6 @@ To maintain context window efficiency, large outputs from CLI tools MUST be hand
 - **Rule**: `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli` output MUST be redirected to a JSON file.
   - Path: `investigations/<patent-id>/json/<patent-id>.json` (for single patent)
   - Path: `investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)
+  - Path: `screening/json/search_results_<desc>.json` (for screening)
 - **Requirement**: Do NOT read the output from stdout.
 - **Action**: Use `jq` or file reading tools to access specific fields from the generated JSON file only when needed.

@@ -50,21 +50,28 @@ ftoc init . --ai claude --insecure
 
 ### 2. Workflow
 
-1. **Phase 1: Evaluation**: Analyze the patent.
+1. **Phase 1: Screening**: Identify risk candidates.
+
+    ```bash
+    /patent-kit.screening
+    # Output: screening/prescreening.md -> screening/screening.md
+    ```
+
+2. **Phase 2: Evaluation**: Analyze the patent.
 
     ```bash
     /patent-kit.evaluation JP2023-123456
     # Output: investigations/JP2023-123456/evaluation.md
     ```
 
-2. **Phase 2: Infringement**: Define search strategy.
+3. **Phase 3: Infringement**: Define search strategy.
 
     ```bash
     /patent-kit.infringement investigations/JP2023-123456/evaluation.md
     # Output: investigations/JP2023-123456/hearing.md -> infringement.md
     ```
 
-3. **Phase 3: Prior**: Run search and report.
+4. **Phase 4: Prior**: Run search and report.
 
     ```bash
     /patent-kit.prior investigations/JP2023-123456/infringement.md
