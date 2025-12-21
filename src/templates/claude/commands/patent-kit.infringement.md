@@ -1,8 +1,8 @@
 ---
-description: "Phase 2: Infringement"
+description: "Phase 3: Infringement"
 ---
 
-# Phase 2: Infringement
+# Phase 3: Infringement
 
 Your task is to create the Investigation Plan based on the Spec.
 

@@ -1,8 +1,8 @@
 ---
-description: "Phase 1: Evaluation"
+description: "Phase 2: Evaluation"
 ---
 
-# Phase 1: Evaluation
+# Phase 2: Evaluation
 
 Your task is to Analyze the Patent and create the Specification.
 
@@ -28,4 +28,4 @@ Your task is to Analyze the Patent and create the Specification.
 
 ## Next Step
 
-Run Phase 2 (Infringement).
+Run Phase 3 (Infringement).

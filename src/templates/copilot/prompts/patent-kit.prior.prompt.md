@@ -1,8 +1,8 @@
 ---
-description: "Phase 3: Prior Art"
+description: "Phase 4: Prior Art"
 ---
 
-# Phase 3: Prior Art
+# Phase 4: Prior Art
 
 Your task is to Execute the Plan and Report Findings.
 
