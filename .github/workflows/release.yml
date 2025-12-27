@@ -55,7 +55,7 @@ jobs:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             artifact_name: ftoc.exe
-            asset_name: ftoc-windows-x86_64.zip
+            asset_name: ftoc-windows-x86_64.msi
 
     steps:
       - name: Checkout code
@@ -69,13 +69,17 @@ jobs:
       - name: Build
         run: cargo build --release --bin ftoc --target ${{ matrix.target }}
 
-      - name: Compress binary
+      - name: Install cargo-wix
+        if: matrix.os == 'windows-latest'
+        run: cargo install cargo-wix
+
+      - name: Package
         shell: bash
         run: |
-          cd target/${{ matrix.target }}/release
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            7z a ../../../${{ matrix.asset_name }} ${{ matrix.artifact_name }}
+            cargo wix --bin ftoc --target ${{ matrix.target }} --nocapture --output ${{ matrix.asset_name }}
           else
+            cd target/${{ matrix.target }}/release
             tar -czf ../../../${{ matrix.asset_name }} ${{ matrix.artifact_name }}
           fi
 

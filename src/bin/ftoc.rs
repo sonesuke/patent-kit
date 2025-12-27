@@ -67,7 +67,10 @@ fn init_project(path: PathBuf, ai: AiAssistant, insecure: bool) -> Result<()> {
 
     // Copy common templates (.patent-kit)
     // Copy common templates (.patent-kit)
-    copy_embedded_dir("common/templates", &target_dir.join(".patent-kit/templates"))?;
+    copy_embedded_dir(
+        "common/templates",
+        &target_dir.join(".patent-kit/templates"),
+    )?;
 
     // Generate AI specific prompts
     generate_prompts(ai, &target_dir)?;
@@ -111,14 +114,8 @@ fn copy_embedded_dir(prefix: &str, target_path: &Path) -> Result<()> {
 
 fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
     let (output_dir, file_suffix) = match ai {
-        AiAssistant::Claude => (
-            target_dir.join(".claude/commands"),
-            ".md",
-        ),
-        AiAssistant::Copilot => (
-            target_dir.join(".github/prompts"),
-            ".prompt.md",
-        ),
+        AiAssistant::Claude => (target_dir.join(".claude/commands"), ".md"),
+        AiAssistant::Copilot => (target_dir.join(".github/prompts"), ".prompt.md"),
     };
 
     if !output_dir.exists() {
@@ -133,9 +130,9 @@ fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
                 .file_name()
                 .and_then(|s| s.to_str())
                 .context("Failed to get filename")?;
-            
+
             let name_stem = filename.trim_end_matches(".md");
-            
+
             let content = Asset::get(file_path_str)
                 .context("Failed to read embedded file")?
                 .data;
@@ -143,7 +140,8 @@ fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
                 .context("Failed to parse embedded file as UTF-8")?;
 
             let next_step_instruction = get_next_step_instruction(ai, name_stem);
-            let new_content = content_str.replace("{{ NEXT_STEP_INSTRUCTION }}", &next_step_instruction);
+            let new_content =
+                content_str.replace("{{ NEXT_STEP_INSTRUCTION }}", &next_step_instruction);
 
             let new_filename = format!("patent-kit.{}{}", name_stem, file_suffix);
             let dest_path = output_dir.join(new_filename);
@@ -159,15 +157,27 @@ fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
 
 fn get_next_step_instruction(ai: AiAssistant, phase: &str) -> String {
     match (ai, phase) {
-        (AiAssistant::Claude, "screening") => "Run /patent-kit.evaluation investigations/<patent-id>/screening.md".to_string(),
-        (AiAssistant::Claude, "evaluation") => "Run /patent-kit.infringement investigations/<patent-id>/evaluation.md".to_string(),
-        (AiAssistant::Claude, "infringement") => "Run /patent-kit.prior investigations/<patent-id>/infringement.md".to_string(),
+        (AiAssistant::Claude, "screening") => {
+            "Run /patent-kit.evaluation investigations/<patent-id>/screening.md".to_string()
+        }
+        (AiAssistant::Claude, "evaluation") => {
+            "Run /patent-kit.infringement investigations/<patent-id>/evaluation.md".to_string()
+        }
+        (AiAssistant::Claude, "infringement") => {
+            "Run /patent-kit.prior investigations/<patent-id>/infringement.md".to_string()
+        }
         // No next step for prior
         (AiAssistant::Claude, _) => "".to_string(),
 
-        (AiAssistant::Copilot, "screening") => "## Next Step\n\nRun Phase 2 (Evaluation).".to_string(),
-        (AiAssistant::Copilot, "evaluation") => "## Next Step\n\nRun Phase 3 (Infringement).".to_string(),
-        (AiAssistant::Copilot, "infringement") => "## Next Step\n\nRun Phase 4 (Prior Art).".to_string(),
+        (AiAssistant::Copilot, "screening") => {
+            "## Next Step\n\nRun Phase 2 (Evaluation).".to_string()
+        }
+        (AiAssistant::Copilot, "evaluation") => {
+            "## Next Step\n\nRun Phase 3 (Infringement).".to_string()
+        }
+        (AiAssistant::Copilot, "infringement") => {
+            "## Next Step\n\nRun Phase 4 (Prior Art).".to_string()
+        }
         (AiAssistant::Copilot, _) => "".to_string(),
     }
 }
