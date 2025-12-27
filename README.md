@@ -57,7 +57,20 @@ ftoc init . --ai claude --insecure
     # Output: screening/prescreening.md -> screening/screening.md
     ```
 
-2. **Phase 2: Evaluation**: Analyze the patent.
+    ```bash
+    /patent-kit.screening
+    # Output: screening/prescreening.md -> screening/screening.md
+    ```
+
+2. **Phase 1b: Query Generation**: Create optimized search queries.
+
+    ```bash
+    /patent-kit.generate-query
+    # Input: screening/prescreening.md
+    # Output: screening/query.md
+    ```
+
+3. **Phase 2: Evaluation**: Analyze the patent.
 
     ```bash
     /patent-kit.evaluation JP2023-123456

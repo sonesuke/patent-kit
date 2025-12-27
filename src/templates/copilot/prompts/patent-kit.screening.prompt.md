@@ -18,7 +18,8 @@ Your task is to identify potential patent infringement risks based on the user's
 1.  **Ask**: Request the following information from the user:
     - **Product Concept**: Detailed description of what they want to realize.
     - **Target Country**: Where the product will be released (e.g., US, JP).
-    - **Target Release Date**: Approximate date (to determine prior art cutoff).
+    - **Target Release Date**: Approximate date.
+    - **Cutoff Date**: Calculate `Target Release Date - 20 years`. Patents filed before this date are likely expired.
     - **Competitors**: List of key competitor companies (Mandatory).
 2.  **Refine**: If the concept is too vague, ask clarifying questions to break it down into technical elements relevant for patent search.
 
@@ -35,12 +36,15 @@ Your task is to identify potential patent infringement risks based on the user's
 1.  **Keywords**:
     - **Broad Terms**: Core technical concepts (high recall). **Must be in the language of the Target Country** (e.g., Japanese for JP).
     - **Narrow Terms**: Specific features, configurations, or unique combinations (high precision). **Must be in the language of the Target Country**.
+    - **Ambiguity Check**:
+        - Check if keywords (especially abbreviations) have multiple meanings (polysemy).
+        - **Action**: If ambiguous, replace with **Full Term** OR add a **Domain Keyword** (AND constraint) to exclude irrelevant contexts.
 2.  **Query Generation**: Create differentiating query strategies using CLI flags:
     - **Strategy A: Competitor Watch (Broad)**:
-        - Command: `google-patent-cli search --query "<Broad Term>" --assignee "<Competitor>" --country "<Target Country>"`
+        - Command: `google-patent-cli search --query "<Broad Term>" --assignee "<Competitor>" --country "<Target Country>" --after "<Cutoff Date>"`
         - Goal: Catch ALL relevant patents from competitors in the target market.
     - **Strategy B: General Search (Narrow)**:
-        - Command: `google-patent-cli search --query "<Broad Term> AND <Narrow Term>" --country "<Target Country>"`
+        - Command: `google-patent-cli search --query "<Broad Term> AND <Narrow Term>" --country "<Target Country>" --after "<Cutoff Date>"`
         - Goal: Find only highly relevant patents from the rest of the world (avoiding noise).
 3.  **Pre-Search execution**:
     - Run the generated commands to get the **count** of results (using `--limit 1` and checking total results if possible).
