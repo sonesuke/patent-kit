@@ -18,7 +18,8 @@ Your task is to Execute the Screening Phase.
     - **Ask**: Request the following information from the user:
         - **Product Concept**: Detailed description of what they want to realize.
         - **Target Country**: Where the product will be released (e.g., US, JP).
-        - **Target Release Date**: Approximate date (to determine prior art cutoff).
+        - **Target Release Date**: Approximate date.
+        - **Cutoff Date**: Calculate `Target Release Date - 20 years`. Patents filed before this date are likely expired and lower risk (unless term extended).
         - **Competitors**: List of key competitor companies (Mandatory).
     - **Refine**: If the concept is too vague, ask clarifying questions to break it down.
 
@@ -31,11 +32,14 @@ Your task is to Execute the Screening Phase.
 
 4.  **Step 3: Search Strategy & Pre-Search**:
     - **Keywords**: Extract Broad Terms and Narrow Terms **in the language of the Target Country** (e.g., Japanese for JP, English for US).
+    - **Ambiguity Check**:
+        - Check if keywords (especially abbreviations) have multiple meanings (polysemy).
+        - **Action**: If ambiguous, replace with **Full Term** OR add a **Domain Keyword** (AND constraint) to exclude irrelevant contexts.
     - **Query Generation**:
         - **Strategy A: Competitor Watch (Broad)**:
-            - Command: `google-patent-cli search --query "<Broad Term>" --assignee "<Competitor>" --country "<Target Country>"`
+            - Command: `google-patent-cli search --query "<Broad Term>" --assignee "<Competitor>" --country "<Target Country>" --after "<Cutoff Date>"`
         - **Strategy B: General Search (Narrow)**:
-            - Command: `google-patent-cli search --query "<Broad Term> AND <Narrow Term>" --country "<Target Country>"`
+            - Command: `google-patent-cli search --query "<Broad Term> AND <Narrow Term>" --country "<Target Country>" --after "<Cutoff Date>"`
     - **Pre-Search**: Run commands to get result **counts** (using `--limit 1`).
     - **Report (Intermediate)**:
         - Create `prescreening.md` using `.patent-kit/templates/prescreening-template.md`.
