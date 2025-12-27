@@ -22,6 +22,4 @@ Your task is to create the Investigation Plan based on the Spec.
 4. **Draft**: Fill `.patent-kit/templates/infringement-template.md`.
 5. **Save**: `investigations/<patent-id>/infringement.md`.
 
-## Next Step
-
-Run Phase 4 (Prior Art).
+{{ NEXT_STEP_INSTRUCTION }}

@@ -66,24 +66,11 @@ fn init_project(path: PathBuf, ai: AiAssistant, insecure: bool) -> Result<()> {
     }
 
     // Copy common templates (.patent-kit)
-    copy_embedded_dir("common", &target_dir.join(".patent-kit"))?;
+    // Copy common templates (.patent-kit)
+    copy_embedded_dir("common/templates", &target_dir.join(".patent-kit/templates"))?;
 
-    // Copy AI specific templates
-    match ai {
-        AiAssistant::Claude => {
-            copy_embedded_dir("claude", &target_dir.join(".claude"))?;
-        }
-        AiAssistant::Copilot => {
-            if Asset::get("copilot").is_none() {
-                // Try to fallback or check if directory exists in embed even if empty
-                // rust-embed doesn't list directories easily, but we know the structure
-                // If we just copy "copilot" folder content
-                copy_embedded_dir("copilot", &target_dir.join(".github"))?;
-            } else {
-                copy_embedded_dir("copilot", &target_dir.join(".github"))?;
-            }
-        }
-    }
+    // Generate AI specific prompts
+    generate_prompts(ai, &target_dir)?;
 
     // Install dependencies (arxiv-cli, google-patent-cli)
     install_dependencies(&target_dir, insecure)?;
@@ -100,7 +87,7 @@ fn copy_embedded_dir(prefix: &str, target_path: &Path) -> Result<()> {
         let file_path_str = file_path.as_ref();
         if file_path_str.starts_with(prefix) {
             let relative_path = file_path_str.strip_prefix(prefix).unwrap_or(file_path_str);
-            // strip leading slash if present (it shouldn't be for strip_prefix but handling just in case logic matches)
+            // strip leading slash if present
             let relative_path = relative_path.trim_start_matches('/');
 
             if relative_path.is_empty() {
@@ -122,6 +109,68 @@ fn copy_embedded_dir(prefix: &str, target_path: &Path) -> Result<()> {
     Ok(())
 }
 
+fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
+    let (output_dir, file_suffix) = match ai {
+        AiAssistant::Claude => (
+            target_dir.join(".claude/commands"),
+            ".md",
+        ),
+        AiAssistant::Copilot => (
+            target_dir.join(".github/prompts"),
+            ".prompt.md",
+        ),
+    };
+
+    if !output_dir.exists() {
+        fs::create_dir_all(&output_dir).context("Failed to create prompt directory")?;
+    }
+
+    let prefix = "common/prompts";
+    for file_path in Asset::iter() {
+        let file_path_str = file_path.as_ref();
+        if file_path_str.starts_with(prefix) {
+            let filename = Path::new(file_path_str)
+                .file_name()
+                .and_then(|s| s.to_str())
+                .context("Failed to get filename")?;
+            
+            let name_stem = filename.trim_end_matches(".md");
+            
+            let content = Asset::get(file_path_str)
+                .context("Failed to read embedded file")?
+                .data;
+            let content_str = std::str::from_utf8(content.as_ref())
+                .context("Failed to parse embedded file as UTF-8")?;
+
+            let next_step_instruction = get_next_step_instruction(ai, name_stem);
+            let new_content = content_str.replace("{{ NEXT_STEP_INSTRUCTION }}", &next_step_instruction);
+
+            let new_filename = format!("patent-kit.{}{}", name_stem, file_suffix);
+            let dest_path = output_dir.join(new_filename);
+
+            fs::write(&dest_path, new_content)
+                .with_context(|| format!("Failed to write prompt file {:?}", dest_path))?;
+            println!("Generated: {:?}", dest_path);
+        }
+    }
+
+    Ok(())
+}
+
+fn get_next_step_instruction(ai: AiAssistant, phase: &str) -> String {
+    match (ai, phase) {
+        (AiAssistant::Claude, "screening") => "Run /patent-kit.evaluation investigations/<patent-id>/screening.md".to_string(),
+        (AiAssistant::Claude, "evaluation") => "Run /patent-kit.infringement investigations/<patent-id>/evaluation.md".to_string(),
+        (AiAssistant::Claude, "infringement") => "Run /patent-kit.prior investigations/<patent-id>/infringement.md".to_string(),
+        // No next step for prior
+        (AiAssistant::Claude, _) => "".to_string(),
+
+        (AiAssistant::Copilot, "screening") => "## Next Step\n\nRun Phase 2 (Evaluation).".to_string(),
+        (AiAssistant::Copilot, "evaluation") => "## Next Step\n\nRun Phase 3 (Infringement).".to_string(),
+        (AiAssistant::Copilot, "infringement") => "## Next Step\n\nRun Phase 4 (Prior Art).".to_string(),
+        (AiAssistant::Copilot, _) => "".to_string(),
+    }
+}
 fn install_dependencies(target_dir: &Path, insecure: bool) -> Result<()> {
     let bin_dir = target_dir.join(".patent-kit").join("bin");
     if !bin_dir.exists() {

@@ -12,21 +12,17 @@ Your task is to Analyze the Patent and create the Specification.
 
 ## Process
 
-1. **Initialize**: Read `.patent-kit/memory/constitution.md` to understand the
-   core principles.
+1. **Initialize**: Read `.patent-kit/memory/constitution.md` to understand the core principles.
 2. **Retrieve Data**:
 
     ```bash
-
     mkdir -p investigations/<patent-id>/json
     ./.patent-kit/bin/google-patent-cli fetch "<patent-id>" > investigations/<patent-id>/json/<patent-id>.json
     ```
 
 3. **Analyze**: Identify Constituent Elements.
-    - Check if the patent is a divisional application. If so, identify the parent application and its filing/priority date to determine the effective filing date for prior art search.
+    - **Divisional Check**: Verify if this is a divisional application. If yes, use the parent application's filing date (or priority date) as the effective reference date for prior art.
 4. **Draft**: Fill `.patent-kit/templates/evaluation-template.md`.
 5. **Save**: `investigations/<patent-id>/evaluation.md`.
 
-## Next Step
-
-Run Phase 3 (Infringement).
+{{ NEXT_STEP_INSTRUCTION }}
