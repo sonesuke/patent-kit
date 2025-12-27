@@ -77,7 +77,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            cargo wix --bin ftoc --target ${{ matrix.target }} --nocapture --output ${{ matrix.asset_name }}
+            cargo wix --target ${{ matrix.target }} --nocapture --output ${{ matrix.asset_name }}
           else
             cd target/${{ matrix.target }}/release
             tar -czf ../../../${{ matrix.asset_name }} ${{ matrix.artifact_name }}
