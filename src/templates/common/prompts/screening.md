@@ -79,7 +79,15 @@ Your task is to identify potential patent infringement risks based on the user's
         - **Concern**: Brief explanation of why it's a risk.
     - **Recommendation**: "Proceed to Phase 2 Evaluation for [Patent ID]."
 
+## Quality Gates
+
+- [ ] **Assignee Verification**: Did you confirm the exact assignee names exist in the DB?
+- [ ] **Pre-Screening Report**: Is `prescreening.md` created with query counts?
+- [ ] **Risk Assessment**: Are High/Medium risk patents clearly identified with reasons?
+
 ## Deliverables
 
 1.  `prescreening.md` (Intermediate)
 2.  `screening.md` (Final)
+
+{{ NEXT_STEP_INSTRUCTION }}
