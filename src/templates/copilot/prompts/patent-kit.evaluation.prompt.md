@@ -23,6 +23,7 @@ Your task is to Analyze the Patent and create the Specification.
     ```
 
 3. **Analyze**: Identify Constituent Elements.
+    - Check if the patent is a divisional application. If so, identify the parent application and its filing/priority date to determine the effective filing date for prior art search.
 4. **Draft**: Fill `.patent-kit/templates/evaluation-template.md`.
 5. **Save**: `investigations/<patent-id>/evaluation.md`.
 
