@@ -72,6 +72,9 @@ fn init_project(path: PathBuf, ai: AiAssistant, insecure: bool) -> Result<()> {
         &target_dir.join(".patent-kit/templates"),
     )?;
 
+    // Copy common memory (.patent-kit/memory)
+    copy_embedded_dir("common/memory", &target_dir.join(".patent-kit/memory"))?;
+
     // Generate AI specific prompts
     generate_prompts(ai, &target_dir)?;
 
