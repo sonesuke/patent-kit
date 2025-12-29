@@ -37,6 +37,14 @@ enum Commands {
         #[arg(long)]
         insecure: bool,
     },
+
+    #[cfg(feature = "dev")]
+    /// Run linting checks (clippy + rumdl check). Use --fix to auto-correct.
+    Lint {
+        /// Apply auto-fixes where possible
+        #[arg(long)]
+        fix: bool,
+    },
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -50,7 +58,166 @@ fn main() -> Result<()> {
 
     match args.command {
         Commands::Init { path, ai, insecure } => init_project(path, ai, insecure),
+        #[cfg(feature = "dev")]
+        Commands::Lint { fix } => run_lint(fix),
     }
+}
+
+#[cfg(feature = "dev")]
+fn run_lint(fix: bool) -> Result<()> {
+    if fix {
+        // Fix mode: prioritize fixing
+        run_command(
+            "cargo",
+            &[
+                "clippy",
+                "--fix",
+                "--allow-dirty",
+                "--allow-staged",
+                "--",
+                "-D",
+                "warnings",
+            ],
+        )?;
+        run_command("cargo", &["fmt", "--all"])?;
+        // run_command("rumdl", &["--fix", "."])?;
+        run_rumdl_lib(true)?;
+    } else {
+        // Check mode: read-only checks
+        run_command("cargo", &["fmt", "--all", "--", "--check"])?;
+        run_command("cargo", &["clippy", "--", "-D", "warnings"])?;
+        // run_command("rumdl", &["check", "."])?;
+        run_rumdl_lib(false)?;
+    }
+    Ok(())
+}
+
+#[cfg(feature = "dev")]
+fn run_command(program: &str, args: &[&str]) -> Result<()> {
+    let status = std::process::Command::new(program)
+        .args(args)
+        .status()
+        .with_context(|| format!("Failed to execute {}", program))?;
+
+    if !status.success() {
+        if program == "rumdl" {
+            // For linting/formatting, we still want to continue if possible, or maybe fail?
+            // Since these are "all-in-one" commands, failing is probably correct to stop CI.
+            anyhow::bail!("Command failed: {} {:?}", program, args);
+        } else {
+            anyhow::bail!("Command failed: {} {:?}", program, args);
+        }
+    }
+    Ok(())
+}
+
+#[cfg(feature = "dev")]
+fn run_rumdl_lib(fix: bool) -> Result<()> {
+    use rumdl_lib::config::{ConfigLoaded, RuleRegistry, SourcedConfig};
+    use rumdl_lib::fix_coordinator::FixCoordinator;
+    use rumdl_lib::lint;
+    use rumdl_lib::rules::all_rules;
+    use walkdir::WalkDir;
+
+    println!("Running rumdl via library...");
+
+    // 1. Load config
+    let loaded_config = SourcedConfig::load_with_discovery(None, None, false)
+        .map_err(|e| anyhow::anyhow!("Failed to load rumdl config: {:?}", e))?;
+
+    // 2. Build registry (needed for validation)
+    let temp_config = rumdl_lib::config::Config::default();
+    let rules_for_registry = all_rules(&temp_config);
+    let registry = RuleRegistry::from_rules(&rules_for_registry);
+
+    // 3. Validate config
+    let validated = loaded_config
+        .validate(&registry)
+        .map_err(|e| anyhow::anyhow!("Failed to validate rumdl config: {:?}", e))?;
+
+    // 4. Convert to Config
+    let config: rumdl_lib::config::Config = validated.into();
+
+    // 5. Get final rules
+    let rules = all_rules(&config);
+
+    // 6. Setup fix coordinator
+    let fix_coordinator = if fix {
+        Some(FixCoordinator::new())
+    } else {
+        None
+    };
+
+    let mut total_warnings = 0;
+    let mut total_fixed = 0;
+
+    // 7. Walk files
+    for entry in WalkDir::new(".").into_iter().filter_map(|e| e.ok()) {
+        let path = entry.path();
+        if path.is_file() && path.extension().map_or(false, |ext| ext == "md") {
+            // Read content
+            let mut content = match fs::read_to_string(path) {
+                Ok(c) => c,
+                Err(e) => {
+                    eprintln!("Failed to read {}: {}", path.display(), e);
+                    continue;
+                }
+            };
+
+            // Lint
+            let flavor = config.markdown_flavor();
+            let mut warnings = lint(&content, &rules, false, flavor, Some(&config))
+                .map_err(|e| anyhow::anyhow!("Lint error: {:?}", e))?;
+
+            if !warnings.is_empty() {
+                if let Some(coordinator) = &fix_coordinator {
+                    // Fix mode
+                    let fix_result = coordinator
+                        .apply_fixes_iterative(
+                            &rules,
+                            &warnings,
+                            &mut content,
+                            &config,
+                            10, // max iterations
+                        )
+                        .map_err(|e| anyhow::anyhow!("Fix error: {}", e))?;
+
+                    if fix_result.rules_fixed > 0 {
+                        fs::write(path, &content)?;
+                        println!(
+                            "Fixed {} issues in {}",
+                            fix_result.rules_fixed,
+                            path.display()
+                        );
+                        total_fixed += fix_result.rules_fixed;
+                    }
+                } else {
+                    // Check mode: print warnings
+                    for w in warnings {
+                        println!(
+                            "{}:{}:{}: {} [{}]",
+                            path.display(),
+                            w.line,
+                            w.column,
+                            w.message,
+                            w.rule_name.as_deref().unwrap_or("?")
+                        );
+                        total_warnings += 1;
+                    }
+                }
+            }
+        }
+    }
+
+    if fix {
+        println!("Rumdl fixed {} issues.", total_fixed);
+    } else if total_warnings > 0 {
+        anyhow::bail!("Rumdl found {} issues", total_warnings);
+    } else {
+        println!("Rumdl passed.");
+    }
+
+    Ok(())
 }
 
 fn init_project(path: PathBuf, ai: AiAssistant, insecure: bool) -> Result<()> {

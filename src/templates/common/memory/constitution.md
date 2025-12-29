@@ -68,6 +68,7 @@ Invalidity searches MUST respect the target patent's effective filing/priority d
 ### IX. Adaptive Strategy Selection
 
 Unless the user explicitly specifies a strategy:
+
 - **Rule**: Dynamically determine the best path (FTO vs Invalidation) *during* the search.
 - **Process**:
 

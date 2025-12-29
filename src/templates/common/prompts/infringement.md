@@ -19,7 +19,7 @@ Your task is to create the Investigation Plan based on the Spec.
 - Compare Product Features vs Patent Elements.
 - Identify Matches/Risks.
 
-4. **Draft**: Fill `.patent-kit/templates/infringement-template.md`.
-5. **Save**: `investigations/<patent-id>/infringement.md`.
+1. **Draft**: Fill `.patent-kit/templates/infringement-template.md`.
+2. **Save**: `investigations/<patent-id>/infringement.md`.
 
 {{ NEXT_STEP_INSTRUCTION }}

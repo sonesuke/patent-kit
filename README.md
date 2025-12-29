@@ -37,6 +37,7 @@ ftoc init . --ai copilot
 ```
 
 This command sets up:
+
 - **.patent-kit**: Common templates and memory bank.
   - **bin/**: Contains automatically downloaded `google-patent-cli` and `arxiv-cli`.
 - **.claude** (if `--ai claude`): Claude-specific slash commands.
@@ -77,14 +78,14 @@ ftoc init . --ai claude --insecure
     # Output: investigations/JP2023-123456/evaluation.md
     ```
 
-3. **Phase 3: Infringement**: Define search strategy.
+4. **Phase 3: Infringement**: Define search strategy.
 
     ```bash
     /patent-kit.infringement investigations/JP2023-123456/evaluation.md
     # Output: investigations/JP2023-123456/hearing.md -> infringement.md
     ```
 
-4. **Phase 4: Prior**: Run search and report.
+5. **Phase 4: Prior**: Run search and report.
 
     ```bash
     /patent-kit.prior investigations/JP2023-123456/infringement.md
@@ -109,22 +110,24 @@ JP2023-123456/
 
 ## Development
 
-### Linting
+### Workflow
 
-This project uses `rumdl` for Markdown linting. To install:
+Before submitting a Pull Request, please ensure your code is formatted and linted.
 
-```bash
-cargo install rumdl
-```
+1. **Format & Fix** (Auto-correct/Fix):
 
-To check for errors:
+    ```bash
+    cargo lint --fix
+    ```
 
-```bash
-rumdl README.md src/templates/common src/templates/claude src/templates/copilot
-```
+    This command runs `clippy --fix`, `cargo fmt`, and `rumdl --fix`.
 
-To automatically fix issues:
+2. **Lint Check** (Check only):
 
-```bash
-rumdl --fix README.md src/templates/common src/templates/claude src/templates/copilot
-```
+    ```bash
+    cargo lint
+    ```
+
+    This command runs checks for formatting, clippy, and markdown without modifying files.
+
+ These commands utilize the custom aliases defined in `.cargo/config.toml` to run `cargo fmt`/`clippy` and `rumdl` together.

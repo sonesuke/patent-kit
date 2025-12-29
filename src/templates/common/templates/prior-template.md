@@ -39,6 +39,7 @@ Select the most relevant documents.
 | D1 | ... | ... | ... | ... |
 
 ### 5.2 Non-Patent Literature (NPL)
+
 | NPL ID | Title | Authors | Pub Date | Relevance | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | NPL1 | ... | ... | ... | ... | ... |
@@ -53,6 +54,7 @@ Compare the Spec (Elements) with the Primary Reference (D1).
 | B | ... | Yes/No | ... |
 
 ### 6.2 Non-Patent Literature Analysis (if applicable)
+
 | Element | NPL Disclosure | Match? | Note |
 | :--- | :--- | :--- | :--- |
 | A | ... | Yes/No | ... |
@@ -68,6 +70,7 @@ For published patent applications (not yet granted), assess the risk of claim am
 | D1 | Published/Pending | (Describe broader features in embodiments) | High/Medium/Low | (Could claims be amended to cover broader scope?) |
 
 **Reasoning**:
+
 - Constitution VI states: "Consider the Detailed Description and embodiments as potential scope for future amendments."
 - Evaluate whether embodiments disclose features that could be added to claims during examination.
 - High risk: Embodiments clearly describe broader features that would strengthen infringement case.
