@@ -55,7 +55,15 @@ Identify non-competitor prior art and industry-wide technical solutions relevant
 
 ## Google Patent UI Queries
 
-Copy and paste these queries directly into [Google Patents](https://patents.google.com/):
+Copy and paste these queries directly into [Google Patents](https://patents.google.com/).
+
+> [!IMPORTANT]
+> **Formatting Rules**:
+> 
+> 1. **Order**: Keywords MUST be placed **at the beginning** of the query string.
+> 2. **Keywords**: MUST be quoted (e.g., `"smartphone"`).
+> 3. **Assignees**: MUST be quoted and space-separated keys (e.g., `assignee:"Google LLC" assignee:"Microsoft Corp"`).
+> 4. **Country/Language**: If a country is specified, the language MUST also be specified (e.g., `country:JP language:JAPANESE`, `country:CN language:CHINESE`).
 
 ### Competitor Patent Research
 

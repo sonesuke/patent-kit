@@ -1,14 +1,14 @@
 ---
-description: "Phase 4: Prior Art"
+description: "Phase 5: Prior Art"
 ---
 
-# Phase 4: Prior Art
+# Phase 5: Prior Art
 
 Your task is to Execute the Plan and Report Findings.
 
 ## Input
 
-- **Plan File**: `investigations/<patent-id>/infringement.md`
+- **Plan File**: `3-investigations/<patent-id>/infringement.md`
 
 ## Process
 
@@ -48,7 +48,7 @@ Your task is to Execute the Plan and Report Findings.
      - **MUST** use `./.patent-kit/bin/google-patent-cli` for patent literature.
      - **MUST** use `./.patent-kit/bin/arxiv-cli` for non-patent literature (academic papers).
      - Example: `./.patent-kit/bin/arxiv-cli search --query "<query>" --before "<priority-date>" --limit 50`.
-     - **Requirement**: Save output to `investigations/<patent-id>/json/search_results_<desc>.json`.
+     - **Requirement**: Save output to `3-investigations/<patent-id>/json/search_results_<desc>.json`.
      - **Check**: Did the command succeed? IF NO -> **STOP** and Debug.
 
 4. **Screen Results** (MANDATORY for BOTH patent and non-patent literature):
@@ -63,7 +63,7 @@ Your task is to Execute the Plan and Report Findings.
    - **For Non-Patent Literature (Grade A)** (CRITICAL):
      - **Full-Text Acquisition**:
        - **MUST** run `arxiv-cli fetch --id <arxiv-id>` to get full-text JSON for Grade A NPLs.
-       - Save output to `investigations/<patent-id>/json/npl_<id>.json`.
+       - Save output to `3-investigations/<patent-id>/json/npl_<id>.json`.
      - **Claim Chart Creation**:
        - **Requirement**: Create a Claim Chart comparing the NPL against the Patent Claims.
        - **Citation**: **MUST** include specific **paragraph-level citations** (or section/line numbers) from the fetched JSON text.
@@ -75,7 +75,7 @@ Your task is to Execute the Plan and Report Findings.
    - Determine the winning logic.
 
 6. **Draft Report**: Fill `.patent-kit/templates/prior-template.md`.
-7. **Save**: `investigations/<patent-id>/prior.md`.
+7. **Save**: `3-investigations/<patent-id>/prior.md`.
 
 ## Quality Gates
 

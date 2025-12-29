@@ -45,6 +45,17 @@ enum Commands {
         #[arg(long)]
         fix: bool,
     },
+
+    /// Merge Google Patents CSVs into target.jsonl
+    Merge {
+        /// Directory containing CSV files
+        #[arg(short, long, default_value = "2-screening/csv")]
+        input_dir: PathBuf,
+
+        /// Output JSONL path
+        #[arg(short, long, default_value = "2-screening/target.jsonl")]
+        output: PathBuf,
+    },
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -60,7 +71,90 @@ fn main() -> Result<()> {
         Commands::Init { path, ai, insecure } => init_project(path, ai, insecure),
         #[cfg(feature = "dev")]
         Commands::Lint { fix } => run_lint(fix),
+        Commands::Merge { input_dir, output } => run_merge(&input_dir, &output),
     }
+}
+
+fn run_merge(csv_dir: &Path, output_path: &Path) -> Result<()> {
+    if !csv_dir.exists() {
+        anyhow::bail!(
+            "Directory not found: {:?}. Please create it and place CSV files there.",
+            csv_dir
+        );
+    }
+
+    let mut unique_patents = std::collections::HashMap::new();
+    let mut file_count = 0;
+
+    for entry in fs::read_dir(csv_dir)? {
+        let entry = entry?;
+        let path = entry.path();
+        if path.extension().and_then(|s| s.to_str()) == Some("csv") {
+            println!("Processing {:?}", path);
+            file_count += 1;
+
+            // Read file info memory effectively to skip preamble
+            let content = fs::read_to_string(&path)?;
+            let mut csv_content = String::new();
+            for line in content.lines() {
+                if line.trim().starts_with("search URL:") {
+                    continue;
+                }
+                csv_content.push_str(line);
+                csv_content.push('\n');
+            }
+
+            let mut rdr = csv::ReaderBuilder::new()
+                .has_headers(true)
+                .from_reader(csv_content.as_bytes());
+
+            for result in rdr.deserialize() {
+                let record: std::collections::HashMap<String, String> = result?;
+                if let Some(id) = record.get("id") {
+                    unique_patents.insert(id.clone(), record);
+                }
+            }
+        }
+    }
+
+    if file_count == 0 {
+        println!("No CSV files found in {:?}", csv_dir);
+        return Ok(());
+    }
+
+    // Write to JSONL
+    if let Some(parent) = output_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+
+    let file = File::create(output_path)?;
+    let mut writer = std::io::BufWriter::new(file);
+    use std::io::Write;
+
+    for record in unique_patents.values() {
+        // Filter out link fields and inventor/author
+        let mut filtered_record: std::collections::HashMap<_, _> = record
+            .iter()
+            .filter(|(k, _)| !k.contains("link") && k.as_str() != "inventor/author")
+            .map(|(k, v)| (k.clone(), v.clone()))
+            .collect();
+
+        // Remove hyphens from id
+        if let Some(id) = filtered_record.get_mut("id") {
+            *id = id.replace("-", "");
+        }
+
+        let json = serde_json::to_string(&filtered_record)?;
+        writeln!(writer, "{}", json)?;
+    }
+
+    println!(
+        "Merged {} unique patents from {} files into {:?}",
+        unique_patents.len(),
+        file_count,
+        output_path
+    );
+    Ok(())
 }
 
 #[cfg(feature = "dev")]
@@ -259,6 +353,9 @@ fn init_project(path: PathBuf, ai: AiAssistant, insecure: bool) -> Result<()> {
         println!("Created directory: {:?}", target_dir);
     }
 
+    // Check for external dependencies (jq)
+    check_jq_installed();
+
     // Copy common templates (.patent-kit)
     // Copy common templates (.patent-kit)
     copy_embedded_dir(
@@ -354,24 +451,28 @@ fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
 
 fn get_next_step_instruction(ai: AiAssistant, phase: &str) -> String {
     match (ai, phase) {
-        (AiAssistant::Claude, "targeting") => "Run /patent-kit.evaluation <patent-id>".to_string(),
+        (AiAssistant::Claude, "targeting") => "Run /patent-kit.screening".to_string(),
+        (AiAssistant::Claude, "screening") => "Run /patent-kit.evaluation <patent-id>".to_string(),
         (AiAssistant::Claude, "evaluation") => {
-            "Run /patent-kit.infringement investigations/<patent-id>/evaluation.md".to_string()
+            "Run /patent-kit.infringement 3-investigations/<patent-id>/evaluation.md".to_string()
         }
         (AiAssistant::Claude, "infringement") => {
-            "Run /patent-kit.prior investigations/<patent-id>/infringement.md".to_string()
+            "Run /patent-kit.prior 3-investigations/<patent-id>/infringement.md".to_string()
         }
         // No next step for prior
         (AiAssistant::Claude, _) => "".to_string(),
 
         (AiAssistant::Copilot, "targeting") => {
-            "## Next Step\n\nRun Phase 2 (Evaluation).".to_string()
+            "## Next Step\n\nRun Phase 2 (Screening).".to_string()
+        }
+        (AiAssistant::Copilot, "screening") => {
+            "## Next Step\n\nRun Phase 3 (Evaluation) for a specific patent.".to_string()
         }
         (AiAssistant::Copilot, "evaluation") => {
-            "## Next Step\n\nRun Phase 3 (Infringement).".to_string()
+            "## Next Step\n\nRun Phase 4 (Infringement).".to_string()
         }
         (AiAssistant::Copilot, "infringement") => {
-            "## Next Step\n\nRun Phase 4 (Prior Art).".to_string()
+            "## Next Step\n\nRun Phase 5 (Prior Art).".to_string()
         }
         (AiAssistant::Copilot, _) => "".to_string(),
     }
@@ -380,6 +481,22 @@ fn install_dependencies(target_dir: &Path, insecure: bool) -> Result<()> {
     let bin_dir = target_dir.join(".patent-kit").join("bin");
     if !bin_dir.exists() {
         fs::create_dir_all(&bin_dir).context("Failed to create bin directory")?;
+    }
+
+    // Create project structure with numbered prefixes
+    let dirs = [
+        "0-specifications",
+        "1-targeting",
+        "2-screening/csv",
+        "3-investigations",
+    ];
+
+    for dir in dirs {
+        let path = target_dir.join(dir);
+        if !path.exists() {
+            fs::create_dir_all(&path).context(format!("Failed to create directory {:?}", path))?;
+            println!("Created directory: {:?}", path);
+        }
     }
 
     let tools = [
@@ -496,4 +613,33 @@ fn download_and_install_tool(
     }
 
     anyhow::bail!("Binary not found in archive")
+}
+
+fn check_jq_installed() {
+    let output = std::process::Command::new("jq").arg("--version").output();
+
+    match output {
+        Ok(output) => {
+            if output.status.success() {
+                println!(
+                    "jq is installed: {:?}",
+                    String::from_utf8_lossy(&output.stdout).trim()
+                );
+            } else {
+                println!("WARNING: `jq` command found but returned error.");
+            }
+        }
+        Err(_) => {
+            println!(
+                "WARNING: `jq` is NOT installed. Many steps require `jq` for JSON processing."
+            );
+            if cfg!(target_os = "macos") {
+                println!("Please install it: brew install jq");
+            } else if cfg!(target_os = "linux") {
+                println!("Please install it: sudo apt-get install jq");
+            } else if cfg!(target_os = "windows") {
+                println!("Please install it: choco install jq");
+            }
+        }
+    }
 }
