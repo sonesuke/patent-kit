@@ -113,7 +113,7 @@ fn run_command(program: &str, args: &[&str]) -> Result<()> {
 
 #[cfg(feature = "dev")]
 fn run_rumdl_lib(fix: bool) -> Result<()> {
-    use rumdl_lib::config::{ConfigLoaded, RuleRegistry, SourcedConfig};
+    use rumdl_lib::config::{RuleRegistry, SourcedConfig};
     use rumdl_lib::fix_coordinator::FixCoordinator;
     use rumdl_lib::lint;
     use rumdl_lib::rules::all_rules;
@@ -136,10 +136,27 @@ fn run_rumdl_lib(fix: bool) -> Result<()> {
         .map_err(|e| anyhow::anyhow!("Failed to validate rumdl config: {:?}", e))?;
 
     // 4. Convert to Config
-    let config: rumdl_lib::config::Config = validated.into();
+    let mut config: rumdl_lib::config::Config = validated.into();
+
+    // Force disable rules as per user requirement (ignoring external config issues)
+    let rules_to_disable = ["MD013", "MD041", "MD033", "MD029"];
+    for rule in rules_to_disable {
+        if !config.global.disable.contains(&rule.to_string()) {
+            config.global.disable.push(rule.to_string());
+        }
+    }
 
     // 5. Get final rules
-    let rules = all_rules(&config);
+    let mut rules = all_rules(&config);
+
+    // Force remove unwanted rules by filtering the vector
+    // MD013: Line length (User requested disable)
+    // MD029: Ordered list item preix (User prefers 1. 2. 3.)
+    // MD041: First line must be h1 (Frontmatter confuses this)
+    // MD033: Inline HTML (Needed for comments/slide separators)
+    // MD007: Unordered list indentation (Conflicts with numbered list 3-space offset)
+    // MD005: Inconsistent indentation (Conflicts with above)
+    rules.retain(|r| !["MD013", "MD029", "MD041", "MD033", "MD007", "MD005"].contains(&r.name()));
 
     // 6. Setup fix coordinator
     let fix_coordinator = if fix {
@@ -154,6 +171,16 @@ fn run_rumdl_lib(fix: bool) -> Result<()> {
     // 7. Walk files
     for entry in WalkDir::new(".").into_iter().filter_map(|e| e.ok()) {
         let path = entry.path();
+        // Skip target directory and hidden directories relative components
+        if path.components().any(|c| c.as_os_str() == "target")
+            || path.components().any(|c| {
+                let s = c.as_os_str().to_string_lossy();
+                s.starts_with('.') && s != "."
+            })
+        {
+            continue;
+        }
+
         if path.is_file() && path.extension().map_or(false, |ext| ext == "md") {
             // Read content
             let mut content = match fs::read_to_string(path) {
@@ -166,7 +193,7 @@ fn run_rumdl_lib(fix: bool) -> Result<()> {
 
             // Lint
             let flavor = config.markdown_flavor();
-            let mut warnings = lint(&content, &rules, false, flavor, Some(&config))
+            let warnings = lint(&content, &rules, false, flavor, Some(&config))
                 .map_err(|e| anyhow::anyhow!("Lint error: {:?}", e))?;
 
             if !warnings.is_empty() {
@@ -327,9 +354,7 @@ fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
 
 fn get_next_step_instruction(ai: AiAssistant, phase: &str) -> String {
     match (ai, phase) {
-        (AiAssistant::Claude, "screening") => {
-            "Run /patent-kit.evaluation investigations/<patent-id>/screening.md".to_string()
-        }
+        (AiAssistant::Claude, "targeting") => "Run /patent-kit.evaluation <patent-id>".to_string(),
         (AiAssistant::Claude, "evaluation") => {
             "Run /patent-kit.infringement investigations/<patent-id>/evaluation.md".to_string()
         }
@@ -339,7 +364,7 @@ fn get_next_step_instruction(ai: AiAssistant, phase: &str) -> String {
         // No next step for prior
         (AiAssistant::Claude, _) => "".to_string(),
 
-        (AiAssistant::Copilot, "screening") => {
+        (AiAssistant::Copilot, "targeting") => {
             "## Next Step\n\nRun Phase 2 (Evaluation).".to_string()
         }
         (AiAssistant::Copilot, "evaluation") => {

@@ -1,4 +1,4 @@
-# Prior Art / Execution Report: <Patent ID>
+# Prior Art Investigation Report
 
 ## 1. Selected Strategy
 
@@ -7,30 +7,27 @@
 - **Strategy**:
 - **Rationale**: (Why was this strategy chosen based on search results?)
 
-## 2. Search Strategy
+## 2. Search Strategy Execution Log
 
-(Based on Infringement Risk Analysis)
+### Layer 1: General Terminology
 
-| Target Feature/Element | Keywords (JP/EN) | Classification |
-| :--- | :--- | :--- |
-| ... | ... | ... |
+- **Query**: ...
+- **Results Count**: ...
+- **Key Findings**: ...
 
-## 3. Search Queries
+### Layer 2: Specific Nomenclature
 
-```bash
-# Query:
-google-patent-cli search --query "..." --before "..."
-```
+- **Query**: ...
+- **Results Count**: ...
+- **Key Findings**: ...
 
-## 4. Execution Log
+### Layer 3: Functional/Role-based
 
-Record the results of the search queries defined in the Plan.
+- **Query**: ...
+- **Results Count**: ...
+- **Key Findings**: ...
 
-- [ ] Run Query 1
-  - **Hit Count**: ...
-  - **Top Results**: ...
-
-## 5. Prior Art List
+## 3. Prior Art List
 
 Select the most relevant documents.
 
@@ -38,13 +35,13 @@ Select the most relevant documents.
 | :--- | :--- | :--- | :--- | :--- |
 | D1 | ... | ... | ... | ... |
 
-### 5.2 Non-Patent Literature (NPL)
+### 3.2 Non-Patent Literature (NPL)
 
 | NPL ID | Title | Authors | Pub Date | Relevance | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | NPL1 | ... | ... | ... | ... | ... |
 
-## 6. Comparison (Claim Chart)
+## 4. Comparison (Claim Chart)
 
 Compare the Spec (Elements) with the Primary Reference (D1).
 
@@ -53,13 +50,13 @@ Compare the Spec (Elements) with the Primary Reference (D1).
 | A | ... | Yes/No | ... |
 | B | ... | Yes/No | ... |
 
-### 6.2 Non-Patent Literature Analysis (if applicable)
+### 4.2 Non-Patent Literature Analysis (if applicable)
 
 | Element | NPL Disclosure | Match? | Note |
 | :--- | :--- | :--- | :--- |
 | A | ... | Yes/No | ... |
 
-## 7. Published Application Amendment Risk (If Applicable)
+## 5. Published Application Amendment Risk (If Applicable)
 
 **Note**: Skip this section if all references are granted patents.
 
@@ -76,14 +73,15 @@ For published patent applications (not yet granted), assess the risk of claim am
 - High risk: Embodiments clearly describe broader features that would strengthen infringement case.
 - Low risk: Embodiments are consistent with current claims or narrower.
 
-## 8. Conclusion
+## 6. Conclusion
 
 - **Novelty/Invalidity**: (Pass/Fail)
+- **Verdict**: [Invalid / Valid / Questionable]
 - **Reasoning**: ...
 
 ---
 
-## 9. Quality Gates
+## 7. Quality Gates
 
 - [ ] All top results reviewed.
 - [ ] All non-patent literature top results reviewed.
