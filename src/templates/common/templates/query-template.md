@@ -8,15 +8,17 @@
 
 | Pattern | Initial Results (Top 20) | Noise Analysis | Adjustment | Final Status |
 | :--- | :--- | :--- | :--- | :--- |
-| Pattern 1 | ... | ... | ... |
+| Pattern 1 | ... | ... | ... |  |
 | Pattern 2 | ... | ... | ... | ... |
 
 ## Final Optimized Queries
 
 ### Pattern 1 (Target: < 1000 hits)
+
 - **Query**: `...`
 - **Hit Count**: ...
 
 ### Pattern 2 (Target: < 1000 hits)
+
 - **Query**: `...`
 - **Hit Count**: ...

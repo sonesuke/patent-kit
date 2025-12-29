@@ -13,7 +13,12 @@ flate2 = "1.0"
 tar = "0.4"
 zip = "0.6"
 tempfile = "3.8"
+walkdir = "2.5"
+rumdl = { version = "0.0.206", optional = true }
 
 [[bin]]
 name = "ftoc"
 path = "src/bin/ftoc.rs"
+
+[features]
+dev = ["dep:rumdl"]
