@@ -24,11 +24,11 @@ Your task is to define the product concept, identify competitors, and generate h
    - **Competitors**: List of key competitor companies (Mandatory).
 
    > [!IMPORTANT]
-   > If `specification/specification.md` already exists, **skip the interview** and use the information from that file as the source of truth describing the concept.
+   > If `1-specifications/specification.md` already exists, **skip the interview** and use the information from that file as the source of truth describing the concept.
 
 3. **Refine**: If the concept is too vague, ask clarifying questions to break it down into technical elements relevant for patent search.
 
-4. **Save**: Write the gathered information to `specification/specification.md` using the template `.patent-kit/templates/specification-template.md`.
+4. **Save**: Write the gathered information to `1-specifications/specification.md` using the template `.patent-kit/templates/specification-template.md`.
 
 ### Step 2: Assignee Identification
 
@@ -39,7 +39,7 @@ Your task is to define the product concept, identify competitors, and generate h
    - **Refine**: If incorrect or no hits, try variations (e.g., "Google LLC" instead of "Google").
 
 2. **Finalize**:
-   - Fill the **Verified Assignee Names (Canonicalized)** table in `targeting/targeting.md`.
+   - Fill the **Verified Assignee Names (Canonicalized)** table in `2-targeting/targeting.md`.
    - Record **all** identified official Assignee Names, **including all name variations** found in `top_assignees`. These variations must be included in the final search query.
    - Record the verification status and any notes (e.g., holding company, subsidiary).
 
@@ -71,14 +71,14 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
      - **Check**: Does it meet the **High Noise** criteria (8+ irrelevant results)?
      - **Refine**: If **High Noise**, you MUST adjust the query (add exclusions or specific constraints) BEFORE proceeding to the next keyword.
      - **Identify**: Look for **Technical Terms** ("Golden Keywords").
-     - **Register**: Immediately add verified keywords to `targeting/keywords.md` (see Output section for format).
+     - **Register**: Immediately add verified keywords to `2-targeting/keywords.md` (see Output section for format).
    - **CRITICAL RULE 3**: **Over-Filtering Check**. If adding a keyword reduces the count to **under 200**, this might be too narrow. **Ask the user** if this is acceptable (e.g., for niche markets) or if they want to broaden the query.
    - **Repeat**: Continue adding quoted keywords (e.g., `--query "\"keyword1\" AND \"keyword2\""`) until the count is reasonable (< 1000) and relevance is high.
 
 #### Phase 3.2: Market Patent Research
 
 1. **Apply Keywords**:
-   - Use the "Golden Keywords" discovered in Phase 3.1 (refer to `targeting/keywords.md`).
+   - Use the "Golden Keywords" discovered in Phase 3.1 (refer to `2-targeting/keywords.md`).
    - Command: `google-patent-cli search --query "\"keyword1\" AND \"keyword2\"" ...` (Wrap details below to avoid length issues)
    - Real Command: `google-patent-cli search --query "\"keyword1\" AND \"keyword2\"" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20`
 2. **Iterative Narrowing**:
@@ -97,7 +97,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 ## Output
 
-- Create a file `targeting/targeting.md` using the template `.patent-kit/templates/targeting-template.md`.
+- Create a file `2-targeting/targeting.md` using the template `.patent-kit/templates/targeting-template.md`.
 - Fill in the **Generated Search Commands** with:
   - **Query**: The final command.
   - **Hit Count**: Number of hits.
@@ -109,7 +109,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
   - **Noise Cause**: Polysemy, Generic, Domain, etc. (Why was it noise?)
   - **Adjustment**: What keywords/exclusions were added.
   - **Result Count**: Count after adjustment.
-- Create a file `targeting/keywords.md` using the template `.patent-kit/templates/keywords-template.md`. This is the **Golden Keywords Registry**.
+- Create a file `2-targeting/keywords.md` using the template `.patent-kit/templates/keywords-template.md`. This is the **Golden Keywords Registry**.
 
 ## Quality Gates
 

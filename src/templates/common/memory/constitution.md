@@ -124,8 +124,9 @@ Strictly adhere to the capabilities of provided tools.
 To maintain context window efficiency, large outputs from CLI tools MUST be handled via files.
 
 - **Rule**: `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli` output MUST be redirected to a JSON file.
-  - Path: `investigations/<patent-id>/json/<patent-id>.json` (for single patent)
-  - Path: `investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)
-  - Path: `targeting/json/search_results_<desc>.json` (for targeting)
+  - Path: `3-investigations/<patent-id>/json/<patent-id>.json` (for single patent)
+  - Path: `3-investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)
+  - Path: `1-targeting/json/search_results_<desc>.json` (for targeting)
+  - Path: `2-screening/json/<patent-id>.json` (for screening fetch)
 - **Requirement**: Do NOT read the output from stdout.
 - **Action**: Use `jq` or file reading tools to access specific fields from the generated JSON file only when needed.
