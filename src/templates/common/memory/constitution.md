@@ -54,7 +54,7 @@ For Infringement/FTO analysis, accurate understanding of the target product is c
 
 - **Rule**: You MUST interview the user to get a detailed description of the product/service.
 - **Requirement**: Do not proceed until you have a clear definition of the "Target Product" to compare against the claim elements.
-- **Requirement**: Do not proceed until you have a clear definition of the "Target Product" to compare against the claim elements.
+- **Output**: Write the gathered information to `specification/specification.md` using the template `.patent-kit/templates/specification-template.md`.
 
 ### VIII. Prior Art Cutoff Date
 
@@ -126,6 +126,6 @@ To maintain context window efficiency, large outputs from CLI tools MUST be hand
 - **Rule**: `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli` output MUST be redirected to a JSON file.
   - Path: `investigations/<patent-id>/json/<patent-id>.json` (for single patent)
   - Path: `investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)
-  - Path: `screening/json/search_results_<desc>.json` (for screening)
+  - Path: `targeting/json/search_results_<desc>.json` (for targeting)
 - **Requirement**: Do NOT read the output from stdout.
 - **Action**: Use `jq` or file reading tools to access specific fields from the generated JSON file only when needed.
