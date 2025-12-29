@@ -44,12 +44,13 @@ Your task is to consolidate the search results from the Targeting Phase and prep
 
 2. **Iterative Screening Loop**:
 
-    **For each line** in `2-screening/target.jsonl`:
+    Process each line in `2-screening/target.jsonl` **sequentially**:
 
     > [!WARNING]
     > **Strict Sequential Process**:
     > - You MUST process records **one by one**. Do NOT parallelize.
     > - Do NOT use batch processing. Process each record individually.
+    > - Do NOT use `for` loops or any loop constructs. Execute each step manually, one record at a time.
     > - Do NOT write Python scripts or use rule-based automation. You must manually fetch, read, and judge each record using the tools provided.
     > - Do NOT ask the user if they want to continue midway. Process ALL records until completion.
     > - **No progress display needed**: The user may be away during this process. Just proceed silently.
