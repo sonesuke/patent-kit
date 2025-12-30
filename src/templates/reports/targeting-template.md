@@ -76,3 +76,12 @@ Copy and paste these queries directly into [Google Patents](https://patents.goog
 ```text
 (Paste query string here)
 ```
+
+---
+
+## Quality Gates
+
+- [ ] Assignee names are verified and all variants are included.
+- [ ] Both Competitor and Market research queries are validated.
+- [ ] Final hit counts are under 1000 (or justified).
+- [ ] All queries are formatted correctly for Google Patents UI.

@@ -7,7 +7,7 @@ A spec-driven development kit for patent analysis, designed for AI agents (GitHu
 This kit provides structured commands to automate:
 
 - Patent Evaluation (Novelty/Inventive Step)
-- Infringement Analysis (Clearance/FTO)
+- Claim Analysis (Clearance/FTO)
 - Prior Art Search
 
 ## Prerequisites
@@ -65,18 +65,18 @@ ftoc init . --ai claude --insecure
     # Output: investigations/JP2023-123456/evaluation.md
     ```
 
-3. **Phase 3: Infringement**: Define search strategy.
+3. **Phase 4: Claim Analysis**: Define search strategy.
 
     ```bash
-    /patent-kit.infringement investigations/JP2023-123456/evaluation.md
-    # Output: investigations/JP2023-123456/hearing.md -> infringement.md
+    /patent-kit.claim-analysis JP2023-123456
+    # Output: investigations/JP2023-123456/claim-analysis.md
     ```
 
-4. **Phase 4: Prior**: Run search and report.
+4. **Phase 5: Prior Art**: Run search and report.
 
     ```bash
-    /patent-kit.prior investigations/JP2023-123456/infringement.md
-    # Output: investigations/JP2023-123456/prior.md
+    /patent-kit.prior-art JP2023-123456
+    # Output: investigations/JP2023-123456/prior-art.md
     ```
 
 ## Output Structure
@@ -86,8 +86,8 @@ All reports are generated in a directory named after the patent ID (e.g., `JP202
 ```text
 JP2023-123456/
   ├── evaluation.md
-  ├── infringement.md
-  └── prior.md
+  ├── claim-analysis.md
+  └── prior-art.md
 ```
 
 ## Configuration

@@ -49,11 +49,11 @@ enum Commands {
     /// Merge Google Patents CSVs into target.jsonl
     Merge {
         /// Directory containing CSV files
-        #[arg(short, long, default_value = "2-screening/csv")]
+        #[arg(short, long, default_value = "1-targeting/csv")]
         input_dir: PathBuf,
 
         /// Output JSONL path
-        #[arg(short, long, default_value = "2-screening/target.jsonl")]
+        #[arg(short, long, default_value = "1-targeting/target.jsonl")]
         output: PathBuf,
     },
 }
@@ -356,15 +356,32 @@ fn init_project(path: PathBuf, ai: AiAssistant, insecure: bool) -> Result<()> {
     // Check for external dependencies (jq)
     check_jq_installed();
 
-    // Copy common templates (.patent-kit)
-    // Copy common templates (.patent-kit)
-    copy_embedded_dir(
-        "common/templates",
-        &target_dir.join(".patent-kit/templates"),
-    )?;
+    // Copy report templates (.patent-kit/templates)
+    copy_embedded_dir("reports", &target_dir.join(".patent-kit/templates"))?;
 
-    // Copy common memory (.patent-kit/memory)
-    copy_embedded_dir("common/memory", &target_dir.join(".patent-kit/memory"))?;
+    // Copy memory (.patent-kit/memory)
+    copy_embedded_dir("memory", &target_dir.join(".patent-kit/memory"))?;
+
+    // Copy scripts (.patent-kit/scripts)
+    copy_embedded_dir("scripts", &target_dir.join(".patent-kit/scripts"))?;
+
+    // Set execute permission on shell scripts (Unix only)
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let shell_dir = target_dir.join(".patent-kit/scripts/shell");
+        if shell_dir.exists() {
+            for entry in fs::read_dir(&shell_dir)? {
+                let entry = entry?;
+                let path = entry.path();
+                if path.extension().and_then(|s| s.to_str()) == Some("sh") {
+                    let mut perms = fs::metadata(&path)?.permissions();
+                    perms.set_mode(0o755);
+                    fs::set_permissions(&path, perms)?;
+                }
+            }
+        }
+    }
 
     // Generate AI specific prompts
     generate_prompts(ai, &target_dir)?;
@@ -416,7 +433,7 @@ fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
         fs::create_dir_all(&output_dir).context("Failed to create prompt directory")?;
     }
 
-    let prefix = "common/prompts";
+    let prefix = "prompts";
     for file_path in Asset::iter() {
         let file_path_str = file_path.as_ref();
         if file_path_str.starts_with(prefix) {
@@ -451,17 +468,21 @@ fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
 
 fn get_next_step_instruction(ai: AiAssistant, phase: &str) -> String {
     match (ai, phase) {
+        (AiAssistant::Claude, "concept-interview") => "Run /patent-kit.targeting".to_string(),
         (AiAssistant::Claude, "targeting") => "Run /patent-kit.screening".to_string(),
         (AiAssistant::Claude, "screening") => "Run /patent-kit.evaluation <patent-id>".to_string(),
         (AiAssistant::Claude, "evaluation") => {
-            "Run /patent-kit.infringement 3-investigations/<patent-id>/evaluation.md".to_string()
+            "Run /patent-kit.claim-analysis <patent-id>".to_string()
         }
-        (AiAssistant::Claude, "infringement") => {
-            "Run /patent-kit.prior 3-investigations/<patent-id>/infringement.md".to_string()
+        (AiAssistant::Claude, "claim-analysis") => {
+            "Run /patent-kit.prior-art <patent-id>".to_string()
         }
-        // No next step for prior
+        // No next step for prior-art
         (AiAssistant::Claude, _) => "".to_string(),
 
+        (AiAssistant::Copilot, "concept-interview") => {
+            "## Next Step\n\nRun Phase 1 (Targeting).".to_string()
+        }
         (AiAssistant::Copilot, "targeting") => {
             "## Next Step\n\nRun Phase 2 (Screening).".to_string()
         }
@@ -469,9 +490,9 @@ fn get_next_step_instruction(ai: AiAssistant, phase: &str) -> String {
             "## Next Step\n\nRun Phase 3 (Evaluation) for a specific patent.".to_string()
         }
         (AiAssistant::Copilot, "evaluation") => {
-            "## Next Step\n\nRun Phase 4 (Infringement).".to_string()
+            "## Next Step\n\nRun Phase 4 (Claim Analysis).".to_string()
         }
-        (AiAssistant::Copilot, "infringement") => {
+        (AiAssistant::Copilot, "claim-analysis") => {
             "## Next Step\n\nRun Phase 5 (Prior Art).".to_string()
         }
         (AiAssistant::Copilot, _) => "".to_string(),
@@ -486,8 +507,8 @@ fn install_dependencies(target_dir: &Path, insecure: bool) -> Result<()> {
     // Create project structure with numbered prefixes
     let dirs = [
         "0-specifications",
-        "1-targeting",
-        "2-screening/csv",
+        "1-targeting/csv",
+        "2-screening",
         "3-investigations",
     ];
 
@@ -638,7 +659,7 @@ fn check_jq_installed() {
             } else if cfg!(target_os = "linux") {
                 println!("Please install it: sudo apt-get install jq");
             } else if cfg!(target_os = "windows") {
-                println!("Please install it: choco install jq");
+                println!("Please install it: winget install jqlang.jq");
             }
         }
     }

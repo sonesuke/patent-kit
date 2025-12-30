@@ -1,13 +1,6 @@
 # Prior Art Investigation Report
 
-## 1. Selected Strategy
-
-(Adaptive Decision: FTO vs Invalidation)
-
-- **Strategy**:
-- **Rationale**: (Why was this strategy chosen based on search results?)
-
-## 2. Search Strategy Execution Log
+## 1. Search Strategy Execution Log
 
 ### Layer 1: General Terminology
 
@@ -27,7 +20,7 @@
 - **Results Count**: ...
 - **Key Findings**: ...
 
-## 3. Prior Art List
+## 2. Prior Art List
 
 Select the most relevant documents.
 
@@ -35,13 +28,13 @@ Select the most relevant documents.
 | :--- | :--- | :--- | :--- | :--- |
 | D1 | ... | ... | ... | ... |
 
-### 3.2 Non-Patent Literature (NPL)
+### 2.2 Non-Patent Literature (NPL)
 
 | NPL ID | Title | Authors | Pub Date | Relevance | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | NPL1 | ... | ... | ... | ... | ... |
 
-## 4. Comparison (Claim Chart)
+## 3. Comparison (Claim Chart)
 
 Compare the Spec (Elements) with the Primary Reference (D1).
 
@@ -50,19 +43,19 @@ Compare the Spec (Elements) with the Primary Reference (D1).
 | A | ... | Yes/No | ... |
 | B | ... | Yes/No | ... |
 
-### 4.2 Non-Patent Literature Analysis (if applicable)
+### 3.2 Non-Patent Literature Analysis (if applicable)
 
 | Element | NPL Disclosure | Match? | Note |
 | :--- | :--- | :--- | :--- |
 | A | ... | Yes/No | ... |
 
-## 5. Published Application Amendment Risk (If Applicable)
+## 4. Published Application Amendment Potential (If Applicable)
 
 **Note**: Skip this section if all references are granted patents.
 
-For published patent applications (not yet granted), assess the risk of claim amendments based on embodiments:
+For published patent applications (not yet granted), assess the possibility of claim amendments based on embodiments:
 
-| Doc Number | Application Status | Embodiment Scope | Amendment Risk | Assessment |
+| Doc Number | Application Status | Embodiment Scope | Amendment Potential | Assessment |
 | :--- | :--- | :--- | :--- | :--- |
 | D1 | Published/Pending | (Describe broader features in embodiments) | High/Medium/Low | (Could claims be amended to cover broader scope?) |
 
@@ -70,13 +63,20 @@ For published patent applications (not yet granted), assess the risk of claim am
 
 - Constitution VI states: "Consider the Detailed Description and embodiments as potential scope for future amendments."
 - Evaluate whether embodiments disclose features that could be added to claims during examination.
-- High risk: Embodiments clearly describe broader features that would strengthen infringement case.
-- Low risk: Embodiments are consistent with current claims or narrower.
+- High potential: Embodiments clearly describe broader features that would strengthen comparison details.
+- Low potential: Embodiments are consistent with current claims or narrower.
+
+## 5. Similarity Assessment (Prior Art)
+
+### Overall Similarity: [Significant Similarity / Moderate Similarity / Limited Similarity]
+
+- **Significant Similarity**: References likely demonstrate significant similarity (Strong Relevance).
+- **Moderate Similarity**: References show partial/arguable similarity.
+- **Limited Similarity**: No strong references found (Patent Potentially Valid).
 
 ## 6. Conclusion
 
-- **Novelty/Invalidity**: (Pass/Fail)
-- **Verdict**: [Invalid / Valid / Questionable]
+- **Verdict**: [Relevant prior art identified / Alternative implementation selected / Aligned with existing techniques / Escalated for legal review]
 - **Reasoning**: ...
 
 ---
@@ -87,5 +87,8 @@ For published patent applications (not yet granted), assess the risk of claim am
 - [ ] All non-patent literature top results reviewed.
 - [ ] Grade A NPL candidates analyzed in detail.
 - [ ] Claim chart completed for the closest prior art.
+- [ ] Overall Similarity is formatted exactly as `Overall Similarity: Significant Similarity` (or Moderate/Limited).
 - [ ] Final report documents BOTH patent and non-patent literature findings (Constitution III).
 - [ ] Conclusion is supported by the comparison.
+- [ ] **Verdict**: Must be strictly one of [Relevant prior art identified / Alternative implementation selected / Aligned with existing techniques / Escalated for legal review].
+- [ ] **No Legal Assertions**: Avoids definitive legal terms (e.g., "invalid", "valid") in favor of technical comparisons.
