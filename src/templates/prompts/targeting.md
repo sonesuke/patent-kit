@@ -4,48 +4,21 @@ description: "Phase 1: Targeting"
 
 # Phase 1: Targeting
 
-Your task is to define the product concept, identify competitors, and generate high-precision search queries. This phase concludes with a set of validated search commands to be used for screening.
+Your task is to generate high-precision search queries based on the product concept and competitors defined in Phase 0. This phase concludes with a set of validated search commands and merged patent data for screening.
 
 ## Input
 
-- **User Input**: Product Concept, Competitors.
+- **Specification**: `0-specifications/specification.md` (generated in Phase 0).
 - **Tools**: `google-patent-cli` (assume updated version with assignee search capability).
 
 ## Process
 
-### Step 1: Concept Interview
+1. **Read Constitution**: Read `.patent-kit/memory/constitution.md` to understand the core principles.
 
-1. **Initialize**: Read `.patent-kit/memory/constitution.md` to understand the core principles.
-2. **Ask**: Request the following information from the user:
-   - **Product Concept**: Detailed description of what they want to realize.
-   - **Target Country**: Where the product will be released (e.g., US, JP).
-   - **Target Release Date**: Approximate date.
-   - **Cutoff Date**: Calculate `Target Release Date - 20 years`. Patents filed before this date are likely expired.
-   - **Competitors**: List of key competitor companies (Mandatory).
+### Step 1: Targeting Process
 
-   > [!IMPORTANT]
-   > If `1-specifications/specification.md` already exists, **skip the interview** and use the information from that file as the source of truth describing the concept.
+Perform the following targeting process relative to the `Target Release Date` and `Cutoff Date` from `0-specifications/specification.md`.
 
-3. **Refine**: If the concept is too vague, ask clarifying questions to break it down into technical elements relevant for patent search.
-
-4. **Save**: Write the gathered information to `1-specifications/specification.md` using the template `.patent-kit/templates/specification-template.md`.
-
-### Step 2: Assignee Identification
-
-1. **Verify**: For each competitor named by the user, verify the correct "Assignee Name" used in patent databases.
-   - **Action**: Run a search (e.g., `google-patent-cli search --assignee "<Company Name>"`) **without** `--limit`.
-   - **Check `top_assignees`**: The output will include `top_assignees`. Look for **name variations** (表記揺れ) for the same company (e.g., "Google LLC", "Google Inc.", "GOOGLE LLC").
-   - **Confirm**: Display the top assignees found and ask the user if they represent the intended competitor.
-   - **Refine**: If incorrect or no hits, try variations (e.g., "Google LLC" instead of "Google").
-
-2. **Finalize**:
-   - Fill the **Verified Assignee Names (Canonicalized)** table in `2-targeting/targeting.md`.
-   - Record **all** identified official Assignee Names, **including all name variations** found in `top_assignees`. These variations must be included in the final search query.
-   - Record the verification status and any notes (e.g., holding company, subsidiary).
-
-### Step 3: Targeting Process
-
-Perform the following targeting process relative to the `Target Release Date` and `Cutoff Date`.
 
 **IMPORTANT**: This step should be conducted **interactively with the user**. Show results, ask for feedback, and refine the queries together.
 
@@ -57,7 +30,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 - **Generic**: Keywords are too general and lack technical specificity.
 - **Irrelevant**: Unrelated to the competitor's known products or the target use case.
 
-#### Phase 3.1: Competitor Patent Research
+#### Phase 1.1: Competitor Patent Research
 
 1. **Start Broad**:
    - Command: `google-patent-cli search --assignee "<Combined Assignees>" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20`
@@ -71,14 +44,14 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
      - **Check**: Does it meet the **High Noise** criteria (8+ irrelevant results)?
      - **Refine**: If **High Noise**, you MUST adjust the query (add exclusions or specific constraints) BEFORE proceeding to the next keyword.
      - **Identify**: Look for **Technical Terms** ("Golden Keywords").
-     - **Register**: Immediately add verified keywords to `2-targeting/keywords.md` (see Output section for format).
+     - **Register**: Immediately add verified keywords to `1-targeting/keywords.md` (see Output section for format).
    - **CRITICAL RULE 3**: **Over-Filtering Check**. If adding a keyword reduces the count to **under 200**, this might be too narrow. **Ask the user** if this is acceptable (e.g., for niche markets) or if they want to broaden the query.
    - **Repeat**: Continue adding quoted keywords (e.g., `--query "\"keyword1\" AND \"keyword2\""`) until the count is reasonable (< 1000) and relevance is high.
 
-#### Phase 3.2: Market Patent Research
+#### Phase 1.2: Market Patent Research
 
 1. **Apply Keywords**:
-   - Use the "Golden Keywords" discovered in Phase 3.1 (refer to `2-targeting/keywords.md`).
+   - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `1-targeting/keywords.md`).
    - Command: `google-patent-cli search --query "\"keyword1\" AND \"keyword2\"" ...` (Wrap details below to avoid length issues)
    - Real Command: `google-patent-cli search --query "\"keyword1\" AND \"keyword2\"" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20`
 2. **Iterative Narrowing**:
@@ -90,14 +63,33 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
    - **Goal**: Reach < 1000 hits with high relevance.
    - **Over-Filtering**: If count < 200, **confirm with the user** before proceeding.
 
-### Step 4: Final Output Generation
+### Step 2: Data Acquisition
 
-1. **Select Best Queries**: Choose the final query set for "Competitor Patent Research" and "Market Patent Research".
-2. **Log Validation**: Record the initial counts, what noise you found, and how adding specific keywords reduced that noise.
+1. **Instruct User**: Ask the user to perform the following:
+   - **Action**: Go to Google Patents (<https://patents.google.com/>).
+   - For each query generated in Step 1:
+     - Execute the query.
+     - Download the results as a CSV file.
+   - **Save Location**: Place all downloaded CSV files in `1-targeting/csv/`.
+
+### Step 3: Merge & Deduplicate
+
+1. **Run Merge Command**:
+   - Execute the following command to combine the CSV files and remove duplicates.
+   - **Important**: Use `ftoc` command, NOT `google-patent-cli`.
+   - Command: `ftoc merge --input-dir 1-targeting/csv --output 1-targeting/target.jsonl`
+
+2. **Verify Output**:
+   - Check that `1-targeting/target.jsonl` has been created.
+   - This file contains the consolidated list of unique patents to be screened/evaluated.
+
+3. **Check Count**:
+   - The `ftoc merge` command output displays the number of unique patents (e.g., `Merged 150 unique patents...`).
+   - Confirm this count to understand the volume of patents to be screened.
 
 ## Output
 
-- Create a file `2-targeting/targeting.md` using the template `.patent-kit/templates/targeting-template.md`.
+- Create a file `1-targeting/targeting.md` using the template `.patent-kit/templates/targeting-template.md`.
 - Fill in the **Generated Search Commands** with:
   - **Query**: The final command.
   - **Hit Count**: Number of hits.
@@ -109,19 +101,22 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
   - **Noise Cause**: Polysemy, Generic, Domain, etc. (Why was it noise?)
   - **Adjustment**: What keywords/exclusions were added.
   - **Result Count**: Count after adjustment.
-- Create a file `2-targeting/keywords.md` using the template `.patent-kit/templates/keywords-template.md`. This is the **Golden Keywords Registry**.
+- Create a file `1-targeting/keywords.md` using the template `.patent-kit/templates/keywords-template.md`. This is the **Golden Keywords Registry**.
+- `1-targeting/target.jsonl`: The merged list of unique patents ready for screening.
 
 ## Quality Gates
 
-- [ ] **Assignee Verification**: Did you confirm the exact assignee names exist in the DB?
 - [ ] **Ambiguity Check**: Did you check for and handle ambiguous keywords/abbreviations?
 - [ ] **Over-Filtering Check**: If count < 200, did you confirm with the user that this is intended?
 - [ ] **Volume Control**: Is the final General Search count under 1000 (or reasonably low)?
 - [ ] **Output**: Is `targeting.md` created with both query patterns and the validation log?
+- [ ] **Data Acquisition**: Are all CSV files downloaded to `1-targeting/csv/`?
+- [ ] **Merge**: Is `1-targeting/target.jsonl` created with unique patents?
 
 ## Deliverables
 
-1. `targeting.md`
-2. `targeting/keywords.md`
+1. `1-targeting/targeting.md`
+2. `1-targeting/keywords.md`
+3. `1-targeting/target.jsonl`
 
 {{ NEXT_STEP_INSTRUCTION }}

@@ -1,0 +1,7 @@
+#!/bin/bash
+# Fetch patent data using google-patent-cli
+# Usage: ./fetch-patent.sh <PATENT_ID>
+
+PATENT_ID=$1
+mkdir -p "2-screening/json"
+./.patent-kit/bin/google-patent-cli fetch "$PATENT_ID" > "2-screening/json/${PATENT_ID}.json" 2>&1

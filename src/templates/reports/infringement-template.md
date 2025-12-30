@@ -18,9 +18,11 @@ Compare the Product Features against the Patent Elements.
 
 ## 3. Risk Assessment
 
-- **High Risk**: All elements match.
-- **Medium Risk**: Equivalents or partial matches.
-- **Low Risk**: Clear missing element.
+### Overall Risk: [High Risk / Medium Risk / Low Risk]
+
+- **High Risk**: All elements match (Literal Infringement).
+- **Medium Risk**: Equivalents or partial matches (Doctrine of Equivalents).
+- **Low Risk**: Clear missing element (No Infringement).
 
 ## 4. Suggested Strategy (Optional)
 
@@ -31,8 +33,11 @@ Compare the Product Features against the Patent Elements.
 
 ---
 
-## Investigation Gates
+## Quality Gates
 
+- [ ] Checked specification sufficiency? (Conducted hearing & updated if insufficient)
 - [ ] Keywords cover all constituent elements.
+- [ ] Conflict Analysis (Claim Chart) is complete.
 - [ ] Search queries are syntactically correct.
 - [ ] Date filters are set correctly.
+- [ ] Overall Risk is formatted exactly as `Overall Risk: High Risk` (or Medium/Low).

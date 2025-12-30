@@ -12,6 +12,14 @@ Your task is to Execute the Plan and Report Findings.
 
 ## Process
 
+### Step 0: Check Existing Report
+
+**If a Patent ID IS provided**:
+- Check if `3-investigations/<patent-id>/prior.md` already exists.
+- **If it exists**: **ASK the User for confirmation** via `notify_user`.
+  - Message: "Prior Art report already exists for <patent-id>. Do you want to proceed with re-investigation?"
+- **If it does NOT exist**: Proceed with the standard process.
+
 1. **Initialize**: Read `.patent-kit/memory/constitution.md`.
 2. **Read Risk**: Read `infringement.md` to understand the conflict.
 3. **Plan & Execute Search**:
@@ -75,6 +83,14 @@ Your task is to Execute the Plan and Report Findings.
    - Determine the winning logic.
 
 6. **Draft Report**: Fill `.patent-kit/templates/prior-template.md`.
+   - **Invalidity Risk Assessment**:
+     - **Definitions**:
+       - **High**: References likely invalidate the patent (Novelty/Inventive Step denied).
+       - **Medium**: References might invalidate (Inventive Step arguable).
+       - **Low**: No strong references found (Patent likely Valid).
+     - **Format**:
+       - Overall Risk MUST be written exactly as: `Overall Risk: High Risk` (or Medium Risk, Low Risk).
+       - Do NOT use other formats.
 7. **Save**: `3-investigations/<patent-id>/prior.md`.
 
 ## Quality Gates
@@ -84,4 +100,5 @@ Your task is to Execute the Plan and Report Findings.
 - [ ] **Full-Text Analysis**: Did you fetch the JSON using `arxiv-cli fetch` for top NPLs?
 - [ ] **Claim Chart**: Does the report include a Claim Chart with precise paragraph-level citations?
 - [ ] **Priority Date**: Is every piece of evidence confirmed to be prior to the cutoff?
+- [ ] **Overall Risk**: Does it follow the strict format `Overall Risk: High Risk` (or Medium/Low)?
 - [ ] **Conclusion**: Is the final verdict clearly guided by the evidence found?

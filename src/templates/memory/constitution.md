@@ -54,7 +54,7 @@ For Infringement/FTO analysis, accurate understanding of the target product is c
 
 - **Rule**: You MUST interview the user to get a detailed description of the product/service.
 - **Requirement**: Do not proceed until you have a clear definition of the "Target Product" to compare against the claim elements.
-- **Output**: Write the gathered information to `specification/specification.md` using the template `.patent-kit/templates/specification-template.md`.
+- **Output**: Write the gathered information to `0-specification/specification.md` using the template `.patent-kit/templates/specification-template.md`.
 
 ### VIII. Prior Art Cutoff Date
 

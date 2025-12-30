@@ -73,9 +73,16 @@ For published patent applications (not yet granted), assess the risk of claim am
 - High risk: Embodiments clearly describe broader features that would strengthen infringement case.
 - Low risk: Embodiments are consistent with current claims or narrower.
 
-## 6. Conclusion
+## 6. Invalidity Risk Assessment
 
-- **Novelty/Invalidity**: (Pass/Fail)
+### Overall Risk: [High Risk / Medium Risk / Low Risk]
+
+- **High Risk**: References likely invalidate the patent (Novelty/Inventive Step denied).
+- **Medium Risk**: References might invalidate (Inventive Step arguable).
+- **Low Risk**: No strong references found (Patent likely Valid).
+
+## 7. Conclusion
+
 - **Verdict**: [Invalid / Valid / Questionable]
 - **Reasoning**: ...
 
@@ -87,5 +94,6 @@ For published patent applications (not yet granted), assess the risk of claim am
 - [ ] All non-patent literature top results reviewed.
 - [ ] Grade A NPL candidates analyzed in detail.
 - [ ] Claim chart completed for the closest prior art.
+- [ ] Overall Risk is formatted exactly as `Overall Risk: High Risk` (or Medium/Low).
 - [ ] Final report documents BOTH patent and non-patent literature findings (Constitution III).
 - [ ] Conclusion is supported by the comparison.
