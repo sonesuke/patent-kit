@@ -19,7 +19,6 @@ Your task is to generate high-precision search queries based on the product conc
 
 Perform the following targeting process relative to the `Target Release Date` and `Cutoff Date` from `0-specifications/specification.md`.
 
-
 **IMPORTANT**: This step should be conducted **interactively with the user**. Show results, ask for feedback, and refine the queries together.
 
 #### Noise Definition

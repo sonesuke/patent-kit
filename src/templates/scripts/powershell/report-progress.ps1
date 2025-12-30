@@ -44,43 +44,36 @@ if (Test-Path "3-investigations") {
         $id = $d.Name
         $has_eval = Test-Path (Join-Path $d.FullName "evaluation.md")
         
-        $inf_path = Join-Path $d.FullName "infringement.md"
-        $has_inf = Test-Path $inf_path
-        $inf_risk = "None"
+        $claim_path = Join-Path $d.FullName "claim-analysis.md"
+        $has_claim = Test-Path $claim_path
+        $claim_sim = "None"
         
-        if ($has_inf) {
-           $inf_content = Get-Content $inf_path -Raw
-           if ($inf_content -match "Overall Risk:.*High") { $inf_risk = "High" }
-           elseif ($inf_content -match "Overall Risk:.*Medium") { $inf_risk = "Medium" }
-           elseif ($inf_content -match "Overall Risk:.*Low") { $inf_risk = "Low" }
-           # Fallback
-           elseif ($inf_content -match "High Risk") { $inf_risk = "High" }
-           elseif ($inf_content -match "Medium Risk") { $inf_risk = "Medium" }
-           elseif ($inf_content -match "Low Risk") { $inf_risk = "Low" }
+        if ($has_claim) {
+           $claim_content = Get-Content $claim_path -Raw
+           if ($claim_content -match "Overall Similarity:.*Significant") { $claim_sim = "Significant" }
+           elseif ($claim_content -match "Overall Similarity:.*Moderate") { $claim_sim = "Moderate" }
+           elseif ($claim_content -match "Overall Similarity:.*Limited") { $claim_sim = "Limited" }
         }
 
-        $prior_path = Join-Path $d.FullName "prior.md"
+        $prior_path = Join-Path $d.FullName "prior-art.md"
         $has_prior = Test-Path $prior_path
-        $prior_risk = "None"
+        $prior_verdict = "None"
 
         if ($has_prior) {
            $prior_content = Get-Content $prior_path -Raw
-           if ($prior_content -match "Overall Risk:.*High") { $prior_risk = "High" }
-           elseif ($prior_content -match "Overall Risk:.*Medium") { $prior_risk = "Medium" }
-           elseif ($prior_content -match "Overall Risk:.*Low") { $prior_risk = "Low" }
-           # Fallback
-           elseif ($prior_content -match "High Risk") { $prior_risk = "High" }
-           elseif ($prior_content -match "Medium Risk") { $prior_risk = "Medium" }
-           elseif ($prior_content -match "Low Risk") { $prior_risk = "Low" }
+           if ($prior_content -match "Verdict:.*Relevant prior art identified") { $prior_verdict = "Relevant" }
+           elseif ($prior_content -match "Verdict:.*Alternative implementation selected") { $prior_verdict = "Alternative" }
+           elseif ($prior_content -match "Verdict:.*Aligned with existing techniques") { $prior_verdict = "Aligned" }
+           elseif ($prior_content -match "Verdict:.*Escalated for legal review") { $prior_verdict = "Escalated" }
         }
         
         $investigations += @{
             id = $id
             evaluation = $has_eval
-            infringement = $has_inf
-            inf_risk = $inf_risk
+            claim_analysis = $has_claim
+            claim_analysis_sim = $claim_sim
             prior = $has_prior
-            prior_risk = $prior_risk
+            prior_verdict = $prior_verdict
         }
     }
 }

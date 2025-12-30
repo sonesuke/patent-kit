@@ -13,10 +13,12 @@ Your task is to report the current status of the patent analysis workflow.
 ### Step 1: Run Progress Script
 
 Run the following script to get the current status in JSON format:
+
 - Run: `report-progress`
 
 > [!NOTE]
 > **Scripts Location**:
+> 
 > - Linux/Mac: `./.patent-kit/scripts/shell/report-progress.sh`
 > - Windows: `.\.patent-kit\scripts\powershell\report-progress.ps1`
 
@@ -28,15 +30,20 @@ Based on the JSON output:
 - **Phase 1**: Check `phase1.targeting_md`, `keywords_md`, `target_jsonl`.
 - **Phase 2**: Check `phase2` counts (screened vs total).
 - **Phase 3-5**: Check `investigations` array.
-  - Calculate **Infringement Progress** (Infringement Done / Relevant Patents from Phase 2).
-  - Calculate **Prior Art Progress** (Prior Art Done / Infringement Analysis Done).
+  - Calculate **Claim Analysis Progress** (Claim Analysis Done / Relevant Patents from Phase 2).
+  - Calculate **Prior Art Progress** (Prior Art Done / Claim Analysis Done).
   - For each investigation, format status as:
-    - Infringement: `High`, `Medium`, `Low` (if Done), or `Pending`.
-    - Prior Art: `High`, `Medium`, `Low` (if Done), or `Pending`.
+    - Claim Analysis: `Significant`, `Moderate`, `Limited` (if Done), or `Pending`.
+    - Claim Analysis: `Significant`, `Moderate`, `Limited` (if Done), or `Pending`.
+    - Prior Art:
+      - If Claim Analysis is `Limited`: `-` (Skipped).
+      - If Done: `Relevant`, `Alternative`, `Aligned`, `Escalated`.
+      - Otherwise: `Pending`.
 
 ## Output
 
 Generate a summary report using the template `.patent-kit/templates/progress-template.md`.
+
    - **Strictly follow the template structure.**
    - **DO NOT add any extra sections** (e.g., "Top Patents", "Current Status", "Risk Summary", "Recommendations").
    - **DO NOT duplicate information.**

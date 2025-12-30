@@ -18,16 +18,19 @@ Your task is to Analyze the Patent and create the Specification.
 ### Step 0: Determine Patent ID
 
 If no patent ID is provided, run the following to get the next patent:
+
 - Run: `next-evaluation-patent`
 
 > [!NOTE]
 > **Scripts Location**:
+> 
 > - Linux/Mac: `./.patent-kit/scripts/shell/next-evaluation-patent.sh`
 > - Windows: `.\.patent-kit\scripts\powershell\next-evaluation-patent.ps1`
 
 This script finds the first patent marked as `relevant` in `2-screening/screened.jsonl` that doesn't yet have a folder in `3-investigations/`.
 
 **If a Patent ID IS provided**:
+
 - Check if `3-investigations/<patent-id>/evaluation.md` already exists.
 - **If it exists**: **ASK the User for confirmation** via `notify_user`.
   - Message: "Evaluation report already exists for <patent-id>. Do you want to proceed with re-evaluating?"

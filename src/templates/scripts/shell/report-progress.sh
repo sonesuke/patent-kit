@@ -57,45 +57,32 @@ if [ -d "3-investigations" ]; then
         
         [ -f "$dir/evaluation.md" ] && has_eval="true"
         
-        # Infringement risks
-        inf_risk="None"
-        if [ -f "$dir/infringement.md" ]; then
-            has_inf="true"
-            if grep -E -i -q "Overall Risk:.*High" "$dir/infringement.md"; then
-                inf_risk="High"
-            elif grep -E -i -q "Overall Risk:.*Medium" "$dir/infringement.md"; then
-                inf_risk="Medium"
-            elif grep -E -i -q "Overall Risk:.*Low" "$dir/infringement.md"; then
-                inf_risk="Low"
-            # Fallback
-            elif grep -i -q "High Risk" "$dir/infringement.md"; then
-                inf_risk="High"
-            elif grep -i -q "Medium Risk" "$dir/infringement.md"; then
-                inf_risk="Medium"
-            elif grep -i -q "Low Risk" "$dir/infringement.md"; then
-                inf_risk="Low"
+        # Claim Analysis similarity
+        claim_analysis_sim="None"
+        has_claim_analysis="false"
+        if [ -f "$dir/claim-analysis.md" ]; then
+            has_claim_analysis="true"
+            if grep -E -i -q "Overall Similarity:.*Significant" "$dir/claim-analysis.md"; then
+                claim_analysis_sim="Significant"
+            elif grep -E -i -q "Overall Similarity:.*Moderate" "$dir/claim-analysis.md"; then
+                claim_analysis_sim="Moderate"
+            elif grep -E -i -q "Overall Similarity:.*Limited" "$dir/claim-analysis.md"; then
+                claim_analysis_sim="Limited"
             fi
         fi
 
-        # Prior Art risks
-        prior_risk="None"
-        # Prior Art risks
-        prior_risk="None"
-        if [ -f "$dir/prior.md" ]; then
+        # Prior Art Verdict
+        prior_verdict="None"
+        if [ -f "$dir/prior-art.md" ]; then
             has_prior="true"
-            if grep -E -i -q "Overall Risk:.*High" "$dir/prior.md"; then
-                prior_risk="High"
-            elif grep -E -i -q "Overall Risk:.*Medium" "$dir/prior.md"; then
-                prior_risk="Medium"
-            elif grep -E -i -q "Overall Risk:.*Low" "$dir/prior.md"; then
-                prior_risk="Low"
-            # Fallback
-            elif grep -i -q "High Risk" "$dir/prior.md"; then
-                prior_risk="High"
-            elif grep -i -q "Medium Risk" "$dir/prior.md"; then
-                prior_risk="Medium"
-            elif grep -i -q "Low Risk" "$dir/prior.md"; then
-                prior_risk="Low"
+            if grep -E -i -q "Verdict:.*Relevant prior art identified" "$dir/prior-art.md"; then
+                prior_verdict="Relevant"
+            elif grep -E -i -q "Verdict:.*Alternative implementation selected" "$dir/prior-art.md"; then
+                prior_verdict="Alternative"
+            elif grep -E -i -q "Verdict:.*Aligned with existing techniques" "$dir/prior-art.md"; then
+                prior_verdict="Aligned"
+            elif grep -E -i -q "Verdict:.*Escalated for legal review" "$dir/prior-art.md"; then
+                prior_verdict="Escalated"
             fi
         fi
         
@@ -105,7 +92,7 @@ if [ -d "3-investigations" ]; then
             investigations="$investigations,"
         fi
         
-        investigations="$investigations {\"id\":\"$id\", \"evaluation\":$has_eval, \"infringement\":$has_inf, \"inf_risk\":\"$inf_risk\", \"prior\":$has_prior, \"prior_risk\":\"$prior_risk\"}"
+        investigations="$investigations {\"id\":\"$id\", \"evaluation\":$has_eval, \"claim_analysis\":$has_claim_analysis, \"claim_analysis_sim\":\"$claim_analysis_sim\", \"prior\":$has_prior, \"prior_verdict\":\"$prior_verdict\"}"
     done
     investigations="$investigations]"
 fi

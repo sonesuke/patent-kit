@@ -19,15 +19,15 @@
 
 ## Investigation Progress
 
-- **Infringement Progress**: I/R (Relevant Patents)
-- **Prior Art Progress**: P/I (Infringement Analyzed)
+- **Claim Analysis Progress**: I/R (Relevant Patents)
+- **Prior Art Progress**: P/I (Claim Analysis Done)
 
-| Patent ID | Evaluation | Infringement Risk | Prior Art Risk |
+| Patent ID | Evaluation | Similarity (Inv.) | Verdict |
 |-----------|------------|--------------|-----------|
-| US12345678 | Done | High | Medium |
+| US12345678 | Done | Significant | Relevant |
 | JP2024001234 | Done | Pending | Pending |
 
-> **Note**: Risk levels: High, Medium, Low, None (or Unknown).
+> **Note**: Similarity levels: Significant, Moderate, Limited. Verdict: Relevant, Alternative, Aligned, Escalated.
 
 ## Next Actions
 
@@ -39,3 +39,4 @@
 
 - [ ] Used strictly standard sections (Overview, Screening Summary, Investigation Progress, Next Actions).
 - [ ] No extra sections (e.g., "Top Patents", "Current Status") added.
+- [ ] **No Legal Assertions**: Avoids definitive legal judgments.

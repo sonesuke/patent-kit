@@ -357,10 +357,7 @@ fn init_project(path: PathBuf, ai: AiAssistant, insecure: bool) -> Result<()> {
     check_jq_installed();
 
     // Copy report templates (.patent-kit/templates)
-    copy_embedded_dir(
-        "reports",
-        &target_dir.join(".patent-kit/templates"),
-    )?;
+    copy_embedded_dir("reports", &target_dir.join(".patent-kit/templates"))?;
 
     // Copy memory (.patent-kit/memory)
     copy_embedded_dir("memory", &target_dir.join(".patent-kit/memory"))?;
@@ -471,18 +468,16 @@ fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
 
 fn get_next_step_instruction(ai: AiAssistant, phase: &str) -> String {
     match (ai, phase) {
-        (AiAssistant::Claude, "concept-interview") => {
-            "Run /patent-kit.targeting".to_string()
-        }
+        (AiAssistant::Claude, "concept-interview") => "Run /patent-kit.targeting".to_string(),
         (AiAssistant::Claude, "targeting") => "Run /patent-kit.screening".to_string(),
         (AiAssistant::Claude, "screening") => "Run /patent-kit.evaluation <patent-id>".to_string(),
         (AiAssistant::Claude, "evaluation") => {
-            "Run /patent-kit.infringement <patent-id>".to_string()
+            "Run /patent-kit.claim-analysis <patent-id>".to_string()
         }
-        (AiAssistant::Claude, "infringement") => {
-            "Run /patent-kit.prior <patent-id>".to_string()
+        (AiAssistant::Claude, "claim-analysis") => {
+            "Run /patent-kit.prior-art <patent-id>".to_string()
         }
-        // No next step for prior
+        // No next step for prior-art
         (AiAssistant::Claude, _) => "".to_string(),
 
         (AiAssistant::Copilot, "concept-interview") => {
@@ -495,9 +490,9 @@ fn get_next_step_instruction(ai: AiAssistant, phase: &str) -> String {
             "## Next Step\n\nRun Phase 3 (Evaluation) for a specific patent.".to_string()
         }
         (AiAssistant::Copilot, "evaluation") => {
-            "## Next Step\n\nRun Phase 4 (Infringement).".to_string()
+            "## Next Step\n\nRun Phase 4 (Claim Analysis).".to_string()
         }
-        (AiAssistant::Copilot, "infringement") => {
+        (AiAssistant::Copilot, "claim-analysis") => {
             "## Next Step\n\nRun Phase 5 (Prior Art).".to_string()
         }
         (AiAssistant::Copilot, _) => "".to_string(),

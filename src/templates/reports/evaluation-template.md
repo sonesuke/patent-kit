@@ -45,3 +45,4 @@ Evaluate Novelty and Inventive Step against prior art.
 - [ ] Essential elements (A, B, C...) clearly defined.
 - [ ] Notable dependent claims summarized.
 - [ ] Objective is unambiguous.
+- [ ] **No Legal Assertions**: Avoids definitive legal conclusions in favor of factual analysis.

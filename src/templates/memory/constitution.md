@@ -6,7 +6,7 @@ Version: 1.0.0 Status: Active
 
 ### I. Element-by-Element Analysis (The Golden Rule)
 
-Every infringement or validity analysis MUST test the target invention against the reference patent element by element.
+Every claim analysis or validity analysis MUST test the target invention against the reference patent element by element.
 
 - **Rule**: Do not rely on "general similarity".
 - **Templates**: strict adherence to the output templates in `.patent-kit/templates/` is required.
@@ -24,7 +24,7 @@ Investigations MUST cover the "Big 4" jurisdictions unless explicitly restricted
 Prior art searches MUST cover both patent literature and non-patent literature.
 
 - **Rule**: Use BOTH `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli` for every prior art investigation.
-- **Rationale**: Comprehensive invalidity analysis requires checking academic papers, conference proceedings, and technical publications alongside patents.
+- **Rationale**: Comprehensive prior art analysis requires checking academic papers, conference proceedings, and technical publications alongside patents.
 - **Requirement**: Document search results from both sources in the final report.
 
 ### IV. Evidence-Based Reporting
@@ -48,9 +48,9 @@ For published applications (not yet granted), assume rights may be broadly secur
 - **Rule**: Do not judge solely based on current claims.
 - **Requirement**: Consider the "Detailed Description" and embodiments as potential scope for future amendments.
 
-### VII. User "Hearing" for Infringement
+### VII. User "Hearing" for Claim Analysis
 
-For Infringement/FTO analysis, accurate understanding of the target product is crucial.
+For Claim Analysis/FTO, accurate understanding of the target product is crucial.
 
 - **Rule**: You MUST interview the user to get a detailed description of the product/service.
 - **Requirement**: Do not proceed until you have a clear definition of the "Target Product" to compare against the claim elements.
@@ -58,27 +58,14 @@ For Infringement/FTO analysis, accurate understanding of the target product is c
 
 ### VIII. Prior Art Cutoff Date
 
-Invalidity searches MUST respect the target patent's effective filing/priority date.
+Prior art searches MUST respect the target patent's effective filing/priority date.
 
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
 - **Requirement**: Use the `--before` flag in `./.patent-kit/bin/google-patent-cli` or `./.patent-kit/bin/arxiv-cli` with the correct date (YYYY-MM-DD).
 
 - **Requirement**: Use the `--before` flag in `./.patent-kit/bin/google-patent-cli` or `./.patent-kit/bin/arxiv-cli` with the correct date (YYYY-MM-DD).
 
-### IX. Adaptive Strategy Selection
-
-Unless the user explicitly specifies a strategy:
-
-- **Rule**: Dynamically determine the best path (FTO vs Invalidation) *during* the search.
-- **Process**:
-
-  1. Start broad.
-  2. If *Product Features* are found -> Switch to **FTO Logic** (Easier/Safer).
-  3. If *Product Features* are NOT found, but *Claim Elements* are -> Switch to **Invalidation Logic**.
-
-- **Requirement**: The final report must clearly state which logic was successfully applied.
-
-### X. Search Query Optimization
+### IX. Search Query Optimization
 
 Long or overly complex queries often return zero results in both `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli`.
 
@@ -95,7 +82,7 @@ Long or overly complex queries often return zero results in both `./.patent-kit/
 - **Requirement**: Document the query evolution in your report (what worked, what didn't).
 - **Requirement**: If multiple simplified queries are needed, save each result separately with descriptive filenames.
 
-### XI. Tool Integrity & Execution
+### X. Tool Integrity & Execution
 
 Strictly adhere to the capabilities of provided tools.
 
@@ -104,22 +91,7 @@ Strictly adhere to the capabilities of provided tools.
 - **Rule**: STOP immediately if a command execution fails. Do not simulate results or proceed with the workflow.
 - **Requirement**: Verify command success (exit code 0) before reading outputs.
 
-### Evaluation Gate
-
-- [ ] Are all constituent elements (A+B+C...) clearly defined?
-- [ ] Is the objective (FTO vs Invalidation) explicitly selected?
-
-### Plan Gate
-
-- [ ] Are keywords provided for at least English, Japanese, and Chinese scopes?
-- [ ] Are classification codes (IPC/CPC) validated against a known database?
-
-### Report Gate
-
-- [ ] Does every Grade A result have a corresponding claim chart or mapping?
-- [ ] Are all dates verified (Priority date vs Publication date)?
-
-### XII. Output Management
+### XI. Output Management
 
 To maintain context window efficiency, large outputs from CLI tools MUST be handled via files.
 

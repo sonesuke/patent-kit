@@ -8,20 +8,21 @@ Your task is to Execute the Plan and Report Findings.
 
 ## Input
 
-- **Plan File**: `3-investigations/<patent-id>/infringement.md`
+- **Plan File**: `3-investigations/<patent-id>/claim-analysis.md`
 
 ## Process
 
 ### Step 0: Check Existing Report
 
 **If a Patent ID IS provided**:
-- Check if `3-investigations/<patent-id>/prior.md` already exists.
+
+- Check if `3-investigations/<patent-id>/prior-art.md` already exists.
 - **If it exists**: **ASK the User for confirmation** via `notify_user`.
   - Message: "Prior Art report already exists for <patent-id>. Do you want to proceed with re-investigation?"
 - **If it does NOT exist**: Proceed with the standard process.
 
 1. **Initialize**: Read `.patent-kit/memory/constitution.md`.
-2. **Read Risk**: Read `infringement.md` to understand the conflict.
+2. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
 3. **Plan & Execute Search**:
 
    - **Strategy: Multi-Layer Search** (Standard Procedure):
@@ -78,20 +79,23 @@ Your task is to Execute the Plan and Report Findings.
      - **Evidence Quality Check**:
        - Verify that the cited paragraph explicitly supports the mapping.
        - Verify that the publication date is strictly before the priority date.
-     - **RULE**: Even if sufficient invalidation evidence is found in patent literature, NPL analysis results MUST be included in the report (Constitution III).
+     - **RULE**: Even if strong prior art is found in patent literature, NPL analysis results MUST be included in the report (Constitution III).
 
-   - Determine the winning logic.
-
-6. **Draft Report**: Fill `.patent-kit/templates/prior-template.md`.
-   - **Invalidity Risk Assessment**:
+6. **Draft Report**: Fill `.patent-kit/templates/prior-art-template.md`.
+   - **Verdict Selection**:
+     - **Relevant prior art identified**: Strong evidence found (investigation required).
+     - **Alternative implementation selected**: Path changed to avoid conflict.
+     - **Aligned with existing techniques**: Technology is standard/safe.
+     - **Escalated for legal review**: Use when none of the above apply (e.g., complex legal interpretation needed).
+   - **Similarity Assessment (Prior Art)**:
      - **Definitions**:
-       - **High**: References likely invalidate the patent (Novelty/Inventive Step denied).
-       - **Medium**: References might invalidate (Inventive Step arguable).
-       - **Low**: No strong references found (Patent likely Valid).
+       - **Significant**: References likely demonstrate significant similarity (Strong Relevance).
+       - **Moderate**: References show partial/arguable similarity.
+       - **Limited**: No strong references found (Patent Potentially Valid).
      - **Format**:
-       - Overall Risk MUST be written exactly as: `Overall Risk: High Risk` (or Medium Risk, Low Risk).
+       - Overall Similarity MUST be written exactly as: `Overall Similarity: Significant Similarity` (or Moderate Similarity, Limited Similarity).
        - Do NOT use other formats.
-7. **Save**: `3-investigations/<patent-id>/prior.md`.
+7. **Save**: `3-investigations/<patent-id>/prior-art.md`.
 
 ## Quality Gates
 
@@ -100,5 +104,6 @@ Your task is to Execute the Plan and Report Findings.
 - [ ] **Full-Text Analysis**: Did you fetch the JSON using `arxiv-cli fetch` for top NPLs?
 - [ ] **Claim Chart**: Does the report include a Claim Chart with precise paragraph-level citations?
 - [ ] **Priority Date**: Is every piece of evidence confirmed to be prior to the cutoff?
-- [ ] **Overall Risk**: Does it follow the strict format `Overall Risk: High Risk` (or Medium/Low)?
-- [ ] **Conclusion**: Is the final verdict clearly guided by the evidence found?
+- [ ] **Overall Similarity**: Does it follow the strict format `Overall Similarity: Significant Similarity` (or Moderate/Limited)?
+- [ ] **Conclusion**: Verdict is strictly one of the 4 standard options.
+- [ ] **No Legal Assertions**: Avoids definitive legal terms (e.g., "invalid", "valid") in favor of technical comparisons.

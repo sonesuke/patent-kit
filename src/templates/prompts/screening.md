@@ -24,6 +24,7 @@ Your task is to filter the collected patents by legal status and relevance to pr
 
 > [!NOTE]
 > **Scripts Location**:
+> 
 > - Linux/Mac: `./.patent-kit/scripts/shell/*.sh`
 > - Windows: `.\.patent-kit\scripts\powershell\*.ps1`
 
