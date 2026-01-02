@@ -104,5 +104,7 @@ Your task is to filter the collected patents by legal status and relevance to pr
 - [ ] Each judgment is one of: `relevant`, `irrelevant`, `expired`.
 - [ ] Screened count matches (Relevant + Irrelevant + Expired).
 - [ ] Summary statistics are accurate.
+- [ ] **NO Legal Assertions**:
+  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology" or cite court cases.
 
 {{ NEXT_STEP_INSTRUCTION }}

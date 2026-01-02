@@ -102,3 +102,27 @@ To maintain context window efficiency, large outputs from CLI tools MUST be hand
   - Path: `2-screening/json/<patent-id>.json` (for screening fetch)
 - **Requirement**: Do NOT read the output from stdout.
 - **Action**: Use `jq` or file reading tools to access specific fields from the generated JSON file only when needed.
+
+### XII. Prohibited Legal Assertions (STRICT)
+
+To detect risks without crossing into the practice of law, specific legal assertions and definitive judgments are STRICTLY PROHIBITED in all outputs.
+
+- **Rule**: You MUST NOT use the following terms:
+  - "Does not satisfy"
+  - "Does not infringe"
+  - "Is a core technology"
+  - "Is invalid"
+- **Rules**:
+  - **Avoid definitive legal conclusions**: Use technical descriptors (e.g., "features not found", "low likelihood of mapping", "fundamental feature").
+  - **No Specific Case Citations**: Do not cite specific court cases or legal precedents to justify a conclusion.
+- **Requirement**: Focus entirely on technical comparison (Element A vs Feature A') and factual observation.
+
+### XIII. Descriptive Equivalence Language
+
+When discussing potential equivalence or similarity, strictly descriptive language describing the technical reality MUST be used.
+
+- **Prohibited**: "This implementation satisfies the 5 requirements of equivalence."
+- **Recommended**:
+  - "The alternative implementation achieves the same functional outcome and exhibits comparable system behavior under typical operating conditions."
+  - "The variation represents a commonly used implementation approach."
+- **Rationale**: The AI provides technical analysis of function and behavior, not legal determination of equivalence.

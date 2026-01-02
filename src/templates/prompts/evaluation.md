@@ -69,5 +69,8 @@ This script finds the first patent marked as `relevant` in `2-screening/screened
 - [ ] Notable dependent claims are summarized.
 - [ ] Divisional application check completed (if applicable).
 - [ ] Evaluation report follows the template format.
+- [ ] **NO Legal Assertions**:
+  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology".
+  - [ ] Avoid citing specific court case examples.
 
 {{ NEXT_STEP_INSTRUCTION }}

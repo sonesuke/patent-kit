@@ -28,6 +28,7 @@
 | JP2024001234 | Done | Pending | Pending |
 
 > **Note**: Similarity levels: Significant, Moderate, Limited. Verdict: Relevant, Alternative, Aligned, Escalated.
+> **Note**: Cases with 'Limited' similarity (Low Risk) are excluded from this list.
 
 ## Next Actions
 
@@ -39,4 +40,5 @@
 
 - [ ] Used strictly standard sections (Overview, Screening Summary, Investigation Progress, Next Actions).
 - [ ] No extra sections (e.g., "Top Patents", "Current Status") added.
-- [ ] **No Legal Assertions**: Avoids definitive legal judgments.
+- [ ] **NO Legal Assertions**:
+  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology" or cite court cases.

@@ -1,5 +1,8 @@
 # Prior Art Investigation Report
 
+> [!IMPORTANT]
+> This is an AI-generated technical analysis, not a legal opinion.
+
 ## 1. Search Strategy Execution Log
 
 ### Layer 1: General Terminology
@@ -91,4 +94,12 @@ For published patent applications (not yet granted), assess the possibility of c
 - [ ] Final report documents BOTH patent and non-patent literature findings (Constitution III).
 - [ ] Conclusion is supported by the comparison.
 - [ ] **Verdict**: Must be strictly one of [Relevant prior art identified / Alternative implementation selected / Aligned with existing techniques / Escalated for legal review].
-- [ ] **No Legal Assertions**: Avoids definitive legal terms (e.g., "invalid", "valid") in favor of technical comparisons.
+- [ ] **NO Legal Assertions**:
+  - [ ] Avoid definitive legal terms (e.g., "invalid", "valid") in favor of technical comparisons.
+  - [ ] Avoid terms: "Does not satisfy", "Does not infringe".
+  - [ ] **Terminology**: Avoid "Is a core technology". Instead, use:
+    - "Characteristic configuration"
+    - "Major technical configuration"
+    - "Characteristic implementation described in the patent"
+  - [ ] Avoid citing specific court case examples.
+  - [ ] Use descriptive technical language.

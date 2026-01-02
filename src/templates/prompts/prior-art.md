@@ -106,4 +106,12 @@ Your task is to Execute the Plan and Report Findings.
 - [ ] **Priority Date**: Is every piece of evidence confirmed to be prior to the cutoff?
 - [ ] **Overall Similarity**: Does it follow the strict format `Overall Similarity: Significant Similarity` (or Moderate/Limited)?
 - [ ] **Conclusion**: Verdict is strictly one of the 4 standard options.
-- [ ] **No Legal Assertions**: Avoids definitive legal terms (e.g., "invalid", "valid") in favor of technical comparisons.
+- [ ] **NO Legal Assertions**:
+  - [ ] Avoid definitive legal terms (e.g., "invalid", "valid") in favor of technical comparisons.
+  - [ ] Avoid terms: "Does not satisfy", "Does not infringe".
+  - [ ] **Terminology**: Avoid "Is a core technology". Instead, use:
+    - "Characteristic configuration"
+    - "Major technical configuration"
+    - "Characteristic implementation described in the patent"
+  - [ ] Avoid citing specific court case examples.
+  - [ ] Use descriptive technical language.
