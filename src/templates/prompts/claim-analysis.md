@@ -46,22 +46,24 @@ This script finds the first patent in `3-investigations/` that has `evaluation.m
 2. **Analyze Comparison**:
    - Compare Product Features vs Patent Elements.
    - Identify Matches/Similarities.
-     - **Literal Match (Significant Similarity)**: All constituent elements are fully satisfied.
-     - **Equivalence Analysis (5 Requirements)**: Even if literal match is not found, "Moderate Similarity" applies if ALL 5 requirements are met (Japan Supreme Court, Ball Spline Case):
-       1. **Non-Essential Part**: The difference is NOT the essential part of the claimed invention.
-       2. **Interchangeability**: The modification produces the SAME result and function.
-       3. **Ease of Interchangeability**: Easily conceived by a person skilled in the art at the time of filing.
-       4. **No Intentional Exclusion**: The feature was NOT intentionally excluded during prosecution (Estoppel).
-       5. **Not Prior Art**: The modified product is NOT part of the prior art at the time of filing.
+     - **Direct correspondence (Significant Similarity)**: All constituent elements are fully satisfied.
+       - **Note**: In Japanese output, use "対応関係が確認" instead of "文言的一致".
+     - **Equivalence/Similarity**: If direct correspondence is not found but functionality is similar:
+       - **Strict Rule**: Do NOT state "Satisfies the 5 requirements" or "Equivalent".
+       - **Requirement**: Use descriptive language focusing on function and behavior.
+         - **Example**: "The alternative implementation achieves the same functional outcome and exhibits comparable system behavior under typical operating conditions."
+         - **Example**: "The variation represents a commonly used implementation approach."
+       - **Logic Check (Internal only)**: You may consider the standard equivalence factors (Interchangeability, Ease of Interchangeability, etc.) to form your technical opinion, but do NOT explicitly list them as legal requirements in the output.
 
 3. **Draft**: Fill `.patent-kit/templates/claim-analysis-template.md`.
    - **Similarity Assessment**:
      - **Definitions**:
-       - **Significant**: All elements overlap (Literal Match).
-       - **Moderate**: Most elements overlap, or partial overlap (Equivalence - See Step 1).
+       - **Significant**: All elements overlap (Direct correspondence).
+       - **Moderate**: Functional overlap without direct correspondence (See Equivalence).
        - **Limited**: Clear difference in at least one element.
      - **Format**:
        - Overall Similarity MUST be written exactly as: `Overall Similarity: Significant Similarity` (or Moderate Similarity, Limited Similarity).
+       - **Reiteration**: Add the following line at the end of the conclusion: "Note: This technical comparison does not constitute a legal opinion."
        - Do NOT use other formats like "High (高リスク)".
 
 4. **Save**: `3-investigations/<patent-id>/claim-analysis.md`.
@@ -76,6 +78,10 @@ This script finds the first patent in `3-investigations/` that has `evaluation.m
 - [ ] Conflict Analysis (Claim Chart) is complete and compares all elements.
 - [ ] Similarity levels are assigned to each element (Significant/Moderate/Limited).
 - [ ] Overall Similarity follows strict format: `Overall Similarity: Significant Similarity` (or Moderate/Limited).
+- [ ] **NO Legal Assertions**:
+  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology".
+  - [ ] Avoid citing specific court case examples.
+  - [ ] Use descriptive technical language (e.g., "features not found", "low likelihood of mapping", "fundamental feature").
 - [ ] Claim analysis report follows the template format.
 
 {{ NEXT_STEP_INSTRUCTION }}

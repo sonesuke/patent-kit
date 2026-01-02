@@ -32,11 +32,12 @@ Based on the JSON output:
 - **Phase 3-5**: Check `investigations` array.
   - Calculate **Claim Analysis Progress** (Claim Analysis Done / Relevant Patents from Phase 2).
   - Calculate **Prior Art Progress** (Prior Art Done / Claim Analysis Done).
-  - For each investigation, format status as:
-    - Claim Analysis: `Significant`, `Moderate`, `Limited` (if Done), or `Pending`.
-    - Claim Analysis: `Significant`, `Moderate`, `Limited` (if Done), or `Pending`.
+  - **List Filtering (Critical)**:
+    - **Include**: Patents where Claim Analysis is `Significant`, `Moderate`, or `Pending`.
+    - **Exclude**: Patents where Claim Analysis is `Limited` (Safe/Low Risk).
+  - For each INCLUDED investigation, format status as:
+    - Claim Analysis: `Significant`, `Moderate`, or `Pending`.
     - Prior Art:
-      - If Claim Analysis is `Limited`: `-` (Skipped).
       - If Done: `Relevant`, `Alternative`, `Aligned`, `Escalated`.
       - Otherwise: `Pending`.
 
@@ -56,3 +57,5 @@ Save to `PROGRESS.md` in the project root.
 - [ ] Used strictly standard sections (Overview, Screening Summary, Investigation Progress, Next Actions).
 - [ ] No extra sections (e.g., "Top Patents", "Current Status") added.
 - [ ] No duplicated information.
+- [ ] **NO Legal Assertions**:
+  - [ ] Ensure summary does not use terms like "Does not satisfy", "Does not infringe", "Is a core technology" or cite court cases.

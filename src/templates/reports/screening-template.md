@@ -32,4 +32,5 @@
 - [ ] Summary statistics are accurate.
 - [ ] Used strictly standard sections (Progress, Detail by Judgment, Top 10 Relevant Patents).
 - [ ] No extra sections added.
-- [ ] **No Legal Assertions**: Avoids definitive legal judgments.
+- [ ] **NO Legal Assertions**:
+  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology" or cite court cases.
