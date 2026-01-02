@@ -1,53 +1,53 @@
 # Patent Kit
 
-A spec-driven development kit for patent analysis, designed for AI agents (GitHub Copilot, Claude Code).
+AI-Native Patent Analysis Kit, designed for AI agents (GitHub Copilot, Claude Code).
+
+> [!IMPORTANT]
+> **Disclaimer**: This tool is provided for informational purposes only. The outputs do not constitute legal advice or professional patent opinions.
 
 ## Overview
 
+A complete toolkit that empowers AI agents to autonomously search, analyze, and evaluate patents with human-level precision.
+
 This kit provides structured commands to automate:
 
-- Patent Evaluation (Novelty/Inventive Step)
-- Claim Analysis (Clearance/FTO)
-- Prior Art Search
-
-## Prerequisites
-
-This kit requires `google-patent-cli` and `arxiv-cli`, which are **automatically downloaded** to the project directory during initialization.
+- **Targeting & Screening**: Identify critical patents from the noise.
+- **Patent Evaluation**: Validate novelty and inventive step logic.
+- **Claim Analysis**: Detailed clearance and infringement reporting.
 
 ### Installation
 
-1. **Install `ftoc` (Project Manager)**
+Download the latest binary for your platform from the [Releases](https://github.com/sonesuke/patent-kit/releases) page.
 
-   ```bash
-   cargo install --path .
-   ```
+1. Extract the archive.
+2. Add the `patent-kit` binary to your system PATH.
 
 ## Usage
 
 ### 1. Initialize Project
 
-Create a new project or initialize an existing one with the necessary configuration files.
+ Create a new project or initialize an existing one with the necessary configuration files.
 
-```bash
-# Create a new project for Claude
-ftoc init my-project --ai claude
+ ```bash
+ # Create a new project for Claude
+ patent-kit init my-project --ai claude
 
-# Initialize existing project for Copilot
-ftoc init . --ai copilot
-```
+ # Initialize existing project for Copilot
+ patent-kit init . --ai copilot
+ ```
 
-This command sets up:
+ This command sets up:
 
-- **.patent-kit**: Common templates and memory bank.
-  - **bin/**: Contains automatically downloaded `google-patent-cli` and `arxiv-cli`.
-- **.claude** (if `--ai claude`): Claude-specific slash commands.
-- **.copilot** (if `--ai copilot`): GitHub Copilot prompts.
+ - **.patent-kit**: Common templates and memory bank.
+   - **bin/**: Contains automatically downloaded `google-patent-cli` and `arxiv-cli`.
+ - **.claude** (if `--ai claude`): Claude-specific slash commands.
+ - **.github** (if `--ai copilot`): GitHub Copilot prompts.
 
-**Note**: If you are behind a corporate proxy or have SSL certificate issues, use the `--insecure` flag to skip SSL verification during download:
+ **Note**: If you are behind a corporate proxy or have SSL certificate issues, use the `--insecure` flag to skip SSL verification during download:
 
-```bash
-ftoc init . --ai claude --insecure
-```
+ ```bash
+ patent-kit init . --ai claude --insecure
+ ```
 
 ### 2. Workflow
 
@@ -79,21 +79,35 @@ ftoc init . --ai claude --insecure
     # Output: investigations/JP2023-123456/prior-art.md
     ```
 
+5. **Track Progress**: Summarize the current status of all investigations.
+
+    ```bash
+    /patent-kit.progress
+    # Output: PROGRESS.md
+    ```
+
 ## Output Structure
 
-All reports are generated in a directory named after the patent ID (e.g., `JP2023-123456.JP7123456`).
+The project is organized into numbered phases:
 
 ```text
-JP2023-123456/
-  ├── evaluation.md
-  ├── claim-analysis.md
-  └── prior-art.md
+.
+├── 0-specifications/         # Phase 0: Product definition
+│   └── specification.md
+├── 1-targeting/              # Phase 1: Search strategy & data
+│   ├── targeting.md
+│   ├── keywords.md
+│   ├── target.jsonl
+│   └── csv/
+├── 2-screening/              # Phase 2: Screening results
+│   └── (Screening data)
+├── 3-investigations/         # Phase 3-5: Detailed analysis
+│   └── JP2023-123456/
+│       ├── evaluation.md
+│       ├── claim-analysis.md
+│       └── prior-art.md
+└── PROGRESS.md               # Overall status report
 ```
-
-## Configuration
-
-- **Slash Commands**: `.claude/commands/`
-- **Output Templates**: `.patent-kit/templates/`
 
 ## Development
 

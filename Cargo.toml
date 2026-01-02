@@ -20,8 +20,8 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
 [[bin]]
-name = "ftoc"
-path = "src/bin/ftoc.rs"
+name = "patent-kit"
+path = "src/bin/patent-kit.rs"
 
 [features]
 dev = ["dep:rumdl"]

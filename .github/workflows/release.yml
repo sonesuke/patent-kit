@@ -18,7 +18,7 @@ jobs:
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
-        with:
+        with: 
           components: rustfmt, clippy
 
       - name: Lint
@@ -36,20 +36,20 @@ jobs:
         include:
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
-            artifact_name: ftoc
-            asset_name: ftoc-linux-x86_64.tar.gz
+            artifact_name: patent-kit
+            asset_name: patent-kit-linux-x86_64.tar.gz
           - os: macos-15-intel
             target: x86_64-apple-darwin
-            artifact_name: ftoc
-            asset_name: ftoc-macos-x86_64.tar.gz
+            artifact_name: patent-kit
+            asset_name: patent-kit-macos-x86_64.tar.gz
           - os: macos-latest
             target: aarch64-apple-darwin
-            artifact_name: ftoc
-            asset_name: ftoc-macos-arm64.tar.gz
+            artifact_name: patent-kit
+            asset_name: patent-kit-macos-arm64.tar.gz
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            artifact_name: ftoc.exe
-            asset_name: ftoc-windows-x86_64.msi
+            artifact_name: patent-kit.exe
+            asset_name: patent-kit-windows-x86_64.msi
 
     steps:
       - name: Checkout code
@@ -61,7 +61,7 @@ jobs:
           targets: ${{ matrix.target }}
 
       - name: Build
-        run: cargo build --release --bin ftoc --target ${{ matrix.target }}
+        run: cargo build --release --bin patent-kit --target ${{ matrix.target }}
 
       - name: Install cargo-wix
         if: matrix.os == 'windows-latest'

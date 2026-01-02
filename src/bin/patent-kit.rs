@@ -14,7 +14,7 @@ use zip::ZipArchive;
 struct Asset;
 
 #[derive(Parser, Debug)]
-#[command(name = "ftoc")]
+#[command(name = "patent-kit")]
 #[command(about = "Generate Table of Contents for Markdown files or initialize project", long_about = None)]
 struct Args {
     #[command(subcommand)]
