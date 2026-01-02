@@ -75,15 +75,15 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Run Merge Command**:
    - Execute the following command to combine the CSV files and remove duplicates.
-   - **Important**: Use `ftoc` command, NOT `google-patent-cli`.
-   - Command: `ftoc merge --input-dir 1-targeting/csv --output 1-targeting/target.jsonl`
+   - **Important**: Use `patent-kit` command, NOT `google-patent-cli`.
+   - Command: `patent-kit merge --input-dir 1-targeting/csv --output 1-targeting/target.jsonl`
 
 2. **Verify Output**:
    - Check that `1-targeting/target.jsonl` has been created.
    - This file contains the consolidated list of unique patents to be screened/evaluated.
 
 3. **Check Count**:
-   - The `ftoc merge` command output displays the number of unique patents (e.g., `Merged 150 unique patents...`).
+   - The `patent-kit merge` command output displays the number of unique patents (e.g., `Merged 150 unique patents...`).
    - Confirm this count to understand the volume of patents to be screened.
 
 ## Output

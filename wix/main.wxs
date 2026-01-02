@@ -122,9 +122,9 @@
                         <Component Id='binary0' Guid='*'>
                             <File
                                 Id='exe0'
-                                Name='ftoc.exe'
+                                Name='patent-kit.exe'
                                 DiskId='1'
-                                Source='$(var.CargoTargetBinDir)\ftoc.exe'
+                                Source='$(var.CargoTargetBinDir)\patent-kit.exe'
                                 KeyPath='yes'/>
                         </Component>
                     </Directory>
