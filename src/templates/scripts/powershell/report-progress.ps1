@@ -50,9 +50,9 @@ if (Test-Path "3-investigations") {
         
         if ($has_claim) {
            $claim_content = Get-Content $claim_path -Raw
-           if ($claim_content -match "Overall Similarity:.*Significant") { $claim_sim = "Significant" }
-           elseif ($claim_content -match "Overall Similarity:.*Moderate") { $claim_sim = "Moderate" }
-           elseif ($claim_content -match "Overall Similarity:.*Limited") { $claim_sim = "Limited" }
+           if ($claim_content -match "^### Overall Similarity:.*Significant") { $claim_sim = "Significant" }
+           elseif ($claim_content -match "^### Overall Similarity:.*Moderate") { $claim_sim = "Moderate" }
+           elseif ($claim_content -match "^### Overall Similarity:.*Limited") { $claim_sim = "Limited" }
         }
 
         $prior_path = Join-Path $d.FullName "prior-art.md"
@@ -61,10 +61,10 @@ if (Test-Path "3-investigations") {
 
         if ($has_prior) {
            $prior_content = Get-Content $prior_path -Raw
-           if ($prior_content -match "Verdict:.*Relevant prior art identified") { $prior_verdict = "Relevant" }
-           elseif ($prior_content -match "Verdict:.*Alternative implementation selected") { $prior_verdict = "Alternative" }
-           elseif ($prior_content -match "Verdict:.*Aligned with existing techniques") { $prior_verdict = "Aligned" }
-           elseif ($prior_content -match "Verdict:.*Escalated for legal review") { $prior_verdict = "Escalated" }
+           if ($prior_content -match "^- \*\*Verdict\*\*:.*Relevant prior art identified") { $prior_verdict = "Relevant" }
+           elseif ($prior_content -match "^- \*\*Verdict\*\*:.*Alternative implementation selected") { $prior_verdict = "Alternative" }
+           elseif ($prior_content -match "^- \*\*Verdict\*\*:.*Aligned with existing techniques") { $prior_verdict = "Aligned" }
+           elseif ($prior_content -match "^- \*\*Verdict\*\*:.*Escalated for legal review") { $prior_verdict = "Escalated" }
         }
         
         $investigations += @{

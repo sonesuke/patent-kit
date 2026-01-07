@@ -62,11 +62,11 @@ if [ -d "3-investigations" ]; then
         has_claim_analysis="false"
         if [ -f "$dir/claim-analysis.md" ]; then
             has_claim_analysis="true"
-            if grep -E -i -q "Overall Similarity:.*Significant" "$dir/claim-analysis.md"; then
+            if grep -E -i -q "^### Overall Similarity:.*Significant" "$dir/claim-analysis.md"; then
                 claim_analysis_sim="Significant"
-            elif grep -E -i -q "Overall Similarity:.*Moderate" "$dir/claim-analysis.md"; then
+            elif grep -E -i -q "^### Overall Similarity:.*Moderate" "$dir/claim-analysis.md"; then
                 claim_analysis_sim="Moderate"
-            elif grep -E -i -q "Overall Similarity:.*Limited" "$dir/claim-analysis.md"; then
+            elif grep -E -i -q "^### Overall Similarity:.*Limited" "$dir/claim-analysis.md"; then
                 claim_analysis_sim="Limited"
             fi
         fi
@@ -75,13 +75,13 @@ if [ -d "3-investigations" ]; then
         prior_verdict="None"
         if [ -f "$dir/prior-art.md" ]; then
             has_prior="true"
-            if grep -E -i -q "Verdict:.*Relevant prior art identified" "$dir/prior-art.md"; then
+            if grep -E -i -q "^- \*\*Verdict\*\*:.*Relevant prior art identified" "$dir/prior-art.md"; then
                 prior_verdict="Relevant"
-            elif grep -E -i -q "Verdict:.*Alternative implementation selected" "$dir/prior-art.md"; then
+            elif grep -E -i -q "^- \*\*Verdict\*\*:.*Alternative implementation selected" "$dir/prior-art.md"; then
                 prior_verdict="Alternative"
-            elif grep -E -i -q "Verdict:.*Aligned with existing techniques" "$dir/prior-art.md"; then
+            elif grep -E -i -q "^- \*\*Verdict\*\*:.*Aligned with existing techniques" "$dir/prior-art.md"; then
                 prior_verdict="Aligned"
-            elif grep -E -i -q "Verdict:.*Escalated for legal review" "$dir/prior-art.md"; then
+            elif grep -E -i -q "^- \*\*Verdict\*\*:.*Escalated for legal review" "$dir/prior-art.md"; then
                 prior_verdict="Escalated"
             fi
         fi

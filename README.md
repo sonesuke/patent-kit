@@ -51,35 +51,49 @@ Download the latest binary for your platform from the [Releases](https://github.
 
 ### 2. Workflow
 
-1. **Phase 1: Targeting**: Define product concept and generate queries.
+1. **Phase 0: Concept Interview**: Define product concept.
+
+    ```bash
+    /patent-kit.concept-interview
+    # Output: 0-specifications/specification.md
+    ```
+
+2. **Phase 1: Targeting**: Generate search queries and targets.
 
      ```bash
      /patent-kit.targeting
-     # Output: targeting/targeting.md
+     # Output: 1-targeting/targeting.md
      ```
 
-2. **Phase 2: Evaluation**: Analyze the patent.
+3. **Phase 2: Screening**: Screen patents for relevance.
+
+    ```bash
+    /patent-kit.screening
+    # Output: 2-screening/screening.md
+    ```
+
+4. **Phase 3: Evaluation**: Analyze the patent.
 
     ```bash
     /patent-kit.evaluation JP2023-123456
-    # Output: investigations/JP2023-123456/evaluation.md
+    # Output: 3-investigations/JP2023-123456/evaluation.md
     ```
 
-3. **Phase 4: Claim Analysis**: Define search strategy.
+5. **Phase 4: Claim Analysis**: Define search strategy.
 
     ```bash
     /patent-kit.claim-analysis JP2023-123456
-    # Output: investigations/JP2023-123456/claim-analysis.md
+    # Output: 3-investigations/JP2023-123456/claim-analysis.md
     ```
 
-4. **Phase 5: Prior Art**: Run search and report.
+6. **Phase 5: Prior Art**: Run search and report.
 
     ```bash
     /patent-kit.prior-art JP2023-123456
-    # Output: investigations/JP2023-123456/prior-art.md
+    # Output: 3-investigations/JP2023-123456/prior-art.md
     ```
 
-5. **Track Progress**: Summarize the current status of all investigations.
+7. **Track Progress**: Summarize the current status of all investigations.
 
     ```bash
     /patent-kit.progress
