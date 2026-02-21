@@ -28,63 +28,88 @@ Download the latest binary for your platform from the [Releases](https://github.
 
  Create a new project or initialize an existing one with the necessary configuration files.
 
- ```bash
- # Create a new project for Claude
- patent-kit init my-project --ai claude
+  ```bash
+  # Create a new project for Claude
+  patent-kit init my-project --ai claude
 
- # Initialize existing project for Copilot
- patent-kit init . --ai copilot
- ```
+  # Initialize existing project for Copilot
+  patent-kit init . --ai copilot
+  ```
 
- This command sets up:
+  This command sets up:
 
- - **.patent-kit**: Common templates and memory bank.
-   - **bin/**: Contains automatically downloaded `google-patent-cli` and `arxiv-cli`.
- - **.claude** (if `--ai claude`): Claude-specific slash commands.
- - **.github** (if `--ai copilot`): GitHub Copilot prompts.
+  - **.patent-kit**: Common templates and memory bank.
+    - **bin/**: Contains automatically downloaded `google-patent-cli` and `arxiv-cli`.
+  - **.patent-kit-plugin** (if `--ai claude`): Claude Code plugin directory containing skills.
+  - **.github/copilot-skills** (if `--ai copilot`): GitHub Copilot skills.
 
- **Note**: If you are behind a corporate proxy or have SSL certificate issues, use the `--insecure` flag to skip SSL verification during download:
+  **Note**: If you are behind a corporate proxy or have SSL certificate issues, use the `--insecure` flag to skip SSL verification during download:
 
- ```bash
- patent-kit init . --ai claude --insecure
- ```
+  ```bash
+  patent-kit init . --ai claude --insecure
+  ```
 
-### 2. Workflow
+### 2. Configure AI Agent
+
+#### Claude Code
+
+Load the generated plugin directory by adding it to your Claude Code command:
+
+```bash
+claude --plugin-dir .patent-kit-plugin
+```
+
+### 3. Workflow
 
 1. **Phase 1: Targeting**: Define product concept and generate queries.
 
+   **Claude**:
      ```bash
-     /patent-kit.targeting
+     /patent-kit:targeting
      # Output: targeting/targeting.md
      ```
 
+   **Copilot**: Look for `targeting` in your skills panel.
+
 2. **Phase 2: Evaluation**: Analyze the patent.
 
+    **Claude**:
     ```bash
-    /patent-kit.evaluation JP2023-123456
+    /patent-kit:evaluation JP2023-123456
     # Output: investigations/JP2023-123456/evaluation.md
     ```
 
+    **Copilot**: Look for `evaluation` in your skills panel.
+
 3. **Phase 4: Claim Analysis**: Define search strategy.
 
+    **Claude**:
     ```bash
-    /patent-kit.claim-analysis JP2023-123456
+    /patent-kit:claim-analysis JP2023-123456
     # Output: investigations/JP2023-123456/claim-analysis.md
     ```
 
+    **Copilot**: Look for `claim-analysis` in your skills panel.
+
 4. **Phase 5: Prior Art**: Run search and report.
 
+    **Claude**:
     ```bash
-    /patent-kit.prior-art JP2023-123456
+    /patent-kit:prior-art JP2023-123456
     # Output: investigations/JP2023-123456/prior-art.md
     ```
 
+    **Copilot**: Look for `prior-art` in your skills panel.
+
 5. **Track Progress**: Summarize the current status of all investigations.
 
+    **Claude**:
     ```bash
-    /patent-kit.progress
+    /patent-kit:progress
     # Output: PROGRESS.md
     ```
+
+    **Copilot**: Look for `progress` in your skills panel.
 
 ## Output Structure
 

@@ -424,13 +424,33 @@ fn copy_embedded_dir(prefix: &str, target_path: &Path) -> Result<()> {
 }
 
 fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
-    let (output_dir, file_suffix) = match ai {
-        AiAssistant::Claude => (target_dir.join(".claude/commands"), ".md"),
-        AiAssistant::Copilot => (target_dir.join(".github/prompts"), ".prompt.md"),
+    let output_dir = match ai {
+        AiAssistant::Claude => target_dir.join(".patent-kit-plugin").join("skills"),
+        AiAssistant::Copilot => target_dir.join(".github").join("copilot-skills"),
     };
 
     if !output_dir.exists() {
         fs::create_dir_all(&output_dir).context("Failed to create prompt directory")?;
+    }
+
+    // Generate plugin.json for Claude
+    if ai == AiAssistant::Claude {
+        let plugin_dir = target_dir.join(".patent-kit-plugin").join(".claude-plugin");
+        if !plugin_dir.exists() {
+            fs::create_dir_all(&plugin_dir).context("Failed to create .claude-plugin directory")?;
+        }
+        let manifest_path = plugin_dir.join("plugin.json");
+        let manifest_content = r#"{
+  "name": "patent-kit",
+  "description": "AI-Native Patent Analysis Kit",
+  "version": "0.1.0",
+  "author": {
+    "name": "sonesuke"
+  }
+}"#;
+        fs::write(&manifest_path, manifest_content)
+            .with_context(|| format!("Failed to write manifest {:?}", manifest_path))?;
+        println!("Generated: {:?}", manifest_path);
     }
 
     let prefix = "prompts";
@@ -447,18 +467,41 @@ fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
             let content = Asset::get(file_path_str)
                 .context("Failed to read embedded file")?
                 .data;
-            let content_str = std::str::from_utf8(content.as_ref())
-                .context("Failed to parse embedded file as UTF-8")?;
+            let mut content_str = std::str::from_utf8(content.as_ref())
+                .context("Failed to parse embedded file as UTF-8")?
+                .to_string();
+
+            // Transform frontmatter: add name
+            if content_str.starts_with("---\n") {
+                let end_frontmatter = content_str[4..].find("---\n");
+                if let Some(end_idx) = end_frontmatter {
+                    let frontmatter_content = &content_str[4..4 + end_idx];
+                    let new_frontmatter = format!("name: {}\n{}", name_stem, frontmatter_content);
+                    content_str = format!(
+                        "---\n{}---\n{}",
+                        new_frontmatter,
+                        &content_str[4 + end_idx + 4..]
+                    );
+                }
+            }
 
             let next_step_instruction = get_next_step_instruction(ai, name_stem);
             let new_content =
                 content_str.replace("{{ NEXT_STEP_INSTRUCTION }}", &next_step_instruction);
 
-            let new_filename = format!("patent-kit.{}{}", name_stem, file_suffix);
-            let dest_path = output_dir.join(new_filename);
+            let skill_dir = match ai {
+                AiAssistant::Claude => output_dir.join(name_stem),
+                AiAssistant::Copilot => output_dir.join(format!("patent-kit-{}", name_stem)),
+            };
+
+            if !skill_dir.exists() {
+                fs::create_dir_all(&skill_dir).context("Failed to create skill directory")?;
+            }
+
+            let dest_path = skill_dir.join("SKILL.md");
 
             fs::write(&dest_path, new_content)
-                .with_context(|| format!("Failed to write prompt file {:?}", dest_path))?;
+                .with_context(|| format!("Failed to write skill file {:?}", dest_path))?;
             println!("Generated: {:?}", dest_path);
         }
     }
@@ -468,16 +511,16 @@ fn generate_prompts(ai: AiAssistant, target_dir: &Path) -> Result<()> {
 
 fn get_next_step_instruction(ai: AiAssistant, phase: &str) -> String {
     match (ai, phase) {
-        (AiAssistant::Claude, "concept-interview") => "Run /patent-kit.targeting".to_string(),
-        (AiAssistant::Claude, "targeting") => "Run /patent-kit.screening".to_string(),
-        (AiAssistant::Claude, "screening") => "Run /patent-kit.evaluation <patent-id>".to_string(),
+        (AiAssistant::Claude, "concept-interview") => "Run /patent-kit:targeting".to_string(),
+        (AiAssistant::Claude, "targeting") => "Run /patent-kit:screening".to_string(),
+        (AiAssistant::Claude, "screening") => "Run /patent-kit:evaluation <patent-id>".to_string(),
         (AiAssistant::Claude, "evaluation") => {
-            "Run /patent-kit.claim-analysis <patent-id>".to_string()
+            "Run /patent-kit:claim-analysis <patent-id>".to_string()
         }
         (AiAssistant::Claude, "claim-analysis") => {
-            "Run /patent-kit.prior-art <patent-id>".to_string()
+            "Run /patent-kit:prior-art <patent-id>".to_string()
         }
-        // No next step for prior-art
+        // No next step for prior-art or progress
         (AiAssistant::Claude, _) => "".to_string(),
 
         (AiAssistant::Copilot, "concept-interview") => {
