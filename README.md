@@ -15,51 +15,36 @@ This kit provides structured commands to automate:
 - **Patent Evaluation**: Validate novelty and inventive step logic.
 - **Claim Analysis**: Detailed clearance and infringement reporting.
 
-### Installation
+### Installation & Usage
 
-Download the latest binary for your platform from the [Releases](https://github.com/sonesuke/patent-kit/releases) page.
+1. **Clone this repository** to serve as your project base:
 
-1. Extract the archive.
-2. Add the `patent-kit` binary to your system PATH.
+   ```bash
+   git clone https://github.com/sonesuke/patent-kit.git my-project
+   cd my-project
+   ```
+   
+   *(Alternatively, you can click "Use this template" if configured on GitHub).*
 
-## Usage
-
-### 1. Initialize Project
-
- Create a new project or initialize an existing one with the necessary configuration files.
-
-  ```bash
-  # Create a new project for Claude
-  patent-kit init my-project --ai claude
-
-  # Initialize existing project for Copilot
-  patent-kit init . --ai copilot
-  ```
-
-  This command sets up:
-
-  - **.patent-kit**: Common templates and memory bank.
-    - **bin/**: Contains automatically downloaded `google-patent-cli` and `arxiv-cli`.
-  - **.patent-kit-plugin** (if `--ai claude`): Claude Code plugin directory containing skills.
-  - **.github/copilot-skills** (if `--ai copilot`): GitHub Copilot skills.
-
-  **Note**: If you are behind a corporate proxy or have SSL certificate issues, use the `--insecure` flag to skip SSL verification during download:
-
-  ```bash
-  patent-kit init . --ai claude --insecure
-  ```
-
-### 2. Configure AI Agent
+2. **Configure AI Agent**
 
 #### Claude Code
 
-Load the generated plugin directory by adding it to your Claude Code command:
+Load the plugin directory by adding it to your Claude Code command:
 
 ```bash
-claude --plugin-dir .patent-kit-plugin
+claude --plugin-dir .claude-plugin
 ```
 
-### 3. Workflow
+**(Optional) Copilot Skills**: GitHub Copilot skills are already available in the `.github/copilot-skills/` directory.
+
+### Prerequisites
+
+You must have the following CLI tools accessible to your AI Agent (e.g., exposed via MCP Server):
+- `google-patent-cli`
+- `arxiv-cli`
+
+### Workflow
 
 1. **Phase 1: Targeting**: Define product concept and generate queries.
 
@@ -134,26 +119,3 @@ The project is organized into numbered phases:
 └── PROGRESS.md               # Overall status report
 ```
 
-## Development
-
-### Workflow
-
-Before submitting a Pull Request, please ensure your code is formatted and linted.
-
-1. **Format & Fix** (Auto-correct/Fix):
-
-    ```bash
-    cargo lint --fix
-    ```
-
-    This command runs `clippy --fix`, `cargo fmt`, and `rumdl --fix`.
-
-2. **Lint Check** (Check only):
-
-    ```bash
-    cargo lint
-    ```
-
-    This command runs checks for formatting, clippy, and markdown without modifying files.
-
- These commands utilize the custom aliases defined in `.cargo/config.toml` to run `cargo fmt`/`clippy` and `rumdl` together.
