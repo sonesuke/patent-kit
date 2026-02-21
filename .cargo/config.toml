@@ -1,3 +1,0 @@
-[alias]
-lint = ["run", "--quiet", "--features", "dev", "--bin", "patent-kit", "--", "lint"]
-
