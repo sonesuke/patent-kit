@@ -15,25 +15,31 @@ This kit provides structured commands to automate:
 - **Patent Evaluation**: Validate novelty and inventive step logic.
 - **Claim Analysis**: Detailed clearance and infringement reporting.
 
-### Installation & Usage
+1. **Install the Plugin**
 
-1. **Clone this repository** to serve as your project base:
-
-   ```bash
-   git clone https://github.com/sonesuke/patent-kit.git my-project
-   cd my-project
-   ```
-
-   _(Alternatively, you can click "Use this template" if configured on GitHub)._
-
-2. **Configure AI Agent**
-
-#### Claude Code
-
-Load the plugin directory by adding it to your Claude Code command:
+Add this repository as a marketplace and install the plugin to your Claude Code environment:
 
 ```bash
-claude --plugin-dir .claude-plugin
+# 1. Add this repository as a marketplace
+claude plugin marketplace add sonesuke/patent-kit
+
+# 2. Install the plugin (automatically loads required MCPs)
+claude plugin add patent-kit@patent-kit-marketplace
+```
+
+2. **Initialize Workspace**
+
+Navigate to your working directory and start Claude:
+
+```bash
+mkdir my-patent-project && cd my-patent-project
+claude
+```
+
+Run the setup skill to generate the required directory structure:
+
+```bash
+/patent-kit:setup
 ```
 
 ### Prerequisites (Install the CLIs)
