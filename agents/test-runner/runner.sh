@@ -36,40 +36,30 @@ mkdir -p "$WORKSPACE_FOLDER/e2e/reports"
 REPORT_ID=$(date +%Y%m%d_%H%M%S)
 
 echo "=================================================="
-echo "[Host] Starting Agentic Test-Runner for $N_TRIALS trials..."
+echo "[Host] Starting Agentic Test-Runner for $N_TRIALS concurrent trials..."
+echo "[Host] Triggering Main Claude Agent inside Dev Container..."
 
-# Loop for N_TRIALS
-for ((i=1; i<=N_TRIALS; i++)); do
-    echo "=================================================="
-    echo "[Host] Trial $i / $N_TRIALS"
-    echo "[Host] Triggering Claude inside Dev Container..."
+TEMP_ERR=$(mktemp)
 
-    # Run Claude inside the container. 
-    TEMP_ERR=$(mktemp)
-
-    if ! devcontainer exec \
-        --workspace-folder "$WORKSPACE_FOLDER" \
-        claude -p \
-            --dangerously-skip-permissions \
-            --verbose \
-            --output-format stream-json \
-            "$(cat agents/test-runner/prompt.txt) REPORT_ID=$REPORT_ID TRIAL=$i" < /dev/null 2>"$TEMP_ERR" | jq . ; then
-        
-        EXIT_CODE=$?
-        echo "[Host] Error: Claude agent or devcontainer failed on Trial $i with exit code $EXIT_CODE." >&2
-        if [ -s "$TEMP_ERR" ]; then
-            echo "[Host] Detailed error log:" >&2
-            cat "$TEMP_ERR" >&2
-        fi
-        rm -f "$TEMP_ERR"
-        
-        echo "[Host] Terminating test run due to error." >&2
-        exit $EXIT_CODE
+if ! devcontainer exec \
+    --workspace-folder "$WORKSPACE_FOLDER" \
+    claude -p \
+        --dangerously-skip-permissions \
+        --verbose \
+        --output-format stream-json \
+        "$(cat agents/test-runner/prompt.txt) REPORT_ID=$REPORT_ID N_TRIALS=$N_TRIALS" < /dev/null 2>"$TEMP_ERR" | jq . ; then
+    
+    EXIT_CODE=$?
+    echo "[Host] Error: Main Claude agent failed with exit code $EXIT_CODE." >&2
+    if [ -s "$TEMP_ERR" ]; then
+        echo "[Host] Detailed error log:" >&2
+        cat "$TEMP_ERR" >&2
     fi
-
     rm -f "$TEMP_ERR"
-    sleep 2 # Brief pause between trials
-done
+    
+    echo "[Host] Terminating test run due to error." >&2
+    exit $EXIT_CODE
+fi
 
 rm -f "$TEMP_ERR"
 
