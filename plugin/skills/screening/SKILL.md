@@ -1,6 +1,6 @@
 ---
 name: screening
-description: "収集した特許リストから法的なステータスや関連度に基づいてスクリーニングを行う。ユーザーが「特許のスクリーニングをして」「ノイズを除去（ステップ2）して」と求めた場合に使用。"
+description: "Screens a collected patent list based on legal status and relevance. Triggered when the user asks to 'screen the patents' or 'remove noise (Step 2)'."
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -118,17 +118,16 @@ Run /patent-kit:evaluation <patent-id>
 
 # Examples
 
-Example 1: 一括スクリーニングの開始
-User says: "抽出した150件の特許をスクリーニングして"
+Example 1: Starting Bulk Screening
+User says: "Screen the 150 extracted patents"
 Actions:
-
-1. specification.md のテーマとドメインを読み込む
-2. target.jsonl の各行について、fetch-patent と extract-id を実行
-3. relevant / irrelevant / expired を判定し、サマリーを作成
-   Result: 2-screening/screened.jsonl と screening.md が生成される
+1. Read the theme and domain from specification.md
+2. For each line in target.jsonl, use the MCP tool to fetch the patent
+3. Determine if it is relevant / irrelevant / expired, and summarize
+Result: 2-screening/screened.jsonl and screening.md are generated.
 
 # Troubleshooting
 
 Error: "Rate limit exceeded / Timeout"
-Cause: 短時間に大量のフェッチリクエストを送信した
-Solution: コマンドの実行パラメータ（<start> - <end>）を使って、未処理の行からレジュームしてください
+Cause: Sent too many fetch requests in a short period.
+Solution: Resume from the unprocessed rows.

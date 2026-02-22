@@ -1,5 +1,5 @@
 #!/bin/bash
-# Fetch patent data using MCP ツール
+# Fetch patent data using MCP tool
 # Usage: ./fetch-patent.sh <PATENT_ID>
 
 PATENT_ID=$1

@@ -1,6 +1,6 @@
 ---
 name: claim-analysis
-description: "特許のクレーム分析レポートを作成する。ユーザーが「クレーム分析をして」「ステップ4を実行して」と求めた場合に使用。"
+description: "Generates a claim analysis report for a patent. Triggered when the user asks to 'perform claim analysis' or 'execute step 4'."
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -94,17 +94,16 @@ Run /patent-kit:prior-art <patent-id>
 
 # Examples
 
-Example 1: クレーム分析の開始
-User says: "US-1234567-B2のクレーム分析をお願い"
+Example 1: Starting Claim Analysis
+User says: "Please perform a claim analysis on US-1234567-B2"
 Actions:
-
-1. constitutionを読み込む
-2. 3-investigations/US-1234567-B2/evaluation.mdと製品仕様を読み込む
-3. 各構成要件の対比分析を行う
-   Result: claim-analysis.md が生成され、特定の特許と製品の対比結果が保存される
+1. Load the constitution
+2. Read 3-investigations/US-1234567-B2/evaluation.md and the product specification
+3. Perform comparative analysis on each claim element
+Result: claim-analysis.md is generated, saving the comparison between the specific patent and the product
 
 # Troubleshooting
 
 Error: "Missing evaluation.md"
-Cause: 評価（Phase 3）が終わっていない特許に対してクレーム分析を実行しようとした
-Solution: まず `/patent-kit:evaluation <patent-id>` を実行して評価レポートを作成してください
+Cause: Attempted to run claim analysis on a patent that hasn't completed the evaluation phase (Phase 3).
+Solution: Run `/patent-kit:evaluation <patent-id>` first to generate the evaluation report.

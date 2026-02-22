@@ -1,6 +1,6 @@
 ---
 name: prior-art
-description: "対象特許に対する無効資料（先行技術）調査を実施し、レポートを作成する。ユーザーが「先行技術調査をして」「無効化資料を探して（ステップ5）」と求めた場合に使用。"
+description: "Conducts an invalidation (prior art) search for a target patent. Triggered when the user asks to 'perform a prior art search' or 'find invalidating materials (Step 5)'."
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -58,10 +58,10 @@ Your task is to Execute the Plan and Report Findings.
      - Construct a list of frequent synonyms for the technical field to avoid missing documents due to terminology mismatch.
 
    - **Tools & Configuration** (Both Required):
-     - **CRITICAL**: Use `--before <priority-date>` for both `MCPツール search_patents / fetch_patent` and `MCPツール search_papers / fetch_paper`.
-     - **MUST** use `MCPツール search_patents / fetch_patent` for patent literature.
-     - **MUST** use `MCPツール search_papers / fetch_paper` for non-patent literature (academic papers).
-     - Example: `MCPツール search_papers --query "<query>" --before "<priority-date>" --limit 50`.
+     - **CRITICAL**: Use `--before <priority-date>` for both `MCP tool search_patents / fetch_patent` and `MCP tool search_papers / fetch_paper`.
+     - **MUST** use `MCP tool search_patents / fetch_patent` for patent literature.
+     - **MUST** use `MCP tool search_papers / fetch_paper` for non-patent literature (academic papers).
+     - Example: `MCP tool search_papers --query "<query>" --before "<priority-date>" --limit 50`.
      - **Requirement**: Save output to `3-investigations/<patent-id>/json/search_results_<desc>.json`.
      - **Check**: Did the command succeed? IF NO -> **STOP** and Debug.
 
@@ -74,7 +74,7 @@ Your task is to Execute the Plan and Report Findings.
 5. **Detailed Analysis** (MANDATORY):
    - **For Non-Patent Literature (Grade A)** (CRITICAL):
      - **Full-Text Acquisition**:
-       - **MUST** run MCP ツール `fetch_paper` を使用 (引数: --id <arxiv-id>) to get full-text JSON for Grade A NPLs.
+       - **MUST** run Use the MCP tool `fetch_paper` (Arguments: --id <arxiv-id>) to get full-text JSON for Grade A NPLs.
        - Save output to `3-investigations/<patent-id>/json/npl_<id>.json`.
      - **Claim Chart Creation**:
        - **Requirement**: Create a Claim Chart comparing the NPL against the Patent Claims.
@@ -121,17 +121,16 @@ Your task is to Execute the Plan and Report Findings.
 
 # Examples
 
-Example 1: 先行技術調査の実行
-User says: "ステップ4で有望だったUS-9876543-B2の先行技術を探して"
+Example 1: Executing Prior Art Search
+User says: "Find prior art for US-9876543-B2, which looked promising in Step 4"
 Actions:
-
-1. claim-analysis.md を読み込み、類似性を確認
-2. General/Specific/Functionalの3層で特許と非特許文献をハイブリッド検索
-3. MCP ツール (search_papers / fetch_paper) と MCP ツール の結果を比較し、クレームチャートを作成
-   Result: 3-investigations/US-9876543-B2/prior-art.md が生成される
+1. Read claim-analysis.md to identify similarities
+2. Perform a hybrid search on patent and non-patent literature across General/Specific/Functional layers
+3. Compare the MCP tool results and create a claim chart
+Result: 3-investigations/US-9876543-B2/prior-art.md is generated.
 
 # Troubleshooting
 
-Error: "Command failed / No results found"
-Cause: 検索クエリが長すぎる、またはAND条件が厳しすぎる
-Solution: Rule IXに従い、検索クエリをシンプルにして（修飾語を削るなど）再検索してください
+Error: "No results found"
+Cause: The search query is too long or the AND conditions are too strict.
+Solution: Follow Rule IX and simplify the search query (e.g., remove modifiers) to search again.

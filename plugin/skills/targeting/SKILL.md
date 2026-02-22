@@ -1,6 +1,6 @@
 ---
 name: targeting
-description: "定義された製品仕様に基づいて特許DBを検索し、調査母集団（ターゲット）を作成する。ユーザーが「ターゲット母集団を作成して」「検索（ステップ1）を実行して」と求めた場合に使用。"
+description: "Searches patent databases to create a target population based on specifications. Triggered when the user asks to 'create a target population' or 'run the search (Step 1)'."
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -15,7 +15,7 @@ Your task is to generate high-precision search queries based on the product conc
 ### Input
 
 - **Specification**: `0-specifications/specification.md` (generated in Phase 0).
-- **Tools**: `MCP ツール` (assume updated version with assignee search capability).
+- **Tools**: `MCP tool` (assume updated version with assignee search capability).
 
 ### Process
 
@@ -38,7 +38,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 ##### Phase 1.1: Competitor Patent Research
 
 1. **Start Broad**:
-   - Command: MCP ツール `search_patents` を使用 (引数: --assignee "<Combined Assignees>" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20)
+   - Command: Use the MCP tool `search_patents` (Arguments: --assignee "<Combined Assignees>" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20)
 2. **Check Volume**:
    - If total count is **under 1000**: This is a good starting point. Check the top 20 snippets to understand what kind of patents they are filing.
    - If total count is **over 1000**: You need to narrow it down.
@@ -57,8 +57,8 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Apply Keywords**:
    - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `1-targeting/keywords.md`).
-   - Command: MCP ツール `search_patents` を使用 (引数: --query "\"keyword1\" AND \"keyword2\"" ...) (Wrap details below to avoid length issues)
-   - Real Command: MCP ツール `search_patents` を使用 (引数: --query "\"keyword1\" AND \"keyword2\"" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20)
+   - Command: Use the MCP tool `search_patents` (Arguments: --query "\"keyword1\" AND \"keyword2\"" ...) (Wrap details below to avoid length issues)
+   - Real Command: Use the MCP tool `search_patents` (Arguments: --query "\"keyword1\" AND \"keyword2\"" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20)
 2. **Iterative Narrowing**:
    - Similar to Phase 3.1, if the count is > 1000, add more specific concept keywords (always quoted).
    - **Mandatory Noise Analysis**:
@@ -81,7 +81,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Run Merge Command**:
    - Execute the following command to combine the CSV files and remove duplicates.
-   - **Important**: Use `patent-kit` command, NOT `MCP ツール`.
+   - **Important**: Use `patent-kit` command, NOT `MCP tool`.
    - Command: `patent-kit merge --input-dir 1-targeting/csv --output 1-targeting/target.jsonl`
 
 2. **Verify Output**:
@@ -128,17 +128,16 @@ Run /patent-kit:screening
 
 # Examples
 
-Example 1: ターゲット母集団の形成
-User says: "要件が固まったので、検索式を作ってターゲット母集団を作成して"
+Example 1: Forming the Target Population
+User says: "The requirements are solid, build the search query and create the target population"
 Actions:
-
-1. specification.md から抽出したキーワードで MCP ツール 検索を試行
-2. 検索ボリューム（< 1000）やノイズレベルを確認しながらクエリを調整
-3. ユーザーがダウンロードしたCSVを merge コマンドでJSONLに結合
-   Result: 1-targeting/target.jsonl が生成され、スクリーニング準備が整う
+1. Extract keywords from specification.md and search using the MCP tool
+2. Adjust the query while checking search volume (< 1000) and noise levels
+3. Combine the downloaded CSVs into JSONL using the merge command
+Result: 1-targeting/target.jsonl is generated, preparing for screening.
 
 # Troubleshooting
 
 Error: "patent-kit command not found"
-Cause: Pythonスクリプトのパスが間違っているか、環境構築が不十分
-Solution: plugin/skills/targeting/scripts/merge.py を実行していることを確認し、必要に応じて Python 3 がインストールされているか確認してください
+Cause: Python script path is incorrect or environment is not fully setup.
+Solution: Ensure plugin/skills/targeting/scripts/merge.py is executable and Python 3 is installed.

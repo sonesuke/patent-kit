@@ -1,6 +1,6 @@
 ---
 name: constitution
-description: "特許調査の基本原則と運用ガイドラインを定義する共通ルール。他のスキルから設定を読み込むために使用され、ユーザーが直接呼び出すことは想定していない。"
+description: "Defines the core principles and operational guidelines for patent investigation. Loaded by other skills; not intended for direct user invocation."
 disable-model-invocation: true
 metadata:
   author: sonesuke
@@ -32,7 +32,7 @@ Investigations MUST cover the "Big 4" jurisdictions unless explicitly restricted
 
 Prior art searches MUST cover both patent literature and non-patent literature.
 
-- **Rule**: Use BOTH `MCPツール search_patents / fetch_patent` and `MCPツール search_papers / fetch_paper` for every prior art investigation.
+- **Rule**: Use BOTH `MCP tool search_patents / fetch_patent` and `MCP tool search_papers / fetch_paper` for every prior art investigation.
 - **Rationale**: Comprehensive prior art analysis requires checking academic papers, conference proceedings, and technical publications alongside patents.
 - **Requirement**: Document search results from both sources in the final report.
 
@@ -70,13 +70,13 @@ For Claim Analysis/FTO, accurate understanding of the target product is crucial.
 Prior art searches MUST respect the target patent's effective filing/priority date.
 
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
-- **Requirement**: Use the `--before` flag in `MCPツール search_patents / fetch_patent` or `MCPツール search_papers / fetch_paper` with the correct date (YYYY-MM-DD).
+- **Requirement**: Use the `--before` flag in `MCP tool search_patents / fetch_patent` or `MCP tool search_papers / fetch_paper` with the correct date (YYYY-MM-DD).
 
-- **Requirement**: Use the `--before` flag in `MCPツール search_patents / fetch_patent` or `MCPツール search_papers / fetch_paper` with the correct date (YYYY-MM-DD).
+- **Requirement**: Use the `--before` flag in `MCP tool search_patents / fetch_patent` or `MCP tool search_papers / fetch_paper` with the correct date (YYYY-MM-DD).
 
 ### IX. Search Query Optimization
 
-Long or overly complex queries often return zero results in both `MCPツール search_patents / fetch_patent` and `MCPツール search_papers / fetch_paper`.
+Long or overly complex queries often return zero results in both `MCP tool search_patents / fetch_patent` and `MCP tool search_papers / fetch_paper`.
 
 - **Rule**: Start with broad, essential keywords (2-4 terms maximum).
 - **Rule**: If a search returns zero results, progressively simplify the query:
@@ -95,7 +95,7 @@ Long or overly complex queries often return zero results in both `MCPツール s
 Strictly adhere to the capabilities of provided tools.
 
 - **Rule**: Do NOT hallucinate command options. Check `--help` if unsure.
-- **Rule**: Use `MCPツール search_patents / fetch_patent` for patent literature and `MCPツール search_papers / fetch_paper` for non-patent literature (academic papers).
+- **Rule**: Use `MCP tool search_patents / fetch_patent` for patent literature and `MCP tool search_papers / fetch_paper` for non-patent literature (academic papers).
 - **Rule**: STOP immediately if a command execution fails. Do not simulate results or proceed with the workflow.
 - **Requirement**: Verify command success (exit code 0) before reading outputs.
 
@@ -103,7 +103,7 @@ Strictly adhere to the capabilities of provided tools.
 
 To maintain context window efficiency, large outputs from CLI tools MUST be handled via files.
 
-- **Rule**: `MCPツール search_patents / fetch_patent` and `MCPツール search_papers / fetch_paper` output MUST be redirected to a JSON file.
+- **Rule**: `MCP tool search_patents / fetch_patent` and `MCP tool search_papers / fetch_paper` output MUST be redirected to a JSON file.
   - Path: `3-investigations/<patent-id>/json/<patent-id>.json` (for single patent)
   - Path: `3-investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)
   - Path: `1-targeting/json/search_results_<desc>.json` (for targeting)
@@ -137,15 +137,14 @@ When discussing potential equivalence or similarity, strictly descriptive langua
 
 # Examples
 
-Example 1: ガイドラインの読み込み
-User says: N/A (自動的に他のスキルから呼び出される)
+Example 1: Loading Guidelines
+User says: N/A (Automatically invoked by other skills)
 Actions:
-
-1. 他のスキル実行時にプロンプトのコンテキストとしてシステムにロードされる
-   Result: エージェントの挙動が法務ポリシーや調査方針に準拠するようになる
+1. Loaded into the system context during the execution of other skills.
+Result: The agent's behavior aligns with legal policies and search guidelines.
 
 # Troubleshooting
 
 Error: "Guidelines not followed"
-Cause: AIエージェントが指示を忘れて法的な判断を下してしまった
-Solution: ユーザーインターフェースから「Constitution（基本原則）に厳密に従ってください」と再指示してください
+Cause: The AI agent forgot instructions and made unsupported legal determinations.
+Solution: Explicitly instruct the agent to "Strictly follow the Constitution guidelines."

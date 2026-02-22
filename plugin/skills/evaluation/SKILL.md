@@ -1,6 +1,6 @@
 ---
 name: evaluation
-description: "スクリーニングされた特許の詳細な評価レポートを作成する。ユーザーが「特許の評価をして」「構成要件の分析（ステップ3）をして」と求めた場合に使用。"
+description: "Generates a detailed evaluation report for a screened patent. Triggered when the user asks to 'evaluate the patent' or 'analyze claim elements (Step 3)'."
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -83,17 +83,16 @@ Run /patent-kit:claim-analysis <patent-id>
 
 # Examples
 
-Example 1: 特定の特許の評価
-User says: "JP-2023-12345-Aの評価をして"
+Example 1: Evaluating a Specific Patent
+User says: "Please evaluate JP-2023-12345-A"
 Actions:
-
-1. MCP ツール `fetch_patent` で特許情報を取得
-2. クレームを構成要件に分解し、法的ステータスを確認
-3. evaluation-template.md に従ってレポート作成
-   Result: 3-investigations/JP-2023-12345-A/evaluation.md が生成される
+1. Fetch patent info using the MCP tool
+2. Break down the claims into elements and check the legal status
+3. Generate the report according to evaluation-template.md
+Result: 3-investigations/JP-2023-12345-A/evaluation.md is generated.
 
 # Troubleshooting
 
 Error: "Failed to fetch patent data"
-Cause: 無効なPatent ID、またはネットワークエラー
-Solution: Patent IDのフォーマットが正しいか確認し、再度実行してください
+Cause: Invalid Patent ID or network error.
+Solution: Verify that the Patent ID format is correct and try again.

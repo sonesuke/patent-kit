@@ -1,6 +1,6 @@
 ---
 name: progress
-description: "現在の特許調査ワークフローの進捗状況をレポートとして出力する。ユーザーが「今の進捗を教えて」「サマリーを出して」と求めた場合に使用。"
+description: "Outputs a progress report for the current patent investigation workflow. Triggered when the user asks 'What is the current progress?' or 'Give me a summary'."
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -68,16 +68,15 @@ Save to `PROGRESS.md` in the project root.
 
 # Examples
 
-Example 1: 進捗の確認
-User says: "今のプロジェクトの進捗を教えて"
+Example 1: Checking Progress
+User says: "Tell me the progress of the current project"
 Actions:
-
-1. report-progressスクリプトを実行し、JSONを取得
-2. 各フェーズの完了件数や、評価待ちの特許件数を集計
-   Result: PROGRESS.md がプロジェクトルートに出力される
+1. Parse the directories for statuses
+2. Tally the completed items in each phase and patents pending evaluation
+Result: PROGRESS.md is generated in the project root.
 
 # Troubleshooting
 
-Error: "report-progress.sh execution failed"
-Cause: 必要な実行権限がないか、ディレクトリ構造が壊れている
-Solution: スクリプトに実行権限（chmod +x）があるか確認し、正しいプロジェクトルートで実行しているか確認してください
+Error: "Failed to read directories"
+Cause: The directory structure is broken or missing.
+Solution: Ensure you are running within the initialized project root.
