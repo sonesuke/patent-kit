@@ -21,3 +21,14 @@ This repository (`patent-kit`) is a **Claude Plugin Marketplace** containing adv
 
 - Format all files (`.md`, `.json`) using Prettier: `npx prettier --write .` (or via `mise run fmt`).
 - Before committing structural changes to the plugin, validate the integrity by running `claude plugin validate .` in the project root.
+
+## Autonomous Agents (Host Loop)
+
+This repository includes autonomous agent scripts under `agents/` that can be run on the host machine to perform background tasks.
+
+### PR-Healer (`agents/pr-healer/healer.sh`)
+
+An autonomous daemon that checks for failing GitHub Actions CI checks on open Pull Requests.
+
+- **Workflow**: Finds failing PRs → Runs `claude` inside the Dev Container (`devcontainer exec`) → Analyzes the failure (typically using `mise run pre-commit`) → Commits the fix and replies to the PR.
+- **Requirements**: Requires Docker, GitHub CLI (`gh`), `devcontainer` CLI, and `jq` installed on the host machine.
