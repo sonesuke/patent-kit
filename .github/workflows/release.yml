@@ -18,7 +18,7 @@ jobs:
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
-        with: 
+        with:
           components: rustfmt, clippy
 
       - name: Lint

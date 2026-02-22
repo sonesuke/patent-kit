@@ -1,0 +1,6 @@
+[tools]
+node = "20"
+
+[tasks]
+fmt = { description = "Format files with prettier", run = "npx prettier --write ." }
+pre-commit = { description = "Pre-commit hook to format files", depends = ["fmt"] }

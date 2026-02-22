@@ -1,0 +1,18 @@
+{
+  "name": "patent-kit",
+  "description": "AI-Native Patent Analysis Kit",
+  "version": "0.1.0",
+  "author": {
+    "name": "sonesuke"
+  },
+  "mcpServers": {
+    "google-patent-cli": {
+      "command": "google-patent-cli",
+      "args": ["mcp"]
+    },
+    "arxiv-cli": {
+      "command": "arxiv-cli",
+      "args": ["mcp"]
+    }
+  }
+}
