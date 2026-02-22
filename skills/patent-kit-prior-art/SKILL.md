@@ -81,7 +81,7 @@ Your task is to Execute the Plan and Report Findings.
        - Verify that the publication date is strictly before the priority date.
      - **RULE**: Even if strong prior art is found in patent literature, NPL analysis results MUST be included in the report (Constitution III).
 
-6. **Draft Report**: Fill `.patent-kit/templates/prior-art-template.md`.
+6. **Draft Report**: Fill `[prior-art-template.md](templates/prior-art-template.md)`.
    - **Verdict Selection**:
      - **Relevant prior art identified**: Strong evidence found (investigation required).
      - **Alternative implementation selected**: Path changed to avoid conflict.

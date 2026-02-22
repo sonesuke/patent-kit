@@ -22,8 +22,8 @@ Run the following script to get the current status in JSON format:
 > [!NOTE]
 > **Scripts Location**:
 >
-> - Linux/Mac: `./.patent-kit/scripts/shell/report-progress.sh`
-> - Windows: `.\.patent-kit\scripts\powershell\report-progress.ps1`
+> - Linux/Mac: `./scripts/shell/report-progress.sh`
+> - Windows: `.\scripts\powershell\report-progress.ps1`
 
 #### Step 2: Analyze Output
 
@@ -46,7 +46,7 @@ Based on the JSON output:
 
 ### Output
 
-Generate a summary report using the template `.patent-kit/templates/progress-template.md`.
+Generate a summary report using the template `[progress-template.md](templates/progress-template.md)`.
 
 - **Strictly follow the template structure.**
 - **DO NOT add any extra sections** (e.g., "Top Patents", "Current Status", "Risk Summary", "Recommendations").

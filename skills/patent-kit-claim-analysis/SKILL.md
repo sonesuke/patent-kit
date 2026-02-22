@@ -34,8 +34,8 @@ If no patent ID is provided, run the following to get the next patent:
 > [!NOTE]
 > **Scripts Location**:
 >
-> - Linux/Mac: `./.patent-kit/scripts/shell/next-claim-analysis-patent.sh`
-> - Windows: `.\.patent-kit\scripts\powershell\next-claim-analysis-patent.ps1`
+> - Linux/Mac: `./scripts/shell/next-claim-analysis-patent.sh`
+> - Windows: `.\scripts\powershell\next-claim-analysis-patent.ps1`
 
 This script finds the first patent in `3-investigations/` that has `evaluation.md` but no `claim-analysis.md` yet.
 
@@ -58,7 +58,7 @@ This script finds the first patent in `3-investigations/` that has `evaluation.m
          - **Example**: "The variation represents a commonly used implementation approach."
        - **Logic Check (Internal only)**: You may consider the standard equivalence factors (Interchangeability, Ease of Interchangeability, etc.) to form your technical opinion, but do NOT explicitly list them as legal requirements in the output.
 
-3. **Draft**: Fill `.patent-kit/templates/claim-analysis-template.md`.
+3. **Draft**: Fill `[claim-analysis-template.md](templates/claim-analysis-template.md)`.
    - **Similarity Assessment**:
      - **Definitions**:
        - **Significant**: All elements overlap (Direct correspondence).

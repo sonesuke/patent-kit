@@ -31,7 +31,7 @@ Your task is to define the product concept and identify competitors. This phase 
 
 2. **Refine**: If the concept is too vague, ask clarifying questions to break it down into technical elements relevant for patent search.
 
-3. **Save**: Write the gathered information to `0-specifications/specification.md` using the template `.patent-kit/templates/specification-template.md`.
+3. **Save**: Write the gathered information to `0-specifications/specification.md` using the template `[specification-template.md](templates/specification-template.md)`.
 
 #### Step 2: Assignee Identification
 

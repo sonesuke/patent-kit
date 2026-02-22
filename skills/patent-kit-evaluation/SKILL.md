@@ -27,8 +27,8 @@ If no patent ID is provided, run the following to get the next patent:
 > [!NOTE]
 > **Scripts Location**:
 >
-> - Linux/Mac: `./.patent-kit/scripts/shell/next-evaluation-patent.sh`
-> - Windows: `.\.patent-kit\scripts\powershell\next-evaluation-patent.ps1`
+> - Linux/Mac: `./scripts/shell/next-evaluation-patent.sh`
+> - Windows: `.\scripts\powershell\next-evaluation-patent.ps1`
 
 This script finds the first patent marked as `relevant` in `2-screening/screened.jsonl` that doesn't yet have a folder in `3-investigations/`.
 
@@ -57,7 +57,7 @@ This script finds the first patent marked as `relevant` in `2-screening/screened
      - **Zombie Pending**: If Filing Date is > 3 years ago AND Status is "Pending" (and not Granted), it is likely "Deemed Withdrawn".
      - **Action**: In such cases, mark the Status as `Pending (Likely Withdrawn - Examination Deadline Exceeded)` in the report.
 
-3. **Draft**: Fill `.patent-kit/templates/evaluation-template.md`.
+3. **Draft**: Fill `[evaluation-template.md](templates/evaluation-template.md)`.
 
 4. **Save**: `3-investigations/<patent-id>/evaluation.md`.
 
