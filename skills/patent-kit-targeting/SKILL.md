@@ -1,5 +1,5 @@
 ---
-name: targeting
+name: patent-kit-targeting
 description: "Phase 1: Targeting"
 ---
 
@@ -7,22 +7,24 @@ description: "Phase 1: Targeting"
 
 Your task is to generate high-precision search queries based on the product concept and competitors defined in Phase 0. This phase concludes with a set of validated search commands and merged patent data for screening.
 
-## Input
+## Instructions
+
+### Input
 
 - **Specification**: `0-specifications/specification.md` (generated in Phase 0).
 - **Tools**: `google-patent-cli` (assume updated version with assignee search capability).
 
-## Process
+### Process
 
 1. **Read Constitution**: Read `.patent-kit/memory/constitution.md` to understand the core principles.
 
-### Step 1: Targeting Process
+#### Step 1: Targeting Process
 
 Perform the following targeting process relative to the `Target Release Date` and `Cutoff Date` from `0-specifications/specification.md`.
 
 **IMPORTANT**: This step should be conducted **interactively with the user**. Show results, ask for feedback, and refine the queries together.
 
-#### Noise Definition
+##### Noise Definition
 
 A search result is considered **"High Noise"** if **8 or more** of the top 20 snippets fall into any of the following categories:
 
@@ -30,7 +32,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 - **Generic**: Keywords are too general and lack technical specificity.
 - **Irrelevant**: Unrelated to the competitor's known products or the target use case.
 
-#### Phase 1.1: Competitor Patent Research
+##### Phase 1.1: Competitor Patent Research
 
 1. **Start Broad**:
    - Command: `google-patent-cli search --assignee "<Combined Assignees>" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20`
@@ -40,7 +42,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 3. **Iterative Narrowing & Keyword Extraction**:
    - **Action**: Add a keyword representing the "Product Concept" to the `--query`.
    - **CRITICAL RULE 1**: **Always use quotes** for keywords (e.g., `"smartphone"` instead of `smartphone`) to ensure exact matching and proper AND logic. Unquoted terms might be treated as broad OR searches by the search engine.
-   - **CRITICAL RULE 2**: **Mandatory Noise Analysis**. After *every* search command, you MUST inspect the top 20 snippets.
+   - **CRITICAL RULE 2**: **Mandatory Noise Analysis**. After _every_ search command, you MUST inspect the top 20 snippets.
      - **Check**: Does it meet the **High Noise** criteria (8+ irrelevant results)?
      - **Refine**: If **High Noise**, you MUST adjust the query (add exclusions or specific constraints) BEFORE proceeding to the next keyword.
      - **Identify**: Look for **Technical Terms** ("Golden Keywords").
@@ -48,7 +50,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
    - **CRITICAL RULE 3**: **Over-Filtering Check**. If adding a keyword reduces the count to **under 200**, this might be too narrow. **Ask the user** if this is acceptable (e.g., for niche markets) or if they want to broaden the query.
    - **Repeat**: Continue adding quoted keywords (e.g., `--query "\"keyword1\" AND \"keyword2\""`) until the count is reasonable (< 1000) and relevance is high.
 
-#### Phase 1.2: Market Patent Research
+##### Phase 1.2: Market Patent Research
 
 1. **Apply Keywords**:
    - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `1-targeting/keywords.md`).
@@ -57,13 +59,13 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 2. **Iterative Narrowing**:
    - Similar to Phase 3.1, if the count is > 1000, add more specific concept keywords (always quoted).
    - **Mandatory Noise Analysis**:
-     - After *every* search, check the snippets against the **High Noise** criteria (8+ irrelevant results).
+     - After _every_ search, check the snippets against the **High Noise** criteria (8+ irrelevant results).
      - **Analyze**: Identify why irrelevant patents are appearing. Is it a polysemy issue?
      - **Correct**: Add context keywords (e.g., `AND "vehicle"`) or exclusions immediately. Do not blindly add more keywords without fixing the noise.
    - **Goal**: Reach < 1000 hits with high relevance.
    - **Over-Filtering**: If count < 200, **confirm with the user** before proceeding.
 
-### Step 2: Data Acquisition
+#### Step 2: Data Acquisition
 
 1. **Instruct User**: Ask the user to perform the following:
    - **Action**: Go to Google Patents (<https://patents.google.com/>).
@@ -72,7 +74,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
      - Download the results as a CSV file.
    - **Save Location**: Place all downloaded CSV files in `1-targeting/csv/`.
 
-### Step 3: Merge & Deduplicate
+#### Step 3: Merge & Deduplicate
 
 1. **Run Merge Command**:
    - Execute the following command to combine the CSV files and remove duplicates.
@@ -87,7 +89,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
    - The `patent-kit merge` command output displays the number of unique patents (e.g., `Merged 150 unique patents...`).
    - Confirm this count to understand the volume of patents to be screened.
 
-## Output
+### Output
 
 - Create a file `1-targeting/targeting.md` using the template `.patent-kit/templates/targeting-template.md`.
 - Fill in the **Generated Search Commands** with:
@@ -104,7 +106,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 - Create a file `1-targeting/keywords.md` using the template `.patent-kit/templates/keywords-template.md`. This is the **Golden Keywords Registry**.
 - `1-targeting/target.jsonl`: The merged list of unique patents ready for screening.
 
-## Quality Gates
+### Quality Gates
 
 - [ ] **Ambiguity Check**: Did you check for and handle ambiguous keywords/abbreviations?
 - [ ] **Over-Filtering Check**: If count < 200, did you confirm with the user that this is intended?
@@ -113,7 +115,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 - [ ] **Data Acquisition**: Are all CSV files downloaded to `1-targeting/csv/`?
 - [ ] **Merge**: Is `1-targeting/target.jsonl` created with unique patents?
 
-## Deliverables
+### Deliverables
 
 1. `1-targeting/targeting.md`
 2. `1-targeting/keywords.md`

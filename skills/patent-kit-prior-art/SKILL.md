@@ -1,5 +1,5 @@
 ---
-name: prior-art
+name: patent-kit-prior-art
 description: "Phase 5: Prior Art"
 ---
 
@@ -7,13 +7,15 @@ description: "Phase 5: Prior Art"
 
 Your task is to Execute the Plan and Report Findings.
 
-## Input
+## Instructions
+
+### Input
 
 - **Plan File**: `3-investigations/<patent-id>/claim-analysis.md`
 
-## Process
+### Process
 
-### Step 0: Check Existing Report
+#### Step 0: Check Existing Report
 
 **If a Patent ID IS provided**:
 
@@ -25,7 +27,6 @@ Your task is to Execute the Plan and Report Findings.
 1. **Initialize**: Read `.patent-kit/memory/constitution.md`.
 2. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
 3. **Plan & Execute Search**:
-
    - **Strategy: Multi-Layer Search** (Standard Procedure):
      - **Layer 1: General Terminology**:
        - **Purpose**: Capture broad technical concepts and context.
@@ -36,7 +37,7 @@ Your task is to Execute the Plan and Report Findings.
        - **Keywords**: Specific model names, exact algorithms, unique parameter names.
        - **Limit**: **MUST** Expand to **30-50** to capture subtle matches.
      - **Layer 3: Functional/Role-based**:
-       - **Purpose**: Catch patents describing the *function* rather than the specific name.
+       - **Purpose**: Catch patents describing the _function_ rather than the specific name.
        - **Keywords**: "Means for...", "configured to...", functional descriptions.
        - **Limit**: Recommended **10-20**.
 
@@ -62,14 +63,12 @@ Your task is to Execute the Plan and Report Findings.
      - **Check**: Did the command succeed? IF NO -> **STOP** and Debug.
 
 4. **Screen Results** (MANDATORY for BOTH patent and non-patent literature):
-
    - **Non-Patent Literature Screening** (CRITICAL - DO NOT SKIP):
      - **RULE**: Papers with titles directly relevant to the target patent's technical field MUST be included for detailed analysis.
      - Identify Grade A NPL candidates and summarize their technical contributions.
      - Map the technical elements of the paper to the patent's constituent elements.
 
 5. **Detailed Analysis** (MANDATORY):
-
    - **For Non-Patent Literature (Grade A)** (CRITICAL):
      - **Full-Text Acquisition**:
        - **MUST** run `arxiv-cli fetch --id <arxiv-id>` to get full-text JSON for Grade A NPLs.
@@ -98,7 +97,7 @@ Your task is to Execute the Plan and Report Findings.
        - Do NOT use other formats.
 7. **Save**: `3-investigations/<patent-id>/prior-art.md`.
 
-## Quality Gates
+### Quality Gates
 
 - [ ] **Multi-Layer Search**: Did you execute comprehensive searches across all 3 layers (General, Specific, Functional)?
 - [ ] **NPL Coverage**: Did you specifically target NPL (Layer 2) with expanded limits (30-50)?

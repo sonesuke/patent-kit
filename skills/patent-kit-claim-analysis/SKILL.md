@@ -1,5 +1,5 @@
 ---
-name: claim-analysis
+name: patent-kit-claim-analysis
 description: "Phase 4: Claim Analysis"
 ---
 
@@ -7,16 +7,18 @@ description: "Phase 4: Claim Analysis"
 
 Your task is to create the Claim Analysis Report based on the Spec.
 
-## Input
+## Instructions
+
+### Input
 
 - **Patent ID**: `<patent-id>` (optional)
   - If not specified, the next patent pending claim analysis will be automatically selected.
 
-## Process
+### Process
 
 1. **Read Constitution**: Read `.patent-kit/memory/constitution.md` to understand the core principles.
 
-### Step 0: Determine Patent ID
+#### Step 0: Determine Patent ID
 
 If no patent ID is provided, run the following to get the next patent:
 
@@ -31,13 +33,13 @@ If no patent ID is provided, run the following to get the next patent:
 
 > [!NOTE]
 > **Scripts Location**:
-> 
+>
 > - Linux/Mac: `./.patent-kit/scripts/shell/next-claim-analysis-patent.sh`
 > - Windows: `.\.patent-kit\scripts\powershell\next-claim-analysis-patent.ps1`
 
 This script finds the first patent in `3-investigations/` that has `evaluation.md` but no `claim-analysis.md` yet.
 
-### Step 1: Comparison Analysis
+#### Step 1: Comparison Analysis
 
 1. **Read Inputs**: `evaluation.md` (Patent) and `0-specifications/specification.md` (Product) if available.
    - **Check Sufficiency**: Is the product specification detailed enough to determine the presence/absence of EACH element?
@@ -69,11 +71,11 @@ This script finds the first patent in `3-investigations/` that has `evaluation.m
 
 4. **Save**: `3-investigations/<patent-id>/claim-analysis.md`.
 
-## Output
+### Output
 
 - `3-investigations/<patent-id>/claim-analysis.md`: The claim analysis report.
 
-## Quality Gates
+### Quality Gates
 
 - [ ] Product specification is complete and up-to-date.
 - [ ] Conflict Analysis (Claim Chart) is complete and compares all elements.

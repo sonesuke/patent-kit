@@ -1,5 +1,5 @@
 ---
-name: evaluation
+name: patent-kit-evaluation
 description: "Phase 3: Evaluation"
 ---
 
@@ -7,16 +7,18 @@ description: "Phase 3: Evaluation"
 
 Your task is to Analyze the Patent and create the Specification.
 
-## Input
+## Instructions
+
+### Input
 
 - **Patent ID**: `<patent-id>` (optional)
   - If not specified, the next uninvestigated relevant patent will be automatically selected.
 
-## Process
+### Process
 
 1. **Read Constitution**: Read `.patent-kit/memory/constitution.md` to understand the core principles.
 
-### Step 0: Determine Patent ID
+#### Step 0: Determine Patent ID
 
 If no patent ID is provided, run the following to get the next patent:
 
@@ -24,7 +26,7 @@ If no patent ID is provided, run the following to get the next patent:
 
 > [!NOTE]
 > **Scripts Location**:
-> 
+>
 > - Linux/Mac: `./.patent-kit/scripts/shell/next-evaluation-patent.sh`
 > - Windows: `.\.patent-kit\scripts\powershell\next-evaluation-patent.ps1`
 
@@ -37,7 +39,7 @@ This script finds the first patent marked as `relevant` in `2-screening/screened
   - Message: "Evaluation report already exists for <patent-id>. Do you want to proceed with re-evaluating?"
 - **If it does NOT exist**: Proceed with the standard process.
 
-### Step 1: Patent Analysis
+#### Step 1: Patent Analysis
 
 1. **Retrieve Data**:
 
@@ -59,11 +61,11 @@ This script finds the first patent marked as `relevant` in `2-screening/screened
 
 4. **Save**: `3-investigations/<patent-id>/evaluation.md`.
 
-## Output
+### Output
 
 - `3-investigations/<patent-id>/evaluation.md`: The evaluation report for the patent.
 
-## Quality Gates
+### Quality Gates
 
 - [ ] Patent data successfully fetched and saved.
 - [ ] Constituent elements are clearly identified.

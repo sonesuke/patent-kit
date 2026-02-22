@@ -1,5 +1,5 @@
 ---
-name: progress
+name: patent-kit-progress
 description: "Progress Report"
 ---
 
@@ -7,11 +7,13 @@ description: "Progress Report"
 
 Your task is to report the current status of the patent analysis workflow.
 
-## Process
+## Instructions
+
+### Process
 
 1. **Read Constitution**: Read `.patent-kit/memory/constitution.md` to understand the core principles.
 
-### Step 1: Run Progress Script
+#### Step 1: Run Progress Script
 
 Run the following script to get the current status in JSON format:
 
@@ -19,11 +21,11 @@ Run the following script to get the current status in JSON format:
 
 > [!NOTE]
 > **Scripts Location**:
-> 
+>
 > - Linux/Mac: `./.patent-kit/scripts/shell/report-progress.sh`
 > - Windows: `.\.patent-kit\scripts\powershell\report-progress.ps1`
 
-### Step 2: Analyze Output
+#### Step 2: Analyze Output
 
 Based on the JSON output:
 
@@ -42,17 +44,17 @@ Based on the JSON output:
       - If Done: `Relevant`, `Alternative`, `Aligned`, `Escalated`.
       - Otherwise: `Pending`.
 
-## Output
+### Output
 
 Generate a summary report using the template `.patent-kit/templates/progress-template.md`.
 
-   - **Strictly follow the template structure.**
-   - **DO NOT add any extra sections** (e.g., "Top Patents", "Current Status", "Risk Summary", "Recommendations").
-   - **DO NOT duplicate information.**
+- **Strictly follow the template structure.**
+- **DO NOT add any extra sections** (e.g., "Top Patents", "Current Status", "Risk Summary", "Recommendations").
+- **DO NOT duplicate information.**
 
 Save to `PROGRESS.md` in the project root.
 
-## Quality Gates
+### Quality Gates
 
 - [ ] JSON data from `report-progress` is correctly mapped.
 - [ ] Used strictly standard sections (Overview, Screening Summary, Investigation Progress, Next Actions).

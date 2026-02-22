@@ -1,5 +1,5 @@
 ---
-name: concept-interview
+name: patent-kit-concept-interview
 description: "Phase 0: Concept Interview"
 ---
 
@@ -7,15 +7,17 @@ description: "Phase 0: Concept Interview"
 
 Your task is to define the product concept and identify competitors. This phase establishes the foundation for patent targeting.
 
-## Input
+## Instructions
+
+### Input
 
 - **User Input**: Product Concept, Competitors.
 
-## Process
+### Process
 
 1. **Read Constitution**: Read `.patent-kit/memory/constitution.md` to understand the core principles.
 
-### Step 1: Concept Interview
+#### Step 1: Concept Interview
 
 1. **Ask**: Request the following information from the user:
    - **Product Concept**: Detailed description of what they want to realize.
@@ -31,7 +33,7 @@ Your task is to define the product concept and identify competitors. This phase 
 
 3. **Save**: Write the gathered information to `0-specifications/specification.md` using the template `.patent-kit/templates/specification-template.md`.
 
-### Step 2: Assignee Identification
+#### Step 2: Assignee Identification
 
 1. **Verify**: For each competitor named by the user, verify the correct "Assignee Name" used in patent databases.
    - **Action**: Run a search (e.g., `google-patent-cli search --assignee "<Company Name>"`) **without** `--limit`.
@@ -44,11 +46,11 @@ Your task is to define the product concept and identify competitors. This phase 
    - Record **all** identified official Assignee Names, **including all name variations** found in `top_assignees`. These variations must be included in the final search query.
    - Record the verification status and any notes (e.g., holding company, subsidiary).
 
-## Output
+### Output
 
 - `0-specifications/specification.md`: The product specification with verified assignee names.
 
-## Quality Gates
+### Quality Gates
 
 - [ ] Product concept is clearly defined.
 - [ ] Target country and release date are specified.
