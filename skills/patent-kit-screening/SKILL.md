@@ -28,8 +28,8 @@ Your task is to filter the collected patents by legal status and relevance to pr
 > [!NOTE]
 > **Scripts Location**:
 >
-> - Linux/Mac: `./scripts/shell/*.sh`
-> - Windows: `.\scripts\powershell\*.ps1`
+> - Linux/Mac: `./scripts/shell/*.sh` (and `../patent-kit-progress/scripts/shell/report-progress.sh`)
+> - Windows: `.\scripts\powershell\*.ps1` (and `..\patent-kit-progress\scripts\powershell\report-progress.ps1`)
 
 1. **Determine Range**:
    - Parse the arguments to determine `START_LINE` and `END_LINE`.
