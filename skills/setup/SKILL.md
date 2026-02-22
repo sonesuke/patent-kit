@@ -14,15 +14,22 @@ These directories are ignored by git (via `.gitignore`) or tracked via `.gitkeep
 
 ### Step 1: Create Directories
 
-Execute this shell command to create the folder structure:
+Execute the appropriate command based on the user's Operating System:
 
-```bash
-mkdir -p 0-specifications \
-         1-targeting/csv \
-         1-targeting/json \
-         2-screening/json \
-         3-investigations
-```
+- **For Linux / Mac (Bash/Zsh)**:
+
+  ```bash
+  mkdir -p 0-specifications \
+           1-targeting/csv \
+           1-targeting/json \
+           2-screening/json \
+           3-investigations
+  ```
+
+- **For Windows (PowerShell)**:
+  ```powershell
+  New-Item -ItemType Directory -Force -Path "0-specifications", "1-targeting\csv", "1-targeting\json", "2-screening\json", "3-investigations"
+  ```
 
 ### Step 2: Confirmation
 
