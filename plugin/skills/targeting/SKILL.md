@@ -81,15 +81,15 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Run Merge Command**:
    - Execute the following command to combine the CSV files and remove duplicates.
-   - **Important**: Use `patent-kit` command, NOT `MCP tool`.
-   - Command: `patent-kit merge --input-dir 1-targeting/csv --output 1-targeting/target.jsonl`
+   - **Important**: Use `./plugin/skills/targeting/scripts/shell/merge.sh` (Mac/Linux) or `.\plugin\skills\targeting\scripts\powershell\merge.ps1` (Windows), NOT `MCP tool`.
+   - Command: `./plugin/skills/targeting/scripts/shell/merge.sh 1-targeting/csv 1-targeting/target.jsonl`
 
 2. **Verify Output**:
    - Check that `1-targeting/target.jsonl` has been created.
    - This file contains the consolidated list of unique patents to be screened/evaluated.
 
 3. **Check Count**:
-   - The `patent-kit merge` command output displays the number of unique patents (e.g., `Merged 150 unique patents...`).
+   - The merge command output displays the number of unique patents (e.g., `Merged 150 unique patents...`).
    - Confirm this count to understand the volume of patents to be screened.
 
 ### Output
@@ -139,6 +139,6 @@ Actions:
 
 # Troubleshooting
 
-Error: "patent-kit command not found"
-Cause: Python script path is incorrect or environment is not fully setup.
-Solution: Ensure plugin/skills/targeting/scripts/merge.py is executable and Python 3 is installed.
+Error: "Permission denied" when running merge.sh
+Cause: The script lacks execution permissions.
+Solution: Run `chmod +x plugin/skills/targeting/scripts/shell/merge.sh`.
