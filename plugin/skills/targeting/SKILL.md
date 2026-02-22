@@ -15,7 +15,7 @@ Your task is to generate high-precision search queries based on the product conc
 ### Input
 
 - **Specification**: `0-specifications/specification.md` (generated in Phase 0).
-- **Tools**: `google-patent-cli` (assume updated version with assignee search capability).
+- **Tools**: `MCP ツール` (assume updated version with assignee search capability).
 
 ### Process
 
@@ -38,7 +38,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 ##### Phase 1.1: Competitor Patent Research
 
 1. **Start Broad**:
-   - Command: `google-patent-cli search --assignee "<Combined Assignees>" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20`
+   - Command: MCP ツール `search_patents` を使用 (引数: --assignee "<Combined Assignees>" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20)
 2. **Check Volume**:
    - If total count is **under 1000**: This is a good starting point. Check the top 20 snippets to understand what kind of patents they are filing.
    - If total count is **over 1000**: You need to narrow it down.
@@ -57,8 +57,8 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Apply Keywords**:
    - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `1-targeting/keywords.md`).
-   - Command: `google-patent-cli search --query "\"keyword1\" AND \"keyword2\"" ...` (Wrap details below to avoid length issues)
-   - Real Command: `google-patent-cli search --query "\"keyword1\" AND \"keyword2\"" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20`
+   - Command: MCP ツール `search_patents` を使用 (引数: --query "\"keyword1\" AND \"keyword2\"" ...) (Wrap details below to avoid length issues)
+   - Real Command: MCP ツール `search_patents` を使用 (引数: --query "\"keyword1\" AND \"keyword2\"" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20)
 2. **Iterative Narrowing**:
    - Similar to Phase 3.1, if the count is > 1000, add more specific concept keywords (always quoted).
    - **Mandatory Noise Analysis**:
@@ -81,7 +81,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Run Merge Command**:
    - Execute the following command to combine the CSV files and remove duplicates.
-   - **Important**: Use `patent-kit` command, NOT `google-patent-cli`.
+   - **Important**: Use `patent-kit` command, NOT `MCP ツール`.
    - Command: `patent-kit merge --input-dir 1-targeting/csv --output 1-targeting/target.jsonl`
 
 2. **Verify Output**:
@@ -132,7 +132,7 @@ Example 1: ターゲット母集団の形成
 User says: "要件が固まったので、検索式を作ってターゲット母集団を作成して"
 Actions:
 
-1. specification.md から抽出したキーワードで google-patent-cli 検索を試行
+1. specification.md から抽出したキーワードで MCP ツール 検索を試行
 2. 検索ボリューム（< 1000）やノイズレベルを確認しながらクエリを調整
 3. ユーザーがダウンロードしたCSVを merge コマンドでJSONLに結合
    Result: 1-targeting/target.jsonl が生成され、スクリーニング準備が整う

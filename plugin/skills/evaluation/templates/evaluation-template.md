@@ -41,7 +41,7 @@ Evaluate Novelty and Inventive Step against prior art.
 
 ## Quality Gates
 
-- [ ] Bibliographic info verified via `google-patent-cli`.
+- [ ] Bibliographic info verified via `MCP ツール`.
 - [ ] Essential elements (A, B, C...) clearly defined.
 - [ ] Notable dependent claims summarized.
 - [ ] Objective is unambiguous.

@@ -39,7 +39,7 @@ Your task is to define the product concept and identify competitors. This phase 
 #### Step 2: Assignee Identification
 
 1. **Verify**: For each competitor named by the user, verify the correct "Assignee Name" used in patent databases.
-   - **Action**: Run a search (e.g., `google-patent-cli search --assignee "<Company Name>"`) **without** `--limit`.
+   - **Action**: Run a search (e.g., MCP ツール `search_patents` を使用 (引数: --assignee "<Company Name>")) **without** `--limit`.
    - **Check `top_assignees`**: The output will include `top_assignees`. Look for **name variations** (表記揺れ) for the same company (e.g., "Google LLC", "Google Inc.", "GOOGLE LLC").
    - **Confirm**: Display the top assignees found and ask the user if they represent the intended competitor.
    - **Refine**: If incorrect or no hits, try variations (e.g., "Google LLC" instead of "Google").
@@ -77,4 +77,4 @@ Actions:
 
 Error: "Competitor not found in patent database"
 Cause: ユーザーが指定した企業名と、特許DB上のAssignee Nameが一致していない
-Solution: google-patent-cli の `--assignee` 検索結果から正しい表記揺れを探し、ユーザーに確認してください
+Solution: MCP ツール の `--assignee` 検索結果から正しい表記揺れを探し、ユーザーに確認してください

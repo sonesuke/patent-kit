@@ -32,7 +32,7 @@ Investigations MUST cover the "Big 4" jurisdictions unless explicitly restricted
 
 Prior art searches MUST cover both patent literature and non-patent literature.
 
-- **Rule**: Use BOTH `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli` for every prior art investigation.
+- **Rule**: Use BOTH `MCPツール search_patents / fetch_patent` and `MCPツール search_papers / fetch_paper` for every prior art investigation.
 - **Rationale**: Comprehensive prior art analysis requires checking academic papers, conference proceedings, and technical publications alongside patents.
 - **Requirement**: Document search results from both sources in the final report.
 
@@ -70,13 +70,13 @@ For Claim Analysis/FTO, accurate understanding of the target product is crucial.
 Prior art searches MUST respect the target patent's effective filing/priority date.
 
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
-- **Requirement**: Use the `--before` flag in `./.patent-kit/bin/google-patent-cli` or `./.patent-kit/bin/arxiv-cli` with the correct date (YYYY-MM-DD).
+- **Requirement**: Use the `--before` flag in `MCPツール search_patents / fetch_patent` or `MCPツール search_papers / fetch_paper` with the correct date (YYYY-MM-DD).
 
-- **Requirement**: Use the `--before` flag in `./.patent-kit/bin/google-patent-cli` or `./.patent-kit/bin/arxiv-cli` with the correct date (YYYY-MM-DD).
+- **Requirement**: Use the `--before` flag in `MCPツール search_patents / fetch_patent` or `MCPツール search_papers / fetch_paper` with the correct date (YYYY-MM-DD).
 
 ### IX. Search Query Optimization
 
-Long or overly complex queries often return zero results in both `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli`.
+Long or overly complex queries often return zero results in both `MCPツール search_patents / fetch_patent` and `MCPツール search_papers / fetch_paper`.
 
 - **Rule**: Start with broad, essential keywords (2-4 terms maximum).
 - **Rule**: If a search returns zero results, progressively simplify the query:
@@ -95,7 +95,7 @@ Long or overly complex queries often return zero results in both `./.patent-kit/
 Strictly adhere to the capabilities of provided tools.
 
 - **Rule**: Do NOT hallucinate command options. Check `--help` if unsure.
-- **Rule**: Use `./.patent-kit/bin/google-patent-cli` for patent literature and `./.patent-kit/bin/arxiv-cli` for non-patent literature (academic papers).
+- **Rule**: Use `MCPツール search_patents / fetch_patent` for patent literature and `MCPツール search_papers / fetch_paper` for non-patent literature (academic papers).
 - **Rule**: STOP immediately if a command execution fails. Do not simulate results or proceed with the workflow.
 - **Requirement**: Verify command success (exit code 0) before reading outputs.
 
@@ -103,7 +103,7 @@ Strictly adhere to the capabilities of provided tools.
 
 To maintain context window efficiency, large outputs from CLI tools MUST be handled via files.
 
-- **Rule**: `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli` output MUST be redirected to a JSON file.
+- **Rule**: `MCPツール search_patents / fetch_patent` and `MCPツール search_papers / fetch_paper` output MUST be redirected to a JSON file.
   - Path: `3-investigations/<patent-id>/json/<patent-id>.json` (for single patent)
   - Path: `3-investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)
   - Path: `1-targeting/json/search_results_<desc>.json` (for targeting)

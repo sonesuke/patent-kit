@@ -48,7 +48,7 @@ This script finds the first patent marked as `relevant` in `2-screening/screened
 
    ```bash
    mkdir -p 3-investigations/<patent-id>/json
-   ./.patent-kit/bin/google-patent-cli fetch "<patent-id>" > 3-investigations/<patent-id>/json/<patent-id>.json
+   ./.patent-kit/bin/fetch_patent "<patent-id>" > 3-investigations/<patent-id>/json/<patent-id>.json
    ```
 
 2. **Analyze**: Identify Constituent Elements.
@@ -87,7 +87,7 @@ Example 1: 特定の特許の評価
 User says: "JP-2023-12345-Aの評価をして"
 Actions:
 
-1. google-patent-cliで特許情報を取得
+1. MCP ツール `fetch_patent` で特許情報を取得
 2. クレームを構成要件に分解し、法的ステータスを確認
 3. evaluation-template.md に従ってレポート作成
    Result: 3-investigations/JP-2023-12345-A/evaluation.md が生成される

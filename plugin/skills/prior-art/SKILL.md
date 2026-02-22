@@ -58,10 +58,10 @@ Your task is to Execute the Plan and Report Findings.
      - Construct a list of frequent synonyms for the technical field to avoid missing documents due to terminology mismatch.
 
    - **Tools & Configuration** (Both Required):
-     - **CRITICAL**: Use `--before <priority-date>` for both `./.patent-kit/bin/google-patent-cli` and `./.patent-kit/bin/arxiv-cli`.
-     - **MUST** use `./.patent-kit/bin/google-patent-cli` for patent literature.
-     - **MUST** use `./.patent-kit/bin/arxiv-cli` for non-patent literature (academic papers).
-     - Example: `./.patent-kit/bin/arxiv-cli search --query "<query>" --before "<priority-date>" --limit 50`.
+     - **CRITICAL**: Use `--before <priority-date>` for both `MCPツール search_patents / fetch_patent` and `MCPツール search_papers / fetch_paper`.
+     - **MUST** use `MCPツール search_patents / fetch_patent` for patent literature.
+     - **MUST** use `MCPツール search_papers / fetch_paper` for non-patent literature (academic papers).
+     - Example: `MCPツール search_papers --query "<query>" --before "<priority-date>" --limit 50`.
      - **Requirement**: Save output to `3-investigations/<patent-id>/json/search_results_<desc>.json`.
      - **Check**: Did the command succeed? IF NO -> **STOP** and Debug.
 
@@ -74,7 +74,7 @@ Your task is to Execute the Plan and Report Findings.
 5. **Detailed Analysis** (MANDATORY):
    - **For Non-Patent Literature (Grade A)** (CRITICAL):
      - **Full-Text Acquisition**:
-       - **MUST** run `arxiv-cli fetch --id <arxiv-id>` to get full-text JSON for Grade A NPLs.
+       - **MUST** run MCP ツール `fetch_paper` を使用 (引数: --id <arxiv-id>) to get full-text JSON for Grade A NPLs.
        - Save output to `3-investigations/<patent-id>/json/npl_<id>.json`.
      - **Claim Chart Creation**:
        - **Requirement**: Create a Claim Chart comparing the NPL against the Patent Claims.
@@ -104,7 +104,7 @@ Your task is to Execute the Plan and Report Findings.
 
 - [ ] **Multi-Layer Search**: Did you execute comprehensive searches across all 3 layers (General, Specific, Functional)?
 - [ ] **NPL Coverage**: Did you specifically target NPL (Layer 2) with expanded limits (30-50)?
-- [ ] **Full-Text Analysis**: Did you fetch the JSON using `arxiv-cli fetch` for top NPLs?
+- [ ] **Full-Text Analysis**: Did you fetch the JSON using `fetch_paper` for top NPLs?
 - [ ] **Claim Chart**: Does the report include a Claim Chart with precise paragraph-level citations?
 - [ ] **Priority Date**: Is every piece of evidence confirmed to be prior to the cutoff?
 - [ ] **Overall Similarity**: Does it follow the strict format `Overall Similarity: Significant Similarity` (or Moderate/Limited)?
@@ -127,7 +127,7 @@ Actions:
 
 1. claim-analysis.md を読み込み、類似性を確認
 2. General/Specific/Functionalの3層で特許と非特許文献をハイブリッド検索
-3. arxiv-cli と google-patent-cli の結果を比較し、クレームチャートを作成
+3. MCP ツール (search_papers / fetch_paper) と MCP ツール の結果を比較し、クレームチャートを作成
    Result: 3-investigations/US-9876543-B2/prior-art.md が生成される
 
 # Troubleshooting
