@@ -9,7 +9,7 @@
       "author": {
         "name": "sonesuke"
       },
-      "source": "./plugins/patent-kit"
+      "source": "./plugin/patent-kit"
     }
   ]
 }
