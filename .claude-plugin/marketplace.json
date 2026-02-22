@@ -1,0 +1,15 @@
+{
+  "name": "patent-kit-marketplace",
+  "owner": "sonesuke",
+  "plugins": [
+    {
+      "name": "patent-kit",
+      "description": "AI-Native Patent Analysis Kit",
+      "version": "0.1.0",
+      "author": {
+        "name": "sonesuke"
+      },
+      "source": "https://github.com/sonesuke/patent-kit"
+    }
+  ]
+}
