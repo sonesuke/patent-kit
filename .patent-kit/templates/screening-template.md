@@ -8,19 +8,19 @@
 
 ## Detail by Judgment
 
-| Judgment | Count | Percentage |
-|----------|-------|------------|
-| Relevant | [NUMBER] | [PERCENT]% |
-| Irrelevant | [NUMBER] | [PERCENT]% |
-| Expired | [NUMBER] | [PERCENT]% |
-| **Total Screened** | [NUMBER] | 100.0% |
-| Not Processed | [NUMBER] | - |
+| Judgment           | Count    | Percentage |
+| ------------------ | -------- | ---------- |
+| Relevant           | [NUMBER] | [PERCENT]% |
+| Irrelevant         | [NUMBER] | [PERCENT]% |
+| Expired            | [NUMBER] | [PERCENT]% |
+| **Total Screened** | [NUMBER] | 100.0%     |
+| Not Processed      | [NUMBER] | -          |
 
 ## Top 10 Relevant Patents
 
-| Patent ID | Title | Assignee | Priority Date | Reason |
-|-----------|-------|----------|---------------|--------|
-| [ID] | [TITLE] | [ASSIGNEE] | [DATE] | [REASON] |
+| Patent ID | Title   | Assignee   | Priority Date | Reason   |
+| --------- | ------- | ---------- | ------------- | -------- |
+| [ID]      | [TITLE] | [ASSIGNEE] | [DATE]        | [REASON] |
 
 ---
 

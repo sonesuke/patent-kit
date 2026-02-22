@@ -12,9 +12,9 @@
 - **User Input**: (List provided names)
 - **Verified Assignee Names (Canonicalized)**:
 
-  | Canonical Name | Variants Found in DB | Verified? | Notes |
-  |---|---|---|---|
-  | (e.g. Google LLC) | (e.g. Google Inc., GOOGLE LLC) | Yes | Main assignee |
+  | Canonical Name    | Variants Found in DB           | Verified? | Notes         |
+  | ----------------- | ------------------------------ | --------- | ------------- |
+  | (e.g. Google LLC) | (e.g. Google Inc., GOOGLE LLC) | Yes       | Main assignee |
 
   **Decision**: Use all verified variants in assignee filter.
 
@@ -30,10 +30,10 @@ Identify non-competitor prior art and industry-wide technical solutions relevant
 
 ## Validation & Adjustment Log
 
-| Research Type | Initial Results (Top 20) | Noise Cause | Adjustment | Result Count | Final Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| Competitor Patent Research | ... | ... | ... | ... |  |
-| Market Patent Research | ... | ... | ... | ... | ... |
+| Research Type              | Initial Results (Top 20) | Noise Cause | Adjustment | Result Count | Final Status |
+| :------------------------- | :----------------------- | :---------- | :--------- | :----------- | :----------- |
+| Competitor Patent Research | ...                      | ...         | ...        | ...          |              |
+| Market Patent Research     | ...                      | ...         | ...        | ...          | ...          |
 
 ## Final Optimized Queries
 
@@ -59,7 +59,7 @@ Copy and paste these queries directly into [Google Patents](https://patents.goog
 
 > [!IMPORTANT]
 > **Formatting Rules**:
-> 
+>
 > 1. **Order**: Keywords MUST be placed **at the beginning** of the query string.
 > 2. **Keywords**: MUST be quoted (e.g., `"smartphone"`).
 > 3. **Assignees**: MUST be quoted and space-separated keys (e.g., `assignee:"Google LLC" assignee:"Microsoft Corp"`).

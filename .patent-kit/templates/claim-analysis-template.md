@@ -15,9 +15,9 @@
 Compare the Product Features against the Patent Elements.
 
 | Element | Product Feature | Match? (Direct correspondence/Equiv/None) | Similarity Level |
-| :--- | :--- | :--- | :--- |
-| A | ... | ... | ... |
-| B | ... | ... | ... |
+| :------ | :-------------- | :---------------------------------------- | :--------------- |
+| A       | ...             | ...                                       | ...              |
+| B       | ...             | ...                                       | ...              |
 
 ## 3. Similarity Assessment
 

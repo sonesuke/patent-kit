@@ -23,8 +23,8 @@ This kit provides structured commands to automate:
    git clone https://github.com/sonesuke/patent-kit.git my-project
    cd my-project
    ```
-   
-   *(Alternatively, you can click "Use this template" if configured on GitHub).*
+
+   _(Alternatively, you can click "Use this template" if configured on GitHub)._
 
 2. **Configure AI Agent**
 
@@ -41,6 +41,7 @@ claude --plugin-dir .claude-plugin
 ### Prerequisites
 
 You must have the following CLI tools accessible to your AI Agent (e.g., exposed via MCP Server):
+
 - `google-patent-cli`
 - `arxiv-cli`
 
@@ -49,52 +50,57 @@ You must have the following CLI tools accessible to your AI Agent (e.g., exposed
 1. **Phase 1: Targeting**: Define product concept and generate queries.
 
    **Claude**:
-     ```bash
-     /patent-kit:targeting
-     # Output: targeting/targeting.md
-     ```
+
+   ```bash
+   /patent-kit:targeting
+   # Output: targeting/targeting.md
+   ```
 
    **Copilot**: Look for `targeting` in your skills panel.
 
 2. **Phase 2: Evaluation**: Analyze the patent.
 
-    **Claude**:
-    ```bash
-    /patent-kit:evaluation JP2023-123456
-    # Output: investigations/JP2023-123456/evaluation.md
-    ```
+   **Claude**:
 
-    **Copilot**: Look for `evaluation` in your skills panel.
+   ```bash
+   /patent-kit:evaluation JP2023-123456
+   # Output: investigations/JP2023-123456/evaluation.md
+   ```
+
+   **Copilot**: Look for `evaluation` in your skills panel.
 
 3. **Phase 4: Claim Analysis**: Define search strategy.
 
-    **Claude**:
-    ```bash
-    /patent-kit:claim-analysis JP2023-123456
-    # Output: investigations/JP2023-123456/claim-analysis.md
-    ```
+   **Claude**:
 
-    **Copilot**: Look for `claim-analysis` in your skills panel.
+   ```bash
+   /patent-kit:claim-analysis JP2023-123456
+   # Output: investigations/JP2023-123456/claim-analysis.md
+   ```
+
+   **Copilot**: Look for `claim-analysis` in your skills panel.
 
 4. **Phase 5: Prior Art**: Run search and report.
 
-    **Claude**:
-    ```bash
-    /patent-kit:prior-art JP2023-123456
-    # Output: investigations/JP2023-123456/prior-art.md
-    ```
+   **Claude**:
 
-    **Copilot**: Look for `prior-art` in your skills panel.
+   ```bash
+   /patent-kit:prior-art JP2023-123456
+   # Output: investigations/JP2023-123456/prior-art.md
+   ```
+
+   **Copilot**: Look for `prior-art` in your skills panel.
 
 5. **Track Progress**: Summarize the current status of all investigations.
 
-    **Claude**:
-    ```bash
-    /patent-kit:progress
-    # Output: PROGRESS.md
-    ```
+   **Claude**:
 
-    **Copilot**: Look for `progress` in your skills panel.
+   ```bash
+   /patent-kit:progress
+   # Output: PROGRESS.md
+   ```
+
+   **Copilot**: Look for `progress` in your skills panel.
 
 ## Output Structure
 
@@ -118,4 +124,3 @@ The project is organized into numbered phases:
 │       └── prior-art.md
 └── PROGRESS.md               # Overall status report
 ```
-

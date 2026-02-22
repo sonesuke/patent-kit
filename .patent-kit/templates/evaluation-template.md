@@ -19,19 +19,19 @@
 Identify the essential technical features (Constituent Elements) from Claim 1.
 
 | Element ID | Description |
-| :--- | :--- |
-| A | ... |
-| B | ... |
-| C | ... |
+| :--------- | :---------- |
+| A          | ...         |
+| B          | ...         |
+| C          | ...         |
 
 ### 3.2 Notable Dependent Claims
 
 Summarize key dependent claims that add significant limitations or features.
 
 | Claim | Limitation Summary | Significance |
-| :--- | :--- | :--- |
-| 2 | ... | ... |
-| ... | ... | ... |
+| :---- | :----------------- | :----------- |
+| 2     | ...                | ...          |
+| ...   | ...                | ...          |
 
 ## 4. Objective
 

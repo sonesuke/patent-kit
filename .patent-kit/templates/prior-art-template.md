@@ -28,29 +28,29 @@
 Select the most relevant documents.
 
 | Doc Number | Title | Pub Date | Relevance (X/Y/A) | Note |
-| :--- | :--- | :--- | :--- | :--- |
-| D1 | ... | ... | ... | ... |
+| :--------- | :---- | :------- | :---------------- | :--- |
+| D1         | ...   | ...      | ...               | ...  |
 
 ### 2.2 Non-Patent Literature (NPL)
 
 | NPL ID | Title | Authors | Pub Date | Relevance | Note |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| NPL1 | ... | ... | ... | ... | ... |
+| :----- | :---- | :------ | :------- | :-------- | :--- |
+| NPL1   | ...   | ...     | ...      | ...       | ...  |
 
 ## 3. Comparison (Claim Chart)
 
 Compare the Spec (Elements) with the Primary Reference (D1).
 
 | Element | D1 Disclosure | Match? | Difference |
-| :--- | :--- | :--- | :--- |
-| A | ... | Yes/No | ... |
-| B | ... | Yes/No | ... |
+| :------ | :------------ | :----- | :--------- |
+| A       | ...           | Yes/No | ...        |
+| B       | ...           | Yes/No | ...        |
 
 ### 3.2 Non-Patent Literature Analysis (if applicable)
 
 | Element | NPL Disclosure | Match? | Note |
-| :--- | :--- | :--- | :--- |
-| A | ... | Yes/No | ... |
+| :------ | :------------- | :----- | :--- |
+| A       | ...            | Yes/No | ...  |
 
 ## 4. Published Application Amendment Potential (If Applicable)
 
@@ -58,9 +58,9 @@ Compare the Spec (Elements) with the Primary Reference (D1).
 
 For published patent applications (not yet granted), assess the possibility of claim amendments based on embodiments:
 
-| Doc Number | Application Status | Embodiment Scope | Amendment Potential | Assessment |
-| :--- | :--- | :--- | :--- | :--- |
-| D1 | Published/Pending | (Describe broader features in embodiments) | High/Medium/Low | (Could claims be amended to cover broader scope?) |
+| Doc Number | Application Status | Embodiment Scope                           | Amendment Potential | Assessment                                        |
+| :--------- | :----------------- | :----------------------------------------- | :------------------ | :------------------------------------------------ |
+| D1         | Published/Pending  | (Describe broader features in embodiments) | High/Medium/Low     | (Could claims be amended to cover broader scope?) |
 
 **Reasoning**:
 

@@ -71,7 +71,6 @@ Long or overly complex queries often return zero results in both `./.patent-kit/
 
 - **Rule**: Start with broad, essential keywords (2-4 terms maximum).
 - **Rule**: If a search returns zero results, progressively simplify the query:
-
   1. Remove technical modifiers and adjectives.
   2. Break compound concepts into separate searches.
   3. Try synonyms or broader terms.
