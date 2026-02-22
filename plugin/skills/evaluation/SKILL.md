@@ -86,10 +86,11 @@ Run /patent-kit:claim-analysis <patent-id>
 Example 1: Evaluating a Specific Patent
 User says: "Please evaluate JP-2023-12345-A"
 Actions:
+
 1. Fetch patent info using the MCP tool
 2. Break down the claims into elements and check the legal status
 3. Generate the report according to evaluation-template.md
-Result: 3-investigations/JP-2023-12345-A/evaluation.md is generated.
+   Result: 3-investigations/JP-2023-12345-A/evaluation.md is generated.
 
 # Troubleshooting
 

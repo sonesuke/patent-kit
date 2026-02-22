@@ -97,10 +97,11 @@ Run /patent-kit:prior-art <patent-id>
 Example 1: Starting Claim Analysis
 User says: "Please perform a claim analysis on US-1234567-B2"
 Actions:
+
 1. Load the constitution
 2. Read 3-investigations/US-1234567-B2/evaluation.md and the product specification
 3. Perform comparative analysis on each claim element
-Result: claim-analysis.md is generated, saving the comparison between the specific patent and the product
+   Result: claim-analysis.md is generated, saving the comparison between the specific patent and the product
 
 # Troubleshooting
 

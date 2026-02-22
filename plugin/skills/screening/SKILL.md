@@ -121,10 +121,11 @@ Run /patent-kit:evaluation <patent-id>
 Example 1: Starting Bulk Screening
 User says: "Screen the 150 extracted patents"
 Actions:
+
 1. Read the theme and domain from specification.md
 2. For each line in target.jsonl, use the MCP tool to fetch the patent
 3. Determine if it is relevant / irrelevant / expired, and summarize
-Result: 2-screening/screened.jsonl and screening.md are generated.
+   Result: 2-screening/screened.jsonl and screening.md are generated.
 
 # Troubleshooting
 

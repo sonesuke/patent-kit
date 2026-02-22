@@ -124,10 +124,11 @@ Your task is to Execute the Plan and Report Findings.
 Example 1: Executing Prior Art Search
 User says: "Find prior art for US-9876543-B2, which looked promising in Step 4"
 Actions:
+
 1. Read claim-analysis.md to identify similarities
 2. Perform a hybrid search on patent and non-patent literature across General/Specific/Functional layers
 3. Compare the MCP tool results and create a claim chart
-Result: 3-investigations/US-9876543-B2/prior-art.md is generated.
+   Result: 3-investigations/US-9876543-B2/prior-art.md is generated.
 
 # Troubleshooting
 

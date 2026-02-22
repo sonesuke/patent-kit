@@ -71,9 +71,10 @@ Save to `PROGRESS.md` in the project root.
 Example 1: Checking Progress
 User says: "Tell me the progress of the current project"
 Actions:
+
 1. Parse the directories for statuses
 2. Tally the completed items in each phase and patents pending evaluation
-Result: PROGRESS.md is generated in the project root.
+   Result: PROGRESS.md is generated in the project root.
 
 # Troubleshooting
 
