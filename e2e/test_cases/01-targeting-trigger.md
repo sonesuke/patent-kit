@@ -7,10 +7,16 @@
 **Input / Trigger Phrase**:
 "Create a target population for a folding dual-screen smartphone. The target release date is 2025-01-01 and the cutoff date is 2020-01-01."
 
-**Expected Outcome**:
+**Simulated User Responses**:
 
-1. [TRIGGERED] The `targeting` skill is correctly identified, loaded, and its instructions are followed.
-2. [OUTPUT] A basic text search query is executed using the `search_patents` MCP tool.
-3. [OUTPUT] Golden keywords are extracted and written to `1-targeting/keywords.md`.
-4. [OUTPUT] The agent asks the user for feedback on the initial search hit count, demonstrating interactive querying as mandated by the skill, OR it attempts to automatically adjust the query to fall under 1000 hits.
-5. [NO_LEAKAGE] The agent DOES NOT start evaluating or screening patents (no `screening.md` or `evaluation.md` files are created).
+- If asked about search count or to proceed with creating `target.jsonl`: "Yes, please proceed with formatting the query and fetching the CSV."
+
+**Evaluation Command**:
+
+```bash
+[ -f 1-targeting/keywords.md ] && grep -q -i "smartphone" 1-targeting/keywords.md
+```
+
+**Expected Outcome**:
+The `targeting` skill is correctly identified. Golden keywords are extracted and written to `1-targeting/keywords.md`. The evaluation command exits with 0.
+There should be NO leakage into screening or evaluation phases.

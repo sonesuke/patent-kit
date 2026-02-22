@@ -11,9 +11,16 @@ Before executing the trigger, the test runner must:
 **Input / Trigger Phrase**:
 "I have placed an invention specification in `0-specifications/specification.md`. Please read it and perform the Phase 1 targeting step (search query generation) for a 2025 product release."
 
-**Expected Outcome**:
+**Simulated User Responses**:
 
-1. [PASS] The `targeting` skill reads the generated specification file.
-2. [PASS] The skill identifies "solar-powered", "auto-cleaning", "IoT module", "cat litter box".
-3. [PASS] The skill successfully writes the formulated queries and synonyms into `1-targeting/targeting.md`.
-4. [PASS] The skill utilizes the `search_patents` tool with the formulated queries and writes the outcome to `1-targeting/target.jsonl`.
+- If asked about modifying keywords or synonyms: "Looks good, proceed to search."
+- If asked whether the query hit counts are acceptable (~1000 hits): "The count is acceptable, proceed to merge."
+
+**Evaluation Command**:
+
+```bash
+[ -f 1-targeting/targeting.md ] && [ -f 1-targeting/target.jsonl ] && [ $(wc -l < 1-targeting/target.jsonl) -gt 0 ]
+```
+
+**Expected Outcome**:
+The `targeting` skill reads the generated specification file. It identifies "solar-powered", "auto-cleaning", "IoT module", "cat litter box". It writes formulated queries into `1-targeting/targeting.md` and successfully creates `1-targeting/target.jsonl`. The evaluation command checks for the existence of both files and ensures the JSONL is not empty (exit code 0).

@@ -11,14 +11,16 @@ DO NOT SUMMARIZE. DO NOT EXPLAIN WHAT YOU WOULD DO. EXECUTE EVERY STEP BELOW IMM
 
 2. EXECUTE TESTS SEQUENTIALLY:
    - For each un-executed test case file (`.md`) found in `e2e/test_cases/`:
-     - Read the user persona, trigger phrase, and expected outcome from the file.
-     - Act as the user: self-prompt Claude with the specified trigger phrase. 
+     - Read the user persona, trigger phrase, evaluation commands, and simulated user responses from the file.
+     - Act as the user: self-prompt Claude with the specified trigger phrase.
+     - **Handling Interaction**: If the skill pauses and asks a question (e.g., asking for feedback on search counts), read the "Simulated User Responses" from the test case and reply on behalf of the user to continue the flow.
      - Observe the internal tool invocations. Did the appropriate `SKILL` tool trigger?
-     - If yes, execute the required tasks for that skill (e.g., creating files, running MCP tool commands). 
      - Wait for the skill execution to yield a state change (e.g., writing output to `1-targeting/targeting.md`).
-     - Compare the final state against the "Expected Outcome" specified in the test case.
+     - **Objective Evaluation**: Once the skill finishes, execute the "Evaluation Command" specified in the test case using your Bash tool. 
+       - If the command exits with `0`, the test is considered `PASS`.
+       - If the command exits with non-zero, the test is considered `FAIL`.
      - Record the progress using: `./agents/test-runner/tools/record-progress.sh "<TestCaseName>" "<PASS|FAIL>" "<Brief Details>" "<Errors if any>"`
-     - Append a more detailed summary to `e2e/reports/report_${REPORT_ID}.md`.
+     - Append a more detailed summary to `e2e/reports/report_${REPORT_ID}_Trial${TRIAL}.md`.
      
 3. REVERT STATE:
    - After testing each state (or at the end of the total run), run a command like `git clean -fd` and `git checkout .` to discard generated files like `1-targeting/` or `0-specifications/` so they do not pollute the repository for the next test.

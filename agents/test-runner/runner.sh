@@ -23,42 +23,53 @@ if ! docker info >/dev/null 2>&1; then
 fi
 
 WORKSPACE_FOLDER="${WORKSPACE_FOLDER:-$(pwd)}"
+N_TRIALS="${1:-1}" # Default to 1 trial if not specified
 
 echo "[Host] Ensuring dev container is up for $WORKSPACE_FOLDER..."
 devcontainer up --workspace-folder "$WORKSPACE_FOLDER"
+
+echo "[Host] Ensuring patent-kit plugin is loaded in Claude Code..."
+devcontainer exec --workspace-folder "$WORKSPACE_FOLDER" claude plugin add plugin/ || true
 
 # Ensure the e2e reporting directory exists
 mkdir -p "$WORKSPACE_FOLDER/e2e/reports"
 REPORT_ID=$(date +%Y%m%d_%H%M%S)
 
 echo "=================================================="
-echo "[Host] Starting Agentic Test-Runner..."
-echo "[Host] Triggering Claude inside Dev Container..."
+echo "[Host] Starting Agentic Test-Runner for $N_TRIALS trials..."
 
-# Run Claude inside the container. 
-# We use a temporary file for stderr to avoid swallowing it in jq pipe while keeping jq for stdout.
-TEMP_ERR=$(mktemp)
+# Loop for N_TRIALS
+for ((i=1; i<=N_TRIALS; i++)); do
+    echo "=================================================="
+    echo "[Host] Trial $i / $N_TRIALS"
+    echo "[Host] Triggering Claude inside Dev Container..."
 
-# Run the test runner prompt through the devcontainer context.
-if ! devcontainer exec \
-    --workspace-folder "$WORKSPACE_FOLDER" \
-    claude -p \
-        --dangerously-skip-permissions \
-        --verbose \
-        --output-format stream-json \
-        "$(cat agents/test-runner/prompt.txt) REPORT_ID=$REPORT_ID" < /dev/null 2>"$TEMP_ERR" | jq . ; then
-    
-    EXIT_CODE=$?
-    echo "[Host] Error: Claude agent or devcontainer failed with exit code $EXIT_CODE." >&2
-    if [ -s "$TEMP_ERR" ]; then
-        echo "[Host] Detailed error log:" >&2
-        cat "$TEMP_ERR" >&2
+    # Run Claude inside the container. 
+    TEMP_ERR=$(mktemp)
+
+    if ! devcontainer exec \
+        --workspace-folder "$WORKSPACE_FOLDER" \
+        claude -p \
+            --dangerously-skip-permissions \
+            --verbose \
+            --output-format stream-json \
+            "$(cat agents/test-runner/prompt.txt) REPORT_ID=$REPORT_ID TRIAL=$i" < /dev/null 2>"$TEMP_ERR" | jq . ; then
+        
+        EXIT_CODE=$?
+        echo "[Host] Error: Claude agent or devcontainer failed on Trial $i with exit code $EXIT_CODE." >&2
+        if [ -s "$TEMP_ERR" ]; then
+            echo "[Host] Detailed error log:" >&2
+            cat "$TEMP_ERR" >&2
+        fi
+        rm -f "$TEMP_ERR"
+        
+        echo "[Host] Terminating test run due to error." >&2
+        exit $EXIT_CODE
     fi
+
     rm -f "$TEMP_ERR"
-    
-    echo "[Host] Terminating test run due to error." >&2
-    exit $EXIT_CODE
-fi
+    sleep 2 # Brief pause between trials
+done
 
 rm -f "$TEMP_ERR"
 
