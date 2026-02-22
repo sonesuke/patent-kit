@@ -1,0 +1,3 @@
+{"timestamp":"2026-02-22T10:05:39Z","test_case":"01-targeting-trigger (Trial 1)","status":"PASS","details":"Successfully created keywords.md with smartphone keyword and golden keywords extracted","errors":"","input_tokens":"0","output_tokens":"0"}
+{"timestamp":"2026-02-22T10:19:36Z","test_case":"01-targeting-trigger (Trial 1)","status":"PASS","details":"keywords.md exists and contains 'smartphone'","errors":"","input_tokens":"0","output_tokens":"0"}
+{"timestamp":"2026-02-22T10:27:01Z","test_case":"02-targeting-functional (Trial 1)","status":"PASS","details":"All evaluation checks passed: targeting.md exists, target.jsonl exists, and target.jsonl is non-empty","errors":"","input_tokens":"0","output_tokens":"0"}

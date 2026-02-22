@@ -1,0 +1,19 @@
+{
+    "checks": [
+        {
+            "name": "targeting_md_exists",
+            "type": "workspace",
+            "command": "[ -f 1-targeting/targeting.md ]"
+        },
+        {
+            "name": "target_jsonl_exists",
+            "type": "workspace",
+            "command": "[ -f 1-targeting/target.jsonl ] && [ $(wc -l < 1-targeting/target.jsonl) -gt 0 ]"
+        },
+        {
+            "name": "search_patents_called",
+            "type": "log",
+            "jq": ".message.content[]? | select(.type == \"tool_use\" and ((.name | test(\"search|Search|WebSearch\")) or (.name == \"Skill\" and (.input.skill | test(\"targeting\")))))"
+        }
+    ]
+}

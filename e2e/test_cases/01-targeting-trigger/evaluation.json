@@ -1,0 +1,14 @@
+{
+    "checks": [
+        {
+            "name": "keywords_file_exists",
+            "type": "workspace",
+            "command": "[ -f 1-targeting/keywords.md ] && grep -q -i 'smartphone' 1-targeting/keywords.md"
+        },
+        {
+            "name": "search_patents_called",
+            "type": "log",
+            "jq": ".message.content[]? | select(.type == \"tool_use\" and ((.name | test(\"search|Search|WebSearch\")) or (.name == \"Skill\" and (.input.skill | test(\"targeting\")))))"
+        }
+    ]
+}

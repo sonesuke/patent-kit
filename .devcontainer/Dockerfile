@@ -24,7 +24,13 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 RUN curl https://mise.run | sh
 ENV PATH="/root/.local/bin:$PATH"
 
-# Install Node.js LTS manually as a fallback, though mise will handle the project version
+# Install Node.js LTS manually
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
     && apt-get install -y nodejs \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+# Install Chromium and dependencies for browser-based MCP
+RUN apt-get update && apt-get install -y \
+    chromium \
+    chromium-common \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
