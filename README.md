@@ -38,12 +38,20 @@ claude --plugin-dir .claude-plugin
 
 **(Optional) Copilot Skills**: GitHub Copilot skills are already available in the `.github/copilot-skills/` directory.
 
-### Prerequisites
+### Prerequisites (Install the CLIs)
 
-You must have the following CLI tools accessible to your AI Agent (e.g., exposed via MCP Server):
+You must have the following CLI tools installed and accessible in your system PATH to execute patent and paper searches. 
+**When this plugin is loaded, it will automatically connect to these tools as built-in MCP servers.**
 
-- `google-patent-cli`
-- `arxiv-cli`
+- [Google Patent CLI (google-patent-cli)](https://github.com/sonesuke/google-patent-cli)
+- [arXiv CLI (arxiv-cli)](https://github.com/sonesuke/arxiv-cli)
+
+#### Installation (with Rust toolchain)
+
+```sh
+cargo install --git https://github.com/sonesuke/google-patent-cli.git
+cargo install --git https://github.com/sonesuke/arxiv-cli.git
+```
 
 ### Workflow
 
