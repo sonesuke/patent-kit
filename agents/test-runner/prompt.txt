@@ -9,21 +9,25 @@ DO NOT SUMMARIZE. DO NOT EXPLAIN WHAT YOU WOULD DO. EXECUTE EVERY STEP BELOW IMM
    - If there are no new tests to run, print "All tests passing. Terminating." and exit.
    - Create or append to a blank summary report file at `e2e/reports/report_${REPORT_ID}.md`.
 
-2. EXECUTE TESTS SEQUENTIALLY:
+2. EXECUTE TESTS VIA SUB-AGENTS:
    - For each un-executed test case file (`.md`) found in `e2e/test_cases/`:
      - Read the user persona, trigger phrase, evaluation commands, and simulated user responses from the file.
-     - Act as the user: self-prompt Claude with the specified trigger phrase.
-     - **Handling Interaction**: If the skill pauses and asks a question (e.g., asking for feedback on search counts), read the "Simulated User Responses" from the test case and reply on behalf of the user to continue the flow.
-     - Observe the internal tool invocations. Did the appropriate `SKILL` tool trigger?
-     - Wait for the skill execution to yield a state change (e.g., writing output to `1-targeting/targeting.md`).
-     - **Objective Evaluation**: Once the skill finishes, execute the "Evaluation Command" specified in the test case using your Bash tool. 
+     - **DO NOT EXECUTE THE SKILLS YOURSELF.** You are the evaluator.
+     - Write a temporary prompt file `/tmp/sub_agent_prompt.txt` containing the following structure:
+       "You are a test sub-agent. Act as the following persona: [Insert Persona]. 
+        Execute the following request using your available skills: [Insert Trigger Phrase]. 
+        If a skill prompts you for feedback or asks a question, automatically answer using these simulated responses and proceed: [Insert Simulated Responses].
+        Do not stop or wait for actual user input. Complete the process entirely."
+     - Execute the sub-agent using your Bash tool: `claude -p "\$(cat /tmp/sub_agent_prompt.txt)"`
+     - Wait for the sub-agent process to exit entirely.
+     - **Objective Evaluation**: Once the sub-agent finishes, execute the "Evaluation Command" specified in the test case using your Bash tool. 
        - If the command exits with `0`, the test is considered `PASS`.
        - If the command exits with non-zero, the test is considered `FAIL`.
      - Record the progress using: `./agents/test-runner/tools/record-progress.sh "<TestCaseName>" "<PASS|FAIL>" "<Brief Details>" "<Errors if any>"`
      - Append a more detailed summary to `e2e/reports/report_${REPORT_ID}_Trial${TRIAL}.md`.
      
 3. REVERT STATE:
-   - After testing each state (or at the end of the total run), run a command like `git clean -fd` and `git checkout .` to discard generated files like `1-targeting/` or `0-specifications/` so they do not pollute the repository for the next test.
+   - After testing each state (or at the end of the total run), run `git clean -fd` and `git checkout .` to discard generated files like `1-targeting/` or `0-specifications/` so they do not pollute the repository for the next test.
 
 4. FINISH TURN:
    - Once all test cases are executed and the report is written, terminate immediately.
