@@ -1,6 +1,6 @@
 # Patent Kit
 
-AI-Native Patent Analysis Kit, designed for AI agents (GitHub Copilot, Claude Code).
+AI-Native Patent Analysis Kit, designed for Claude Code.
 
 > [!IMPORTANT]
 > **Disclaimer**: This tool is provided for informational purposes only. The outputs do not constitute legal advice or professional patent opinions.
@@ -36,8 +36,6 @@ Load the plugin directory by adding it to your Claude Code command:
 claude --plugin-dir .claude-plugin
 ```
 
-**(Optional) Copilot Skills**: GitHub Copilot skills are already available in the `.github/copilot-skills/` directory.
-
 ### Prerequisites (Install the CLIs)
 
 You must have the following CLI tools installed and accessible in your system PATH to execute patent and paper searches.
@@ -50,58 +48,38 @@ You must have the following CLI tools installed and accessible in your system PA
 
 1. **Phase 1: Targeting**: Define product concept and generate queries.
 
-   **Claude**:
-
    ```bash
    /patent-kit:targeting
    # Output: targeting/targeting.md
    ```
 
-   **Copilot**: Look for `targeting` in your skills panel.
-
 2. **Phase 2: Evaluation**: Analyze the patent.
-
-   **Claude**:
 
    ```bash
    /patent-kit:evaluation JP2023-123456
    # Output: investigations/JP2023-123456/evaluation.md
    ```
 
-   **Copilot**: Look for `evaluation` in your skills panel.
-
 3. **Phase 4: Claim Analysis**: Define search strategy.
-
-   **Claude**:
 
    ```bash
    /patent-kit:claim-analysis JP2023-123456
    # Output: investigations/JP2023-123456/claim-analysis.md
    ```
 
-   **Copilot**: Look for `claim-analysis` in your skills panel.
-
 4. **Phase 5: Prior Art**: Run search and report.
-
-   **Claude**:
 
    ```bash
    /patent-kit:prior-art JP2023-123456
    # Output: investigations/JP2023-123456/prior-art.md
    ```
 
-   **Copilot**: Look for `prior-art` in your skills panel.
-
 5. **Track Progress**: Summarize the current status of all investigations.
-
-   **Claude**:
 
    ```bash
    /patent-kit:progress
    # Output: PROGRESS.md
    ```
-
-   **Copilot**: Look for `progress` in your skills panel.
 
 ## Output Structure
 
