@@ -1,6 +1,9 @@
 ---
 name: prior-art
-description: "Phase 5: Prior Art"
+description: "対象特許に対する無効資料（先行技術）調査を実施し、レポートを作成する。ユーザーが「先行技術調査をして」「無効化資料を探して（ステップ5）」と求めた場合に使用。"
+metadata:
+  author: sonesuke
+  version: 1.0.0
 ---
 
 # Phase 5: Prior Art
@@ -115,3 +118,20 @@ Your task is to Execute the Plan and Report Findings.
     - "Characteristic implementation described in the patent"
   - [ ] Avoid citing specific court case examples.
   - [ ] Use descriptive technical language.
+
+# Examples
+
+Example 1: 先行技術調査の実行
+User says: "ステップ4で有望だったUS-9876543-B2の先行技術を探して"
+Actions:
+
+1. claim-analysis.md を読み込み、類似性を確認
+2. General/Specific/Functionalの3層で特許と非特許文献をハイブリッド検索
+3. arxiv-cli と google-patent-cli の結果を比較し、クレームチャートを作成
+   Result: 3-investigations/US-9876543-B2/prior-art.md が生成される
+
+# Troubleshooting
+
+Error: "Command failed / No results found"
+Cause: 検索クエリが長すぎる、またはAND条件が厳しすぎる
+Solution: Rule IXに従い、検索クエリをシンプルにして（修飾語を削るなど）再検索してください

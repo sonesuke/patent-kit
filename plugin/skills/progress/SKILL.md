@@ -1,6 +1,9 @@
 ---
 name: progress
-description: "Progress Report"
+description: "現在の特許調査ワークフローの進捗状況をレポートとして出力する。ユーザーが「今の進捗を教えて」「サマリーを出して」と求めた場合に使用。"
+metadata:
+  author: sonesuke
+  version: 1.0.0
 ---
 
 # Progress Report
@@ -62,3 +65,19 @@ Save to `PROGRESS.md` in the project root.
 - [ ] No duplicated information.
 - [ ] **NO Legal Assertions**:
   - [ ] Ensure summary does not use terms like "Does not satisfy", "Does not infringe", "Is a core technology" or cite court cases.
+
+# Examples
+
+Example 1: 進捗の確認
+User says: "今のプロジェクトの進捗を教えて"
+Actions:
+
+1. report-progressスクリプトを実行し、JSONを取得
+2. 各フェーズの完了件数や、評価待ちの特許件数を集計
+   Result: PROGRESS.md がプロジェクトルートに出力される
+
+# Troubleshooting
+
+Error: "report-progress.sh execution failed"
+Cause: 必要な実行権限がないか、ディレクトリ構造が壊れている
+Solution: スクリプトに実行権限（chmod +x）があるか確認し、正しいプロジェクトルートで実行しているか確認してください

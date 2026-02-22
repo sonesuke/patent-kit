@@ -1,6 +1,9 @@
 ---
 name: screening
-description: "Phase 2: Screening"
+description: "収集した特許リストから法的なステータスや関連度に基づいてスクリーニングを行う。ユーザーが「特許のスクリーニングをして」「ノイズを除去（ステップ2）して」と求めた場合に使用。"
+metadata:
+  author: sonesuke
+  version: 1.0.0
 ---
 
 # Phase 2: Screening
@@ -112,3 +115,20 @@ Your task is to filter the collected patents by legal status and relevance to pr
   - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology" or cite court cases.
 
 Run /patent-kit:evaluation <patent-id>
+
+# Examples
+
+Example 1: 一括スクリーニングの開始
+User says: "抽出した150件の特許をスクリーニングして"
+Actions:
+
+1. specification.md のテーマとドメインを読み込む
+2. target.jsonl の各行について、fetch-patent と extract-id を実行
+3. relevant / irrelevant / expired を判定し、サマリーを作成
+   Result: 2-screening/screened.jsonl と screening.md が生成される
+
+# Troubleshooting
+
+Error: "Rate limit exceeded / Timeout"
+Cause: 短時間に大量のフェッチリクエストを送信した
+Solution: コマンドの実行パラメータ（<start> - <end>）を使って、未処理の行からレジュームしてください

@@ -1,6 +1,9 @@
 ---
 name: setup
-description: "Initializes the required directory structure for patent analysis"
+description: "特許分析に必要なディレクトリ構造（0-specifications など）を初期セットアップする。ユーザーが「プロジェクトの初期化をして」「フォルダを作って」と求めた場合に使用。"
+metadata:
+  author: sonesuke
+  version: 1.0.0
 ---
 
 # Patent Kit Setup
@@ -35,3 +38,19 @@ Execute the appropriate command based on the user's Operating System:
 
 Verify that the directories have been created successfully.
 Once created, inform the user that the workspace is ready and they can proceed to Phase 0 (Concept Interview) or Phase 1 (Targeting).
+
+# Examples
+
+Example 1: プロジェクトの初期化
+User says: "新しい調査のためにフォルダをセットアップして"
+Actions:
+
+1. OSの環境（Mac/Windows）を判別
+2. mkdir（またはNew-Item）を使用して必須ディレクトリを一括作成
+   Result: 0-specifications などの必須フォルダ構造が準備される
+
+# Troubleshooting
+
+Error: "Permission denied / Directory already exists"
+Cause: すでにフォルダが存在するか、アクセス権限がない
+Solution: -p フラグまたは -Force オプションが使われているため通常は失敗しません。環境の書き込み権限を確認してください

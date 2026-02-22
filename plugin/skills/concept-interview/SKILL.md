@@ -1,6 +1,9 @@
 ---
 name: concept-interview
-description: "Phase 0: Concept Interview"
+description: "製品コンセプトの定義と競合企業の特定を行うインタビューを実施する。ユーザーが「特許調査を始めたい」「調査の要件定義（ステップ0）をして」と求めた場合に使用。"
+metadata:
+  author: sonesuke
+  version: 1.0.0
 ---
 
 # Phase 0: Concept Interview
@@ -58,3 +61,20 @@ Your task is to define the product concept and identify competitors. This phase 
 - [ ] Specification file is saved with complete information.
 
 Run /patent-kit:targeting
+
+# Examples
+
+Example 1: 新規調査の開始
+User says: "新しい音声認識システムの特許調査を始めたい"
+Actions:
+
+1. constitutionを読み込む
+2. ユーザーにターゲット国、ターゲットリリース日、競合企業を質問する
+3. 競合企業の正式なAssignee Nameを検証する
+   Result: 0-specifications/specification.md が生成され、コンセプトと検索条件が定義される
+
+# Troubleshooting
+
+Error: "Competitor not found in patent database"
+Cause: ユーザーが指定した企業名と、特許DB上のAssignee Nameが一致していない
+Solution: google-patent-cli の `--assignee` 検索結果から正しい表記揺れを探し、ユーザーに確認してください

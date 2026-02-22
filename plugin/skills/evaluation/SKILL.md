@@ -1,6 +1,9 @@
 ---
 name: evaluation
-description: "Phase 3: Evaluation"
+description: "スクリーニングされた特許の詳細な評価レポートを作成する。ユーザーが「特許の評価をして」「構成要件の分析（ステップ3）をして」と求めた場合に使用。"
+metadata:
+  author: sonesuke
+  version: 1.0.0
 ---
 
 # Phase 3: Evaluation
@@ -77,3 +80,20 @@ This script finds the first patent marked as `relevant` in `2-screening/screened
   - [ ] Avoid citing specific court case examples.
 
 Run /patent-kit:claim-analysis <patent-id>
+
+# Examples
+
+Example 1: 特定の特許の評価
+User says: "JP-2023-12345-Aの評価をして"
+Actions:
+
+1. google-patent-cliで特許情報を取得
+2. クレームを構成要件に分解し、法的ステータスを確認
+3. evaluation-template.md に従ってレポート作成
+   Result: 3-investigations/JP-2023-12345-A/evaluation.md が生成される
+
+# Troubleshooting
+
+Error: "Failed to fetch patent data"
+Cause: 無効なPatent ID、またはネットワークエラー
+Solution: Patent IDのフォーマットが正しいか確認し、再度実行してください

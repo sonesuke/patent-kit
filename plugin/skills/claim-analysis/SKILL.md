@@ -1,6 +1,9 @@
 ---
 name: claim-analysis
-description: "Phase 4: Claim Analysis"
+description: "特許のクレーム分析レポートを作成する。ユーザーが「クレーム分析をして」「ステップ4を実行して」と求めた場合に使用。"
+metadata:
+  author: sonesuke
+  version: 1.0.0
 ---
 
 # Phase 4: Claim Analysis
@@ -88,3 +91,20 @@ This script finds the first patent in `3-investigations/` that has `evaluation.m
 - [ ] Claim analysis report follows the template format.
 
 Run /patent-kit:prior-art <patent-id>
+
+# Examples
+
+Example 1: クレーム分析の開始
+User says: "US-1234567-B2のクレーム分析をお願い"
+Actions:
+
+1. constitutionを読み込む
+2. 3-investigations/US-1234567-B2/evaluation.mdと製品仕様を読み込む
+3. 各構成要件の対比分析を行う
+   Result: claim-analysis.md が生成され、特定の特許と製品の対比結果が保存される
+
+# Troubleshooting
+
+Error: "Missing evaluation.md"
+Cause: 評価（Phase 3）が終わっていない特許に対してクレーム分析を実行しようとした
+Solution: まず `/patent-kit:evaluation <patent-id>` を実行して評価レポートを作成してください

@@ -1,7 +1,10 @@
 ---
 name: constitution
-description: "Core Principles and Operational Guidelines for the Patent Kit"
+description: "特許調査の基本原則と運用ガイドラインを定義する共通ルール。他のスキルから設定を読み込むために使用され、ユーザーが直接呼び出すことは想定していない。"
 disable-model-invocation: true
+metadata:
+  author: sonesuke
+  version: 1.0.0
 ---
 
 # Patent Investigation Constitution
@@ -131,3 +134,18 @@ When discussing potential equivalence or similarity, strictly descriptive langua
   - "The alternative implementation achieves the same functional outcome and exhibits comparable system behavior under typical operating conditions."
   - "The variation represents a commonly used implementation approach."
 - **Rationale**: The AI provides technical analysis of function and behavior, not legal determination of equivalence.
+
+# Examples
+
+Example 1: ガイドラインの読み込み
+User says: N/A (自動的に他のスキルから呼び出される)
+Actions:
+
+1. 他のスキル実行時にプロンプトのコンテキストとしてシステムにロードされる
+   Result: エージェントの挙動が法務ポリシーや調査方針に準拠するようになる
+
+# Troubleshooting
+
+Error: "Guidelines not followed"
+Cause: AIエージェントが指示を忘れて法的な判断を下してしまった
+Solution: ユーザーインターフェースから「Constitution（基本原則）に厳密に従ってください」と再指示してください

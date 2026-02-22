@@ -1,6 +1,9 @@
 ---
 name: targeting
-description: "Phase 1: Targeting"
+description: "定義された製品仕様に基づいて特許DBを検索し、調査母集団（ターゲット）を作成する。ユーザーが「ターゲット母集団を作成して」「検索（ステップ1）を実行して」と求めた場合に使用。"
+metadata:
+  author: sonesuke
+  version: 1.0.0
 ---
 
 # Phase 1: Targeting
@@ -122,3 +125,20 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 3. `1-targeting/target.jsonl`
 
 Run /patent-kit:screening
+
+# Examples
+
+Example 1: ターゲット母集団の形成
+User says: "要件が固まったので、検索式を作ってターゲット母集団を作成して"
+Actions:
+
+1. specification.md から抽出したキーワードで google-patent-cli 検索を試行
+2. 検索ボリューム（< 1000）やノイズレベルを確認しながらクエリを調整
+3. ユーザーがダウンロードしたCSVを merge コマンドでJSONLに結合
+   Result: 1-targeting/target.jsonl が生成され、スクリーニング準備が整う
+
+# Troubleshooting
+
+Error: "patent-kit command not found"
+Cause: Pythonスクリプトのパスが間違っているか、環境構築が不十分
+Solution: plugin/skills/targeting/scripts/merge.py を実行していることを確認し、必要に応じて Python 3 がインストールされているか確認してください
