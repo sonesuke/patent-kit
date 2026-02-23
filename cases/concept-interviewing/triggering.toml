@@ -13,9 +13,9 @@ I want to start a patent search for a new voice recognition system.
 [[checks]]
 name = "init_validation"
 type = "log"
-jq = "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:concept-interviewing\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:concept-interviewing\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
 
 [[checks]]
 name = "concept_interview_invoked"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"concept-interview\")))"
+jq = "[.[] | .message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"concept-interviewing\")))] | length > 0"
