@@ -29,9 +29,10 @@ Use the Glob tool to check if `0-specifications/specification.md` exists:
 
 - **If exists**: Proceed to targeting execution
 - **If NOT exists**:
-  - **Error**: Notify the user that specification.md is required
-  - **Action**: Ask the user to run `/patent-kit:concept-interviewing` first to create the specification
-  - **Do NOT proceed** until specification.md exists
+  1. Use the Skill tool to load the `concept-interviewing` skill to create the specification
+  2. Wait for the concept-interviewing to complete
+  3. Verify that `0-specifications/specification.md` has been created
+  4. Only proceed after the specification file exists
 
 ### 3. Execute Targeting
 
