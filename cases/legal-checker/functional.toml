@@ -28,4 +28,4 @@ jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool
 [[checks]]
 name = "legal_checker_loaded"
 type = "log"
-jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"text\" and (.text | contains(\"Prohibited Legal Assertions\") or contains(\"Descriptive Equivalence Language\")))] | length > 0"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"text\" and (.text | contains(\"legal-checker skill\")))] | length > 0"
