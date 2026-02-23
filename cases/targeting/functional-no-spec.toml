@@ -24,32 +24,32 @@ Please proceed with assignee verification and create the specification file auto
 [[checks]]
 name = "init_validation"
 type = "log"
-jq = "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
 
 [[checks]]
 name = "concept_interview_invoked"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"concept-interview\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"concept-interview\")))] | length > 0"
 
 [[checks]]
 name = "constitution_loaded"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))] | length > 0"
 
 [[checks]]
 name = "specification_template_read"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"specification-template.md\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"specification-template.md\")))] | length > 0"
 
 [[checks]]
 name = "targeting_template_read"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"targeting-template.md\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"targeting-template.md\")))] | length > 0"
 
 [[checks]]
 name = "keywords_template_read"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"keywords-template.md\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"keywords-template.md\")))] | length > 0"
 
 [[checks]]
 name = "specification_md_created"
@@ -59,7 +59,7 @@ command = "[ -f 0-specifications/specification.md ]"
 [[checks]]
 name = "targeting_invoked_after_interview"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"targeting\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"targeting\")))] | length > 0"
 
 [[checks]]
 name = "google_patent_mcp_succeeded"
