@@ -12,4 +12,4 @@ fi
 
 # Check if the skill was invoked in the log
 # Note: Log is JSONL format with "name":"Skill" and "skill":"patent-kit:<skill-name>"
-grep -q "\"Skill\"" "$LOG_FILE" && grep -q "\"skill\":"\".*$SKILL_NAME" "$LOG_FILE"
+grep -q '"Skill"' "$LOG_FILE" && grep -q '"skill":".*'"$SKILL_NAME" "$LOG_FILE"
