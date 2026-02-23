@@ -67,7 +67,7 @@ command = "[ -f 1-targeting/keywords.md ]"
 [[checks]]
 name = "search_patents_called"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name | test(\"google-patent-cli__search_patents\"))"
+jq = "(.message.content[]?.name? // \"\") | test(\"google-patent-cli__search_patents\")"
 
 # TODO: Replace string matching with isError field check once google-patent-cli MCP server returns isError: true on errors
 [[checks]]
