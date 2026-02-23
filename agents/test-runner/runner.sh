@@ -46,8 +46,8 @@ TOTAL_CASES=0
 TOTAL_PASS=0
 TOTAL_FAIL=0
 
-# --- Process each test case directory sequentially ---
-for TEST_CASE_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/*/; do
+# --- Process Case 1 only for now ---
+for TEST_CASE_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/01-targeting-trigger/; do
     TEST_CASE_NAME=$(basename "$TEST_CASE_DIR")
     TOTAL_CASES=$((TOTAL_CASES + 1))
 

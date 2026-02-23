@@ -1,19 +1,24 @@
 {
-    "checks": [
-        {
-            "name": "targeting_md_exists",
-            "type": "workspace",
-            "command": "[ -f 1-targeting/targeting.md ]"
-        },
-        {
-            "name": "target_jsonl_exists",
-            "type": "workspace",
-            "command": "[ -f 1-targeting/target.jsonl ] && [ $(wc -l < 1-targeting/target.jsonl) -gt 0 ]"
-        },
-        {
-            "name": "search_patents_called",
-            "type": "log",
-            "jq": ".message.content[]? | select(.type == \"tool_use\" and ((.name | test(\"search|Search|WebSearch\")) or (.name == \"Skill\" and (.input.skill | test(\"targeting\")))))"
-        }
-    ]
+  "checks": [
+    {
+      "name": "targeting_md_exists",
+      "type": "workspace",
+      "command": "[ -f 1-targeting/targeting.md ]"
+    },
+    {
+      "name": "target_jsonl_exists",
+      "type": "workspace",
+      "command": "[ -f 1-targeting/target.jsonl ] && [ $(wc -l < 1-targeting/target.jsonl) -gt 0 ]"
+    },
+    {
+      "name": "init_validation",
+      "type": "log",
+      "jq": "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and (.mcp_servers? | any(.name | test(\"google-patent-cli\") and .status == \"running\")) and (.mcp_servers? | any(.name | test(\"arxiv-cli\") and .status == \"running\"))"
+    },
+    {
+      "name": "search_patents_called",
+      "type": "log",
+      "jq": ".message.content[]? | select(.type == \"tool_use\" and ((.name | test(\"search|Search|WebSearch\")) or (.name == \"Skill\" and (.input.skill | test(\"targeting\")))))"
+    }
+  ]
 }

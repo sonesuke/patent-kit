@@ -1,14 +1,19 @@
 {
     "checks": [
         {
-            "name": "keywords_file_exists",
-            "type": "workspace",
-            "command": "[ -f 1-targeting/keywords.md ] && grep -q -i 'smartphone' 1-targeting/keywords.md"
+            "name": "init_validation",
+            "type": "log",
+            "jq": "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
         },
         {
             "name": "search_patents_called",
             "type": "log",
-            "jq": ".message.content[]? | select(.type == \"tool_use\" and ((.name | test(\"search|Search|WebSearch\")) or (.name == \"Skill\" and (.input.skill | test(\"targeting\")))))"
+            "jq": ".message.content[]? | select(.type == \"tool_use\" and ((.name | test(\"search_patents|search_papers|WebSearch\")) or (.name == \"Skill\" and (.input.skill | test(\"targeting\")))))"
+        },
+        {
+            "name": "keywords_file_exists",
+            "type": "workspace",
+            "command": "[ -f data/target.jsonl ] && grep -q -i 'smartphone' data/target.jsonl"
         }
     ]
 }

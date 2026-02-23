@@ -8,11 +8,15 @@
   "mcpServers": {
     "google-patent-cli": {
       "command": "google-patent-cli",
-      "args": ["mcp"]
+      "args": [
+        "mcp"
+      ]
     },
     "arxiv-cli": {
       "command": "arxiv-cli",
-      "args": ["mcp"]
+      "args": [
+        "mcp"
+      ]
     }
   }
 }
