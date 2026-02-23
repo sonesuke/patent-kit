@@ -86,6 +86,7 @@ for IDX in "${!TEST_FILES[@]}"; do
 
     # Read test configuration
     TEST_PROMPT=$(yq eval '.test_prompt' "$TEST_FILE")
+    TEST_TIMEOUT=$(yq eval '.timeout // 300' "$TEST_FILE")  # Default 300 seconds
 
     echo ""
     echo "──────────────────────────────────────────────────"
@@ -113,17 +114,32 @@ for IDX in "${!TEST_FILES[@]}"; do
         # Setup workspace (delegated to test-setup.sh)
         "$(dirname "$0")/tools/test-setup.sh" "$WORKSPACE_FOLDER" "$WORK_DIR" "$TEST_FILE"
 
-        # Launch trial in background
+        # Launch trial in background with timeout
         echo "[Host]   Launching trial $TRIAL → $LOG_FILE"
-        devcontainer exec \
-            --workspace-folder "$WORKSPACE_FOLDER" \
-            bash -c 'cd "$1" && claude -p \
-                --dangerously-skip-permissions \
-                --verbose \
-                --output-format stream-json \
-                --plugin-dir ./plugin \
-                -- "$2" < /dev/null | jq -c '"'"'(. + {timestamp: now})'"'"'' -- "${WORK_DIR}" "$TEST_PROMPT" \
-            >"$LOG_FILE" 2>&1 &
+        # Use gtimeout if available (macOS with gnu coreutils), otherwise use timeout
+        TIMEOUT_CMD=$(command -v gtimeout || command -v timeout || echo "")
+        if [ -n "$TIMEOUT_CMD" ]; then
+            $TIMEOUT_CMD "${TEST_TIMEOUT}s" devcontainer exec \
+                --workspace-folder "$WORKSPACE_FOLDER" \
+                bash -c 'cd "$1" && claude -p \
+                    --dangerously-skip-permissions \
+                    --verbose \
+                    --output-format stream-json \
+                    --plugin-dir ./plugin \
+                    -- "$2" < /dev/null | jq -c '"'"'(. + {timestamp: now})'"'"'' -- "${WORK_DIR}" "$TEST_PROMPT" \
+                >"$LOG_FILE" 2>&1 &
+        else
+            # Fallback: run without timeout (not recommended)
+            devcontainer exec \
+                --workspace-folder "$WORKSPACE_FOLDER" \
+                bash -c 'cd "$1" && claude -p \
+                    --dangerously-skip-permissions \
+                    --verbose \
+                    --output-format stream-json \
+                    --plugin-dir ./plugin \
+                    -- "$2" < /dev/null | jq -c '"'"'(. + {timestamp: now})'"'"'' -- "${WORK_DIR}" "$TEST_PROMPT" \
+                >"$LOG_FILE" 2>&1 &
+        fi
 
         PIDS+=($!)
     done
@@ -132,7 +148,19 @@ for IDX in "${!TEST_FILES[@]}"; do
     echo "[Host]   Waiting for ${#PIDS[@]} trial(s) to complete..."
     TRIAL_DURATIONS=()
     for i in "${!PIDS[@]}"; do
-        if wait "${PIDS[$i]}"; then
+        # Wait with timeout check
+        ELAPSED=0
+        while kill -0 "${PIDS[$i]}" 2>/dev/null; do
+            if [ $ELAPSED -ge $TEST_TIMEOUT ]; then
+                echo "[Host]   ⚠️  Trial $((i + 1)) timeout after ${TEST_TIMEOUT}s, killing..."
+                kill -9 "${PIDS[$i]}" 2>/dev/null
+                break
+            fi
+            sleep 5
+            ELAPSED=$((ELAPSED + 5))
+        done
+
+        if wait "${PIDS[$i]}" 2>/dev/null; then
             echo "[Host]   ✅ Trial $((i + 1)) finished"
         else
             echo "[Host]   ⚠️  Trial $((i + 1)) exited with non-zero (may still be valid)"
