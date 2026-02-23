@@ -88,4 +88,3 @@ To maintain context window efficiency, large tool outputs MUST be saved to files
   - Path: `2-screening/json/<patent-id>.json` (for screening fetch)
 - **Requirement**: Do NOT load large JSON outputs directly into context.
 - **Action**: Use Read tool or jq to access specific fields from the saved JSON file when needed.
-

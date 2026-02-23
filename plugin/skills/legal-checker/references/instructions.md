@@ -33,12 +33,14 @@ When discussing potential equivalence or similarity, strictly descriptive langua
 ## III. Acceptable vs. Unacceptable Language Examples
 
 ### Unacceptable (Legal Determinations):
+
 - ❌ "The claim does not infringe the reference."
 - ❌ "This element is satisfied by the prior art."
 - ❌ "The product is clearly outside the scope of the claims."
 - ❌ "This patent is invalid due to obviousness."
 
 ### Acceptable (Technical Descriptions):
+
 - ✅ "Feature A' performs the same function as Element A: [describe technical function]."
 - ✅ "The reference discloses a component that [technical description]."
 - ✅ "Element A requires [technical requirement], which is not found in the reference."
@@ -58,6 +60,7 @@ When mapping claim elements to prior art features:
 **Element A**: [Quote from claim]
 
 **Reference Analysis**:
+
 - Found: [describe what IS in the reference]
 - Not found: [describe what is NOT in the reference]
 - Technical difference: [describe any differences]
@@ -73,6 +76,7 @@ For Freedom to Operate analysis:
 3. **Design Around Options**: Suggest technical alternatives without guaranteeing non-infringement.
 
 ### Acceptable FTO Language:
+
 - "The claim covers [technical description], which may overlap with [product feature]."
 - "Consider design modifications to [technical element] to reduce potential risk."
 - "Further analysis recommended for [specific technical area]."
@@ -86,6 +90,7 @@ For invalidity or novelty analysis:
 3. **Claim Construction**: Describe claim meaning in technical terms; avoid legal claim construction.
 
 ### Acceptable Invalidity Language:
+
 - "The reference discloses all elements of Claim 1: [list]."
 - "The implementation differs from the reference in [technical aspect]."
 - "The reference teaches away from [technical feature]."

@@ -1,0 +1,31 @@
+# Test Case: Legal Checker Functional
+
+name = "functional"
+description = "Verify legal-checker loads and references/instructions.md is read"
+timeout = 60 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+Load the legal-checker skill to understand the legal compliance guidelines.
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:legal-checker\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
+
+[[checks]]
+name = "legal_checker_skill_invoked"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"legal-checker\")))] | length > 0"
+
+[[checks]]
+name = "references_instructions_read"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"legal-checker.*references/instructions.md\")))] | length > 0"
+
+[[checks]]
+name = "legal_checker_loaded"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"text\" and (.text | contains(\"Prohibited Legal Assertions\") or contains(\"Descriptive Equivalence Language\")))] | length > 0"

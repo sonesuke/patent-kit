@@ -28,7 +28,8 @@ Your task is to Execute the Plan and Report Findings.
 - **If it does NOT exist**: Proceed with the standard process.
 
 1. **Initialize**: Load the `constitution` skill.
-2. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
+2. **Load Legal Checker**: Load the `legal-checker` skill for legal compliance guidelines.
+3. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
 3. **Plan & Execute Search**:
    - **Strategy: Multi-Layer Search** (Standard Procedure):
      - **Layer 1: General Terminology**:

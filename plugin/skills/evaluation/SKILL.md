@@ -20,6 +20,7 @@ Your task is to Analyze the Patent and create the Specification.
 ### Process
 
 1. **Read Constitution**: Load the `constitution` skill to understand the core principles.
+2. **Read Legal Checker**: Load the `legal-checker` skill to understand legal compliance guidelines.
 
 #### Step 0: Determine Patent ID
 

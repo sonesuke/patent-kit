@@ -9,6 +9,7 @@ Provides legal compliance guidelines for patent investigation activities. This s
 ## When to Load
 
 Load this skill BEFORE any analysis that involves:
+
 - Claim charting or claim element mapping
 - FTO (Freedom to Operate) analysis
 - Invalidity analysis
