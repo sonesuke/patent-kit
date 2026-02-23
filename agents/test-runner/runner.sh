@@ -46,10 +46,15 @@ TOTAL_CASES=0
 TOTAL_PASS=0
 TOTAL_FAIL=0
 
-# --- Process Case 1 only for now ---
-for TEST_CASE_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/01-targeting-trigger/; do
-    TEST_CASE_NAME=$(basename "$TEST_CASE_DIR")
-    TOTAL_CASES=$((TOTAL_CASES + 1))
+# --- Process each test type (triggering/functional) for each skill ---
+for SKILL_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/*/; do
+    SKILL_NAME=$(basename "$SKILL_DIR")
+
+    # Process each test type (triggering, functional, etc.)
+    for TEST_TYPE_DIR in "$SKILL_DIR"/*/; do
+        TEST_CASE_DIR="$TEST_TYPE_DIR"
+        TEST_CASE_NAME="${SKILL_NAME}/$(basename "$TEST_TYPE_DIR")"
+        TOTAL_CASES=$((TOTAL_CASES + 1))
 
     # Read test-prompt.md (used as-is for claude -p)
     TEST_PROMPT_FILE="$TEST_CASE_DIR/test-prompt.md"
@@ -90,7 +95,7 @@ for TEST_CASE_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/01-targeting-trigger/; d
         # Copy setup files into workspace (if setup/ directory exists)
         if [ -d "$SETUP_DIR" ]; then
             devcontainer exec --workspace-folder "$WORKSPACE_FOLDER" \
-                bash -c "cp -r e2e/test_cases/${TEST_CASE_NAME}/setup/* ${WORK_DIR}/"
+                bash -c "cp -r ${SETUP_DIR}/* ${WORK_DIR}/"
         fi
 
         echo "[Host]   Launching trial $TRIAL → $LOG_FILE"
@@ -174,14 +179,15 @@ for TEST_CASE_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/01-targeting-trigger/; d
         fi
     done
 
-    if [ "$CASE_PASS" = true ]; then
-        echo "[Host]   ✅ $TEST_CASE_NAME: PASS"
-        TOTAL_PASS=$((TOTAL_PASS + 1))
-    else
-        echo "[Host]   ❌ $TEST_CASE_NAME: FAIL"
-        TOTAL_FAIL=$((TOTAL_FAIL + 1))
-    fi
-done
+        if [ "$CASE_PASS" = true ]; then
+            echo "[Host]   ✅ $TEST_CASE_NAME: PASS"
+            TOTAL_PASS=$((TOTAL_PASS + 1))
+        else
+            echo "[Host]   ❌ $TEST_CASE_NAME: FAIL"
+            TOTAL_FAIL=$((TOTAL_FAIL + 1))
+        fi
+    done  # End of TEST_TYPE_DIR loop
+done  # End of SKILL_DIR loop
 
 # --- Generate summary report ---
 REPORT_FILE="$REPORT_DIR/summary.md"
