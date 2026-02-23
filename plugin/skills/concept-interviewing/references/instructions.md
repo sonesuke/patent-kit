@@ -44,13 +44,20 @@ Use the Skill tool to load the `constitution` skill BEFORE starting any work. Th
 ### Step 3: Assignee Identification
 
 1. **Verify**: For each competitor named by the user, verify the correct "Assignee Name" used in patent databases.
-   - **Action**: Run a search (e.g., Use the MCP tool `search_patents` (Arguments: --assignee "<Company Name>")) **without** `--limit`.
+   - **Action**: Use the `search_patents` tool with:
+     - assignee: "<Company Name>"
+     - Note: Omit the limit parameter to get all assignee variations
    - **CRITICAL: Check MCP response**:
      - Verify the response does NOT contain `isError: true`
      - **If MCP tool fails**: Refer to `references/troubleshooting.md` for "MCP Server Errors" section
      - Do NOT proceed with fabricated or assumed assignee names
-   - **Check `top_assignees`**: The output will include `top_assignees`. Look for **name variations** (表記揺れ) for the same company (e.g., "Google LLC", "Google Inc.", "GOOGLE LLC").
-   - **Confirm**: Display the top assignees found and ask the user if they represent the intended competitor.
+   - **Extract and Analyze**: The tool returns a JSON file path with search results.
+     - Use jq to create a frequency histogram of assignee names:
+       ```bash
+       jq '[.results[]?.assignee] | group_by(.) | map({assignee: .[0], count: length}) | sort_by(.count) | reverse | .[0:100]' <file_path>
+       ```
+     - This extracts assignee names, groups by name, counts occurrences, sorts by frequency, and shows top 100
+   - **Confirm**: Display the top assignee variations found and ask the user if they represent the intended competitor.
    - **Refine**: If incorrect or no hits, try variations (e.g., "Google LLC" instead of "Google").
 
 2. **Finalize**:

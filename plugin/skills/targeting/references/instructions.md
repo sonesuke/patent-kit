@@ -43,7 +43,12 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 #### Phase 1.1: Competitor Patent Research
 
 1. **Start Broad**:
-   - Command: Use the MCP tool `search_patents` (Arguments: --assignee "<Combined Assignees>" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20)
+   - **Action**: Use the `search_patents` tool with:
+     - assignee: "<Combined Assignees>"
+     - country: "<Target Country>"
+     - before: "<Target Release Date>"
+     - after: "<Cutoff Date>"
+     - limit: 20
    - **CRITICAL: Check MCP response**:
      - Verify the response does NOT contain `isError: true`
      - **If MCP tool fails**: Refer to `references/troubleshooting.md` for "MCP Server Errors" section
@@ -61,14 +66,18 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
      - **Identify**: Look for **Technical Terms** ("Golden Keywords").
      - **Register**: Immediately add verified keywords to `1-targeting/keywords.md` (see Output section for format).
    - **CRITICAL RULE 3**: **Over-Filtering Check**. If adding a keyword reduces the count to **under 200**, this might be too narrow. **Ask the user** if this is acceptable (e.g., for niche markets) or if they want to broaden the query.
-   - **Repeat**: Continue adding quoted keywords (e.g., `--query "\"keyword1\" AND \"keyword2\""`) until the count is reasonable (< 1000) and relevance is high.
+   - **Repeat**: Continue adding quoted keywords (e.g., query: "\"keyword1\" AND \"keyword2\"") until the count is reasonable (< 1000) and relevance is high.
 
 #### Phase 1.2: Market Patent Research
 
 1. **Apply Keywords**:
    - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `1-targeting/keywords.md`).
-   - Command: Use the MCP tool `search_patents` (Arguments: --query "\"keyword1\" AND \"keyword2\"" ...) (Wrap details below to avoid length issues)
-   - Real Command: Use the MCP tool `search_patents` (Arguments: --query "\"keyword1\" AND \"keyword2\"" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20)
+   - **Action**: Use the `search_patents` tool with:
+     - query: "\"keyword1\" AND \"keyword2\" AND ..."
+     - country: "<Target Country>"
+     - before: "<Target Release Date>"
+     - after: "<Cutoff Date>"
+     - limit: 20
    - **CRITICAL: Check MCP response**:
      - Verify the response does NOT contain `isError: true`
      - **If MCP tool fails**: Refer to `references/troubleshooting.md` for "MCP Server Errors" section
