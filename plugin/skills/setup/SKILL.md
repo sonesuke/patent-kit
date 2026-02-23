@@ -17,6 +17,7 @@ Prepare the working directory for a new patent analysis project by creating the 
 ### 1. Detect Operating System
 
 Identify whether the user is on:
+
 - Linux/Mac (Bash/Zsh)
 - Windows (PowerShell)
 
@@ -46,6 +47,7 @@ Confirm directories are created and inform the user of next steps.
 ## Next Steps
 
 Upon completion, user can proceed to:
+
 - `/patent-kit:concept-interview` - Define product concept and identify competitors
 - `/patent-kit:targeting` - Start patent search (if specification already exists)
 

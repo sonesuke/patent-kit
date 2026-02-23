@@ -17,7 +17,7 @@ Voice recognition system for smart home devices
 
 ## 4. Verified Assignee Names (Canonicalized)
 
-| Original Name | Verified Assignee Names | Status | Notes |
-|--------------|------------------------|--------|-------|
-| Google | Google LLC, Google Inc., GOOGLE LLC | Verified | Multiple name variations |
-| Amazon | Amazon.com Inc., Amazon Technologies, Inc. | Verified | Multiple name variations |
+| Original Name | Verified Assignee Names                    | Status   | Notes                    |
+| ------------- | ------------------------------------------ | -------- | ------------------------ |
+| Google        | Google LLC, Google Inc., GOOGLE LLC        | Verified | Multiple name variations |
+| Amazon        | Amazon.com Inc., Amazon Technologies, Inc. | Verified | Multiple name variations |

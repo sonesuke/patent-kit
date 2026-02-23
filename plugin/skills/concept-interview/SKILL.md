@@ -32,12 +32,14 @@ Use the Glob tool to check if `0-specifications/specification.md` exists:
 ### 3. Execute Concept Interview
 
 See `references/instructions.md` for detailed execution steps including:
+
 - Information gathering (product concept, target country, release date, competitors)
 - Assignee name verification
 
 ### 4. Transition to Targeting
 
 Upon successful completion:
+
 - Deliverable: `0-specifications/specification.md` created with verified assignee names
 - Next skill: `/patent-kit:targeting`
 

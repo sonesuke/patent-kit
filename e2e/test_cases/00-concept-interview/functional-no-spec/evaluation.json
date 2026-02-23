@@ -3,17 +3,22 @@
     {
       "name": "init_validation",
       "type": "log",
-      "jq": ".type == \"system\" and .subtype == \"init\""
+      "jq": "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:concept-interview\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
     },
     {
       "name": "concept_interview_invoked",
       "type": "log",
-      "jq": ".type == \"function\" and .name == \"Skill\" and (.input | contains(\"concept-interview\"))"
+      "jq": ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"concept-interview\")))"
     },
     {
       "name": "constitution_loaded",
       "type": "log",
-      "jq": ".type == \"function\" and .name == \"Skill\" and (.input | contains(\"constitution\"))"
+      "jq": ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))"
+    },
+    {
+      "name": "references_instructions_read",
+      "type": "log",
+      "jq": ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"concept-interview.*references/instructions.md\")))"
     },
     {
       "name": "specification_md_created",

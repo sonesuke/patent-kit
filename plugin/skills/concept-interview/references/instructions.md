@@ -29,6 +29,9 @@ Use the Skill tool to load the `constitution` skill BEFORE starting any work. Th
    - **Cutoff Date**: Calculate `Target Release Date - 20 years`. Patents filed before this date are likely expired.
    - **Competitors**: List of key competitor companies (Mandatory).
 
+   > [!NOTE]
+   > If the user has provided sufficient information (product concept, target country, release date, competitors), proceed directly to assignee verification without asking additional clarifying questions.
+
 3. **Refine**: If the concept is too vague, ask clarifying questions to break it down into technical elements relevant for patent search.
 
 4. **Save**: Write the gathered information to `0-specifications/specification.md` using the template `assets/templates/specification-template.md`.

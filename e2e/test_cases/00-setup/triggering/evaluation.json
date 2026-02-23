@@ -3,12 +3,12 @@
     {
       "name": "init_validation",
       "type": "log",
-      "jq": ".type == \"system\" and .subtype == \"init\""
+      "jq": "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:setup\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
     },
     {
       "name": "setup_skill_invoked",
       "type": "log",
-      "jq": ".type == \"function\" and .name == \"Skill\" and (.input | contains(\"setup\"))"
+      "jq": ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"setup\")))"
     }
   ]
 }

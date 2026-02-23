@@ -15,6 +15,7 @@ Provides the foundational principles and guidelines that govern all patent inves
 ## When to Load
 
 Load this skill BEFORE starting any patent investigation phase:
+
 - Targeting (Phase 1)
 - Screening (Phase 2)
 - Prior Art Search (Phase 3)

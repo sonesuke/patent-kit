@@ -1,1 +1,1 @@
-I want to proceed with the patent search. Use the existing specification.
+Use concept-interview to verify our existing product specification is complete and ready for the targeting phase.
