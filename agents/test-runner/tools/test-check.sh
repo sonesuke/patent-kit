@@ -35,7 +35,7 @@ for CHECK_IDX in $(seq 0 $((NUM_CHECKS - 1))); do
         fi
     elif [ "$CHECK_TYPE" = "log" ]; then
         JQ_FILTER=$(yq eval ".checks[$CHECK_IDX].jq" "$TEST_TOML_FILE")
-        if grep -v '^\s*$' "$LOG_FILE" | jq -s -e "any(.[]; $JQ_FILTER)" >/dev/null 2>&1; then
+        if grep -v '^\s*$' "$LOG_FILE" | jq -s -e "$JQ_FILTER" >/dev/null 2>&1; then
             echo "[Host]     ✅ $CHECK_NAME"
         else
             echo "[Host]     ❌ $CHECK_NAME"
