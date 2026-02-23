@@ -27,6 +27,7 @@ fi
 WORKSPACE_FOLDER="${WORKSPACE_FOLDER:-$(pwd)}"
 N_TRIALS="${1:-1}"
 TARGET_SKILL="${2:-}"  # Optional: specify skill folder (e.g., "targeting")
+TARGET_TEST="${3:-}"   # Optional: specify test file name (e.g., "functional-with-spec")
 
 echo "[Host] Ensuring dev container is up for $WORKSPACE_FOLDER..."
 devcontainer up --workspace-folder "$WORKSPACE_FOLDER"
@@ -40,6 +41,12 @@ mkdir -p "$REPORT_DIR"
 echo "=================================================="
 echo "[Host] Starting Parallel Claude CLI Test-Runner"
 echo "[Host] Trials per test case: $N_TRIALS"
+if [ -n "$TARGET_SKILL" ]; then
+    echo "[Host] Target skill: $TARGET_SKILL"
+fi
+if [ -n "$TARGET_TEST" ]; then
+    echo "[Host] Target test: $TARGET_TEST"
+fi
 echo "=================================================="
 
 TOTAL_CASES=0
@@ -66,6 +73,12 @@ for SKILL_DIR in "$WORKSPACE_FOLDER"/cases/*/; do
         [ -f "$TEST_FILE" ] || continue
 
         TEST_NAME=$(basename "$TEST_FILE" .toml)
+
+        # Skip if TARGET_TEST is specified and doesn't match
+        if [ -n "$TARGET_TEST" ] && [ "$TEST_NAME" != "$TARGET_TEST" ]; then
+            continue
+        fi
+
         TEST_CASE_NAME="${SKILL_NAME}/${TEST_NAME}"
         TOTAL_CASES=$((TOTAL_CASES + 1))
 
