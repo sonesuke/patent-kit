@@ -151,24 +151,7 @@ for SKILL_DIR in "$WORKSPACE_FOLDER"/cases/*/; do
     done  # End of TEST_FILE loop
 done  # End of SKILL_DIR loop
 
-# --- Generate summary report ---
-REPORT_FILE="$REPORT_DIR/summary.md"
-{
-    echo "# E2E Test Report: $REPORT_ID"
-    echo ""
-    echo "| Metric | Value |"
-    echo "|--------|-------|"
-    echo "| Total Test Cases | $TOTAL_CASES |"
-    echo "| Passed | $TOTAL_PASS |"
-    echo "| Failed | $TOTAL_FAIL |"
-    echo "| Trials per Case | $N_TRIALS |"
-} > "$REPORT_FILE"
-
-echo ""
-echo "=================================================="
-echo "[Host] Test-Runner finished."
-echo "[Host] Summary: $TOTAL_PASS/$TOTAL_CASES test cases passed."
-echo "[Host] Report : $REPORT_FILE"
-echo "=================================================="
+# --- Generate and display summary (delegated to test-summary.sh) ---
+"$(dirname "$0")/tools/test-summary.sh" "$REPORT_DIR" "$TOTAL_CASES" "$TOTAL_PASS" "$TOTAL_FAIL" "$N_TRIALS"
 
 exit "$TOTAL_FAIL"
