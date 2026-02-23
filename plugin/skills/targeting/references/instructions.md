@@ -58,7 +58,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
    - If total count is **under 1000**: This is a good starting point. Check the top 20 snippets to understand what kind of patents they are filing.
    - If total count is **over 1000**: You need to narrow it down.
 3. **Iterative Narrowing & Keyword Extraction**:
-   - **Action**: Add a keyword representing the "Product Concept" to the `--query`.
+   - **Action**: Add a keyword representing the "Product Concept" to the query parameter.
    - **CRITICAL RULE 1**: **Always use quotes** for keywords (e.g., `"smartphone"` instead of `smartphone`) to ensure exact matching and proper AND logic. Unquoted terms might be treated as broad OR searches by the search engine.
    - **CRITICAL RULE 2**: **Mandatory Noise Analysis**. After _every_ search command, you MUST inspect the top 20 snippets.
      - **Check**: Does it meet the **High Noise** criteria (8+ irrelevant results)?
