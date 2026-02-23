@@ -18,7 +18,7 @@ Your task is to define the product concept and identify competitors. This phase 
 
 ### Process
 
-1. **Read Constitution**: Load the `constitution` skill to understand the core principles.
+1. **Load Constitution (MANDATORY)**: Use the Skill tool to load the `constitution` skill BEFORE starting any work. This is required to understand the core principles.
 
 #### Step 1: Concept Interview
 

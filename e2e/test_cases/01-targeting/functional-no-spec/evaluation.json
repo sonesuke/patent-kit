@@ -13,7 +13,7 @@
     {
       "name": "constitution_loaded",
       "type": "log",
-      "jq": ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.path | test(\"constitution\")))"
+      "jq": ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))"
     },
     {
       "name": "specification_md_created",

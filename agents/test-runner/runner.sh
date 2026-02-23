@@ -25,6 +25,7 @@ fi
 
 WORKSPACE_FOLDER="${WORKSPACE_FOLDER:-$(pwd)}"
 N_TRIALS="${1:-1}"
+TARGET_SKILL="${2:-}"  # Optional: specify skill folder (e.g., "01-targeting")
 
 echo "[Host] Ensuring dev container is up for $WORKSPACE_FOLDER..."
 devcontainer up --workspace-folder "$WORKSPACE_FOLDER"
@@ -48,11 +49,19 @@ TOTAL_FAIL=0
 
 # --- Process each test type (triggering/functional) for each skill ---
 for SKILL_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/*/; do
+    # Remove trailing slash from SKILL_DIR
+    SKILL_DIR="${SKILL_DIR%/}"
     SKILL_NAME=$(basename "$SKILL_DIR")
+
+    # Skip if TARGET_SKILL is specified and doesn't match
+    if [ -n "$TARGET_SKILL" ] && [ "$SKILL_NAME" != "$TARGET_SKILL" ]; then
+        continue
+    fi
 
     # Process each test type (triggering, functional, etc.)
     for TEST_TYPE_DIR in "$SKILL_DIR"/*/; do
-        TEST_CASE_DIR="$TEST_TYPE_DIR"
+        # Remove trailing slash from TEST_TYPE_DIR
+        TEST_CASE_DIR="${TEST_TYPE_DIR%/}"
         TEST_CASE_NAME="${SKILL_NAME}/$(basename "$TEST_TYPE_DIR")"
         TOTAL_CASES=$((TOTAL_CASES + 1))
 
@@ -93,9 +102,13 @@ for SKILL_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/*/; do
             bash -c "rm -rf ${WORK_DIR} && mkdir -p ${WORK_DIR} && cp -r plugin e2e agents .claude-plugin ./.claude.json CLAUDE.md ${WORK_DIR}/ 2>/dev/null || true"
 
         # Copy setup files into workspace (if setup/ directory exists)
+        # Convert host path to container path
+        SETUP_REL_PATH="${TEST_CASE_DIR#$WORKSPACE_FOLDER/}"
+        SETUP_DIR_CONTAINER="/workspaces/patent-kit/$SETUP_REL_PATH/setup"
+
         if [ -d "$SETUP_DIR" ]; then
             devcontainer exec --workspace-folder "$WORKSPACE_FOLDER" \
-                bash -c "cp -r ${SETUP_DIR}/* ${WORK_DIR}/"
+                bash -c "cp -r ${SETUP_DIR_CONTAINER}/* ${WORK_DIR}/"
         fi
 
         echo "[Host]   Launching trial $TRIAL → $LOG_FILE"

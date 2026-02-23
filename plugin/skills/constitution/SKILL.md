@@ -1,7 +1,6 @@
 ---
 name: constitution
-description: "Defines the core principles and operational guidelines for patent investigation. Loaded by other skills; not intended for direct user invocation."
-disable-model-invocation: true
+description: "Defines the core principles and operational guidelines for patent investigation. Load this skill when starting any patent investigation phase (targeting, screening, prior-art search, etc.) to understand the core rules."
 metadata:
   author: sonesuke
   version: 1.0.0
