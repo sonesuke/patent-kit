@@ -8,11 +8,13 @@ timeout = 600 # seconds
 test_prompt = """
 I have placed an invention specification in `0-specifications/specification.md` and downloaded CSV files in `1-targeting/csv/`.
 
-Please load the constitution-reminding skill first, then perform the Phase 1 targeting step.
+Since the CSV files are already downloaded, skip the patent search and keyword extraction steps.
 
-After completing the targeting analysis, merge the CSV data using the merge script to create `1-targeting/target.jsonl`.
+Please run the merge script directly to create `1-targeting/target.jsonl`:
 
-If asked about modifying keywords or synonyms: "Looks good, proceed to merge."
+```bash
+./plugin/skills/targeting/scripts/shell/merge.sh 1-targeting/csv 1-targeting/target.jsonl
+```
 """
 
 # Setup files to be copied to workspace
