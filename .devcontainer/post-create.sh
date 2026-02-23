@@ -50,6 +50,17 @@ EOF
     curl -fsSL https://raw.githubusercontent.com/sonesuke/google-patent-cli/main/install.sh | bash
     curl -fsSL https://raw.githubusercontent.com/sonesuke/arxiv-cli/main/install.sh | bash
 
+    echo "[Devcontainer Setup] Configuring google-patent-cli for Docker..."
+    mkdir -p ~/.config/google-patent-cli
+    cat > ~/.config/google-patent-cli/config.toml << 'EOF'
+# Chrome arguments for Docker/DevContainer environment
+chrome_args = [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-gpu"
+]
+EOF
+
     echo "[Devcontainer Setup] Complete!"
 else
     echo "Running in CI environment, skipping development setup..."
