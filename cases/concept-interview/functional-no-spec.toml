@@ -31,6 +31,18 @@ type = "log"
 jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"concept-interview.*references/instructions.md\")))"
 
 [[checks]]
+name = "specification_template_read"
+type = "log"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"specification-template.md\")))"
+
+[[checks]]
 name = "specification_md_created"
 type = "workspace"
 command = "[ -f 0-specifications/specification.md ]"
+
+# TODO: Replace string matching with isError field check once google-patent-cli MCP server returns isError: true on errors
+# See: MCP specification for tool result isError field
+[[checks]]
+name = "google_patent_mcp_succeeded"
+type = "log"
+jq = "map(select(.type == \"assistant\" and (.message.content[]?.name // \"\" | test(\"google-patent-cli__search_patents\"))) | .message.content[]?.id) as $tool_ids | map(select(.type == \"user\" and (.message.content[]?.tool_use_id // \"\" | IN($tool_ids[])))) | all(.message.content[]?.content[]?.text // \"\" | test(\"Search failed|Browser error|Chrome|SIGABRT\") | not)"

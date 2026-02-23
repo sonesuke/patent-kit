@@ -29,6 +29,11 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Start Broad**:
    - Command: Use the MCP tool `search_patents` (Arguments: --assignee "<Combined Assignees>" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20)
+   - **CRITICAL: Check MCP response**:
+     - Verify the response does NOT contain `isError: true`
+     - **If MCP tool fails**: Refer to `references/troubleshooting.md` for "MCP Server Errors" section
+     - Do NOT proceed with fabricated search results
+
 2. **Check Volume**:
    - If total count is **under 1000**: This is a good starting point. Check the top 20 snippets to understand what kind of patents they are filing.
    - If total count is **over 1000**: You need to narrow it down.
@@ -49,6 +54,11 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
    - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `1-targeting/keywords.md`).
    - Command: Use the MCP tool `search_patents` (Arguments: --query "\"keyword1\" AND \"keyword2\"" ...) (Wrap details below to avoid length issues)
    - Real Command: Use the MCP tool `search_patents` (Arguments: --query "\"keyword1\" AND \"keyword2\"" --country "<Target Country>" --before "<Target Release Date>" --after "<Cutoff Date>" --limit 20)
+   - **CRITICAL: Check MCP response**:
+     - Verify the response does NOT contain `isError: true`
+     - **If MCP tool fails**: Refer to `references/troubleshooting.md` for "MCP Server Errors" section
+     - Do NOT proceed with fabricated search results
+
 2. **Iterative Narrowing**:
    - Similar to Phase 3.1, if the count is > 1000, add more specific concept keywords (always quoted).
    - **Mandatory Noise Analysis**:
@@ -84,7 +94,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 ## Output
 
-- Create a file `1-targeting/targeting.md` using the template `[targeting-template.md](assets/templates/targeting-template.md)`.
+- Create a file `1-targeting/targeting.md` using the template `[targeting-template.md](assets/targeting-template.md)`.
 - Fill in the **Generated Search Commands** with:
   - **Query**: The final command.
   - **Hit Count**: Number of hits.
@@ -96,7 +106,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
   - **Noise Cause**: Polysemy, Generic, Domain, etc. (Why was it noise?)
   - **Adjustment**: What keywords/exclusions were added.
   - **Result Count**: Count after adjustment.
-- Create a file `1-targeting/keywords.md` using the template `[keywords-template.md](assets/templates/keywords-template.md)`. This is the **Golden Keywords Registry**.
+- Create a file `1-targeting/keywords.md` using the template `[keywords-template.md](assets/keywords-template.md)`. This is the **Golden Keywords Registry**.
 - `1-targeting/target.jsonl`: The merged list of unique patents ready for screening.
 
 ## Quality Gates

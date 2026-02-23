@@ -34,12 +34,16 @@ Use the Skill tool to load the `constitution` skill BEFORE starting any work. Th
 
 3. **Refine**: If the concept is too vague, ask clarifying questions to break it down into technical elements relevant for patent search.
 
-4. **Save**: Write the gathered information to `0-specifications/specification.md` using the template `assets/templates/specification-template.md`.
+4. **Save**: Write the gathered information to `0-specifications/specification.md` using the template `assets/specification-template.md`.
 
 ### Step 3: Assignee Identification
 
 1. **Verify**: For each competitor named by the user, verify the correct "Assignee Name" used in patent databases.
    - **Action**: Run a search (e.g., Use the MCP tool `search_patents` (Arguments: --assignee "<Company Name>")) **without** `--limit`.
+   - **CRITICAL: Check MCP response**:
+     - Verify the response does NOT contain `isError: true`
+     - **If MCP tool fails**: Refer to `references/troubleshooting.md` for "MCP Server Errors" section
+     - Do NOT proceed with fabricated or assumed assignee names
    - **Check `top_assignees`**: The output will include `top_assignees`. Look for **name variations** (表記揺れ) for the same company (e.g., "Google LLC", "Google Inc.", "GOOGLE LLC").
    - **Confirm**: Display the top assignees found and ask the user if they represent the intended competitor.
    - **Refine**: If incorrect or no hits, try variations (e.g., "Google LLC" instead of "Google").
