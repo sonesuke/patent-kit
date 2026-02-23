@@ -123,7 +123,7 @@ for IDX in "${!TEST_FILES[@]}"; do
                 --verbose \
                 --output-format stream-json \
                 --plugin-dir ./plugin \
-                -- "$2" < /dev/null' -- "${WORK_DIR}" "$TEST_PROMPT" \
+                -- "$2" < /dev/null | while IFS= read -r line; do timestamp=$(date +%s); echo "$line" | jq -c ". + {timestamp: $timestamp}"; done' -- "${WORK_DIR}" "$TEST_PROMPT" \
             >"$LOG_FILE" 2>&1 &
 
         PIDS+=($!)
