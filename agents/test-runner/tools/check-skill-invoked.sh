@@ -12,4 +12,4 @@ fi
 
 # Check if the skill was invoked in the log
 # Note: Log is JSONL format with message.content[].type == "tool_use" and .name == "Skill"
-jq -r "select(.message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\") | .input.skill | test(\"$SKILL_NAME\"; \"i\")) | \"true\"" "$LOG_FILE" | grep -q "true"
+grep -q "\"Skill\"" "$LOG_FILE" && grep -q "\"skill\":\"[^\"]*$SKILL_NAME" "$LOG_FILE"
