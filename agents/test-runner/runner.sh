@@ -164,8 +164,10 @@ for IDX in "${!TEST_FILES[@]}"; do
         echo "$CHECK_OUTPUT"
 
         # Extract token usage from output
-        TRIAL_INPUT=$(echo "$CHECK_OUTPUT" | grep "📊 Tokens:" | sed -E 's/.*in=([0-9]+).*/\1/' || echo "0")
-        TRIAL_OUTPUT=$(echo "$CHECK_OUTPUT" | grep "📊 Tokens:" | sed -E 's/.*out=([0-9]+).*/\1/' || echo "0")
+        TRIAL_INPUT=$(echo "$CHECK_OUTPUT" | grep "📊 Tokens:" | sed -E 's/.*in=([0-9]+) .*/\1/' || echo "0")
+        TRIAL_CACHE_READ=$(echo "$CHECK_OUTPUT" | grep "📊 Tokens:" | sed -E 's/.*cache=([0-9]+).*/\1/' || echo "0")
+        TRIAL_TOTAL_INPUT=$((TRIAL_INPUT + TRIAL_CACHE_READ))
+        TRIAL_OUTPUT=$(echo "$CHECK_OUTPUT" | grep "📊 Tokens:" | sed -E 's/.*out=([0-9]+)/\1/' || echo "0")
 
         # Store trial result for summary
         TRIAL_STATUS="true"
@@ -173,7 +175,7 @@ for IDX in "${!TEST_FILES[@]}"; do
             CASE_PASS=false
             TRIAL_STATUS="false"
         fi
-        echo "${TRIAL_STATUS}|${TRIAL_DURATIONS[$TRIAL_IDX]}|${TRIAL_INPUT}|${TRIAL_OUTPUT}" >> "$RESULT_FILE"
+        echo "${TRIAL_STATUS}|${TRIAL_DURATIONS[$TRIAL_IDX]}|${TRIAL_INPUT}|${TRIAL_CACHE_READ}|${TRIAL_TOTAL_INPUT}|${TRIAL_OUTPUT}" >> "$RESULT_FILE"
 
         # Display duration
         echo "[Host]   ⏱️  Trial $TRIAL_NUM took ${TRIAL_DURATIONS[$TRIAL_IDX]}s"

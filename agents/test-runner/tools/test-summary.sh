@@ -42,13 +42,17 @@ for RESULT_FILE in "${RESULT_FILES[@]}"; do
 
     DURATION_SUM=0
     INPUT_SUM=0
+    CACHE_READ_SUM=0
+    TOTAL_INPUT_SUM=0
     OUTPUT_SUM=0
     COUNT=0
     ALL_PASS=true
 
-    while IFS='|' read -r R_PASSED R_DURATION R_INPUT R_OUTPUT; do
+    while IFS='|' read -r R_PASSED R_DURATION R_INPUT R_CACHE_READ R_TOTAL_INPUT R_OUTPUT; do
         DURATION_SUM=$((DURATION_SUM + R_DURATION))
         INPUT_SUM=$((INPUT_SUM + R_INPUT))
+        CACHE_READ_SUM=$((CACHE_READ_SUM + R_CACHE_READ))
+        TOTAL_INPUT_SUM=$((TOTAL_INPUT_SUM + R_TOTAL_INPUT))
         OUTPUT_SUM=$((OUTPUT_SUM + R_OUTPUT))
         COUNT=$((COUNT + 1))
 
@@ -57,7 +61,7 @@ for RESULT_FILE in "${RESULT_FILES[@]}"; do
         fi
     done < "$RESULT_FILE"
 
-    TEST_STATS+=("${TEST_NAME}|${DURATION_SUM}|${INPUT_SUM}|${OUTPUT_SUM}|${COUNT}|${ALL_PASS}")
+    TEST_STATS+=("${TEST_NAME}|${DURATION_SUM}|${INPUT_SUM}|${CACHE_READ_SUM}|${TOTAL_INPUT_SUM}|${OUTPUT_SUM}|${COUNT}|${ALL_PASS}")
 done
 
 # --- Determine summary location ---
@@ -86,20 +90,22 @@ REPORT_FILE="$SUMMARY_DIR/summary.md"
     if [ ${#TEST_NAMES[@]} -gt 0 ]; then
         echo "## Test Results"
         echo ""
-        echo "| Test | Status | Avg Duration | Avg Input Tokens | Avg Output Tokens |"
-        echo "|------|--------|--------------|-------------------|--------------------|"
+        echo "| Test | Status | Avg Duration | Avg Input Tokens (with cache) | Actual Input | Avg Output Tokens |"
+        echo "|------|--------|--------------|------------------------------|--------------|--------------------|"
 
         for STAT in "${TEST_STATS[@]}"; do
-            IFS='|' read -r TEST_NAME DURATION_SUM INPUT_SUM OUTPUT_SUM COUNT ALL_PASS <<< "$STAT"
+            IFS='|' read -r TEST_NAME DURATION_SUM INPUT_SUM CACHE_READ_SUM TOTAL_INPUT_SUM OUTPUT_SUM COUNT ALL_PASS <<< "$STAT"
             AVG_DURATION=$((DURATION_SUM / COUNT))
             AVG_INPUT=$((INPUT_SUM / COUNT))
+            AVG_CACHE_READ=$((CACHE_READ_SUM / COUNT))
+            AVG_TOTAL_INPUT=$((TOTAL_INPUT_SUM / COUNT))
             AVG_OUTPUT=$((OUTPUT_SUM / COUNT))
 
             STATUS="✅ PASS"
             if [ "$ALL_PASS" != "true" ]; then
                 STATUS="❌ FAIL"
             fi
-            echo "| $TEST_NAME | $STATUS | ${AVG_DURATION}s | $AVG_INPUT | $AVG_OUTPUT |"
+            echo "| $TEST_NAME | $STATUS | ${AVG_DURATION}s | $AVG_TOTAL_INPUT | $AVG_INPUT | $AVG_OUTPUT |"
         done
     fi
 } > "$REPORT_FILE"
@@ -114,16 +120,18 @@ if [ ${#TEST_NAMES[@]} -gt 0 ]; then
     echo ""
     echo "[Host] Test Results:"
     for STAT in "${TEST_STATS[@]}"; do
-        IFS='|' read -r TEST_NAME DURATION_SUM INPUT_SUM OUTPUT_SUM COUNT ALL_PASS <<< "$STAT"
+        IFS='|' read -r TEST_NAME DURATION_SUM INPUT_SUM CACHE_READ_SUM TOTAL_INPUT_SUM OUTPUT_SUM COUNT ALL_PASS <<< "$STAT"
         AVG_DURATION=$((DURATION_SUM / COUNT))
         AVG_INPUT=$((INPUT_SUM / COUNT))
+        AVG_CACHE_READ=$((CACHE_READ_SUM / COUNT))
+        AVG_TOTAL_INPUT=$((TOTAL_INPUT_SUM / COUNT))
         AVG_OUTPUT=$((OUTPUT_SUM / COUNT))
 
         STATUS="✅"
         if [ "$ALL_PASS" != "true" ]; then
             STATUS="❌"
         fi
-        echo "[Host]   $STATUS $TEST_NAME - ${AVG_DURATION}s (in: $AVG_INPUT, out: $AVG_OUTPUT tokens)"
+        echo "[Host]   $STATUS $TEST_NAME - ${AVG_DURATION}s (in: $AVG_INPUT + cache: $AVG_CACHE_READ = $AVG_TOTAL_INPUT total, out: $AVG_OUTPUT tokens)"
     done
 fi
 

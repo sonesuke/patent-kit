@@ -61,8 +61,10 @@ done
 
 # --- Extract and display token usage ---
 INPUT_TOKENS=$(grep -v '^\s*$' "$LOG_FILE" | jq -s '[.[] | select(.type == "result") | .usage.input_tokens // 0] | add' 2>/dev/null || echo "0")
+CACHE_READ_TOKENS=$(grep -v '^\s*$' "$LOG_FILE" | jq -s '[.[] | select(.type == "result") | .usage.cache_read_input_tokens // 0] | add' 2>/dev/null || echo "0")
+TOTAL_INPUT_TOKENS=$((INPUT_TOKENS + CACHE_READ_TOKENS))
 OUTPUT_TOKENS=$(grep -v '^\s*$' "$LOG_FILE" | jq -s '[.[] | select(.type == "result") | .usage.output_tokens // 0] | add' 2>/dev/null || echo "0")
-echo "[Host]     📊 Tokens: in=$INPUT_TOKENS out=$OUTPUT_TOKENS"
+echo "[Host]     📊 Tokens: in=$INPUT_TOKENS (cache=$CACHE_READ_TOKENS, total=$TOTAL_INPUT_TOKENS) out=$OUTPUT_TOKENS"
 
 # --- Return exit code based on trial pass status ---
 if [ "$TRIAL_PASS" = true ]; then
