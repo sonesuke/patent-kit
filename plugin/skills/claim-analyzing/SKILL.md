@@ -1,5 +1,5 @@
 ---
-name: claim-analysis
+name: claim-analyzing
 description: "Generates a claim analysis report for a patent. Triggered when the user asks to 'perform claim analysis' or 'execute step 4'."
 metadata:
   author: sonesuke
@@ -19,8 +19,8 @@ Your task is to create the Claim Analysis Report based on the Spec.
 
 ### Process
 
-1. **Read Constitution**: Load the `constitution` skill to understand the core principles.
-2. **Read Legal Checker**: Load the `legal-checker` skill to understand legal compliance guidelines.
+1. **Read Constitution**: Load the `constitution-reminding` skill to understand the core principles.
+2. **Read Legal Checker**: Load the `legal-checking` skill to understand legal compliance guidelines.
 
 #### Step 0: Determine Patent ID
 
@@ -91,7 +91,7 @@ This script finds the first patent in `3-investigations/` that has `evaluation.m
   - [ ] Use descriptive technical language (e.g., "features not found", "low likelihood of mapping", "fundamental feature").
 - [ ] Claim analysis report follows the template format.
 
-Run /patent-kit:prior-art <patent-id>
+Run /patent-kit:prior-art-researching <patent-id>
 
 # Examples
 
@@ -108,4 +108,4 @@ Actions:
 
 Error: "Missing evaluation.md"
 Cause: Attempted to run claim analysis on a patent that hasn't completed the evaluation phase (Phase 3).
-Solution: Run `/patent-kit:evaluation <patent-id>` first to generate the evaluation report.
+Solution: Run `/patent-kit:evaluating <patent-id>` first to generate the evaluation report.

@@ -48,7 +48,7 @@ Confirm directories are created and inform the user of next steps.
 
 Upon completion, user can proceed to:
 
-- `/patent-kit:concept-interview` - Define product concept and identify competitors
+- `/patent-kit:concept-interviewing` - Define product concept and identify competitors
 - `/patent-kit:targeting` - Start patent search (if specification already exists)
 
 ## References

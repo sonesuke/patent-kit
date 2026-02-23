@@ -1,0 +1,28 @@
+# Test Case: Legal Checker Functional
+
+name = "functional"
+description = "Verify legal-checker automatically triggers on legal compliance keywords"
+timeout = 60 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+Review this patent analysis for legal compliance violations:
+
+The claim **does not infringe** the reference because it **clearly discloses** all elements.
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:legal-checking\")))"
+
+[[checks]]
+name = "legal_checker_skill_invoked"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"legal-checker\")))] | length > 0"
+
+[[checks]]
+name = "violations_detected"
+type = "log"
+jq = "[.[] | select(.type == \"result\" and (.result // \"\" | test(\"does not infringe|clearly discloses\"; \"i\")))] | length > 0"

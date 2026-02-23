@@ -1,5 +1,5 @@
 ---
-name: constitution
+name: constitution-reminding
 description: "Defines the core principles and operational guidelines for patent investigation. Load this skill when starting any patent investigation phase (targeting, screening, prior-art search, etc.) to understand the core rules."
 metadata:
   author: sonesuke

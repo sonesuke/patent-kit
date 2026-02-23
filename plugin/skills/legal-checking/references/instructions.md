@@ -2,6 +2,52 @@
 
 Version: 1.0.0 | Status: Active
 
+## Review Process
+
+When invoked with a file path, follow this process:
+
+### Step 1: Read the File
+
+Use the Read tool to load the file content.
+
+### Step 2: Identify Prohibited Terms
+
+Scan the document for prohibited legal terms and assertions:
+
+**Strictly Prohibited Terms:**
+- "Does not satisfy"
+- "Does not infringe"
+- "Is a core technology"
+- "Is invalid"
+- "Anticipates" / "Is anticipated"
+- "Renders obvious" / "Would be obvious"
+- "Is equivalent"
+- "Clearly", "Obviously", "Undoubtedly"
+
+### Step 3: Generate Compliance Report
+
+Structure your report as follows:
+
+#### 1. Summary
+- Total number of violations found
+- Overall compliance status
+
+#### 2. Detailed Findings
+For each violation:
+- **Prohibited Term**: The exact term/phrase found
+- **Location**: Section/paragraph where it appears
+- **Issue**: Which rule is violated
+- **Suggested Alternative**: Compliant replacement
+
+#### 3. Corrected Version (Optional)
+Provide a rewritten version of the document with all violations corrected.
+
+### Step 4: Output the Report
+
+Present the compliance report to the user. Do NOT modify the original file.
+
+---
+
 ## I. Prohibited Legal Assertions (STRICT)
 
 To detect risks without crossing into the practice of law, specific legal assertions and definitive judgments are STRICTLY PROHIBITED in all outputs.

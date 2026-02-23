@@ -1,5 +1,5 @@
 ---
-name: evaluation
+name: evaluating
 description: "Generates a detailed evaluation report for a screened patent. Triggered when the user asks to 'evaluate the patent' or 'analyze claim elements (Step 3)'."
 metadata:
   author: sonesuke
@@ -19,8 +19,8 @@ Your task is to Analyze the Patent and create the Specification.
 
 ### Process
 
-1. **Read Constitution**: Load the `constitution` skill to understand the core principles.
-2. **Read Legal Checker**: Load the `legal-checker` skill to understand legal compliance guidelines.
+1. **Read Constitution**: Load the `constitution-reminding` skill to understand the core principles.
+2. **Read Legal Checker**: Load the `legal-checking` skill to understand legal compliance guidelines.
 
 #### Step 0: Determine Patent ID
 
@@ -80,7 +80,7 @@ This script finds the first patent marked as `relevant` in `2-screening/screened
   - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology".
   - [ ] Avoid citing specific court case examples.
 
-Run /patent-kit:claim-analysis <patent-id>
+Run /patent-kit:claim-analyzing <patent-id>
 
 # Examples
 

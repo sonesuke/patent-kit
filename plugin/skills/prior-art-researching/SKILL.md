@@ -1,5 +1,5 @@
 ---
-name: prior-art
+name: prior-art-researching
 description: "Conducts an invalidation (prior art) search for a target patent. Triggered when the user asks to 'perform a prior art search' or 'find invalidating materials (Step 5)'."
 metadata:
   author: sonesuke
@@ -27,8 +27,8 @@ Your task is to Execute the Plan and Report Findings.
   - Message: "Prior Art report already exists for <patent-id>. Do you want to proceed with re-investigation?"
 - **If it does NOT exist**: Proceed with the standard process.
 
-1. **Initialize**: Load the `constitution` skill.
-2. **Load Legal Checker**: Load the `legal-checker` skill for legal compliance guidelines.
+1. **Initialize**: Load the `constitution-reminding` skill.
+2. **Load Legal Checker**: Load the `legal-checking` skill for legal compliance guidelines.
 3. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
 4. **Plan & Execute Search**:
    - **Strategy: Multi-Layer Search** (Standard Procedure):

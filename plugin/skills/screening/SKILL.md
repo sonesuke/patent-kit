@@ -23,8 +23,8 @@ Your task is to filter the collected patents by legal status and relevance to pr
 
 ### Process
 
-1. **Read Constitution**: Load the `constitution` skill to understand the core principles.
-2. **Load Legal Checker**: Load the `legal-checker` skill for legal compliance guidelines.
+1. **Read Constitution**: Load the `constitution-reminding` skill to understand the core principles.
+2. **Load Legal Checker**: Load the `legal-checking` skill for legal compliance guidelines.
 3. **Read Specification**: Read `0-specifications/specification.md` to fully understand the **Theme**, **Domain**, and **Target Product**. This is the CRITERIA for relevance.
 
 #### Step 1: Automated Screening
@@ -115,7 +115,7 @@ Your task is to filter the collected patents by legal status and relevance to pr
 - [ ] **NO Legal Assertions**:
   - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology" or cite court cases.
 
-Run /patent-kit:evaluation <patent-id>
+Run /patent-kit:evaluating <patent-id>
 
 # Examples
 
