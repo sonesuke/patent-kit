@@ -37,6 +37,21 @@ type = "log"
 jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))"
 
 [[checks]]
+name = "specification_template_read"
+type = "log"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"specification-template.md\")))"
+
+[[checks]]
+name = "targeting_template_read"
+type = "log"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"targeting-template.md\")))"
+
+[[checks]]
+name = "keywords_template_read"
+type = "log"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"keywords-template.md\")))"
+
+[[checks]]
 name = "specification_md_created"
 type = "workspace"
 command = "[ -f 0-specifications/specification.md ]"

@@ -50,6 +50,16 @@ type = "log"
 jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))"
 
 [[checks]]
+name = "targeting_template_read"
+type = "log"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"targeting-template.md\")))"
+
+[[checks]]
+name = "keywords_template_read"
+type = "log"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"keywords-template.md\")))"
+
+[[checks]]
 name = "keywords_md_created"
 type = "workspace"
 command = "[ -f 1-targeting/keywords.md ]"
@@ -57,7 +67,7 @@ command = "[ -f 1-targeting/keywords.md ]"
 [[checks]]
 name = "search_patents_called"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"mcp__google_patent_mcp__search_patents\")"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name | test(\"google-patent-cli__search_patents\"))"
 
 [[checks]]
 name = "noise_analysis_performed"
