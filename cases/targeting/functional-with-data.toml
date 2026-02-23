@@ -6,11 +6,11 @@ timeout = 600 # seconds
 
 # Test prompt sent to Claude
 test_prompt = """
-You are a Patent Engineer who has just received a draft invention specification.
-
 I have placed an invention specification in `0-specifications/specification.md` and downloaded CSV files in `1-targeting/csv/`.
 
-Please perform the Phase 1 targeting step and then merge the CSV data to create `1-targeting/target.jsonl`.
+Please load the constitution-reminding skill first, then perform the Phase 1 targeting step.
+
+After completing the targeting analysis, merge the CSV data using the merge script to create `1-targeting/target.jsonl`.
 
 If asked about modifying keywords or synonyms: "Looks good, proceed to merge."
 """
@@ -22,39 +22,47 @@ content = """
 # Product Specification
 
 **Product/Technology**:
-Solar-powered auto-cleaning cat litter box with IoT notifications.
+LLM-based multi-turn chatbot system with RAG (Retrieval-Augmented Generation) capabilities.
 
 **Background**:
-Current cat litter boxes require manual scooping and frequent bag changes, which leads to odor and hygiene issues.
+Current chatbots struggle with context awareness and factual accuracy in multi-turn conversations. This system combines LLM with vector database retrieval to provide accurate, context-aware responses.
 
 **Key Technical Features**:
 
-1. A solar panel integrated into the top hood that charges an internal battery.
-2. A rotating internal drum that separates solid waste into a sealed compartment.
-3. An IoT module (Wi-Fi) that sends push notifications to a smartphone when the waste compartment is full.
+1. LLM-driven multi-turn conversation management
+2. Vector database integration for retrieval-augmented generation
+3. Automatic quality assurance for information retrieval and intent detection
+4. Iterative AI prompt optimization for various applications (video generation, etc.)
 
 **Competitors**:
 
-- Litter-Robot
-- CatGenie
+- Loop Now Technologies
+- Forethought Technologies
+- 주식회사 마인즈앤컴퍼니 (Minds & Company)
+- (주)유비커스 (Ubiquitus)
+- 주식회사 지뉴소프트 (Geniusoft)
+
+**Target Market**:
+US and Korea markets, focusing on enterprise customer service and conversational AI applications.
 """
 
 [[setup]]
 path = "1-targeting/csv/sample1.csv"
 content = """
-publication_number,title,assignee
-US9433185B2,Automated pet care assembly with sensor,"Automated Pet Care Products, Llc"
-US11399502B2,Waste compartment monitoring,Automated Pet Care Products, Llc
-US11963512B1,Pet toilet with rotating drum,PetPivot INC
+search URL:,https://patents.google.com/?q=%28llm+ai+chat%29&oq=llm+ai+chat
+id,title,assignee,inventor/author,priority date,filing/creation date,publication date,grant date,result link,representative figure link
+KR-102637029-B1,Device for Generating Multi-turn Chat Bot Data Using LLM and Driving Method Thereof ,주식회사 마인즈앤컴퍼니,"고석태, 백영상, 명대우, 김명진, 김영우, 김지훈, 신재우",2023-10-11,2023-10-11,2024-02-15,2024-02-15,https://patents.google.com/patent/KR102637029B1/en,
+US-2024292070-A1,Iterative ai prompt optimization for video generation ,"Loop Now Technologies, Inc.","Wu-Hsi Li, Edwin Chiu, Hong-Ming Tseng, Xiaochen ZHANG",2023-02-24,2024-04-10,2024-08-29,,https://patents.google.com/patent/US20240292070A1/en,https://patentimages.storage.googleapis.com/41/9d/6e/035e7a6c53a1a8/US20240292070A1-20240829-D00000.png
+US-2025200489-A1,Automatic quality assurance for information retrieval and intent detection ,"Forethought Technologies, Inc.","Sami Ghoche, Deon Nicholas, Kyungmo KOO, Hanqiao Li, Weitian Xing, Yi Lu, Zachary Tosh, Sunny Kong, Antoine Nasr, Volodymyr Lyubinets",2022-02-28,2024-10-31,2025-06-19,,https://patents.google.com/patent/US20250200489A1/en,https://patentimages.storage.googleapis.com/f0/aa/92/f5b882088ea83c/US20250200489A1-20250619-D00000.png
 """
 
 [[setup]]
 path = "1-targeting/csv/sample2.csv"
 content = """
-publication_number,title,assignee
-US20200178505A1,Solar-powered pet monitoring,Botsitter, Llc
-US10582621B2,Cat litter box,CatGenie
-US10856789B2,Automatic litter device,Litter-Robot
+search URL:,https://patents.google.com/?q=%28llm+ai+chat%29&oq=llm+ai+chat
+id,title,assignee,inventor/author,priority date,filing/creation date,publication date,grant date,result link,representative figure link
+KR-102681147-B1,Method and apparatus for generating appropriate responses based on the user intent in an ai chatbot through retrieval-augmented generation ,(주)유비커스,서규현,2023-10-31,2023-10-31,2024-07-04,2024-07-04,https://patents.google.com/patent/KR102681147B1/en,
+KR-102738821-B1,Method for Operating an AI Chatbot Utilizing a Vector Database ,주식회사 지뉴소프트,"박찬우, 박현재, 정훈모, 임태훈, 김동일",2024-02-07,2024-02-07,2024-12-06,2024-12-06,https://patents.google.com/patent/KR102738821B1/en,https://patentimages.storage.googleapis.com/7d/04/43/813ad43892e7cb/112024015338864-pat00009.png
 """
 
 # Evaluation checks
