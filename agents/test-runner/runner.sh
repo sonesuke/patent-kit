@@ -46,6 +46,9 @@ TOTAL_CASES=0
 TOTAL_PASS=0
 TOTAL_FAIL=0
 
+# Track test results for summary (format: "test_name|pass|duration|input_tokens|output_tokens")
+declare -a TEST_RESULTS=()
+
 # --- Process each skill directory ---
 for SKILL_DIR in "$WORKSPACE_FOLDER"/cases/*/; do
     # Remove trailing slash from SKILL_DIR
@@ -78,13 +81,13 @@ for SKILL_DIR in "$WORKSPACE_FOLDER"/cases/*/; do
         PIDS=()
         TRIAL_DIRS=()
         TRIAL_START_TIMES=()
-        CASE_REPORT_DIR="$REPORT_DIR/$TEST_CASE_NAME"
-        mkdir -p "$CASE_REPORT_DIR"
+        TRIAL_LOG_FILES=()
 
         for TRIAL in $(seq 1 "$N_TRIALS"); do
             LABEL="${TEST_CASE_NAME}_trial-${TRIAL}"
-            LOG_FILE="$CASE_REPORT_DIR/trial-${TRIAL}.log"
+            LOG_FILE="$REPORT_DIR/${TEST_NAME}-${TRIAL}.log"
             WORK_DIR="/tmp/e2e-${LABEL}"
+            TRIAL_LOG_FILES+=("$LOG_FILE")
             TRIAL_DIRS+=("$WORK_DIR")
             TRIAL_START_TIMES+=($(date +%s))
 
@@ -129,14 +132,29 @@ for SKILL_DIR in "$WORKSPACE_FOLDER"/cases/*/; do
         for TRIAL_IDX in $(seq 0 $((N_TRIALS - 1))); do
             TRIAL_NUM=$((TRIAL_IDX + 1))
             WORK_DIR="${TRIAL_DIRS[$TRIAL_IDX]}"
-            LOG_FILE="$CASE_REPORT_DIR/trial-${TRIAL_NUM}.log"
+            LOG_FILE="${TRIAL_LOG_FILES[$TRIAL_IDX]}"
 
-            # Run checks using test-check.sh (handles all display)
-            if ! "$(dirname "$0")/tools/test-check.sh" "$WORKSPACE_FOLDER" "$TEST_FILE" "$LOG_FILE" "$WORK_DIR" "$TRIAL_NUM"; then
+            # Run checks using test-check.sh and capture output
+            CHECK_OUTPUT=$("$(dirname "$0")/tools/test-check.sh" "$WORKSPACE_FOLDER" "$TEST_FILE" "$LOG_FILE" "$WORK_DIR" "$TRIAL_NUM" 2>&1)
+            CHECK_EXIT_CODE=$?
+
+            # Display output
+            echo "$CHECK_OUTPUT"
+
+            # Extract token usage from output
+            TRIAL_INPUT=$(echo "$CHECK_OUTPUT" | grep "📊 Tokens:" | sed -E 's/.*in=([0-9]+).*/\1/' || echo "0")
+            TRIAL_OUTPUT=$(echo "$CHECK_OUTPUT" | grep "📊 Tokens:" | sed -E 's/.*out=([0-9]+).*/\1/' || echo "0")
+
+            # Store trial result for summary (raw data)
+            TRIAL_STATUS="true"
+            if [ $CHECK_EXIT_CODE -ne 0 ]; then
                 CASE_PASS=false
+                TRIAL_STATUS="false"
             fi
+            TEST_RESULT="${TEST_NAME}|${TRIAL_STATUS}|${TRIAL_DURATIONS[$TRIAL_IDX]}|${TRIAL_INPUT}|${TRIAL_OUTPUT}"
+            TEST_RESULTS+=("$TEST_RESULT")
 
-            # Display duration (this is runner-level timing info)
+            # Display duration
             echo "[Host]   ⏱️  Trial $TRIAL_NUM took ${TRIAL_DURATIONS[$TRIAL_IDX]}s"
         done
 
@@ -152,6 +170,6 @@ for SKILL_DIR in "$WORKSPACE_FOLDER"/cases/*/; do
 done  # End of SKILL_DIR loop
 
 # --- Generate and display summary (delegated to test-summary.sh) ---
-"$(dirname "$0")/tools/test-summary.sh" "$REPORT_DIR" "$TOTAL_CASES" "$TOTAL_PASS" "$TOTAL_FAIL" "$N_TRIALS"
+"$(dirname "$0")/tools/test-summary.sh" "$REPORT_DIR" "$TOTAL_CASES" "$TOTAL_PASS" "$TOTAL_FAIL" "$N_TRIALS" "${TEST_RESULTS[@]}"
 
 exit "$TOTAL_FAIL"
