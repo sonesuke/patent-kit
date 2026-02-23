@@ -69,6 +69,12 @@ name = "search_patents_called"
 type = "log"
 jq = ".message.content[]? | select(.type == \"tool_use\" and .name | test(\"google-patent-cli__search_patents\"))"
 
+# TODO: Replace string matching with isError field check once google-patent-cli MCP server returns isError: true on errors
+[[checks]]
+name = "google_patent_mcp_succeeded"
+type = "log"
+jq = "map(select(.type == \"assistant\" and (.message.content[]?.name // \"\" | test(\"google-patent-cli__search_patents\"))) | .message.content[]?.id) as $tool_ids | map(select(.type == \"user\" and (.message.content[]?.tool_use_id // \"\" | IN($tool_ids[])))) | all(.message.content[]?.content[]?.text // \"\" | test(\"Search failed|Browser error|Chrome|SIGABRT\") | not)"
+
 [[checks]]
 name = "noise_analysis_performed"
 type = "log"

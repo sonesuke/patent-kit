@@ -63,3 +63,10 @@ command = "[ -f 0-specifications/specification.md ]"
 name = "specification_preserved"
 type = "workspace"
 command = "grep -q 'Voice recognition system' 0-specifications/specification.md"
+
+# If MCP tools are called, verify they succeed
+# TODO: Replace string matching with isError field check once google-patent-cli MCP server returns isError: true on errors
+[[checks]]
+name = "google_patent_mcp_succeeded_if_called"
+type = "log"
+jq = "(map(select(.type == \"assistant\" and (.message.content[]?.name // \"\" | test(\"google-patent-cli__search_patents\"))) | .message.content[]?.id) | length) as $call_count | if $call_count > 0 then map(select(.type == \"assistant\" and (.message.content[]?.name // \"\" | test(\"google-patent-cli__search_patents\"))) | .message.content[]?.id) as $tool_ids | map(select(.type == \"user\" and (.message.content[]?.tool_use_id // \"\" | IN($tool_ids[])))) | all(.message.content[]?.content[]?.text // \"\" | test(\"Search failed|Browser error|Chrome|SIGABRT\") | not) else true end"
