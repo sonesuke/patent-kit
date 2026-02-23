@@ -6,15 +6,7 @@ timeout = 600 # seconds
 
 # Test prompt sent to Claude
 test_prompt = """
-I have placed an invention specification in `0-specifications/specification.md` and downloaded CSV files in `1-targeting/csv/`.
-
-Since the CSV files are already downloaded, skip the patent search and keyword extraction steps.
-
-Please run the merge script directly to create `1-targeting/target.jsonl`:
-
-```bash
-./plugin/skills/targeting/scripts/shell/merge.sh 1-targeting/csv 1-targeting/target.jsonl
-```
+I have placed downloaded CSV files in `1-targeting/csv/`.
 """
 
 # Setup files to be copied to workspace

@@ -36,7 +36,21 @@ Use the Glob tool to check if `0-specifications/specification.md` exists:
 
 ### 3. Execute Targeting
 
-See `references/instructions.md` for detailed execution steps.
+**First, check if CSV files already exist:**
+
+Use the Glob tool to check if `1-targeting/csv/*.csv` files exist:
+
+- **If CSV files exist**:
+  1. Skip the patent search and keyword extraction steps (Step 1 & 2 from instructions)
+  2. Immediately proceed to merge step (Step 3)
+  3. Run the merge script:
+     ```bash
+     ./plugin/skills/targeting/scripts/shell/merge.sh 1-targeting/csv 1-targeting/target.jsonl
+     ```
+  4. Verify `1-targeting/target.jsonl` was created successfully
+  5. Skip to completion
+
+- **If NO CSV files**: See `references/instructions.md` for detailed execution steps.
 
 ### 4. Transition to Screening
 
