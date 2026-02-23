@@ -30,7 +30,7 @@ Your task is to Execute the Plan and Report Findings.
 1. **Initialize**: Load the `constitution` skill.
 2. **Load Legal Checker**: Load the `legal-checker` skill for legal compliance guidelines.
 3. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
-3. **Plan & Execute Search**:
+4. **Plan & Execute Search**:
    - **Strategy: Multi-Layer Search** (Standard Procedure):
      - **Layer 1: General Terminology**:
        - **Purpose**: Capture broad technical concepts and context.
@@ -66,13 +66,13 @@ Your task is to Execute the Plan and Report Findings.
      - **Requirement**: Save output to `3-investigations/<patent-id>/json/search_results_<desc>.json`.
      - **Check**: Did the command succeed? IF NO -> **STOP** and Debug.
 
-4. **Screen Results** (MANDATORY for BOTH patent and non-patent literature):
+5. **Screen Results** (MANDATORY for BOTH patent and non-patent literature):
    - **Non-Patent Literature Screening** (CRITICAL - DO NOT SKIP):
      - **RULE**: Papers with titles directly relevant to the target patent's technical field MUST be included for detailed analysis.
      - Identify Grade A NPL candidates and summarize their technical contributions.
      - Map the technical elements of the paper to the patent's constituent elements.
 
-5. **Detailed Analysis** (MANDATORY):
+6. **Detailed Analysis** (MANDATORY):
    - **For Non-Patent Literature (Grade A)** (CRITICAL):
      - **Full-Text Acquisition**:
        - **MUST** run Use the MCP tool `fetch_paper` (Arguments: --id <arxiv-id>) to get full-text JSON for Grade A NPLs.
@@ -85,7 +85,7 @@ Your task is to Execute the Plan and Report Findings.
        - Verify that the publication date is strictly before the priority date.
      - **RULE**: Even if strong prior art is found in patent literature, NPL analysis results MUST be included in the report (Constitution III).
 
-6. **Draft Report**: Fill `[prior-art-template.md](templates/prior-art-template.md)`.
+7. **Draft Report**: Fill `[prior-art-template.md](templates/prior-art-template.md)`.
    - **Verdict Selection**:
      - **Relevant prior art identified**: Strong evidence found (investigation required).
      - **Alternative implementation selected**: Path changed to avoid conflict.
@@ -99,7 +99,7 @@ Your task is to Execute the Plan and Report Findings.
      - **Format**:
        - Overall Similarity MUST be written exactly as: `Overall Similarity: Significant Similarity` (or Moderate Similarity, Limited Similarity).
        - Do NOT use other formats.
-7. **Save**: `3-investigations/<patent-id>/prior-art.md`.
+8. **Save**: `3-investigations/<patent-id>/prior-art.md`.
 
 ### Quality Gates
 

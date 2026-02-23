@@ -1,3 +1,11 @@
+---
+name: legal-checker
+description: "Provides legal compliance guidelines for patent investigation to avoid crossing into the practice of law. Load this skill before any claim analysis, FTO, or invalidity work."
+metadata:
+  author: sonesuke
+  version: 1.0.0
+---
+
 # Legal Checker - Patent Investigation Guidelines
 
 Version: 1.0.0
