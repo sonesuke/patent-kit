@@ -2,5 +2,5 @@ investigations/
 .venv/
 __pycache__/
 /target/
-e2e/reports
+out/
 Cargo.lock

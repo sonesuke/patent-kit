@@ -32,9 +32,9 @@ echo "[Host] Ensuring dev container is up for $WORKSPACE_FOLDER..."
 devcontainer up --workspace-folder "$WORKSPACE_FOLDER"
 
 # --- Prepare report directory ---
-mkdir -p "$WORKSPACE_FOLDER/e2e/reports"
+mkdir -p "$WORKSPACE_FOLDER/out"
 REPORT_ID=$(date +%Y%m%d_%H%M%S)
-REPORT_DIR="$WORKSPACE_FOLDER/e2e/reports/$REPORT_ID"
+REPORT_DIR="$WORKSPACE_FOLDER/out/$REPORT_ID"
 mkdir -p "$REPORT_DIR"
 
 echo "=================================================="
