@@ -14,7 +14,6 @@
 #               "cases/concept-interview/func*.toml" - tests starting with 'func'
 #               "cases/concept-interview/functional-with-spec.toml" - specific test
 
-set -e
 set -o pipefail
 
 # --- Pre-flight Checks ---

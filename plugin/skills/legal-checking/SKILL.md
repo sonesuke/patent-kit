@@ -1,6 +1,6 @@
 ---
 name: legal-checking
-description: "Use to review patent analysis for legal compliance violations. Detects prohibited terms (infringe, satisfy, anticipate, obvious, equivalent, invalid) and suggests compliant alternatives. Trigger: review, legal compliance, violation, check"
+description: "Review a file for legal compliance violations. Detects prohibited terms (infringe, satisfy, anticipate, obvious, equivalent, invalid) and suggests compliant alternatives. Load this skill when: reviewing patent analysis, checking for legal language violations, or analyzing compliance"
 metadata:
   author: sonesuke
   version: 1.0.0

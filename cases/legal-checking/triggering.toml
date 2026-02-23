@@ -1,12 +1,12 @@
 # Test Case: Legal Checker Triggering
 
 name = "triggering"
-description = "Verify legal-checker skill can be loaded and invoked"
+description = "Verify legal-checking skill can be loaded and invoked"
 timeout = 60 # seconds
 
 # Test prompt sent to Claude
 test_prompt = """
-Load the legal-checker skill to understand the legal compliance guidelines.
+Load the legal-checking skill to understand the legal compliance guidelines.
 """
 
 # Evaluation checks
@@ -18,4 +18,4 @@ jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 
 [[checks]]
 name = "legal_checker_skill_invoked"
 type = "log"
-jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"legal-checker\")))] | length > 0"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"legal-checking\")))] | length > 0"

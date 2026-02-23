@@ -1,7 +1,7 @@
 # Test Case: Legal Checker - File Review
 
 name = "functional-file-review"
-description = "Verify legal-checker reviews a file and identifies violations"
+description = "Verify legal-checking reviews a file and identifies violations"
 timeout = 90 # seconds
 
 # Test prompt sent to Claude

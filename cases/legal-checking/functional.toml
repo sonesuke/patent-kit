@@ -1,7 +1,7 @@
 # Test Case: Legal Checker Functional
 
 name = "functional"
-description = "Verify legal-checker automatically triggers on legal compliance keywords"
+description = "Verify legal-checking automatically triggers on legal compliance keywords"
 timeout = 60 # seconds
 
 # Test prompt sent to Claude
@@ -20,7 +20,7 @@ jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 
 [[checks]]
 name = "legal_checker_skill_invoked"
 type = "log"
-jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"legal-checker\")))] | length > 0"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"legal-checking\")))] | length > 0"
 
 [[checks]]
 name = "violations_detected"
