@@ -53,6 +53,23 @@ EOF
     echo "[Devcontainer Setup] Configuring google-patent-cli for Docker..."
     mkdir -p ~/.config/google-patent-cli
     cat > ~/.config/google-patent-cli/config.toml << 'EOF'
+# Chrome browser path
+browser_path = "/usr/bin/chromium"
+
+# Chrome arguments for Docker/DevContainer environment
+chrome_args = [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-gpu"
+]
+EOF
+
+    echo "[Devcontainer Setup] Configuring arxiv-cli for Docker..."
+    mkdir -p ~/.config/arxiv-cli
+    cat > ~/.config/arxiv-cli/config.toml << 'EOF'
+# Chrome browser path
+browser_path = "/usr/bin/chromium"
+
 # Chrome arguments for Docker/DevContainer environment
 chrome_args = [
     "--no-sandbox",
