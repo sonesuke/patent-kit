@@ -63,5 +63,6 @@ jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" 
 
 [[checks]]
 name = "google_patent_mcp_succeeded"
-type = "log"
-jq = "map(select(.type == \"assistant\" and (.message.content[]?.name // \"\" | test(\"google-patent-cli__search_patents\"))) | .message.content[]?.id) as $tool_ids | map(select(.type == \"user\" and .message.content[]? | select((.tool_use_id // \"\") | IN($tool_ids[])) | .is_error // false | not)) | all(. != null)"
+type = "script"
+command = "./check-mcp-success.sh"
+mcp_tool = "google-patent-cli__search_patents"

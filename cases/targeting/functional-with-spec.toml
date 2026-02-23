@@ -42,22 +42,22 @@ Current cat litter boxes require manual scooping and frequent bag changes, which
 [[checks]]
 name = "init_validation"
 type = "log"
-jq = "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
 
 [[checks]]
 name = "constitution_loaded"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))] | length > 0"
 
 [[checks]]
 name = "targeting_template_read"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"targeting-template.md\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"targeting-template.md\")))] | length > 0"
 
 [[checks]]
 name = "keywords_template_read"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"keywords-template.md\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"keywords-template.md\")))] | length > 0"
 
 [[checks]]
 name = "keywords_md_created"
@@ -67,17 +67,18 @@ command = "[ -f 1-targeting/keywords.md ]"
 [[checks]]
 name = "search_patents_called"
 type = "log"
-jq = "(.message.content[]?.name? // \"\") | test(\"google-patent-cli__search_patents\")"
+jq = "[.[] | (.message.content[]?.name? // \"\") | test(\"google-patent-cli__search_patents\")] | any"
 
 [[checks]]
 name = "google_patent_mcp_succeeded"
-type = "log"
-jq = "map(select(.type == \"assistant\" and (.message.content[]?.name // \"\" | test(\"google-patent-cli__search_patents\"))) | .message.content[]?.id) as $tool_ids | map(select(.type == \"user\" and .message.content[]? | select((.tool_use_id // \"\") | IN($tool_ids[])) | .is_error // false | not)) | all(. != null)"
+type = "script"
+command = "./check-mcp-success.sh"
+mcp_tool = "google-patent-cli__search_patents"
 
 [[checks]]
 name = "noise_analysis_performed"
 type = "log"
-jq = ".message.content[]? | select(.type == \"text\" and (.text | test(\"noise|Noise|irrelevant|Irrelevant|snippets|Snippets\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"text\" and (.text | test(\"noise|Noise|irrelevant|Irrelevant|snippets|Snippets\")))] | length > 0"
 
 [[checks]]
 name = "targeting_md_created"

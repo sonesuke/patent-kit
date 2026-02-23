@@ -41,6 +41,16 @@ for CHECK_IDX in $(seq 0 $((NUM_CHECKS - 1))); do
             echo "[Host]     ❌ $CHECK_NAME"
             TRIAL_PASS=false
         fi
+    elif [ "$CHECK_TYPE" = "script" ]; then
+        CHECK_CMD=$(yq eval ".checks[$CHECK_IDX].command" "$TEST_TOML_FILE")
+        MCP_TOOL=$(yq eval ".checks[$CHECK_IDX].mcp_tool // \"\"" "$TEST_TOML_FILE")
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        cd "$SCRIPT_DIR" && if $CHECK_CMD "$LOG_FILE" "$MCP_TOOL" >/dev/null 2>&1; then
+            echo "[Host]     ✅ $CHECK_NAME"
+        else
+            echo "[Host]     ❌ $CHECK_NAME"
+            TRIAL_PASS=false
+        fi
     fi
 done
 
