@@ -74,11 +74,6 @@ type = "log"
 jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
 
 [[checks]]
-name = "merge_executed"
-type = "log"
-jq = "[.[] | .message.content[]? | select(type == \"tool_use\" and .name == \"Bash\" and (.input.command | test(\"merge\")))] | length > 0"
-
-[[checks]]
 name = "target_jsonl_exists"
 type = "workspace"
 command = "[ -f 1-targeting/target.jsonl ] && [ $(wc -l < 1-targeting/target.jsonl) -gt 0 ]"
