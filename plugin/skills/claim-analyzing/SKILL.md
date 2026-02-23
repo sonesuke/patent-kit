@@ -12,6 +12,19 @@ Your task is to create the Claim Analysis Report based on the Spec.
 
 ## Instructions
 
+### User Interview for Product Understanding
+
+For accurate claim analysis, understanding the target product is crucial.
+
+- **Rule**: Ensure `0-specifications/specification.md` exists and contains complete product information.
+- **Check**: If specification is incomplete or missing, notify the user before proceeding.
+- **Information Needed**: Clear definition of the "Target Product" to compare against claim elements.
+
+### Template Adherence
+
+- **Requirement**: Strict adherence to the output template is required.
+- **Template**: `templates/claim-analysis-template.md` - Use for `3-investigations/<patent-id>/claim-analysis.md`
+
 ### Input
 
 - **Patent ID**: `<patent-id>` (optional)
@@ -74,6 +87,15 @@ This script finds the first patent in `3-investigations/` that has `evaluation.m
        - Do NOT use other formats like "High (高リスク)".
 
 4. **Save**: `3-investigations/<patent-id>/claim-analysis.md`.
+
+### Output Management
+
+To maintain context window efficiency:
+
+- **Rule**: When reading evaluation.md, use the saved JSON file for patent data.
+  - Path: `3-investigations/<patent-id>/json/<patent-id>.json`
+  - **Requirement**: Do NOT load large JSON outputs directly into context.
+  - **Action**: Use Read tool or jq to access specific fields (e.g., constituent_elements, dependent_claims) from saved JSON.
 
 ### Output
 

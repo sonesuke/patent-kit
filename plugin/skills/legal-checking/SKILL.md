@@ -33,6 +33,7 @@ Reviews patent analysis documents for legal compliance violations and suggests c
 ```
 
 The skill will:
+
 1. Read the specified file
 2. Review for legal compliance violations
 3. Output a compliance report with findings and suggestions

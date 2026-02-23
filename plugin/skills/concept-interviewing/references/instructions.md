@@ -1,5 +1,10 @@
 # Concept Interview - Detailed Instructions
 
+## Template Adherence
+
+- **Requirement**: Strict adherence to the output template is required.
+- **Template**: `assets/templates/specification-template.md` - Use for `0-specifications/specification.md`
+
 ## Overview
 
 Define the product concept and identify competitors. This phase establishes the foundation for patent targeting.

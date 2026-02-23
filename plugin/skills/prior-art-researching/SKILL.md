@@ -12,6 +12,11 @@ Your task is to Execute the Plan and Report Findings.
 
 ## Instructions
 
+### Template Adherence
+
+- **Requirement**: Strict adherence to the output template is required.
+- **Template**: `templates/prior-art-template.md` - Use for `3-investigations/<patent-id>/prior-art.md`
+
 ### Input
 
 - **Plan File**: `3-investigations/<patent-id>/claim-analysis.md`
@@ -119,6 +124,17 @@ Your task is to Execute the Plan and Report Findings.
     - "Characteristic implementation described in the patent"
   - [ ] Avoid citing specific court case examples.
   - [ ] Use descriptive technical language.
+
+## Output Management
+
+To maintain context window efficiency:
+
+- **Rule**: `search_patents` and `search_papers` results MUST be saved to JSON files.
+  - Patent Search Path: `3-investigations/<patent-id>/json/search_results_<timestamp>.json`
+  - NPL Search Path: `3-investigations/<patent-id>/json/search_results_<timestamp>.json`
+  - NPL Full-Text Path: `3-investigations/<patent-id>/json/npl_<arxiv-id>.json`
+- **Requirement**: Do NOT load large JSON outputs directly into context.
+- **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
 
 # Examples
 

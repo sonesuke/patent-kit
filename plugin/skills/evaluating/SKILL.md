@@ -12,6 +12,19 @@ Your task is to Analyze the Patent and create the Specification.
 
 ## Instructions
 
+### User Interview for Product Understanding
+
+For accurate claim analysis, understanding the target product is crucial.
+
+- **Rule**: Ensure `0-specifications/specification.md` exists and contains complete product information.
+- **Check**: If specification is incomplete or missing, notify the user before proceeding.
+- **Information Needed**: Clear definition of the "Target Product" to compare against claim elements.
+
+### Template Adherence
+
+- **Requirement**: Strict adherence to the output template is required.
+- **Template**: `templates/evaluation-template.md` - Use for `3-investigations/<patent-id>/evaluation.md`
+
 ### Input
 
 - **Patent ID**: `<patent-id>` (optional)
@@ -64,6 +77,15 @@ This script finds the first patent marked as `relevant` in `2-screening/screened
 3. **Draft**: Fill `[evaluation-template.md](templates/evaluation-template.md)`.
 
 4. **Save**: `3-investigations/<patent-id>/evaluation.md`.
+
+### Output Management
+
+To maintain context window efficiency:
+
+- **Rule**: `fetch_patent` results MUST be saved to a JSON file.
+  - Path: `3-investigations/<patent-id>/json/<patent-id>.json`
+  - **Requirement**: Do NOT load large JSON outputs directly into context.
+  - **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
 
 ### Output
 

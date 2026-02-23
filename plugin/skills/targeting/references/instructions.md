@@ -1,5 +1,20 @@
 # Targeting - Detailed Instructions
 
+## Template Adherence
+
+- **Requirement**: Strict adherence to the output templates is required.
+- **Templates**: Located in `assets/` directory.
+  - `targeting-template.md` - Use for `1-targeting/targeting.md`
+  - `keywords-template.md` - Use for `1-targeting/keywords.md`
+
+## Unified Search Scope
+
+Patent investigations MUST cover the "Big 4" jurisdictions unless explicitly restricted.
+
+- **Rule**: Always consider US, EP, JP, and CN references.
+- **Mechanism**: Use machine translation for CN/JP if native language skills are unavailable.
+- **Country Codes**: US (United States), EP (Europe), JP (Japan), CN (China).
+
 ## Overview
 
 Generate high-precision search queries based on the product concept and competitors defined in Phase 0. This phase concludes with a set of validated search commands and merged patent data for screening.
@@ -91,6 +106,16 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 3. **Check Count**:
    - The merge command output displays the number of unique patents (e.g., `Merged 150 unique patents...`).
    - Confirm this count to understand the volume of patents to be screened.
+
+## Output Management
+
+To maintain context window efficiency:
+
+- **Rule**: `search_patents` results MUST be saved to a JSON file.
+  - Path: `1-targeting/json/search_results_<desc>.json`
+    - Replace `<desc>` with query description (e.g., `competitor_assignee`, `general_keywords`)
+  - **Requirement**: Do NOT load large JSON outputs directly into context.
+  - **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
 
 ## Output
 

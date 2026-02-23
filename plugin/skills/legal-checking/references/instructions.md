@@ -15,6 +15,7 @@ Use the Read tool to load the file content.
 Scan the document for prohibited legal terms and assertions:
 
 **Strictly Prohibited Terms:**
+
 - "Does not satisfy"
 - "Does not infringe"
 - "Is a core technology"
@@ -29,17 +30,21 @@ Scan the document for prohibited legal terms and assertions:
 Structure your report as follows:
 
 #### 1. Summary
+
 - Total number of violations found
 - Overall compliance status
 
 #### 2. Detailed Findings
+
 For each violation:
+
 - **Prohibited Term**: The exact term/phrase found
 - **Location**: Section/paragraph where it appears
 - **Issue**: Which rule is violated
 - **Suggested Alternative**: Compliant replacement
 
 #### 3. Corrected Version (Optional)
+
 Provide a rewritten version of the document with all violations corrected.
 
 ### Step 4: Output the Report

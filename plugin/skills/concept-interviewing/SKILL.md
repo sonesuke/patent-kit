@@ -43,6 +43,13 @@ Upon successful completion:
 - Deliverable: `0-specifications/specification.md` created with verified assignee names
 - Next skill: `/patent-kit:targeting`
 
+## Output Management
+
+- **Output File**: `0-specifications/specification.md`
+- **Template**: Use `assets/templates/specification-template.md`
+- **Format**: Markdown (not JSON)
+- **Note**: This file is referenced by all subsequent phases (targeting, screening, evaluating, claim-analyzing)
+
 ## State Management
 
 ### Initial State

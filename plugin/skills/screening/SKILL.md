@@ -12,6 +12,11 @@ Your task is to filter the collected patents by legal status and relevance to pr
 
 ## Instructions
 
+### Template Adherence
+
+- **Requirement**: Strict adherence to the output template is required.
+- **Template**: `templates/screening-template.md` - Use for `2-screening/screening.md`
+
 ### Input
 
 - **Target Patents**: `1-targeting/target.jsonl` (generated in Phase 1 Targeting).
@@ -100,6 +105,15 @@ Your task is to filter the collected patents by legal status and relevance to pr
   - **Strictly follow the template structure.**
   - **DO NOT add any extra sections.**
   - Include: Progress (Screened/Total), Relevant, Irrelevant, Expired, Not processed.
+
+### Output Management
+
+To maintain context window efficiency:
+
+- **Rule**: `fetch_patent` results MUST be saved to a JSON file.
+  - Path: `2-screening/json/<patent-id>.json`
+  - **Requirement**: Do NOT load large JSON outputs directly into context.
+  - **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
 
 ### Output
 
