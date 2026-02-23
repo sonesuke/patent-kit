@@ -1,7 +1,20 @@
+# Test Case: Setup Triggering
+
+name = "triggering"
+description = "Verify setup skill can be loaded and invoked"
+timeout = 60 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+Initialize the project directories.
+"""
+
+# Evaluation checks
 [[checks]]
 name = "init_validation"
 type = "log"
 jq = "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:setup\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
+
 [[checks]]
 name = "setup_skill_invoked"
 type = "log"

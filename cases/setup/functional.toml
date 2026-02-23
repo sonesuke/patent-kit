@@ -1,15 +1,30 @@
+# Test Case: Setup Functional
+
+name = "functional"
+description = "Verify setup creates project directories and reads instructions"
+timeout = 60 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+Initialize the project directories.
+"""
+
+# Evaluation checks
 [[checks]]
 name = "init_validation"
 type = "log"
 jq = "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:setup\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
+
 [[checks]]
 name = "setup_skill_invoked"
 type = "log"
 jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"setup\")))"
+
 [[checks]]
 name = "references_instructions_read"
 type = "log"
 jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"setup.*references/instructions.md\")))"
+
 [[checks]]
 name = "directories_created"
 type = "workspace"

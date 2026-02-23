@@ -1,1 +1,0 @@
-I want to start a patent search for a new voice recognition system in the US, releasing in 2025. Competitors are Google and Amazon. The system is for smart home devices with real-time transcription and noise-resistant recognition. Please proceed with the assignee verification and create the specification file.

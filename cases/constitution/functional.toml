@@ -1,15 +1,30 @@
+# Test Case: Constitution Functional
+
+name = "functional"
+description = "Verify constitution loads and references/instructions.md is read"
+timeout = 60 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+Load the constitution skill to understand the core principles.
+"""
+
+# Evaluation checks
 [[checks]]
 name = "init_validation"
 type = "log"
 jq = "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:constitution\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
+
 [[checks]]
 name = "constitution_skill_invoked"
 type = "log"
 jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))"
+
 [[checks]]
 name = "references_instructions_read"
 type = "log"
 jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"references/instructions.md\")))"
+
 [[checks]]
 name = "constitution_loaded"
 type = "log"

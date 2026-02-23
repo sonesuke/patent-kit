@@ -1,0 +1,65 @@
+# Test Case: Concept Interview Functional (with existing specification)
+
+name = "functional-with-spec"
+description = "Verify concept-interview verifies existing specification without re-interviewing"
+timeout = 120 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+Use concept-interview to verify our existing product specification is complete and ready for the targeting phase.
+"""
+
+# Setup files to be copied to workspace
+[[setup]]
+path = "0-specifications/specification.md"
+content = """
+# Product Specification
+
+## 1. Product Concept
+
+Voice recognition system for smart home devices
+
+## 2. Target Market
+
+- **Country**: US
+- **Release Date**: 2025-06-01
+- **Cutoff Date**: 2005-06-01
+
+## 3. Competitors
+
+- **Google LLC**
+- **Amazon.com Inc.**
+
+## 4. Verified Assignee Names (Canonicalized)
+
+| Original Name | Verified Assignee Names                    | Status   | Notes                    |
+| ------------- | ------------------------------------------ | -------- | ------------------------ |
+| Google        | Google LLC, Google Inc., GOOGLE LLC        | Verified | Multiple name variations |
+| Amazon        | Amazon.com Inc., Amazon Technologies, Inc. | Verified | Multiple name variations |
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:concept-interview\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
+
+[[checks]]
+name = "concept_interview_invoked"
+type = "log"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"concept-interview\")))"
+
+[[checks]]
+name = "constitution_loaded"
+type = "log"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))"
+
+[[checks]]
+name = "specification_md_exists"
+type = "workspace"
+command = "[ -f 0-specifications/specification.md ]"
+
+[[checks]]
+name = "specification_preserved"
+type = "workspace"
+command = "grep -q 'Voice recognition system' 0-specifications/specification.md"
