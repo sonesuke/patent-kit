@@ -156,7 +156,9 @@ for IDX in "${!TEST_FILES[@]}"; do
         LOG_FILE="${TRIAL_LOG_FILES[$TRIAL_IDX]}"
 
         # Run checks using test-check.sh and capture output
-        CHECK_OUTPUT=$("$(dirname "$0")/tools/test-check.sh" "$WORKSPACE_FOLDER" "$TEST_FILE" "$LOG_FILE" "$WORK_DIR" "$TRIAL_NUM" 2>&1)
+        # Convert TEST_FILE to absolute path for test-check.sh (which runs from tools/ directory)
+        TEST_FILE_ABSOLUTE=$(cd "$WORKSPACE_FOLDER" && realpath "$TEST_FILE")
+        CHECK_OUTPUT=$("$(dirname "$0")/tools/test-check.sh" "$WORKSPACE_FOLDER" "$TEST_FILE_ABSOLUTE" "$LOG_FILE" "$WORK_DIR" "$TRIAL_NUM" 2>&1)
         CHECK_EXIT_CODE=$?
 
         # Display output

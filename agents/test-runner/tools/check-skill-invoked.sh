@@ -11,5 +11,5 @@ if [ -z "$LOG_FILE" ] || [ -z "$SKILL_NAME" ]; then
 fi
 
 # Check if the skill was invoked in the log
-# Note: Log is JSONL format with message.content[].type == "tool_use" and .name == "Skill"
-grep -q "\"Skill\"" "$LOG_FILE" && grep -q "\"skill\":\"[^\"]*$SKILL_NAME" "$LOG_FILE"
+# Note: Log is JSONL format with "name":"Skill" and "skill":"patent-kit:<skill-name>"
+grep -q "\"Skill\"" "$LOG_FILE" && grep -q "\"skill\":"\".*$SKILL_NAME" "$LOG_FILE"
