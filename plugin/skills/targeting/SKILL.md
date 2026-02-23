@@ -1,6 +1,6 @@
 ---
 name: targeting
-description: "Searches patent databases to create a target population based on specifications. Triggered when the user asks to 'create a target population' or 'run the search (Step 1)'."
+description: "Searches patent databases to create a target population based on specifications. Triggered when the user asks to 'create a target population' or 'run the search (Step 1)', or when CSV files are detected in 1-targeting/csv/."
 metadata:
   author: sonesuke
   version: 1.0.0

@@ -68,6 +68,11 @@ type = "log"
 jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
 
 [[checks]]
+name = "targeting_skill_invoked"
+type = "script"
+command = "check-skill-invoked.sh targeting"
+
+[[checks]]
 name = "target_jsonl_exists"
 type = "workspace"
 command = "[ -f 1-targeting/target.jsonl ] && [ $(wc -l < 1-targeting/target.jsonl) -gt 0 ]"
