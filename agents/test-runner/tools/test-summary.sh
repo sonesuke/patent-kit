@@ -1,6 +1,6 @@
 #!/bin/bash
-# test-summary.sh - Generate and display test summary report
-# Usage: test-summary.sh <report_dir> <total_cases> <total_pass> <total_fail> <n_trials> [trial_results...]
+# test-summary.sh - Generate and display test summary report from result files
+# Usage: test-summary.sh <report_dir> <total_cases> <total_pass> <total_fail> <n_trials>
 
 set -e
 set -o pipefail
@@ -10,33 +10,46 @@ TOTAL_CASES="${2:?}"
 TOTAL_PASS="${3:?}"
 TOTAL_FAIL="${4:?}"
 N_TRIALS="${5:?}"
-shift 5
-TRIAL_RESULTS=("$@")
 
-# --- Calculate averages per test case ---
-declare -A TEST_DURATION_SUM
-declare -A TEST_INPUT_SUM
-declare -A TEST_OUTPUT_SUM
-declare -A TEST_TOTAL_COUNT
-declare -A TEST_ALL_PASS
+# --- Parse result files and collect statistics ---
+RESULT_FILES=()
+for f in "$REPORT_DIR"/*.results; do
+    [ -f "$f" ] || continue
+    RESULT_FILES+=("$f")
+done
 
 # Get unique test names
 TEST_NAMES=()
-for RESULT in "${TRIAL_RESULTS[@]}"; do
-    IFS='|' read -r TEST_NAME PASSED DURATION INPUT OUTPUT <<< "$RESULT"
-    if [[ ! " ${TEST_NAMES[@]} " =~ " ${TEST_NAME} " ]]; then
-        TEST_NAMES+=("$TEST_NAME")
-    fi
-    TEST_DURATION_SUM[$TEST_NAME]=$((${TEST_DURATION_SUM[$TEST_NAME]:-0} + DURATION))
-    TEST_INPUT_SUM[$TEST_NAME]=$((${TEST_INPUT_SUM[$TEST_NAME]:-0} + INPUT))
-    TEST_OUTPUT_SUM[$TEST_NAME]=$((${TEST_OUTPUT_SUM[$TEST_NAME]:-0} + OUTPUT))
-    TEST_TOTAL_COUNT[$TEST_NAME]=$((${TEST_TOTAL_COUNT[$TEST_NAME]:-0} + 1))
+declare -a TEST_STATS  # Format: "test_name|total_duration|total_input|total_output|count|all_pass"
 
-    if [ "$PASSED" = "true" ]; then
-        TEST_ALL_PASS[$TEST_NAME]=${TEST_ALL_PASS[$TEST_NAME]:-true}
-    else
-        TEST_ALL_PASS[$TEST_NAME]=false
-    fi
+for RESULT_FILE in "${RESULT_FILES[@]}"; do
+    # Extract test name from file name
+    FILE_BASENAME=$(basename "$RESULT_FILE" .results)
+    TEST_NAMES+=("$FILE_BASENAME")
+done
+
+# Calculate statistics for each test
+for TEST_NAME in "${TEST_NAMES[@]}"; do
+    RESULT_FILE="$REPORT_DIR/${TEST_NAME}.results"
+
+    DURATION_SUM=0
+    INPUT_SUM=0
+    OUTPUT_SUM=0
+    COUNT=0
+    ALL_PASS=true
+
+    while IFS='|' read -r R_PASSED R_DURATION R_INPUT R_OUTPUT; do
+        DURATION_SUM=$((DURATION_SUM + R_DURATION))
+        INPUT_SUM=$((INPUT_SUM + R_INPUT))
+        OUTPUT_SUM=$((OUTPUT_SUM + R_OUTPUT))
+        COUNT=$((COUNT + 1))
+
+        if [ "$R_PASSED" != "true" ]; then
+            ALL_PASS=false
+        fi
+    done < "$RESULT_FILE"
+
+    TEST_STATS+=("${TEST_NAME}|${DURATION_SUM}|${INPUT_SUM}|${OUTPUT_SUM}|${COUNT}|${ALL_PASS}")
 done
 
 # --- Generate summary report ---
@@ -58,12 +71,14 @@ REPORT_FILE="$REPORT_DIR/summary.md"
         echo "| Test | Status | Avg Duration | Avg Input Tokens | Avg Output Tokens |"
         echo "|------|--------|--------------|-------------------|--------------------|"
 
-        for TEST_NAME in "${TEST_NAMES[@]}"; do
-            AVG_DURATION=$((TEST_DURATION_SUM[$TEST_NAME] / TEST_TOTAL_COUNT[$TEST_NAME]))
-            AVG_INPUT=$((TEST_INPUT_SUM[$TEST_NAME] / TEST_TOTAL_COUNT[$TEST_NAME]))
-            AVG_OUTPUT=$((TEST_OUTPUT_SUM[$TEST_NAME] / TEST_TOTAL_COUNT[$TEST_NAME]))
+        for STAT in "${TEST_STATS[@]}"; do
+            IFS='|' read -r TEST_NAME DURATION_SUM INPUT_SUM OUTPUT_SUM COUNT ALL_PASS <<< "$STAT"
+            AVG_DURATION=$((DURATION_SUM / COUNT))
+            AVG_INPUT=$((INPUT_SUM / COUNT))
+            AVG_OUTPUT=$((OUTPUT_SUM / COUNT))
+
             STATUS="✅ PASS"
-            if [ "${TEST_ALL_PASS[$TEST_NAME]}" != "true" ]; then
+            if [ "$ALL_PASS" != "true" ]; then
                 STATUS="❌ FAIL"
             fi
             echo "| $TEST_NAME | $STATUS | ${AVG_DURATION}s | $AVG_INPUT | $AVG_OUTPUT |"
@@ -80,12 +95,14 @@ echo "[Host] Summary: $TOTAL_PASS/$TOTAL_CASES test cases passed."
 if [ ${#TEST_NAMES[@]} -gt 0 ]; then
     echo ""
     echo "[Host] Test Results:"
-    for TEST_NAME in "${TEST_NAMES[@]}"; do
-        AVG_DURATION=$((TEST_DURATION_SUM[$TEST_NAME] / TEST_TOTAL_COUNT[$TEST_NAME]))
-        AVG_INPUT=$((TEST_INPUT_SUM[$TEST_NAME] / TEST_TOTAL_COUNT[$TEST_NAME]))
-        AVG_OUTPUT=$((TEST_OUTPUT_SUM[$TEST_NAME] / TEST_TOTAL_COUNT[$TEST_NAME]))
+    for STAT in "${TEST_STATS[@]}"; do
+        IFS='|' read -r TEST_NAME DURATION_SUM INPUT_SUM OUTPUT_SUM COUNT ALL_PASS <<< "$STAT"
+        AVG_DURATION=$((DURATION_SUM / COUNT))
+        AVG_INPUT=$((INPUT_SUM / COUNT))
+        AVG_OUTPUT=$((OUTPUT_SUM / COUNT))
+
         STATUS="✅"
-        if [ "${TEST_ALL_PASS[$TEST_NAME]}" != "true" ]; then
+        if [ "$ALL_PASS" != "true" ]; then
             STATUS="❌"
         fi
         echo "[Host]   $STATUS $TEST_NAME - ${AVG_DURATION}s (in: $AVG_INPUT, out: $AVG_OUTPUT tokens)"

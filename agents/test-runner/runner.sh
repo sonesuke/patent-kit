@@ -57,8 +57,8 @@ TOTAL_CASES=0
 TOTAL_PASS=0
 TOTAL_FAIL=0
 
-# Track test results for summary (format: "test_name|pass|duration|input_tokens|output_tokens")
-declare -a TEST_RESULTS=()
+# Track all log files for summary
+declare -a ALL_LOG_FILES=()
 
 # --- Collect test files matching pattern ---
 TEST_FILES=()
@@ -144,6 +144,8 @@ for IDX in "${!TEST_FILES[@]}"; do
     echo "[Host]   Running evaluation..."
 
     CASE_PASS=true
+    RESULT_FILE="$REPORT_DIR/${TEST_NAME}.results"
+    > "$RESULT_FILE"  # Create/clear result file
 
     for TRIAL_IDX in $(seq 0 $((N_TRIALS - 1))); do
         TRIAL_NUM=$((TRIAL_IDX + 1))
@@ -161,14 +163,13 @@ for IDX in "${!TEST_FILES[@]}"; do
         TRIAL_INPUT=$(echo "$CHECK_OUTPUT" | grep "📊 Tokens:" | sed -E 's/.*in=([0-9]+).*/\1/' || echo "0")
         TRIAL_OUTPUT=$(echo "$CHECK_OUTPUT" | grep "📊 Tokens:" | sed -E 's/.*out=([0-9]+).*/\1/' || echo "0")
 
-        # Store trial result for summary (raw data)
+        # Store trial result for summary
         TRIAL_STATUS="true"
         if [ $CHECK_EXIT_CODE -ne 0 ]; then
             CASE_PASS=false
             TRIAL_STATUS="false"
         fi
-        TEST_RESULT="${TEST_NAME}|${TRIAL_STATUS}|${TRIAL_DURATIONS[$TRIAL_IDX]}|${TRIAL_INPUT}|${TRIAL_OUTPUT}"
-        TEST_RESULTS+=("$TEST_RESULT")
+        echo "${TRIAL_STATUS}|${TRIAL_DURATIONS[$TRIAL_IDX]}|${TRIAL_INPUT}|${TRIAL_OUTPUT}" >> "$RESULT_FILE"
 
         # Display duration
         echo "[Host]   ⏱️  Trial $TRIAL_NUM took ${TRIAL_DURATIONS[$TRIAL_IDX]}s"
@@ -185,6 +186,6 @@ for IDX in "${!TEST_FILES[@]}"; do
 done
 
 # --- Generate and display summary (delegated to test-summary.sh) ---
-"$(dirname "$0")/tools/test-summary.sh" "$REPORT_DIR" "$TOTAL_CASES" "$TOTAL_PASS" "$TOTAL_FAIL" "$N_TRIALS" "${TEST_RESULTS[@]}"
+"$(dirname "$0")/tools/test-summary.sh" "$REPORT_DIR" "$TOTAL_CASES" "$TOTAL_PASS" "$TOTAL_FAIL" "$N_TRIALS"
 
 exit "$TOTAL_FAIL"
