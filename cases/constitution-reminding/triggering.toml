@@ -1,0 +1,22 @@
+# Test Case: Constitution Triggering
+
+name = "triggering"
+description = "Verify constitution skill can be loaded and invoked"
+timeout = 60 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+Load the constitution skill to understand the core principles.
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:constitution-reminding\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
+
+[[checks]]
+name = "constitution_skill_invoked"
+type = "log"
+type = "script"
+command = "check-skill-invoked.sh constitution-reminding"

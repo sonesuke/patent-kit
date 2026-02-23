@@ -1,5 +1,5 @@
 ---
-name: progress
+name: progress-reporting
 description: "Outputs a progress report for the current patent investigation workflow. Triggered when the user asks 'What is the current progress?' or 'Give me a summary'."
 metadata:
   author: sonesuke
@@ -14,7 +14,7 @@ Your task is to report the current status of the patent analysis workflow.
 
 ### Process
 
-1. **Read Constitution**: Load the `constitution` skill to understand the core principles.
+1. **Read Constitution**: Load the `constitution-reminding` skill to understand the core principles.
 
 #### Step 1: Run Progress Script
 

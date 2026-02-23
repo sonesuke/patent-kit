@@ -1,0 +1,47 @@
+# Test Case: Concept Interview Functional (no existing specification)
+
+name = "functional-no-spec"
+description = "Verify concept-interview creates specification from scratch"
+timeout = 180 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+I want to start a patent search for a new voice recognition system in the US, releasing in 2025. Competitors are Google and Amazon. The system is for smart home devices with real-time transcription and noise-resistant recognition. Please proceed with the assignee verification and create the specification file.
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:concept-interviewing\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
+
+[[checks]]
+name = "concept_interview_invoked"
+type = "script"
+command = "check-skill-invoked.sh concept-interviewing"
+
+[[checks]]
+name = "constitution_loaded"
+type = "script"
+command = "check-skill-invoked.sh constitution-reminding"
+
+[[checks]]
+name = "references_instructions_read"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"concept-interview.*references/instructions.md\")))] | length > 0"
+
+[[checks]]
+name = "specification_template_read"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"specification-template.md\")))] | length > 0"
+
+[[checks]]
+name = "specification_md_created"
+type = "workspace"
+command = "[ -f 0-specifications/specification.md ]"
+
+[[checks]]
+name = "google_patent_mcp_succeeded"
+type = "script"
+command = "./check-mcp-success.sh"
+mcp_tool = "google-patent-cli__search_patents"

@@ -1,0 +1,68 @@
+# Test Case: Targeting Functional (no existing specification)
+
+name = "functional-no-spec"
+description = "Verify targeting calls concept-interview when specification is missing"
+timeout = 600 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+I want to search for patents related to a "folding dual-screen smartphone" for release in the US in Q1 2025. The main competitor is Samsung.
+
+Please conduct the concept interview and targeting steps.
+
+When asked for clarifications:
+
+- Folding mechanism: Foldable device with single flexible display (like Galaxy Z Fold)
+- Display configuration: Same size screens, front-folding (inward)
+- Additional features: Hinge mechanism, multi-window functionality
+- Competitors: Only Samsung is needed
+
+Please proceed with assignee verification and create the specification file automatically.
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
+
+[[checks]]
+name = "concept_interview_invoked"
+type = "script"
+command = "check-skill-invoked.sh concept-interviewing"
+
+[[checks]]
+name = "constitution_loaded"
+type = "script"
+command = "check-skill-invoked.sh constitution-reminding"
+
+[[checks]]
+name = "specification_template_read"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"specification-template.md\")))] | length > 0"
+
+[[checks]]
+name = "targeting_template_read"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"targeting-template.md\")))] | length > 0"
+
+[[checks]]
+name = "keywords_template_read"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"keywords-template.md\")))] | length > 0"
+
+[[checks]]
+name = "specification_md_created"
+type = "workspace"
+command = "[ -f 0-specifications/specification.md ]"
+
+[[checks]]
+name = "targeting_invoked_after_interview"
+type = "script"
+command = "check-skill-invoked.sh targeting"
+
+[[checks]]
+name = "google_patent_mcp_succeeded"
+type = "script"
+command = "./check-mcp-success.sh"
+mcp_tool = "google-patent-cli__search_patents"

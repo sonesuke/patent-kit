@@ -1,5 +1,5 @@
 ---
-name: prior-art
+name: prior-art-researching
 description: "Conducts an invalidation (prior art) search for a target patent. Triggered when the user asks to 'perform a prior art search' or 'find invalidating materials (Step 5)'."
 metadata:
   author: sonesuke
@@ -11,6 +11,11 @@ metadata:
 Your task is to Execute the Plan and Report Findings.
 
 ## Instructions
+
+### Template Adherence
+
+- **Requirement**: Strict adherence to the output template is required.
+- **Template**: `templates/prior-art-template.md` - Use for `3-investigations/<patent-id>/prior-art.md`
 
 ### Input
 
@@ -27,9 +32,10 @@ Your task is to Execute the Plan and Report Findings.
   - Message: "Prior Art report already exists for <patent-id>. Do you want to proceed with re-investigation?"
 - **If it does NOT exist**: Proceed with the standard process.
 
-1. **Initialize**: Load the `constitution` skill.
-2. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
-3. **Plan & Execute Search**:
+1. **Initialize**: Load the `constitution-reminding` skill.
+2. **Load Legal Checker**: Load the `legal-checking` skill for legal compliance guidelines.
+3. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
+4. **Plan & Execute Search**:
    - **Strategy: Multi-Layer Search** (Standard Procedure):
      - **Layer 1: General Terminology**:
        - **Purpose**: Capture broad technical concepts and context.
@@ -65,13 +71,13 @@ Your task is to Execute the Plan and Report Findings.
      - **Requirement**: Save output to `3-investigations/<patent-id>/json/search_results_<desc>.json`.
      - **Check**: Did the command succeed? IF NO -> **STOP** and Debug.
 
-4. **Screen Results** (MANDATORY for BOTH patent and non-patent literature):
+5. **Screen Results** (MANDATORY for BOTH patent and non-patent literature):
    - **Non-Patent Literature Screening** (CRITICAL - DO NOT SKIP):
      - **RULE**: Papers with titles directly relevant to the target patent's technical field MUST be included for detailed analysis.
      - Identify Grade A NPL candidates and summarize their technical contributions.
      - Map the technical elements of the paper to the patent's constituent elements.
 
-5. **Detailed Analysis** (MANDATORY):
+6. **Detailed Analysis** (MANDATORY):
    - **For Non-Patent Literature (Grade A)** (CRITICAL):
      - **Full-Text Acquisition**:
        - **MUST** run Use the MCP tool `fetch_paper` (Arguments: --id <arxiv-id>) to get full-text JSON for Grade A NPLs.
@@ -84,7 +90,7 @@ Your task is to Execute the Plan and Report Findings.
        - Verify that the publication date is strictly before the priority date.
      - **RULE**: Even if strong prior art is found in patent literature, NPL analysis results MUST be included in the report (Constitution III).
 
-6. **Draft Report**: Fill `[prior-art-template.md](templates/prior-art-template.md)`.
+7. **Draft Report**: Fill `[prior-art-template.md](templates/prior-art-template.md)`.
    - **Verdict Selection**:
      - **Relevant prior art identified**: Strong evidence found (investigation required).
      - **Alternative implementation selected**: Path changed to avoid conflict.
@@ -98,7 +104,7 @@ Your task is to Execute the Plan and Report Findings.
      - **Format**:
        - Overall Similarity MUST be written exactly as: `Overall Similarity: Significant Similarity` (or Moderate Similarity, Limited Similarity).
        - Do NOT use other formats.
-7. **Save**: `3-investigations/<patent-id>/prior-art.md`.
+8. **Save**: `3-investigations/<patent-id>/prior-art.md`.
 
 ### Quality Gates
 
@@ -118,6 +124,17 @@ Your task is to Execute the Plan and Report Findings.
     - "Characteristic implementation described in the patent"
   - [ ] Avoid citing specific court case examples.
   - [ ] Use descriptive technical language.
+
+## Output Management
+
+To maintain context window efficiency:
+
+- **Rule**: `search_patents` and `search_papers` results MUST be saved to JSON files.
+  - Patent Search Path: `3-investigations/<patent-id>/json/search_results_<timestamp>.json`
+  - NPL Search Path: `3-investigations/<patent-id>/json/search_results_<timestamp>.json`
+  - NPL Full-Text Path: `3-investigations/<patent-id>/json/npl_<arxiv-id>.json`
+- **Requirement**: Do NOT load large JSON outputs directly into context.
+- **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
 
 # Examples
 

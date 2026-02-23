@@ -1,0 +1,31 @@
+# Test Case: Setup Functional
+
+name = "functional"
+description = "Verify setup creates project directories and reads instructions"
+timeout = 60 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+Initialize the project directories.
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:setup\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
+
+[[checks]]
+name = "setup_skill_invoked"
+type = "script"
+command = "check-skill-invoked.sh setup"
+
+[[checks]]
+name = "references_instructions_read"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"setup.*references/instructions.md\")))] | length > 0"
+
+[[checks]]
+name = "directories_created"
+type = "workspace"
+command = "[ -d 0-specifications ] && [ -d 1-targeting/csv ] && [ -d 1-targeting/json ] && [ -d 2-screening/json ] && [ -d 3-investigations ]"

@@ -1,5 +1,5 @@
 ---
-name: evaluation
+name: evaluating
 description: "Generates a detailed evaluation report for a screened patent. Triggered when the user asks to 'evaluate the patent' or 'analyze claim elements (Step 3)'."
 metadata:
   author: sonesuke
@@ -12,6 +12,19 @@ Your task is to Analyze the Patent and create the Specification.
 
 ## Instructions
 
+### User Interview for Product Understanding
+
+For accurate claim analysis, understanding the target product is crucial.
+
+- **Rule**: Ensure `0-specifications/specification.md` exists and contains complete product information.
+- **Check**: If specification is incomplete or missing, notify the user before proceeding.
+- **Information Needed**: Clear definition of the "Target Product" to compare against claim elements.
+
+### Template Adherence
+
+- **Requirement**: Strict adherence to the output template is required.
+- **Template**: `templates/evaluation-template.md` - Use for `3-investigations/<patent-id>/evaluation.md`
+
 ### Input
 
 - **Patent ID**: `<patent-id>` (optional)
@@ -19,7 +32,8 @@ Your task is to Analyze the Patent and create the Specification.
 
 ### Process
 
-1. **Read Constitution**: Load the `constitution` skill to understand the core principles.
+1. **Read Constitution**: Load the `constitution-reminding` skill to understand the core principles.
+2. **Read Legal Checker**: Load the `legal-checking` skill to understand legal compliance guidelines.
 
 #### Step 0: Determine Patent ID
 
@@ -64,6 +78,15 @@ This script finds the first patent marked as `relevant` in `2-screening/screened
 
 4. **Save**: `3-investigations/<patent-id>/evaluation.md`.
 
+### Output Management
+
+To maintain context window efficiency:
+
+- **Rule**: `fetch_patent` results MUST be saved to a JSON file.
+  - Path: `3-investigations/<patent-id>/json/<patent-id>.json`
+  - **Requirement**: Do NOT load large JSON outputs directly into context.
+  - **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
+
 ### Output
 
 - `3-investigations/<patent-id>/evaluation.md`: The evaluation report for the patent.
@@ -79,7 +102,7 @@ This script finds the first patent marked as `relevant` in `2-screening/screened
   - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology".
   - [ ] Avoid citing specific court case examples.
 
-Run /patent-kit:claim-analysis <patent-id>
+Run /patent-kit:claim-analyzing <patent-id>
 
 # Examples
 

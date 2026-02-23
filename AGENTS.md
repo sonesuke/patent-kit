@@ -32,3 +32,12 @@ An autonomous daemon that checks for failing GitHub Actions CI checks on open Pu
 
 - **Workflow**: Finds failing PRs → Runs `claude` inside the Dev Container (`devcontainer exec`) → Analyzes the failure (typically using `mise run pre-commit`) → Commits the fix and replies to the PR.
 - **Requirements**: Requires Docker, GitHub CLI (`gh`), `devcontainer` CLI, and `jq` installed on the host machine.
+
+### Test-Runner (`agents/test-runner/runner.sh`)
+
+An autonomous daemon that runs End-to-End (E2E) triggering and functional tests for the `patent-kit` skills using **parallel Claude CLI** processes.
+
+- **Architecture**: For each test case × trial, the runner spawns an independent `claude -p` process inside the Dev Container. All trials run concurrently and results are aggregated into a summary report.
+- **Workflow**: Reads test cases from `e2e/test_cases/*.md` → Expands `prompt.txt` template per trial → Launches parallel `devcontainer exec claude -p` processes → Waits for all to complete → Generates summary in `e2e/reports/<report_id>/summary.md`.
+- **Usage**: `bash agents/test-runner/runner.sh [N_TRIALS]` (default: 1 trial per test case).
+- **Requirements**: Requires Docker, `devcontainer` CLI, and `jq` installed on the host machine.

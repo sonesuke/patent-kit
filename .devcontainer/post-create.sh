@@ -41,11 +41,42 @@ EOF
         echo "[Devcontainer Setup] WARNING: mise is not installed."
     fi
 
-    echo "[Devcontainer Setup] Authenticating claude..."
     if [ -n "$Z_AI_API_KEY" ]; then
         npx -y @z_ai/coding-helper auth glm_coding_plan_global "$Z_AI_API_KEY"
         npx -y @z_ai/coding-helper auth reload claude
     fi
+
+    echo "[Devcontainer Setup] Installing MCP tools..."
+    curl -fsSL https://raw.githubusercontent.com/sonesuke/google-patent-cli/main/install.sh | bash
+    curl -fsSL https://raw.githubusercontent.com/sonesuke/arxiv-cli/main/install.sh | bash
+
+    echo "[Devcontainer Setup] Configuring google-patent-cli for Docker..."
+    mkdir -p ~/.config/google-patent-cli
+    cat > ~/.config/google-patent-cli/config.toml << 'EOF'
+# Chrome browser path
+browser_path = "/usr/bin/chromium"
+
+# Chrome arguments for Docker/DevContainer environment
+chrome_args = [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-gpu"
+]
+EOF
+
+    echo "[Devcontainer Setup] Configuring arxiv-cli for Docker..."
+    mkdir -p ~/.config/arxiv-cli
+    cat > ~/.config/arxiv-cli/config.toml << 'EOF'
+# Chrome browser path
+browser_path = "/usr/bin/chromium"
+
+# Chrome arguments for Docker/DevContainer environment
+chrome_args = [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-gpu"
+]
+EOF
 
     echo "[Devcontainer Setup] Complete!"
 else

@@ -1,0 +1,78 @@
+# Test Case: Targeting Functional (with CSV data)
+
+name = "functional-with-data"
+description = "Verify targeting process with pre-downloaded CSV data"
+timeout = 600 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+I have placed downloaded CSV files in `1-targeting/csv/`.
+"""
+
+# Setup files to be copied to workspace
+[[setup]]
+path = "0-specifications/specification.md"
+content = """
+# Product Specification
+
+**Product/Technology**:
+LLM-based multi-turn chatbot system with RAG (Retrieval-Augmented Generation) capabilities.
+
+**Background**:
+Current chatbots struggle with context awareness and factual accuracy in multi-turn conversations. This system combines LLM with vector database retrieval to provide accurate, context-aware responses.
+
+**Key Technical Features**:
+
+1. LLM-driven multi-turn conversation management
+2. Vector database integration for retrieval-augmented generation
+3. Automatic quality assurance for information retrieval and intent detection
+4. Iterative AI prompt optimization for various applications (video generation, etc.)
+
+**Target Release Date**: 2025-12-31
+
+**Priority Date Cutoff**: 2020-01-01
+
+**Competitors**:
+
+- Google
+- Microsoft
+- OpenAI
+
+**Target Market**:
+US and Korea markets, focusing on enterprise customer service and conversational AI applications.
+"""
+
+[[setup]]
+path = "1-targeting/csv/sample1.csv"
+content = """
+search URL:,https://patents.google.com/?q=%28llm+ai+chat%29&oq=llm+ai+chat
+id,title,assignee,inventor/author,priority date,filing/creation date,publication date,grant date,result link,representative figure link
+KR-102637029-B1,Device for Generating Multi-turn Chat Bot Data Using LLM and Driving Method Thereof ,주식회사 마인즈앤컴퍼니,"고석태, 백영상, 명대우, 김명진, 김영우, 김지훈, 신재우",2023-10-11,2023-10-11,2024-02-15,2024-02-15,https://patents.google.com/patent/KR102637029B1/en,
+US-2024292070-A1,Iterative ai prompt optimization for video generation ,"Loop Now Technologies, Inc.","Wu-Hsi Li, Edwin Chiu, Hong-Ming Tseng, Xiaochen ZHANG",2023-02-24,2024-04-10,2024-08-29,,https://patents.google.com/patent/US20240292070A1/en,https://patentimages.storage.googleapis.com/41/9d/6e/035e7a6c53a1a8/US20240292070A1-20240829-D00000.png
+US-2025200489-A1,Automatic quality assurance for information retrieval and intent detection ,"Forethought Technologies, Inc.","Sami Ghoche, Deon Nicholas, Kyungmo KOO, Hanqiao Li, Weitian Xing, Yi Lu, Zachary Tosh, Sunny Kong, Antoine Nasr, Volodymyr Lyubinets",2022-02-28,2024-10-31,2025-06-19,,https://patents.google.com/patent/US20250200489A1/en,https://patentimages.storage.googleapis.com/f0/aa/92/f5b882088ea83c/US20250200489A1-20250619-D00000.png
+"""
+
+[[setup]]
+path = "1-targeting/csv/sample2.csv"
+content = """
+search URL:,https://patents.google.com/?q=%28llm+ai+chat%29&oq=llm+ai+chat
+id,title,assignee,inventor/author,priority date,filing/creation date,publication date,grant date,result link,representative figure link
+KR-102681147-B1,Method and apparatus for generating appropriate responses based on the user intent in an ai chatbot through retrieval-augmented generation ,(주)유비커스,서규현,2023-10-31,2023-10-31,2024-07-04,2024-07-04,https://patents.google.com/patent/KR102681147B1/en,
+KR-102738821-B1,Method for Operating an AI Chatbot Utilizing a Vector Database ,주식회사 지뉴소프트,"박찬우, 박현재, 정훈모, 임태훈, 김동일",2024-02-07,2024-02-07,2024-12-06,2024-12-06,https://patents.google.com/patent/KR102738821B1/en,https://patentimages.storage.googleapis.com/7d/04/43/813ad43892e7cb/112024015338864-pat00009.png
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
+
+[[checks]]
+name = "targeting_skill_invoked"
+type = "script"
+command = "check-skill-invoked.sh targeting"
+
+[[checks]]
+name = "target_jsonl_exists"
+type = "workspace"
+command = "[ -f 1-targeting/target.jsonl ] && [ $(wc -l < 1-targeting/target.jsonl) -gt 0 ]"

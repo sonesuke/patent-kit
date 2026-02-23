@@ -1,0 +1,22 @@
+# Test Case: Concept Interview Triggering
+
+name = "triggering"
+description = "Verify concept-interview skill can be loaded and invoked"
+timeout = 60 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+I want to start a patent search for a new voice recognition system.
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:concept-interviewing\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
+
+[[checks]]
+name = "concept_interview_invoked"
+type = "log"
+type = "script"
+command = "check-skill-invoked.sh concept-interviewing"

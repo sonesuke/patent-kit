@@ -1,0 +1,66 @@
+# Test Case: Legal Checker - File Review
+
+name = "functional-file-review"
+description = "Verify legal-checking reviews a file and identifies violations"
+timeout = 90 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+Review the following file for legal compliance violations:
+
+test-claim-analysis.md
+"""
+
+# Setup files to create in the workspace
+[[setup]]
+path = "test-claim-analysis.md"
+content = """
+# Claim Analysis: US9876543B2
+
+## Element A: Wireless Communication Module
+
+The reference **clearly discloses** a wireless communication module in Column 3. This element is **satisfied** by the reference.
+
+## Element B: Neural Network Layers
+
+The reference **does not satisfy** this requirement because it only has 2 layers. Therefore, Claim 1 **is not anticipated** by the reference.
+
+## Element C: Data Transmission
+
+The alternative implementation using optical fibers **is equivalent** to the copper wires in the reference and **would be obvious** to one skilled in the art.
+
+## Conclusion
+
+The product **does not infringe** Claim 1 because it uses a different algorithm. There is **no risk** of infringement.
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:legal-checking\")))"
+
+[[checks]]
+name = "legal_checker_skill_invoked"
+type = "script"
+command = "check-skill-invoked.sh legal-checking"
+
+[[checks]]
+name = "test_file_read"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"test-claim-analysis.md\")))] | length > 0"
+
+[[checks]]
+name = "violations_identified"
+type = "log"
+jq = "[.[] | select(.type == \"result\" and (.result // \"\" | test(\"Violations|violation\"; \"i\")))] | length > 0"
+
+[[checks]]
+name = "suggestions_provided"
+type = "log"
+jq = "[.[] | select(.type == \"result\" and (.result // \"\" | test(\"Suggested alternative|alternative\"; \"i\")))] | length > 0"
+
+[[checks]]
+name = "file_not_modified"
+type = "workspace"
+command = "grep -q 'does not infringe' test-claim-analysis.md"

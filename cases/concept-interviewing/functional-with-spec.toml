@@ -1,0 +1,73 @@
+# Test Case: Concept Interview Functional (with existing specification)
+
+name = "functional-with-spec"
+description = "Verify concept-interview verifies existing specification without re-interviewing"
+timeout = 120 # seconds
+
+# Test prompt sent to Claude
+test_prompt = """
+Use concept-interview to verify our existing product specification is complete and ready for the targeting phase.
+"""
+
+# Setup files to be copied to workspace
+[[setup]]
+path = "0-specifications/specification.md"
+content = """
+# Product Specification
+
+## 1. Product Concept
+
+Voice recognition system for smart home devices
+
+## 2. Target Market
+
+- **Country**: US
+- **Release Date**: 2025-06-01
+- **Cutoff Date**: 2005-06-01
+
+## 3. Competitors
+
+- **Google LLC**
+- **Amazon.com Inc.**
+
+## 4. Verified Assignee Names (Canonicalized)
+
+| Original Name | Verified Assignee Names                    | Status   | Notes                    |
+| ------------- | ------------------------------------------ | -------- | ------------------------ |
+| Google        | Google LLC, Google Inc., GOOGLE LLC        | Verified | Multiple name variations |
+| Amazon        | Amazon.com Inc., Amazon Technologies, Inc. | Verified | Multiple name variations |
+"""
+
+# Evaluation checks
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:concept-interviewing\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
+
+[[checks]]
+name = "concept_interview_invoked"
+type = "script"
+command = "check-skill-invoked.sh concept-interviewing"
+
+[[checks]]
+name = "constitution_loaded"
+type = "script"
+command = "check-skill-invoked.sh constitution-reminding"
+
+[[checks]]
+name = "specification_md_exists"
+type = "workspace"
+command = "[ -f 0-specifications/specification.md ]"
+
+[[checks]]
+name = "specification_preserved"
+type = "workspace"
+command = "grep -q 'Voice recognition system' 0-specifications/specification.md"
+
+# If MCP tools are called, verify they succeed
+[[checks]]
+name = "google_patent_mcp_succeeded_if_called"
+type = "script"
+command = "./check-mcp-success.sh"
+mcp_tool = "google-patent-cli__search_patents"
+if_called = true

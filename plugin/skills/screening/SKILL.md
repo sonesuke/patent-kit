@@ -12,6 +12,11 @@ Your task is to filter the collected patents by legal status and relevance to pr
 
 ## Instructions
 
+### Template Adherence
+
+- **Requirement**: Strict adherence to the output template is required.
+- **Template**: `templates/screening-template.md` - Use for `2-screening/screening.md`
+
 ### Input
 
 - **Target Patents**: `1-targeting/target.jsonl` (generated in Phase 1 Targeting).
@@ -23,8 +28,9 @@ Your task is to filter the collected patents by legal status and relevance to pr
 
 ### Process
 
-1. **Read Constitution**: Load the `constitution` skill to understand the core principles.
-2. **Read Specification**: Read `0-specifications/specification.md` to fully understand the **Theme**, **Domain**, and **Target Product**. This is the CRITERIA for relevance.
+1. **Read Constitution**: Load the `constitution-reminding` skill to understand the core principles.
+2. **Load Legal Checker**: Load the `legal-checking` skill for legal compliance guidelines.
+3. **Read Specification**: Read `0-specifications/specification.md` to fully understand the **Theme**, **Domain**, and **Target Product**. This is the CRITERIA for relevance.
 
 #### Step 1: Automated Screening
 
@@ -100,6 +106,15 @@ Your task is to filter the collected patents by legal status and relevance to pr
   - **DO NOT add any extra sections.**
   - Include: Progress (Screened/Total), Relevant, Irrelevant, Expired, Not processed.
 
+### Output Management
+
+To maintain context window efficiency:
+
+- **Rule**: `fetch_patent` results MUST be saved to a JSON file.
+  - Path: `2-screening/json/<patent-id>.json`
+  - **Requirement**: Do NOT load large JSON outputs directly into context.
+  - **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
+
 ### Output
 
 - `2-screening/screened.jsonl`: The list of screened patents with legal_status, judgments, reasons, and abstract_texts.
@@ -114,7 +129,7 @@ Your task is to filter the collected patents by legal status and relevance to pr
 - [ ] **NO Legal Assertions**:
   - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology" or cite court cases.
 
-Run /patent-kit:evaluation <patent-id>
+Run /patent-kit:evaluating <patent-id>
 
 # Examples
 

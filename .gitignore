@@ -2,4 +2,5 @@ investigations/
 .venv/
 __pycache__/
 /target/
+out/
 Cargo.lock
