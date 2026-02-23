@@ -8,49 +8,49 @@ metadata:
 
 # Patent Kit Setup
 
-Your task is to prepare the working directory for a new patent analysis project.
+## Purpose
 
-## Instructions
+Prepare the working directory for a new patent analysis project by creating the required directory structure.
 
-Run the following commands to create the necessary directories.
-These directories are ignored by git (via `.gitignore`) or tracked via `.gitkeep`, and are required to store outputs during the analysis process.
+## Skill Orchestration
 
-### Step 1: Create Directories
+### 1. Detect Operating System
 
-Execute the appropriate command based on the user's Operating System:
+Identify whether the user is on:
+- Linux/Mac (Bash/Zsh)
+- Windows (PowerShell)
 
-- **For Linux / Mac (Bash/Zsh)**:
+### 2. Create Directories
 
-  ```bash
-  mkdir -p 0-specifications \
-           1-targeting/csv \
-           1-targeting/json \
-           2-screening/json \
-           3-investigations
-  ```
+Execute the appropriate command (see `references/instructions.md` for detailed commands).
 
-- **For Windows (PowerShell)**:
-  ```powershell
-  New-Item -ItemType Directory -Force -Path "0-specifications", "1-targeting\csv", "1-targeting\json", "2-screening\json", "3-investigations"
-  ```
+### 3. Verify and Inform
 
-### Step 2: Confirmation
+Confirm directories are created and inform the user of next steps.
 
-Verify that the directories have been created successfully.
-Once created, inform the user that the workspace is ready and they can proceed to Phase 0 (Concept Interview) or Phase 1 (Targeting).
+## State Management
 
-# Examples
+### Initial State
 
-Example 1: Initializing the Project
-User says: "Set up the folders for a new investigation"
-Actions:
+- Working directory may not have required patent analysis folders
 
-1. Detect OS environment (Mac/Windows)
-2. Use mkdir (or New-Item) to create required directories at once
-   Result: Required folder structures like 0-specifications are prepared.
+### Final State
 
-# Troubleshooting
+- `0-specifications/` directory created
+- `1-targeting/csv/` directory created
+- `1-targeting/json/` directory created
+- `2-screening/json/` directory created
+- `3-investigations/` directory created
+- Workspace ready for patent analysis
 
-Error: "Permission denied / Directory already exists"
-Cause: Folder already exists or lacking permissions.
-Solution: Usually succeeds due to -p or -Force. Check environment write permissions.
+## Next Steps
+
+Upon completion, user can proceed to:
+- `/patent-kit:concept-interview` - Define product concept and identify competitors
+- `/patent-kit:targeting` - Start patent search (if specification already exists)
+
+## References
+
+- `references/instructions.md` - Detailed directory creation commands
+- `references/examples.md` - Usage examples
+- `references/troubleshooting.md` - Common issues and solutions

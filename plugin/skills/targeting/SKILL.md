@@ -41,6 +41,7 @@ See `references/instructions.md` for detailed execution steps.
 ### 4. Transition to Screening
 
 Upon successful completion:
+
 - Deliverables: `1-targeting/targeting.md`, `1-targeting/keywords.md`, `1-targeting/target.jsonl`
 - Next skill: `/patent-kit:screening`
 
@@ -63,5 +64,5 @@ Upon successful completion:
 - `references/instructions.md` - Detailed targeting process instructions
 - `references/examples.md` - Usage examples
 - `references/troubleshooting.md` - Common issues and solutions
-- `references/templates/targeting-template.md` - Output template for targeting results
-- `references/templates/keywords-template.md` - Output template for keywords registry
+- `assets/templates/targeting-template.md` - Output template for targeting results
+- `assets/templates/keywords-template.md` - Output template for keywords registry

@@ -1,0 +1,19 @@
+{
+  "checks": [
+    {
+      "name": "init_validation",
+      "type": "log",
+      "jq": ".type == \"system\" and .subtype == \"init\""
+    },
+    {
+      "name": "setup_skill_invoked",
+      "type": "log",
+      "jq": ".type == \"function\" and .name == \"Skill\" and (.input | contains(\"setup\"))"
+    },
+    {
+      "name": "directories_created",
+      "type": "workspace",
+      "command": "[ -d 0-specifications ] && [ -d 1-targeting/csv ] && [ -d 1-targeting/json ] && [ -d 2-screening/json ] && [ -d 3-investigations ]"
+    }
+  ]
+}

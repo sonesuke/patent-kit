@@ -1,0 +1,19 @@
+{
+  "checks": [
+    {
+      "name": "init_validation",
+      "type": "log",
+      "jq": ".type == \"system\" and .subtype == \"init\""
+    },
+    {
+      "name": "constitution_skill_invoked",
+      "type": "log",
+      "jq": ".type == \"function\" and .name == \"Skill\" and (.input | contains(\"constitution\"))"
+    },
+    {
+      "name": "constitution_loaded",
+      "type": "log",
+      "jq": ".type == \"function\" and .name == \"Skill\" and (.input | contains(\"constitution\")) and (.result.content | contains(\"Purpose\") or contains(\"When to Load\"))"
+    }
+  ]
+}

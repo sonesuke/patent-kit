@@ -3,6 +3,7 @@ I want to search for patents related to a "folding dual-screen smartphone" for r
 Please conduct the concept interview and targeting steps.
 
 When asked for clarifications:
+
 - Folding mechanism: Foldable device with single flexible display (like Galaxy Z Fold)
 - Display configuration: Same size screens, front-folding (inward)
 - Additional features: Hinge mechanism, multi-window functionality

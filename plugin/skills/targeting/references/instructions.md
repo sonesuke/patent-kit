@@ -84,7 +84,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 ## Output
 
-- Create a file `1-targeting/targeting.md` using the template `[targeting-template.md](references/templates/targeting-template.md)`.
+- Create a file `1-targeting/targeting.md` using the template `[targeting-template.md](assets/templates/targeting-template.md)`.
 - Fill in the **Generated Search Commands** with:
   - **Query**: The final command.
   - **Hit Count**: Number of hits.
@@ -96,7 +96,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
   - **Noise Cause**: Polysemy, Generic, Domain, etc. (Why was it noise?)
   - **Adjustment**: What keywords/exclusions were added.
   - **Result Count**: Count after adjustment.
-- Create a file `1-targeting/keywords.md` using the template `[keywords-template.md](references/templates/keywords-template.md)`. This is the **Golden Keywords Registry**.
+- Create a file `1-targeting/keywords.md` using the template `[keywords-template.md](assets/templates/keywords-template.md)`. This is the **Golden Keywords Registry**.
 - `1-targeting/target.jsonl`: The merged list of unique patents ready for screening.
 
 ## Quality Gates

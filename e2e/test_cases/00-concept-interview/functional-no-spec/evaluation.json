@@ -1,0 +1,24 @@
+{
+  "checks": [
+    {
+      "name": "init_validation",
+      "type": "log",
+      "jq": ".type == \"system\" and .subtype == \"init\""
+    },
+    {
+      "name": "concept_interview_invoked",
+      "type": "log",
+      "jq": ".type == \"function\" and .name == \"Skill\" and (.input | contains(\"concept-interview\"))"
+    },
+    {
+      "name": "constitution_loaded",
+      "type": "log",
+      "jq": ".type == \"function\" and .name == \"Skill\" and (.input | contains(\"constitution\"))"
+    },
+    {
+      "name": "specification_md_created",
+      "type": "workspace",
+      "command": "[ -f 0-specifications/specification.md ]"
+    }
+  ]
+}

@@ -8,73 +8,57 @@ metadata:
 
 # Phase 0: Concept Interview
 
-Your task is to define the product concept and identify competitors. This phase establishes the foundation for patent targeting.
+## Purpose
 
-## Instructions
+Define the product concept and identify competitors. This phase establishes the foundation for patent targeting.
 
-### Input
+## Prerequisites
 
-- **User Input**: Product Concept, Competitors.
+- Constitution skill must be loaded
 
-### Process
+## Skill Orchestration
 
-1. **Load Constitution (MANDATORY)**: Use the Skill tool to load the `constitution` skill BEFORE starting any work. This is required to understand the core principles.
+### 1. Load Constitution (MANDATORY)
 
-#### Step 1: Concept Interview
+Use the Skill tool to load the `constitution` skill BEFORE starting any work. This is required to understand the core principles.
 
-1. **Ask**: Request the following information from the user:
-   - **Product Concept**: Detailed description of what they want to realize.
-   - **Target Country**: Where the product will be released (e.g., US, JP).
-   - **Target Release Date**: Approximate date.
-   - **Cutoff Date**: Calculate `Target Release Date - 20 years`. Patents filed before this date are likely expired.
-   - **Competitors**: List of key competitor companies (Mandatory).
+### 2. Check Existing Specification
 
-   > [!IMPORTANT]
-   > If `0-specifications/specification.md` already exists, **skip the interview** and use the information from that file as the source of truth describing the concept.
+Use the Glob tool to check if `0-specifications/specification.md` exists:
 
-2. **Refine**: If the concept is too vague, ask clarifying questions to break it down into technical elements relevant for patent search.
+- **If exists**: Skip the interview and use existing specification as the source of truth.
+- **If NOT exists**: Proceed with concept interview.
 
-3. **Save**: Write the gathered information to `0-specifications/specification.md` using the template `[specification-template.md](templates/specification-template.md)`.
+### 3. Execute Concept Interview
 
-#### Step 2: Assignee Identification
+See `references/instructions.md` for detailed execution steps including:
+- Information gathering (product concept, target country, release date, competitors)
+- Assignee name verification
 
-1. **Verify**: For each competitor named by the user, verify the correct "Assignee Name" used in patent databases.
-   - **Action**: Run a search (e.g., Use the MCP tool `search_patents` (Arguments: --assignee "<Company Name>")) **without** `--limit`.
-   - **Check `top_assignees`**: The output will include `top_assignees`. Look for **name variations** (表記揺れ) for the same company (e.g., "Google LLC", "Google Inc.", "GOOGLE LLC").
-   - **Confirm**: Display the top assignees found and ask the user if they represent the intended competitor.
-   - **Refine**: If incorrect or no hits, try variations (e.g., "Google LLC" instead of "Google").
+### 4. Transition to Targeting
 
-2. **Finalize**:
-   - Fill the **Verified Assignee Names (Canonicalized)** table in `0-specifications/specification.md`.
-   - Record **all** identified official Assignee Names, **including all name variations** found in `top_assignees`. These variations must be included in the final search query.
-   - Record the verification status and any notes (e.g., holding company, subsidiary).
+Upon successful completion:
+- Deliverable: `0-specifications/specification.md` created with verified assignee names
+- Next skill: `/patent-kit:targeting`
 
-### Output
+## State Management
 
-- `0-specifications/specification.md`: The product specification with verified assignee names.
+### Initial State
 
-### Quality Gates
+- No `0-specifications/specification.md` (proceed with interview)
+- OR `0-specifications/specification.md` exists (skip to verification/confirmation)
 
-- [ ] Product concept is clearly defined.
-- [ ] Target country and release date are specified.
-- [ ] All competitors' assignee names are verified in the database.
-- [ ] Specification file is saved with complete information.
+### Final State
 
-Run /patent-kit:targeting
+- `0-specifications/specification.md` created with:
+  - Product concept clearly defined
+  - Target country and release date specified
+  - All competitors' assignee names verified
+  - Complete information saved
 
-# Examples
+## References
 
-Example 1: Starting a New Investigation
-User says: "I want to start a patent search for a new voice recognition system"
-Actions:
-
-1. Load the constitution.
-2. Ask the user for the target country, target release date, and competitor companies.
-3. Validate the formal Assignee Name of the competitors.
-   Result: 0-specifications/specification.md is generated, defining the concept and search criteria.
-
-# Troubleshooting
-
-Error: "Competitor not found in patent database"
-Cause: The company name specified by the user does not match the Assignee Name in the patent DB.
-Solution: Discuss with the user and find the correct naming variations using the MCP tool's assignee search.
+- `references/instructions.md` - Detailed concept interview process
+- `references/examples.md` - Usage examples
+- `references/troubleshooting.md` - Common issues and solutions
+- `assets/templates/specification-template.md` - Output template for specification

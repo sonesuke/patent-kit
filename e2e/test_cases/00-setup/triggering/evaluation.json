@@ -1,0 +1,14 @@
+{
+  "checks": [
+    {
+      "name": "init_validation",
+      "type": "log",
+      "jq": ".type == \"system\" and .subtype == \"init\""
+    },
+    {
+      "name": "setup_skill_invoked",
+      "type": "log",
+      "jq": ".type == \"function\" and .name == \"Skill\" and (.input | contains(\"setup\"))"
+    }
+  ]
+}
