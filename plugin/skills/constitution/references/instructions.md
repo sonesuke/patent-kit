@@ -7,7 +7,7 @@ Version: 1.0.0 | Status: Active
 Every claim analysis or validity analysis MUST test the target invention against the reference patent element by element.
 
 - **Rule**: Do not rely on "general similarity".
-- **Templates**: strict adherence to the output templates in `.patent-kit/templates/` is required.
+- **Templates**: strict adherence to the output templates in each skill's `templates/` or `assets/` directory is required.
 - **Requirement**: Break down the invention into Elements A, B, C. Find references that disclose A AND B AND C for anticipation (Novelty).
 
 ## II. Unified Search Scope
@@ -21,7 +21,7 @@ Investigations MUST cover the "Big 4" jurisdictions unless explicitly restricted
 
 Prior art searches MUST cover both patent literature and non-patent literature.
 
-- **Rule**: Use BOTH `MCP tool search_patents / fetch_patent` and `MCP tool search_papers / fetch_paper` for every prior art investigation.
+- **Rule**: Use BOTH `search_patents`/`fetch_patents` and `search_papers`/`fetch_paper` for every prior art investigation.
 - **Rationale**: Comprehensive prior art analysis requires checking academic papers, conference proceedings, and technical publications alongside patents.
 - **Requirement**: Document search results from both sources in the final report.
 
@@ -52,18 +52,18 @@ For Claim Analysis/FTO, accurate understanding of the target product is crucial.
 
 - **Rule**: You MUST interview the user to get a detailed description of the product/service.
 - **Requirement**: Do not proceed until you have a clear definition of the "Target Product" to compare against the claim elements.
-- **Output**: Write the gathered information to `0-specification/specification.md` using the template `.patent-kit/templates/specification-template.md`.
+- **Output**: Write the gathered information to `0-specifications/specification.md` using the concept-interview skill's `assets/templates/specification-template.md`.
 
 ## VIII. Prior Art Cutoff Date
 
 Prior art searches MUST respect the target patent's effective filing/priority date.
 
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
-- **Requirement**: Use the `--before` flag in `MCP tool search_patents / fetch_patent` or `MCP tool search_papers / fetch_paper` with the correct date (YYYY-MM-DD).
+- **Requirement**: Use the `--before` flag in `search_patents`/`fetch_patents` or `search_papers`/`fetch_paper` with the correct date (YYYY-MM-DD).
 
 ## IX. Search Query Optimization
 
-Long or overly complex queries often return zero results in both `MCP tool search_patents / fetch_patent` and `MCP tool search_papers / fetch_paper`.
+Long or overly complex queries often return zero results in both `search_patents`/`fetch_patents` and `search_papers`/`fetch_paper`.
 
 - **Rule**: Start with broad, essential keywords (2-4 terms maximum).
 - **Rule**: If a search returns zero results, progressively simplify the query:
@@ -77,28 +77,19 @@ Long or overly complex queries often return zero results in both `MCP tool searc
 - **Requirement**: Document the query evolution in your report (what worked, what didn't).
 - **Requirement**: If multiple simplified queries are needed, save each result separately with descriptive filenames.
 
-## X. Tool Integrity & Execution
+## X. Output Management
 
-Strictly adhere to the capabilities of provided tools.
+To maintain context window efficiency, large tool outputs MUST be saved to files.
 
-- **Rule**: Do NOT hallucinate command options. Check `--help` if unsure.
-- **Rule**: Use `MCP tool search_patents / fetch_patent` for patent literature and `MCP tool search_papers / fetch_paper` for non-patent literature (academic papers).
-- **Rule**: STOP immediately if a command execution fails. Do not simulate results or proceed with the workflow.
-- **Requirement**: Verify command success (exit code 0) before reading outputs.
-
-## XI. Output Management
-
-To maintain context window efficiency, large outputs from CLI tools MUST be handled via files.
-
-- **Rule**: `MCP tool search_patents / fetch_patent` and `MCP tool search_papers / fetch_paper` output MUST be redirected to a JSON file.
+- **Rule**: `search_patents` and `search_papers` results MUST be saved to a JSON file.
   - Path: `3-investigations/<patent-id>/json/<patent-id>.json` (for single patent)
   - Path: `3-investigations/<patent-id>/json/search_results_<timestamp>.json` (for search)
   - Path: `1-targeting/json/search_results_<desc>.json` (for targeting)
   - Path: `2-screening/json/<patent-id>.json` (for screening fetch)
-- **Requirement**: Do NOT read the output from stdout.
-- **Action**: Use `jq` or file reading tools to access specific fields from the generated JSON file only when needed.
+- **Requirement**: Do NOT load large JSON outputs directly into context.
+- **Action**: Use Read tool or jq to access specific fields from the saved JSON file when needed.
 
-## XII. Prohibited Legal Assertions (STRICT)
+## XI. Prohibited Legal Assertions (STRICT)
 
 To detect risks without crossing into the practice of law, specific legal assertions and definitive judgments are STRICTLY PROHIBITED in all outputs.
 
@@ -112,7 +103,7 @@ To detect risks without crossing into the practice of law, specific legal assert
   - **No Specific Case Citations**: Do not cite specific court cases or legal precedents to justify a conclusion.
 - **Requirement**: Focus entirely on technical comparison (Element A vs Feature A') and factual observation.
 
-## XIII. Descriptive Equivalence Language
+## XII. Descriptive Equivalence Language
 
 When discussing potential equivalence or similarity, strictly descriptive language describing the technical reality MUST be used.
 
