@@ -44,8 +44,13 @@ for CHECK_IDX in $(seq 0 $((NUM_CHECKS - 1))); do
     elif [ "$CHECK_TYPE" = "script" ]; then
         CHECK_CMD=$(yq eval ".checks[$CHECK_IDX].command" "$TEST_TOML_FILE")
         MCP_TOOL=$(yq eval ".checks[$CHECK_IDX].mcp_tool // \"\"" "$TEST_TOML_FILE")
+        IF_CALLED=$(yq eval ".checks[$CHECK_IDX].if_called // \"false\"" "$TEST_TOML_FILE")
         SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-        cd "$SCRIPT_DIR" && if $CHECK_CMD "$LOG_FILE" "$MCP_TOOL" >/dev/null 2>&1; then
+        OPTIONAL_FLAG=""
+        if [ "$IF_CALLED" = "true" ]; then
+            OPTIONAL_FLAG="--optional"
+        fi
+        cd "$SCRIPT_DIR" && if $CHECK_CMD "$LOG_FILE" "$MCP_TOOL" "$OPTIONAL_FLAG" >/dev/null 2>&1; then
             echo "[Host]     ✅ $CHECK_NAME"
         else
             echo "[Host]     ❌ $CHECK_NAME"

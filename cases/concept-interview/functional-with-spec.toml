@@ -68,5 +68,6 @@ command = "grep -q 'Voice recognition system' 0-specifications/specification.md"
 [[checks]]
 name = "google_patent_mcp_succeeded_if_called"
 type = "script"
-command = "./check-mcp-success-if-called.sh"
+command = "./check-mcp-success.sh"
 mcp_tool = "google-patent-cli__search_patents"
+if_called = true
