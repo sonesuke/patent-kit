@@ -45,7 +45,12 @@ for CHECK_IDX in $(seq 0 $((NUM_CHECKS - 1))); do
         CHECK_CMD=$(yq eval ".checks[$CHECK_IDX].command" "$TEST_TOML_FILE")
         MCP_TOOL=$(yq eval ".checks[$CHECK_IDX].mcp_tool // \"\"" "$TEST_TOML_FILE")
         IF_CALLED=$(yq eval ".checks[$CHECK_IDX].if_called // \"false\"" "$TEST_TOML_FILE")
+        # Get script directory using absolute path
         SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        # Fallback to relative path if SCRIPT_DIR is empty
+        if [ -z "$SCRIPT_DIR" ]; then
+            SCRIPT_DIR="$(dirname "$0")"
+        fi
         OPTIONAL_FLAG=""
         if [ "$IF_CALLED" = "true" ]; then
             OPTIONAL_FLAG="--optional"
