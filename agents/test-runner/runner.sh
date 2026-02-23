@@ -25,7 +25,7 @@ fi
 
 WORKSPACE_FOLDER="${WORKSPACE_FOLDER:-$(pwd)}"
 N_TRIALS="${1:-1}"
-TARGET_SKILL="${2:-}"  # Optional: specify skill folder (e.g., "01-targeting")
+TARGET_SKILL="${2:-}"  # Optional: specify skill folder (e.g., "targeting")
 
 echo "[Host] Ensuring dev container is up for $WORKSPACE_FOLDER..."
 devcontainer up --workspace-folder "$WORKSPACE_FOLDER"
@@ -67,7 +67,7 @@ for SKILL_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/*/; do
 
     # Read test-prompt.md (used as-is for claude -p)
     TEST_PROMPT_FILE="$TEST_CASE_DIR/test-prompt.md"
-    EVAL_JSON_FILE="$TEST_CASE_DIR/evaluation.json"
+    EVAL_TOML_FILE="$TEST_CASE_DIR/evaluation.toml"
     SETUP_DIR="$TEST_CASE_DIR/setup"
 
     if [ ! -f "$TEST_PROMPT_FILE" ]; then
@@ -154,14 +154,14 @@ for SKILL_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/*/; do
 
         echo "[Host]   --- Trial $TRIAL_NUM ---"
 
-        # Run each check from evaluation.json
-        NUM_CHECKS=$(jq '.checks | length' "$EVAL_JSON_FILE")
+        # Run each check from evaluation.toml
+        NUM_CHECKS=$(yq eval '.checks | length' "$EVAL_TOML_FILE")
         for CHECK_IDX in $(seq 0 $((NUM_CHECKS - 1))); do
-            CHECK_NAME=$(jq -r ".checks[$CHECK_IDX].name" "$EVAL_JSON_FILE")
-            CHECK_TYPE=$(jq -r ".checks[$CHECK_IDX].type" "$EVAL_JSON_FILE")
+            CHECK_NAME=$(yq eval ".checks[$CHECK_IDX].name" "$EVAL_TOML_FILE")
+            CHECK_TYPE=$(yq eval ".checks[$CHECK_IDX].type" "$EVAL_TOML_FILE")
 
             if [ "$CHECK_TYPE" = "workspace" ]; then
-                CHECK_CMD=$(jq -r ".checks[$CHECK_IDX].command" "$EVAL_JSON_FILE")
+                CHECK_CMD=$(yq eval ".checks[$CHECK_IDX].command" "$EVAL_TOML_FILE")
                 if devcontainer exec --workspace-folder "$WORKSPACE_FOLDER" \
                     bash -c "cd ${WORK_DIR} && ${CHECK_CMD}" >/dev/null 2>&1; then
                     echo "[Host]     ✅ $CHECK_NAME"
@@ -170,7 +170,7 @@ for SKILL_DIR in "$WORKSPACE_FOLDER"/e2e/test_cases/*/; do
                     TRIAL_PASS=false
                 fi
             elif [ "$CHECK_TYPE" = "log" ]; then
-                JQ_FILTER=$(jq -r ".checks[$CHECK_IDX].jq" "$EVAL_JSON_FILE")
+                JQ_FILTER=$(yq eval ".checks[$CHECK_IDX].jq" "$EVAL_TOML_FILE")
                 if grep -v '^\s*$' "$LOG_FILE" | jq -s -e "any(.[]; $JQ_FILTER)" >/dev/null 2>&1; then
                     echo "[Host]     ✅ $CHECK_NAME"
                 else

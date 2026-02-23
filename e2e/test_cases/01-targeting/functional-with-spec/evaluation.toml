@@ -1,0 +1,28 @@
+[[checks]]
+name = "init_validation"
+type = "log"
+jq = "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:targeting\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
+[[checks]]
+name = "constitution_loaded"
+type = "log"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))"
+[[checks]]
+name = "keywords_md_created"
+type = "workspace"
+command = "[ -f 1-targeting/keywords.md ]"
+[[checks]]
+name = "search_patents_called"
+type = "log"
+jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"mcp__google_patent_mcp__search_patents\")"
+[[checks]]
+name = "noise_analysis_performed"
+type = "log"
+jq = ".message.content[]? | select(.type == \"text\" and (.text | test(\"noise|Noise|irrelevant|Irrelevant|snippets|Snippets\")))"
+[[checks]]
+name = "targeting_md_created"
+type = "workspace"
+command = "[ -f 1-targeting/targeting.md ]"
+[[checks]]
+name = "target_jsonl_exists"
+type = "workspace"
+command = "[ -f 1-targeting/target.jsonl ] && [ $(wc -l < 1-targeting/target.jsonl) -gt 0 ]"
