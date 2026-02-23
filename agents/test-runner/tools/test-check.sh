@@ -50,6 +50,8 @@ for CHECK_IDX in $(seq 0 $((NUM_CHECKS - 1))); do
         if [ "$IF_CALLED" = "true" ]; then
             OPTIONAL_FLAG="--optional"
         fi
+        # Prepend ./ to command if not already present
+        [[ ! "$CHECK_CMD" =~ ^\.\/ ]] && CHECK_CMD="./$CHECK_CMD"
         cd "$SCRIPT_DIR" && if $CHECK_CMD "$LOG_FILE" "$MCP_TOOL" "$OPTIONAL_FLAG" >/dev/null 2>&1; then
             echo "[Host]     ✅ $CHECK_NAME"
         else
