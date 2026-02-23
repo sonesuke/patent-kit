@@ -18,4 +18,5 @@ jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 
 [[checks]]
 name = "concept_interview_invoked"
 type = "log"
-jq = "[.[] | .message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"concept-interviewing\")))] | length > 0"
+type = "script"
+command = "check-skill-invoked.sh concept-interviewing"

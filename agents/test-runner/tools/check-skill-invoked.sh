@@ -1,0 +1,14 @@
+#!/bin/bash
+# check-skill-invoked.sh - Check if a specific skill was invoked
+# Usage: check-skill-invoked.sh <log_file> <mcp_tool> <skill_name>
+
+LOG_FILE="${1:-}"
+SKILL_NAME="${2:-}"
+
+if [ -z "$LOG_FILE" ] || [ -z "$SKILL_NAME" ]; then
+    echo "[Error] Usage: $0 <log_file> <skill_name>" >&2
+    exit 1
+fi
+
+# Check if the skill was invoked in the log
+jq -s "[.[] | .message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"$SKILL_NAME\"; \"i\")))] | length > 0" "$LOG_FILE"

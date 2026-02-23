@@ -17,5 +17,5 @@ jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 
 
 [[checks]]
 name = "targeting_skill_invoked"
-type = "log"
-jq = "[.[] | .message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"targeting\")))] | length > 0"
+type = "script"
+command = "check-skill-invoked.sh targeting"
