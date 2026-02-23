@@ -99,9 +99,13 @@ for IDX in "${!TEST_FILES[@]}"; do
     TRIAL_START_TIMES=()
     TRIAL_LOG_FILES=()
 
+    # Create skill-specific log directory
+    LOG_DIR="$REPORT_DIR/${SKILL_NAME}"
+    mkdir -p "$LOG_DIR"
+
     for TRIAL in $(seq 1 "$N_TRIALS"); do
         LABEL="${TEST_CASE_NAME}_trial-${TRIAL}"
-        LOG_FILE="$REPORT_DIR/${TEST_NAME}-${TRIAL}.log"
+        LOG_FILE="$LOG_DIR/${TEST_NAME}-${TRIAL}.log"
         WORK_DIR="/tmp/e2e-${LABEL}"
         TRIAL_LOG_FILES+=("$LOG_FILE")
         TRIAL_DIRS+=("$WORK_DIR")
@@ -144,7 +148,7 @@ for IDX in "${!TEST_FILES[@]}"; do
     echo "[Host]   Running evaluation..."
 
     CASE_PASS=true
-    RESULT_FILE="$REPORT_DIR/${TEST_NAME}.results"
+    RESULT_FILE="$LOG_DIR/${TEST_NAME}.results"
     > "$RESULT_FILE"  # Create/clear result file
 
     for TRIAL_IDX in $(seq 0 $((N_TRIALS - 1))); do

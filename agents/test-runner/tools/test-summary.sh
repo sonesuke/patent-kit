@@ -13,24 +13,32 @@ N_TRIALS="${5:?}"
 
 # --- Parse result files and collect statistics ---
 RESULT_FILES=()
-for f in "$REPORT_DIR"/*.results; do
+# Find all .results files recursively (including subdirectories)
+while IFS= read -r -d '' f; do
     [ -f "$f" ] || continue
     RESULT_FILES+=("$f")
-done
+done < <(find "$REPORT_DIR" -name '*.results' -print0 2>/dev/null)
 
-# Get unique test names
+# Get unique test names and skill names
 TEST_NAMES=()
+SKILL_NAMES=()
 declare -a TEST_STATS  # Format: "test_name|total_duration|total_input|total_output|count|all_pass"
 
 for RESULT_FILE in "${RESULT_FILES[@]}"; do
     # Extract test name from file name
     FILE_BASENAME=$(basename "$RESULT_FILE" .results)
     TEST_NAMES+=("$FILE_BASENAME")
+
+    # Extract skill name from directory path
+    FILE_DIR=$(dirname "$RESULT_FILE")
+    SKILL_NAME=$(basename "$FILE_DIR")
+    SKILL_NAMES+=("$SKILL_NAME")
 done
 
 # Calculate statistics for each test
-for TEST_NAME in "${TEST_NAMES[@]}"; do
-    RESULT_FILE="$REPORT_DIR/${TEST_NAME}.results"
+for RESULT_FILE in "${RESULT_FILES[@]}"; do
+    # Extract test name from file path
+    TEST_NAME=$(basename "$RESULT_FILE" .results)
 
     DURATION_SUM=0
     INPUT_SUM=0
@@ -52,8 +60,18 @@ for TEST_NAME in "${TEST_NAMES[@]}"; do
     TEST_STATS+=("${TEST_NAME}|${DURATION_SUM}|${INPUT_SUM}|${OUTPUT_SUM}|${COUNT}|${ALL_PASS}")
 done
 
+# --- Determine summary location ---
+# If only one skill was tested, put summary in skill directory
+# If multiple skills were tested, put summary in root directory
+UNIQUE_SKILLS=($(echo "${SKILL_NAMES[@]}" | tr ' ' '\n' | sort -u))
+if [ ${#UNIQUE_SKILLS[@]} -eq 1 ]; then
+    SUMMARY_DIR="$REPORT_DIR/${UNIQUE_SKILLS[0]}"
+else
+    SUMMARY_DIR="$REPORT_DIR"
+fi
+
 # --- Generate summary report ---
-REPORT_FILE="$REPORT_DIR/summary.md"
+REPORT_FILE="$SUMMARY_DIR/summary.md"
 {
     echo "# E2E Test Report"
     echo ""
