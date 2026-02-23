@@ -1,24 +1,25 @@
-# Test Case: Targeting Functional (with existing specification)
+# Test Case: Targeting Functional (with CSV data)
 
-name = "functional-with-spec"
-description = "Verify targeting process with existing specification"
+name = "functional-with-data"
+description = "Verify targeting process with pre-downloaded CSV data"
 timeout = 300 # seconds
 
 # Test prompt sent to Claude
 test_prompt = """
 You are a Patent Engineer who has just received a draft invention specification.
 
-I have placed an invention specification in `0-specifications/specification.md`. Please read it and perform the Phase 1 targeting step (search query generation) for a 2025 product release.
+I have placed an invention specification in `0-specifications/specification.md` and downloaded CSV files in `1-targeting/csv/`.
 
-If asked about modifying keywords or synonyms: "Looks good, proceed to search."
-If asked whether the query hit counts are acceptable (~1000 hits): "The count is acceptable, proceed to merge."
+Please perform the Phase 1 targeting step and then merge the CSV data to create `1-targeting/target.jsonl`.
+
+If asked about modifying keywords or synonyms: "Looks good, proceed to merge."
 """
 
 # Setup files to be copied to workspace
 [[setup]]
 path = "0-specifications/specification.md"
 content = """
-# Specification Dummy
+# Product Specification
 
 **Product/Technology**:
 Solar-powered auto-cleaning cat litter box with IoT notifications.
@@ -36,6 +37,24 @@ Current cat litter boxes require manual scooping and frequent bag changes, which
 
 - Litter-Robot
 - CatGenie
+"""
+
+[[setup]]
+path = "1-targeting/csv/sample1.csv"
+content = """
+publication_number,title,assignee
+US9433185B2,Automated pet care assembly with sensor,"Automated Pet Care Products, Llc"
+US11399502B2,Waste compartment monitoring,Automated Pet Care Products, Llc
+US11963512B1,Pet toilet with rotating drum,PetPivot INC
+"""
+
+[[setup]]
+path = "1-targeting/csv/sample2.csv"
+content = """
+publication_number,title,assignee
+US20200178505A1,Solar-powered pet monitoring,Botsitter, Llc
+US10582621B2,Cat litter box,CatGenie
+US10856789B2,Automatic litter device,Litter-Robot
 """
 
 # Evaluation checks
@@ -86,6 +105,11 @@ type = "workspace"
 command = "[ -f 1-targeting/targeting.md ]"
 
 [[checks]]
-name = "target_jsonl_not_exists"
+name = "merge_executed"
+type = "log"
+jq = "[.[] | .message.content[]? | select(type == \"tool_use\" and .name == \"Bash\" and (.input.command | test(\"merge\")))] | length > 0"
+
+[[checks]]
+name = "target_jsonl_exists"
 type = "workspace"
-command = "[ ! -f 1-targeting/target.jsonl ]"
+command = "[ -f 1-targeting/target.jsonl ] && [ $(wc -l < 1-targeting/target.jsonl) -gt 0 ]"
