@@ -46,13 +46,13 @@ jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 
 
 [[checks]]
 name = "concept_interview_invoked"
-type = "log"
-jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"concept-interview\")))] | length > 0"
+type = "script"
+command = "check-skill-invoked.sh concept-interviewing"
 
 [[checks]]
 name = "constitution_loaded"
-type = "log"
-jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))] | length > 0"
+type = "script"
+command = "check-skill-invoked.sh constitution-reminding"
 
 [[checks]]
 name = "specification_md_exists"

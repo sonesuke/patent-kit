@@ -11,4 +11,5 @@ if [ -z "$LOG_FILE" ] || [ -z "$SKILL_NAME" ]; then
 fi
 
 # Check if the skill was invoked in the log
-jq -s "[.[] | .message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"$SKILL_NAME\"; \"i\")))] | length > 0" "$LOG_FILE"
+# Note: Log is JSONL format with message.content[].type == "tool_use" and .name == "Skill"
+jq -r "select(.message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\") | .input.skill | test(\"$SKILL_NAME\"; \"i\")) | \"true\"" "$LOG_FILE" | grep -q "true"

@@ -42,8 +42,8 @@ jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 
 
 [[checks]]
 name = "legal_checker_skill_invoked"
-type = "log"
-jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"legal-checking\")))] | length > 0"
+type = "script"
+command = "check-skill-invoked.sh legal-checking"
 
 [[checks]]
 name = "test_file_read"
