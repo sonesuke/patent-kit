@@ -13,19 +13,19 @@ Load the constitution skill to understand the core principles.
 [[checks]]
 name = "init_validation"
 type = "log"
-jq = "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:constitution\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:constitution\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
 
 [[checks]]
 name = "constitution_skill_invoked"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"constitution\")))] | length > 0"
 
 [[checks]]
 name = "references_instructions_read"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"references/instructions.md\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"references/instructions.md\")))] | length > 0"
 
 [[checks]]
 name = "constitution_loaded"
 type = "log"
-jq = ".message.content[]? | select(.type == \"text\" and (.text | contains(\"Purpose\") or contains(\"When to Load\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"text\" and (.text | contains(\"Purpose\") or contains(\"When to Load\")))] | length > 0"

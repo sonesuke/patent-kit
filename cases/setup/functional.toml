@@ -13,17 +13,17 @@ Initialize the project directories.
 [[checks]]
 name = "init_validation"
 type = "log"
-jq = "select(.type == \"system\" and .subtype == \"init\") | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:setup\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\")"
+jq = "[.[] | select(.type == \"system\" and .subtype == \"init\")] | length > 0 and (.[0] | .plugins[]?.name == \"patent-kit\" and (.skills? | any(. == \"patent-kit:setup\")) and any(.mcp_servers[]?; (.name | test(\"google-patent-cli\")) and .status == \"connected\") and any(.mcp_servers[]?; (.name | test(\"arxiv-cli\")) and .status == \"connected\"))"
 
 [[checks]]
 name = "setup_skill_invoked"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"setup\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"setup\")))] | length > 0"
 
 [[checks]]
 name = "references_instructions_read"
 type = "log"
-jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"setup.*references/instructions.md\")))"
+jq = "[.[] | .message.content[]? | select(type == \"object\" and .type == \"tool_use\" and .name == \"Read\" and (.input.file_path | test(\"setup.*references/instructions.md\")))] | length > 0"
 
 [[checks]]
 name = "directories_created"
