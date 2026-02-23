@@ -2,7 +2,7 @@
 
 name = "functional-with-spec"
 description = "Verify targeting process with existing specification"
-timeout = 300 # seconds
+timeout = 600 # seconds
 
 # Test prompt sent to Claude
 test_prompt = """

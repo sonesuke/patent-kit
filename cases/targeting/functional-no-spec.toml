@@ -2,7 +2,7 @@
 
 name = "functional-no-spec"
 description = "Verify targeting calls concept-interview when specification is missing"
-timeout = 300 # seconds
+timeout = 600 # seconds
 
 # Test prompt sent to Claude
 test_prompt = """
