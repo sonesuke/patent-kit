@@ -61,8 +61,7 @@ name = "targeting_invoked_after_interview"
 type = "log"
 jq = ".message.content[]? | select(.type == \"tool_use\" and .name == \"Skill\" and (.input.skill | test(\"targeting\")))"
 
-# TODO: Replace string matching with isError field check once google-patent-cli MCP server returns isError: true on errors
 [[checks]]
 name = "google_patent_mcp_succeeded"
 type = "log"
-jq = "map(select(.type == \"assistant\" and (.message.content[]?.name // \"\" | test(\"google-patent-cli__search_patents\"))) | .message.content[]?.id) as $tool_ids | map(select(.type == \"user\" and (.message.content[]?.tool_use_id // \"\" | IN($tool_ids[])))) | all(.message.content[]?.content[]?.text // \"\" | test(\"Search failed|Browser error|Chrome|SIGABRT\") | not)"
+jq = "map(select(.type == \"assistant\" and (.message.content[]?.name // \"\" | test(\"google-patent-cli__search_patents\"))) | .message.content[]?.id) as $tool_ids | map(select(.type == \"user\" and (.message.content[]?.tool_use_id // \"\" | IN($tool_ids[])))) | all(.message.content[]? | select(.type == \"tool_result\") | .is_error // false | not)"
