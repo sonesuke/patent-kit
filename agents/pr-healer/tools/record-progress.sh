@@ -1,14 +1,18 @@
-#!/bin/bash
-# agents/pr-healer/tools/record-progress.sh
-# Appends a structured JSONL entry to progress.jsonl
+#!/usr/bin/env bash
+set -euo pipefail
 
-PROGRESS_FILE="agents/pr-healer/progress.jsonl"
+# Get main worktree path (works from any worktree)
+GIT_COMMON_DIR=$(git rev-parse --git-common-dir)
+MAIN_WORKTREE=$(dirname "$GIT_COMMON_DIR")
+PROGRESS_FILE="$MAIN_WORKTREE/agents/pr-healer/progress.jsonl"
+
+# Ensure directory exists
+mkdir -p "$(dirname "$PROGRESS_FILE")"
 
 TASK="${1:-No task specified}"
 FILES="${2:-}"
 DECISIONS="${3:-}"
 BLOCKERS="${4:-}"
-
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 # Use jq to safely create JSON
@@ -21,4 +25,8 @@ ENTRY=$(jq -n -c \
   '{timestamp: $ts, task: $task, files: $files, decisions: $decisions, blockers: $blockers}')
 
 echo "$ENTRY" >> "$PROGRESS_FILE"
-echo "[record-progress] Logged: $TASK"
+echo "✅ Progress logged: $TASK"
+
+# Show recent count
+RECENT=$(wc -l < "$PROGRESS_FILE" 2>/dev/null || echo "0")
+echo "   Total records: $RECENT"

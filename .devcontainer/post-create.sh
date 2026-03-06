@@ -17,6 +17,18 @@ if [ -z "$CI" ] && [ -z "$GITHUB_ACTIONS" ]; then
         echo "[Devcontainer Setup] Claude CLI already installed: $(claude --version)"
     fi
 
+    # Install yq (YAML/TOML processor) for skill-bench
+    if ! command -v yq >/dev/null 2>&1; then
+        echo "[Devcontainer Setup] Installing yq..."
+        YQ_VERSION=v4.52.4
+        wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -O /tmp/yq
+        chmod +x /tmp/yq
+        sudo mv /tmp/yq /usr/local/bin/yq
+        echo "[Devcontainer Setup] yq installed: $(yq --version)"
+    else
+        echo "[Devcontainer Setup] yq already installed: $(yq --version)"
+    fi
+
     echo "[Devcontainer Setup] Configuring tmux..."
     cat > $HOME/.tmux.conf << 'EOF'
 # Display pane number

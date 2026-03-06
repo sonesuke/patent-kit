@@ -1,20 +1,33 @@
-#!/bin/bash
-# agents/pr-healer/tools/load-progress.sh
-# Reads and displays the most recent progress entries from progress.jsonl
+#!/usr/bin/env bash
+set -euo pipefail
 
-PROGRESS_FILE="agents/pr-healer/progress.jsonl"
+# Get main worktree path (works from any worktree)
+GIT_COMMON_DIR=$(git rev-parse --git-common-dir)
+MAIN_WORKTREE=$(dirname "$GIT_COMMON_DIR")
+PROGRESS_FILE="$MAIN_WORKTREE/agents/pr-healer/progress.jsonl"
 
-if [ ! -f "$PROGRESS_FILE" ]; then
-    echo "[load-progress] No progress file found. This is a fresh start."
+if [[ ! -f "$PROGRESS_FILE" ]]; then
+    echo "📋 No progress file found - this is a fresh start"
     exit 0
 fi
 
 LINES=$(wc -l < "$PROGRESS_FILE" | tr -d ' ')
 
-if [ "$LINES" -eq 0 ]; then
-    echo "[load-progress] Progress file is empty. This is a fresh start."
+if [[ "$LINES" -eq 0 ]]; then
+    echo "📋 Progress file is empty - this is a fresh start"
     exit 0
 fi
 
-echo "[load-progress] Showing last 5 entries (of $LINES total):"
-tail -n 5 "$PROGRESS_FILE" | jq .
+echo "📋 Progress History (showing last 5 entries of $LINES total):"
+echo "================================"
+
+tail -n 5 "$PROGRESS_FILE" | while IFS= read -r line; do
+    echo "$line" | jq -r '"\(.timestamp): \(.task)\n  Files: \(.files)\n  Decisions: \(.decisions)\n  Blockers: \(.blockers)"'
+    echo ""
+done
+
+echo ""
+echo "Use this information to:"
+echo "  - Skip tasks that have already been processed successfully"
+echo "  - Retry tasks that failed previously"
+echo "  - Avoid repeating the same fixes"
