@@ -1,0 +1,29 @@
+# Test Case: arXiv Search - Triggering
+
+name = "triggering"
+description = "Verify arxiv-search skill is triggered when searching for papers"
+timeout = 60
+
+test_prompt = """
+I need to search for papers about machine learning on arXiv.
+"""
+
+[[checks]]
+name = "mcp_server_loaded"
+type = "script"
+command = "check-mcp-loaded.sh arxiv-cli"
+
+[[checks]]
+name = "skill_loaded"
+type = "script"
+command = "check-skill-loaded.sh arxiv-search"
+
+[[checks]]
+name = "arxiv_search_invoked"
+type = "script"
+command = "check-skill-invoked.sh arxiv-search"
+
+[[checks]]
+name = "arxiv_search_mcp_succeeded"
+type = "script"
+command = "check-mcp-success.sh search_papers"

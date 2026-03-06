@@ -90,6 +90,26 @@ chrome_args = [
 ]
 EOF
 
+    # Install external skills from marketplace
+    echo "[Devcontainer Setup] Installing external skills..."
+    if command -v claude >/dev/null 2>&1; then
+        # Add marketplaces
+        echo "[Devcontainer Setup]   Adding google-patent-cli marketplace..."
+        claude plugin marketplace add sonesuke/google-patent-cli 2>/dev/null || echo "[Devcontainer Setup]   google-patent-cli marketplace already added or failed"
+
+        echo "[Devcontainer Setup]   Adding arxiv-cli marketplace..."
+        claude plugin marketplace add sonesuke/arxiv-cli 2>/dev/null || echo "[Devcontainer Setup]   arxiv-cli marketplace already added or failed"
+
+        # Install skills
+        echo "[Devcontainer Setup]   Installing google-patent-cli skills..."
+        claude plugin install google-patent-cli@sonesuke/google-patent-cli 2>/dev/null || echo "[Devcontainer Setup]   google-patent-cli skills already installed or failed"
+
+        echo "[Devcontainer Setup]   Installing arxiv-cli skills..."
+        claude plugin install arxiv-cli@sonesuke/arxiv-cli 2>/dev/null || echo "[Devcontainer Setup]   arxiv-cli skills already installed or failed"
+    else
+        echo "[Devcontainer Setup] WARNING: Claude CLI not found, skipping skill installation"
+    fi
+
     echo "[Devcontainer Setup] Complete!"
 else
     echo "Running in CI environment, skipping development setup..."
