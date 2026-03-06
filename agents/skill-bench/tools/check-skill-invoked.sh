@@ -1,0 +1,16 @@
+#!/bin/bash
+# check-skill-invoked.sh - Check if a specific skill was invoked
+# Usage: check-skill-invoked.sh <log_file> <work_dir> <skill_name>
+
+LOG_FILE="${1:-}"
+WORK_DIR="${2:-}"
+SKILL_NAME="${3:-}"
+
+if [ -z "$LOG_FILE" ] || [ -z "$SKILL_NAME" ]; then
+    echo "[Error] Usage: $0 <log_file> <work_dir> <skill_name>" >&2
+    exit 1
+fi
+
+# Check if the skill was invoked in the log
+# Note: Log is JSONL format with "name":"Skill" and "skill":"patent-kit:<skill-name>"
+grep -q '"Skill"' "$LOG_FILE" && grep -q '"skill":".*'"$SKILL_NAME" "$LOG_FILE"

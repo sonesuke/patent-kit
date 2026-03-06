@@ -26,18 +26,19 @@ This repository (`patent-kit`) is a **Claude Plugin Marketplace** containing adv
 
 This repository includes autonomous agent scripts under `agents/` that can be run on the host machine to perform background tasks.
 
-### PR-Healer (`agents/pr-healer/healer.sh`)
+### PR-Healer (`agents/pr-healer/auto-heal.sh`)
 
-An autonomous daemon that checks for failing GitHub Actions CI checks on open Pull Requests.
+An autonomous daemon that runs inside the devcontainer and checks for failing GitHub Actions CI checks on open Pull Requests.
 
-- **Workflow**: Finds failing PRs → Runs `claude` inside the Dev Container (`devcontainer exec`) → Analyzes the failure (typically using `mise run pre-commit`) → Commits the fix and replies to the PR.
-- **Requirements**: Requires Docker, GitHub CLI (`gh`), `devcontainer` CLI, and `jq` installed on the host machine.
+- **Workflow**: Finds failing PRs → Runs `claude` with `--worktree` → Analyzes the failure (typically using `npm run lint`) → Commits the fix and replies to the PR.
+- **Requirements**: Requires GitHub CLI (`gh`) authenticated inside the devcontainer.
 
-### Test-Runner (`agents/test-runner/runner.sh`)
+### Skill-Bench (`agents/skill-bench/runner.sh`)
 
-An autonomous daemon that runs End-to-End (E2E) triggering and functional tests for the `patent-kit` skills using **parallel Claude CLI** processes.
+An autonomous test runner that executes E2E tests for the `patent-kit` skills using **TOML-based test cases**.
 
-- **Architecture**: For each test case × trial, the runner spawns an independent `claude -p` process inside the Dev Container. All trials run concurrently and results are aggregated into a summary report.
-- **Workflow**: Reads test cases from `e2e/test_cases/*.md` → Expands `prompt.txt` template per trial → Launches parallel `devcontainer exec claude -p` processes → Waits for all to complete → Generates summary in `e2e/reports/<report_id>/summary.md`.
-- **Usage**: `bash agents/test-runner/runner.sh [N_TRIALS]` (default: 1 trial per test case).
-- **Requirements**: Requires Docker, `devcontainer` CLI, and `jq` installed on the host machine.
+- **Architecture**: All execution happens inside the devcontainer. Test cases are defined in TOML format under `cases/<skill>/<test>.toml`.
+- **Workflow**: Reads test cases from `cases/*/*.toml` → Sets up isolated workspaces → Runs `claude -p` with test prompts → Evaluates results using check scripts → Generates summary in `logs/`.
+- **Usage**: `bash agents/skill-bench/runner.sh [pattern]` (default: `cases/*/*.toml`).
+- **Test Case Format**: TOML files with `test_prompt`, `timeout`, `[[setup]]`, and `[[checks]]` sections.
+- **Requirements**: Requires `yq` and `jq` commands inside the devcontainer.

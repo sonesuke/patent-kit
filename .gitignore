@@ -4,3 +4,7 @@ __pycache__/
 /target/
 out/
 Cargo.lock
+
+# Claude Code local files
+.claude/worktrees/
+.claude/settings.local.json
