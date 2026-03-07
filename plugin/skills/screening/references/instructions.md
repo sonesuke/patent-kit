@@ -29,45 +29,48 @@ Use the Skill tool to load the `investigating-database` skill for:
 - Recording screening results
 - Getting progress statistics
 
-#### Screening Loop
+#### Screening Process
 
-Process all patents from the `target_patents` table **sequentially**:
+Process all patents from the `target_patents` table using **parallel agents**:
 
-> [!WARNING]
-> **Long-Running Sequential Task**:
+> [!NOTE]
+> **Parallel Processing with Team**:
 >
-> - Process records **one by one**. No batch processing, loops, or automation scripts.
-> - Do not ask questions or stop midway. Complete the entire task silently.
-> - No policy changes or proposals needed. If in doubt, proceed with your own judgment.
-> - Do not output intermediate results; only provide the final output.
-> - Accuracy over speed. Self-check every 5 records: "Am I processing one by one?"
+> - Create a team of multiple agents to process patents in parallel
+> - Each agent works independently on assigned patents
+> - Results are aggregated after all agents complete
 
-**For each patent**:
+**Process Steps**:
 
-1. **Get Patent ID**:
+1. **Get Unscreened Patents**:
    - Use the Skill tool to load the `investigating-database` skill
-   - Request: "Get next patent ID"
+   - Request: "Get list of unscreened patent IDs"
+   - Divide the list into batches for parallel processing
 
-2. **Fetch Data**:
-   - Use the `google-patent-cli:patent-fetch` skill to retrieve patent details
+2. **Create Screening Team**:
+   - Use the Agent tool to create a team with multiple teammates
+   - Recommended team size: 3-5 agents depending on patent volume
+   - Each teammate will process a subset of patents
 
-3. **Judgment**:
-   - Check `abstract_text` and `legal_status` (if available)
-   - **Auto-Reject**: If status is Expired/Withdrawn → `expired`
-     - Reason: "Status is [actual status]"
-   - **Relevance**: Compare against Theme/Domain from specification
-     - **Criteria**: Check at Theme/Domain level. Is it relevant to the business area?
-     - **Exception**: KEEP if technology could serve as infrastructure/platform
-     - **Examples**:
-       - **Relevant**: Defined Theme, Direct Competitors, Core Tech
-       - **Irrelevant**: Completely different industry (e.g., Medical vs Web)
+3. **Assign Patents to Agents**:
+   - Divide unscreened patents evenly among teammates
+   - For each agent, send message with assigned patent IDs
+   - Request: "Screen these patents: [ID1, ID2, ID3, ...]"
 
-   > [!IMPORTANT]
-   > **Judgment Values**: Use ONLY one of: `relevant`, `irrelevant`, `expired` (lowercase)
+4. **Agent Screening Task** (each teammate executes independently):
 
-4. **Record Result**:
+   For each assigned patent:
+   - **Fetch Data**: Use `google-patent-cli:patent-fetch` skill
+   - **Judgment**: Check abstract and legal status
+     - **Auto-Reject**: Expired/Withdrawn → `expired`
+     - **Relevance**: Compare against Theme/Domain from specification
+     - **Judgment Values**: `relevant`, `irrelevant`, `expired` (lowercase)
+   - **Record Result**: Use `investigating-database` skill to record judgment
+
+5. **Aggregate Results**:
+   - Wait for all teammates to complete their tasks
    - Use the Skill tool to load the `investigating-database` skill
-   - Request: "Record screening result for patent <ID>: judgment=<JUDGMENT>, reason=<REASON>"
+   - Request: "Get screening progress statistics"
 
 ### Phase 3: Generate Summary Report
 
