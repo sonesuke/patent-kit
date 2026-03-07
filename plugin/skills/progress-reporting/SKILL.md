@@ -16,27 +16,31 @@ Your task is to report the current status of the patent analysis workflow.
 
 1. **Read Constitution**: Load the `constitution-reminding` skill to understand the core principles.
 
-#### Step 1: Run Progress Script
+#### Step 1: Get Database Statistics
 
-Run the following script to get the current status in JSON format:
+Use the database skill to get the current status:
 
-- Run: `report-progress`
+- Use the Skill tool to load the `investigating-database` skill
+- Request: "Get screening progress statistics"
+- Or run: `bash plugin/skills/investigating-database/scripts/shell/get-statistics.sh`
 
-> [!NOTE]
-> **Scripts Location**:
->
-> - Linux/Mac: `./scripts/shell/report-progress.sh`
-> - Windows: `.\scripts\powershell\report-progress.ps1`
+This returns JSON with:
+
+- `total_targets`: Total patents in targeting
+- `total_screened`: Total patents screened
+- `relevant`: Relevant patent count
+- `irrelevant`: Irrelevant patent count
+- `expired`: Expired patent count
 
 #### Step 2: Analyze Output
 
-Based on the JSON output:
+Based on the database statistics and file analysis:
 
-- **Phase 0**: Check `phase0.specification_md`.
-- **Phase 1**: Check `phase1.targeting_md`, `keywords_md`, `target_jsonl`.
-- **Phase 2**: Check `phase2` counts (screened vs total).
-- **Phase 3-5**: Check `investigations` array.
-  - Calculate **Claim Analysis Progress** (Claim Analysis Done / Relevant Patents from Phase 2).
+- **Phase 0**: Check `0-specifications/specification.md` exists.
+- **Phase 1**: Check `1-targeting/targeting.md`, `1-targeting/keywords.md` exist and database has patents.
+- **Phase 2**: Use database statistics (total_screened vs total_targets, relevant/irrelevant/expired counts).
+- **Phase 3-5**: Parse investigation directories and JSON files.
+  - Calculate **Claim Analysis Progress** (Claim Analysis Done / Relevant Patents from database).
   - Calculate **Prior Art Progress** (Prior Art Done / Claim Analysis Done).
   - **List Filtering (Critical)**:
     - **Include**: Patents where Claim Analysis is `Significant`, `Moderate`, or `Pending`.
@@ -59,7 +63,7 @@ Save to `PROGRESS.md` in the project root.
 
 ### Quality Gates
 
-- [ ] JSON data from `report-progress` is correctly mapped.
+- [ ] Database statistics are correctly retrieved and mapped.
 - [ ] Used strictly standard sections (Overview, Screening Summary, Investigation Progress, Next Actions).
 - [ ] No extra sections (e.g., "Top Patents", "Current Status") added.
 - [ ] No duplicated information.

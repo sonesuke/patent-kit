@@ -1,0 +1,47 @@
+# Test Case: Investigating Database - Import Multiple CSV Files
+
+name = "functional-import-multiple-csvs"
+description = "Verify investigating-database can import multiple CSV files with different formats"
+timeout = 180 # seconds
+
+test_prompt = """
+Import all CSV files from the current directory into the patent database.
+"""
+
+[[setup]]
+path = "patents-simple.csv"
+content = """
+id,family_id,title,abstract_text,publication_date,country
+US-1234567-A,US-1234567,Example Patent 1,Example abstract text for patent 1,2023-01-15,US
+US-7654321-A,US-7654321,Example Patent 2,Example abstract text for patent 2,2023-03-20,US
+US-9999999-A,US-9999999,Example Patent 3,Example abstract text for patent 3,2023-06-10,US
+"""
+
+[[setup]]
+path = "patents-google-format.csv"
+content = """
+search URL:,https://patents.google.com/?q=rag+systems
+id,title,assignee,inventor/author,priority date,filing/creation date,publication date,grant date,result link,representative figure link
+KR-102030405-B1,RAG System for Document Analysis,"삼성전자 주식회사","홍길동",2022-05-10,2022-05-10,2023-08-20,2023-08-20,https://patents.google.com/patent/KR102030405B1/en,
+US-20240101234-A1,Information Retrieval Using Neural Networks,"Tech Corp Inc.","Jane Doe, John Smith",2022-03-15,2023-08-01,2024-01-15,,https://patents.google.com/patent/US20240101234A1/en,
+"""
+
+[[checks]]
+name = "skill_loaded"
+type = "script"
+command = "check-skill-loaded.sh investigating-database"
+
+[[checks]]
+name = "investigating_database_invoked"
+type = "script"
+command = "check-skill-invoked.sh investigating-database"
+
+[[checks]]
+name = "database_created"
+type = "script"
+command = "check-workspace-file.sh patents.db"
+
+[[checks]]
+name = "all_csvs_imported"
+type = "script"
+command = "check-db-query.sh {} {} '5' 'SELECT COUNT(*) FROM target_patents;'"

@@ -142,12 +142,24 @@ for IDX in "${!TEST_FILES[@]}"; do
         if [ -n "$CHECK_ARGS" ]; then
             # Command has arguments: script.sh arg1 arg2...
             # Use eval to properly expand quoted arguments
-            # Always pass LOG_FILE and WORK_DIR as first two arguments
-            if eval "$TOOLS_DIR/$CHECK_SCRIPT \"\$LOG_FILE\" \"\$WORK_DIR\" $CHECK_ARGS" >/dev/null 2>&1; then
-                echo "[SkillBench]     ✅ $CHECK_NAME"
+            # Replace {} placeholders with LOG_FILE and WORK_DIR (if present)
+            if echo "$CHECK_ARGS" | grep -q '{}'; then
+                CHECK_ARGS=$(echo "$CHECK_ARGS" | sed 's|{}|"'$LOG_FILE'"|1' | sed 's|{}|"'$WORK_DIR'"|1')
+                # {} placeholders were replaced, don't pass LOG_FILE and WORK_DIR again
+                if eval "\"$TOOLS_DIR/$CHECK_SCRIPT\" $CHECK_ARGS" >/dev/null 2>&1; then
+                    echo "[SkillBench]     ✅ $CHECK_NAME"
+                else
+                    echo "[SkillBench]     ❌ $CHECK_NAME"
+                    CASE_PASS=false
+                fi
             else
-                echo "[SkillBench]     ❌ $CHECK_NAME"
-                CASE_PASS=false
+                # No {} placeholders, pass LOG_FILE and WORK_DIR as first two args
+                if eval "\"$TOOLS_DIR/$CHECK_SCRIPT\" \"$LOG_FILE\" \"$WORK_DIR\" $CHECK_ARGS" >/dev/null 2>&1; then
+                    echo "[SkillBench]     ✅ $CHECK_NAME"
+                else
+                    echo "[SkillBench]     ❌ $CHECK_NAME"
+                    CASE_PASS=false
+                fi
             fi
         else
             # Command has no arguments: script.sh

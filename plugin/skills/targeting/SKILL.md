@@ -49,15 +49,17 @@ Use the Glob tool to check if `0-specifications/specification.md` exists:
 Use the Glob tool to check if `1-targeting/csv/*.csv` files exist:
 
 - **If CSV files exist**:
-  1. **Do NOT** ask the user what to do. **Immediately proceed to merge step.**
+  1. **Do NOT** ask the user what to do. **Immediately proceed to database import.**
   2. **Skip** the patent search and keyword extraction steps (Step 1 & 2 from instructions)
-  3. **Immediately run** the merge script to create target.jsonl:
-     ```bash
-     ./plugin/skills/targeting/scripts/shell/merge.sh 1-targeting/csv 1-targeting/target.jsonl
-     ```
-  4. Verify `1-targeting/target.jsonl` was created successfully
+  3. **Initialize database and import CSV files**:
+     - Use the Skill tool to load the `investigating-database` skill
+     - Request: "Initialize the patent database and import CSV files from 1-targeting/csv/"
+     - This will:
+       - Create `patents.db` if it doesn't exist
+       - Import all CSV files into the `target_patents` table
+  4. Verify import completed successfully by checking the database statistics
   5. **Do NOT** create targeting.md or keywords.md when CSV files are pre-downloaded
-  6. Report completion: "Merged X patents from CSV files into target.jsonl"
+  6. Report completion: "Imported X patents from CSV files into the patent database"
 
 - **If NO CSV files**:
   1. **Execute Competitor Patent Research**:
@@ -75,7 +77,7 @@ Use the Glob tool to check if `1-targeting/csv/*.csv` files exist:
 
 Upon successful completion:
 
-- Deliverables: `1-targeting/targeting.md`, `1-targeting/keywords.md`, `1-targeting/target.jsonl`
+- Deliverables: `1-targeting/targeting.md`, `1-targeting/keywords.md` (if not from CSV), `patents.db`
 - Next skill: `/patent-kit:screening`
 
 ## State Management
@@ -87,9 +89,9 @@ Upon successful completion:
 
 ### Final State
 
-- `1-targeting/targeting.md` created with validated search commands
-- `1-targeting/keywords.md` created with golden keywords registry
-- `1-targeting/target.jsonl` created with merged patent list
+- `1-targeting/targeting.md` created with validated search commands (if not from CSV)
+- `1-targeting/keywords.md` created with golden keywords registry (if not from CSV)
+- `patents.db` created with patents imported into `target_patents` table
 - Ready to proceed to screening phase
 
 ## References

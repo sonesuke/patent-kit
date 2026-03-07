@@ -60,6 +60,11 @@ type = "script"
 command = "check-skill-invoked.sh targeting"
 
 [[checks]]
-name = "target_jsonl_created"
+name = "database_created"
 type = "script"
-command = "check-workspace-file.sh 1-targeting/target.jsonl"
+command = "check-workspace-file.sh patents.db"
+
+[[checks]]
+name = "csv_imported"
+type = "script"
+command = "check-db-query.sh {} {} '3' 'SELECT COUNT(*) FROM target_patents;'"
