@@ -7,9 +7,9 @@ description: |
   - The user wants to start a patent investigation for a new product, idea, or concept
     (e.g., "start a patent search for a new product", "patent investigation for a new idea")
   - The user explicitly requests:
-    * "Define search requirements (Step 0)"
     * "conduct concept interview"
     * "define product concept"
+    * "define search requirements"
 metadata:
   author: sonesuke
   version: 1.0.0
