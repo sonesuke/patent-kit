@@ -1,0 +1,37 @@
+# Test Case: Question Responder - Basic Functionality
+
+name = "basic"
+description = "Verify question-responder finds answers from test case"
+timeout = 60
+
+test_prompt = """
+I need to ask: What are the product concept, target country, release date, and competitors for the patent search? Please use the question-responder skill to find the answer.
+"""
+
+[answers]
+"product concept" = "Voice recognition system for smart home devices with real-time transcription and noise-resistant recognition"
+"target country" = "US"
+"country" = "US"
+"release date" = "2025-06-01"
+"date" = "2025-06-01"
+"competitors" = ["Google", "Amazon"]
+
+[[checks]]
+name = "skill_loaded"
+type = "script"
+command = "check-skill-loaded.sh question-responder"
+
+[[checks]]
+name = "question_responder_invoked"
+type = "script"
+command = "check-skill-invoked.sh question-responder"
+
+[[checks]]
+name = "answer_contains_us"
+type = "script"
+command = "check-output-contains.sh US"
+
+[[checks]]
+name = "answer_contains_google"
+type = "script"
+command = "check-output-contains.sh Google"

@@ -22,9 +22,9 @@ Define the product concept and identify competitors. This phase establishes the 
 
 Use the Skill tool to load the `constitution-reminding` skill BEFORE starting any work. This is required to understand the core principles.
 
-### 2. Load Google Patent CLI Skills
+### 2. Load Required Skills
 
-Use the Skill tool to verify that the following google-patent-cli skills are available:
+Use the Skill tool to verify that the following skills are available:
 
 - `google-patent-cli:patent-assignee-check` - For discovering assignee name variations
 
