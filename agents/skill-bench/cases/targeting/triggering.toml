@@ -5,13 +5,8 @@ description = "Verify targeting skill is triggered when asked to execute targeti
 timeout = 60
 
 test_prompt = """
-Execute the targeting skill for a patent search project.
+I have a product concept. Now I need to create a target population for patent searching.
 """
-
-[[checks]]
-name = "mcp_server_loaded"
-type = "script"
-command = "check-mcp-loaded.sh google-patent-cli"
 
 [[checks]]
 name = "skill_loaded"

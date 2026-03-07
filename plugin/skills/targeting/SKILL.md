@@ -1,6 +1,14 @@
 ---
 name: targeting
-description: "Searches patent databases to create a target population based on specifications. Triggered when the user asks to 'create a target population' or 'run the search (Step 1)', or when CSV files are detected in 1-targeting/csv/."
+description: |
+  Searches patent databases to create a target population based on specifications.
+
+  Triggered when:
+  - The user asks to:
+    * "create a target population"
+    * "determine the target population"
+    * "run the patent search"
+  - CSV files are detected in 1-targeting/csv/
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -21,7 +29,7 @@ Generate high-precision search queries and create a consolidated patent populati
 
 ### 1. Load Constitution (MANDATORY)
 
-Use the Skill tool to load the `constitution` skill BEFORE starting any work. This is required to understand the core principles.
+Use the Skill tool to load the `constitution-reminding` skill BEFORE starting any work. This is required to understand the core principles.
 
 ### 2. Check Specification
 
@@ -51,7 +59,17 @@ Use the Glob tool to check if `1-targeting/csv/*.csv` files exist:
   5. **Do NOT** create targeting.md or keywords.md when CSV files are pre-downloaded
   6. Report completion: "Merged X patents from CSV files into target.jsonl"
 
-- **If NO CSV files**: See `references/instructions.md` for detailed execution steps.
+- **If NO CSV files**:
+  1. **Execute Competitor Patent Research**:
+     - Use `google-patent-cli:patent-search` with assignee search
+     - Analyze results and extract "Golden Keywords"
+     - Save keywords to `1-targeting/keywords.md`
+  2. **Execute Market Patent Research**:
+     - Use `google-patent-cli:patent-search` with keyword queries
+     - Refine queries based on noise analysis
+  3. **Create Output Files**:
+     - Fill `1-targeting/targeting.md` using the template
+     - Update `1-targeting/keywords.md` with golden keywords registry
 
 ### 4. Transition to Screening
 

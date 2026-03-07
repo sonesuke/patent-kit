@@ -40,10 +40,14 @@ Current chatbots struggle with context awareness and factual accuracy in multi-t
 US and Korea markets, focusing on enterprise customer service and conversational AI applications.
 """
 
-[[checks]]
-name = "mcp_server_loaded"
-type = "script"
-command = "check-mcp-loaded.sh google-patent-cli"
+[[setup]]
+path = "1-targeting/csv/patents.csv"
+content = """
+id,family_id,title,abstract_text,publication_date,country
+US-1234567-A,US-1234567,Example Patent 1,Example abstract text for patent 1,2023-01-15,US
+US-7654321-A,US-7654321,Example Patent 2,Example abstract text for patent 2,2023-03-20,US
+US-9999999-A,US-9999999,Example Patent 3,Example abstract text for patent 3,2023-06-10,US
+"""
 
 [[checks]]
 name = "skill_loaded"
@@ -54,3 +58,8 @@ command = "check-skill-loaded.sh targeting"
 name = "targeting_invoked"
 type = "script"
 command = "check-skill-invoked.sh targeting"
+
+[[checks]]
+name = "target_jsonl_created"
+type = "script"
+command = "check-workspace-file.sh 1-targeting/target.jsonl"

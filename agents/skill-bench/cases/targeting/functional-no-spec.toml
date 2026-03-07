@@ -9,20 +9,15 @@ I want to search for patents related to a "folding dual-screen smartphone" for r
 
 Please conduct the concept interview and targeting steps.
 
-When asked for clarifications:
-
-- Folding mechanism: Foldable device with single flexible display (like Galaxy Z Fold)
-- Display configuration: Same size screens, front-folding (inward)
-- Additional features: Hinge mechanism, multi-window functionality
-- Competitors: Only Samsung is needed
-
-Please proceed with assignee verification and create the specification file automatically.
+Before asking me any questions, please use the question-responder skill to check if the required information is already available. Then proceed with assignee verification and create the specification file automatically.
 """
 
-[[checks]]
-name = "mcp_server_loaded"
-type = "script"
-command = "check-mcp-loaded.sh google-patent-cli"
+[answers]
+"folding mechanism" = "Foldable device with single flexible display (like Galaxy Z Fold)"
+"display configuration" = "Same size screens, front-folding (inward)"
+"additional features" = "Hinge mechanism, multi-window functionality"
+"competitors" = "Only Samsung is needed"
+"clarifications" = "Foldable device with single flexible display (like Galaxy Z Fold), Same size screens, front-folding (inward), Hinge mechanism, multi-window functionality, Only Samsung is needed"
 
 [[checks]]
 name = "skill_loaded"
@@ -58,3 +53,8 @@ command = "check-tool-use.sh Read file_path \"keywords-template.md\""
 name = "specification_md_created"
 type = "script"
 command = "check-workspace-file.sh 0-specifications/specification.md"
+
+[[checks]]
+name = "google_patent_search_invoked"
+type = "script"
+command = "check-skill-invoked.sh google-patent-cli:patent-search"
