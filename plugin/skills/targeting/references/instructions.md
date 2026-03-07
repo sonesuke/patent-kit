@@ -22,7 +22,7 @@ Generate high-precision search queries based on the product concept and competit
 ## Input
 
 - **Specification**: `0-specifications/specification.md` (generated in Phase 0).
-- **Tools**: `MCP tool` (assume updated version with assignee search capability).
+- **Skills**: `google-patent-cli` (patent-search, patent-assignee-check) from marketplace.
 
 ## Process
 
@@ -43,15 +43,15 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 #### Phase 1.1: Competitor Patent Research
 
 1. **Start Broad**:
-   - **Action**: Use the `search_patents` tool with:
+   - **Action**: Use the `google-patent-cli:patent-search` skill with:
      - assignee: "<Combined Assignees>"
      - country: "<Target Country>"
      - before: "<Target Release Date>"
      - after: "<Cutoff Date>"
      - limit: 20
-   - **CRITICAL: Check MCP response**:
-     - Verify the response does NOT contain `isError: true`
-     - **If MCP tool fails**: Refer to `references/troubleshooting.md` for "MCP Server Errors" section
+   - **CRITICAL: Check skill response**:
+     - Verify the skill completed successfully and returned results
+     - **If skill fails**: Refer to `references/troubleshooting.md` for error handling
      - Do NOT proceed with fabricated search results
 
 2. **Check Volume**:
@@ -72,15 +72,15 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Apply Keywords**:
    - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `1-targeting/keywords.md`).
-   - **Action**: Use the `search_patents` tool with:
+   - **Action**: Use the `google-patent-cli:patent-search` skill with:
      - query: "\"keyword1\" AND \"keyword2\" AND ..."
      - country: "<Target Country>"
      - before: "<Target Release Date>"
      - after: "<Cutoff Date>"
      - limit: 20
-   - **CRITICAL: Check MCP response**:
-     - Verify the response does NOT contain `isError: true`
-     - **If MCP tool fails**: Refer to `references/troubleshooting.md` for "MCP Server Errors" section
+   - **CRITICAL: Check skill response**:
+     - Verify the skill completed successfully and returned results
+     - **If skill fails**: Refer to `references/troubleshooting.md` for error handling
      - Do NOT proceed with fabricated search results
 
 2. **Iterative Narrowing**:
@@ -105,7 +105,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Run Merge Command**:
    - Execute the following command to combine the CSV files and remove duplicates.
-   - **Important**: Use `./plugin/skills/targeting/scripts/shell/merge.sh` (Mac/Linux) or `.\plugin\skills\targeting\scripts\powershell\merge.ps1` (Windows), NOT `MCP tool`.
+   - **Important**: Use `./plugin/skills/targeting/scripts/shell/merge.sh` (Mac/Linux) or `.\plugin\skills\targeting\scripts\powershell\merge.ps1` (Windows).
    - Command: `./plugin/skills/targeting/scripts/shell/merge.sh 1-targeting/csv 1-targeting/target.jsonl`
 
 2. **Verify Output**:
@@ -120,11 +120,11 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 To maintain context window efficiency:
 
-- **Rule**: `search_patents` results MUST be saved to a JSON file.
+- **Rule**: `google-patent-cli:patent-search` results MUST be saved to a JSON file.
   - Path: `1-targeting/json/search_results_<desc>.json`
     - Replace `<desc>` with query description (e.g., `competitor_assignee`, `general_keywords`)
   - **Requirement**: Do NOT load large JSON outputs directly into context.
-  - **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
+  - **Action**: Use Read tool to access specific fields from saved JSON when needed.
 
 ## Output
 
