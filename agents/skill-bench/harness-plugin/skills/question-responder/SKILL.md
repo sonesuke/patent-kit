@@ -1,6 +1,6 @@
 ---
 name: question-responder
-description: "Before asking the user any questions, always check this skill first to see if the answer already exists in the project context."
+description: "Find answers to common questions from project context before asking the user. Always use this skill when you need information like competitors, target country, or release date."
 metadata:
   author: sonesuke
   version: 0.1.0
