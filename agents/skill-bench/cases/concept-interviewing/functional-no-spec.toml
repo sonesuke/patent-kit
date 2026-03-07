@@ -24,6 +24,11 @@ type = "script"
 command = "check-skill-invoked.sh concept-interviewing"
 
 [[checks]]
+name = "patent_assignee_check_invoked"
+type = "script"
+command = "check-skill-invoked.sh patent-assignee-check"
+
+[[checks]]
 name = "constitution_loaded"
 type = "script"
 command = "check-skill-invoked.sh constitution-reminding"

@@ -22,12 +22,23 @@ Define the product concept and identify competitors. This phase establishes the 
 
 Use the Skill tool to load the `constitution-reminding` skill BEFORE starting any work. This is required to understand the core principles.
 
-### 2. Check Existing Specification
+### 2. Load Google Patent CLI Skills
+
+Use the Skill tool to verify that the following google-patent-cli skills are available:
+
+- `google-patent-cli:patent-assignee-check` - For discovering assignee name variations
+
+### 3. Check Existing Specification
 
 Use the Glob tool to check if `0-specifications/specification.md` exists:
 
-- **If exists**: Skip the interview and use existing specification as the source of truth.
-- **If NOT exists**: Proceed with concept interview.
+- **If exists**:
+  - Read the existing specification
+  - Check if "Verified Assignee Names" table contains proper assignee name variations
+  - **If assignee names are listed** with variations: Verification already complete - skip assignee checks
+  - **If assignee names are missing** or incomplete: Perform assignee verification using `google-patent-cli:patent-assignee-check`
+
+- **If NOT exists**: Proceed with concept interview
 
 ### 3. Execute Concept Interview
 

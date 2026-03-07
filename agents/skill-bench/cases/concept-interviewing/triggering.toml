@@ -5,7 +5,7 @@ description = "Verify concept-interviewing skill is triggered when discussing pa
 timeout = 60
 
 test_prompt = """
-I want to start a patent search for a new voice recognition system.
+I want to start a patent search for a new voice recognition system in the US, releasing in 2025. Competitors are Google and Amazon. The system is for smart home devices with real-time transcription and noise-resistant recognition. Please proceed with the assignee verification and create the specification file.
 """
 
 [[checks]]
@@ -22,3 +22,8 @@ command = "check-skill-loaded.sh concept-interviewing"
 name = "concept_interviewing_invoked"
 type = "script"
 command = "check-skill-invoked.sh concept-interviewing"
+
+[[checks]]
+name = "patent_assignee_check_invoked"
+type = "script"
+command = "check-skill-invoked.sh patent-assignee-check"

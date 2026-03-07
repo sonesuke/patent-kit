@@ -1,0 +1,29 @@
+# Test Case: arXiv Fetch - Triggering
+
+name = "triggering"
+description = "Verify arxiv-fetch skill is triggered when fetching paper details"
+timeout = 60
+
+test_prompt = """
+Fetch paper details for arXiv:1706.03762.
+"""
+
+[[checks]]
+name = "mcp_server_loaded"
+type = "script"
+command = "check-mcp-loaded.sh arxiv-cli"
+
+[[checks]]
+name = "skill_loaded"
+type = "script"
+command = "check-skill-loaded.sh arxiv-fetch"
+
+[[checks]]
+name = "arxiv_fetch_invoked"
+type = "script"
+command = "check-skill-invoked.sh arxiv-fetch"
+
+[[checks]]
+name = "fetch_paper_mcp_succeeded"
+type = "script"
+command = "check-mcp-success.sh fetch_paper"

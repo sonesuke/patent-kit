@@ -23,46 +23,56 @@ Use the Skill tool to load the `constitution` skill BEFORE starting any work. Th
 
 1. **Check Existing Specification**: Use the Glob tool to check if `0-specifications/specification.md` exists.
 
-   **If exists**: Skip the interview and use the information from that file as the source of truth.
+   **If exists**:
+   - Read the existing specification
+   - Check if "Verified Assignee Names" table contains proper assignee name variations:
+     - **If assignee names are listed** with variations (e.g., "Google LLC, Google Inc."): Assignee verification already complete - skip to confirmation
+     - **If assignee names are missing** or incomplete: Perform assignee verification using `google-patent-cli:patent-assignee-check`
 
-   **If NOT exists**: Proceed with the interview.
+   **If NOT exists**: Proceed to information gathering below.
 
-2. **Ask**: Request the following information from the user:
+2. **Extract Information**: Analyze the user's input to extract the following information:
+
+   **Required Information**:
    - **Product Concept**: Detailed description of what they want to realize.
+   - **Competitors**: List of key competitor companies (Mandatory).
    - **Target Country**: Where the product will be released (e.g., US, JP).
    - **Target Release Date**: Approximate date.
    - **Cutoff Date**: Calculate `Target Release Date - 20 years`. Patents filed before this date are likely expired.
-   - **Competitors**: List of key competitor companies (Mandatory).
+
+   **Extraction Logic**:
+   - If the user provides a country (e.g., "in the US", "US market"), extract and use that
+   - If the user provides a release date (e.g., "2025", "June 2025"), extract and use that
+   - Extract competitors from mentions of company names (e.g., "Competitors are Google and Amazon")
+
+   - **If any required information is missing** (product concept, country, release date, or competitors):
+     - Ask the user to provide the missing information
+     - Do not make assumptions or use default values
 
    > [!NOTE]
-   > If the user has provided sufficient information (product concept, target country, release date, competitors), proceed directly to assignee verification without asking additional clarifying questions.
+   > In automated test environments, ensure all required information is provided in the initial request to avoid interactive prompts.
 
-3. **Refine**: If the concept is too vague, ask clarifying questions to break it down into technical elements relevant for patent search.
-
-4. **Save**: Write the gathered information to `0-specifications/specification.md` using the template `assets/specification-template.md`.
+3. **Proceed to Assignee Verification**: Once all required information is collected, proceed directly to Step 3 to verify assignee names.
 
 ### Step 3: Assignee Identification
 
 1. **Verify**: For each competitor named by the user, verify the correct "Assignee Name" used in patent databases.
-   - **Action**: Use the `search_patents` tool with:
-     - assignee: "<Company Name>"
-     - Note: Omit the limit parameter to get all assignee variations
-   - **CRITICAL: Check MCP response**:
-     - Verify the response does NOT contain `isError: true`
-     - **If MCP tool fails**: Refer to `references/troubleshooting.md` for "MCP Server Errors" section
+   - **Action**: Use the Skill tool to invoke `google-patent-cli:patent-assignee-check` with:
+     - company_name: "<Company Name>"
+     - country: "<Target Country from Step 2>"
+     - Note: Omit the limit parameter to get all assignee variations (default: 100)
+   - **CRITICAL: Check skill response**:
+     - Verify the response does NOT contain errors
+     - **If skill fails**: Refer to `references/troubleshooting.md` for error handling
      - Do NOT proceed with fabricated or assumed assignee names
-   - **Extract and Analyze**: The tool returns a JSON file path with search results.
-     - Use jq to create a frequency histogram of assignee names:
-       ```bash
-       jq '[.results[]?.assignee] | group_by(.) | map({assignee: .[0], count: length}) | sort_by(.count) | reverse | .[0:100]' <file_path>
-       ```
-     - This extracts assignee names, groups by name, counts occurrences, sorts by frequency, and shows top 100
+   - **Extract and Analyze**: The skill returns assignee name variations with frequency information.
+     - The skill automatically provides a frequency histogram of assignee names
    - **Confirm**: Display the top assignee variations found and ask the user if they represent the intended competitor.
    - **Refine**: If incorrect or no hits, try variations (e.g., "Google LLC" instead of "Google").
 
 2. **Finalize**:
    - Fill the **Verified Assignee Names (Canonicalized)** table in `0-specifications/specification.md`.
-   - Record **all** identified official Assignee Names, **including all name variations** found in `top_assignees`. These variations must be included in the final search query.
+   - Record **all** identified official Assignee Names, **including all name variations** found in the skill results. These variations must be included in the final search query.
    - Record the verification status and any notes (e.g., holding company, subsidiary).
 
 ## Output
