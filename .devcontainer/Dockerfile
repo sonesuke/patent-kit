@@ -13,6 +13,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     pkg-config \
     libssl-dev \
     ripgrep \
+    sqlite3 \
     tmux \
     vim \
     jq \

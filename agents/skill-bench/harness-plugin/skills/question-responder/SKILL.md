@@ -1,6 +1,7 @@
 ---
 name: question-responder
 description: "Find answers to common questions from project context before asking the user. Always use this skill when you need information like competitors, target country, or release date."
+context: fork
 metadata:
   author: sonesuke
   version: 0.1.0
@@ -42,7 +43,6 @@ Use this skill whenever you need to ask the user a question. First check if the 
 - The test case path is provided via `SKILL_BENCH_TEST_CASE` environment variable
 - Access environment variables using the Bash tool: `echo $SKILL_BENCH_TEST_CASE`
 - Match questions using flexible keyword matching (e.g., "competitors" matches "Who are the competitors?")
-- Since this skill runs in `context: fork`, the main agent won't see the test case answers directly
 
 ## Test Case Format
 
