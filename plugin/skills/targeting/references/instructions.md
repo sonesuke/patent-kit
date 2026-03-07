@@ -28,7 +28,9 @@ Generate high-precision search queries based on the product concept and competit
 
 ### Step 1: Targeting Process
 
-Perform the following targeting process relative to the `Target Release Date` and `Cutoff Date` from `0-specifications/specification.md`.
+Perform the following targeting process relative to the `Priority Date Cutoff` from `0-specifications/specification.md`.
+
+**IMPORTANT**: For prior art searches, use the **Priority Date** as the cutoff. Patents published before the Priority Date are considered prior art.
 
 **IMPORTANT**: This step should be conducted **interactively with the user**. Show results, ask for feedback, and refine the queries together.
 
@@ -47,7 +49,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
      - assignee: "<Combined Assignees>"
      - country: "<Target Country>"
      - before: "<Target Release Date>"
-     - after: "<Cutoff Date>"
+     - after: "<Priority Date Cutoff>"
      - limit: 20
    - **CRITICAL: Check skill response**:
      - Verify the skill completed successfully and returned results
@@ -76,7 +78,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
      - query: "\"keyword1\" AND \"keyword2\" AND ..."
      - country: "<Target Country>"
      - before: "<Target Release Date>"
-     - after: "<Cutoff Date>"
+     - after: "<Priority Date Cutoff>"
      - limit: 20
    - **CRITICAL: Check skill response**:
      - Verify the skill completed successfully and returned results
