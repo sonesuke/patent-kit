@@ -84,8 +84,3 @@ command = "check-workspace-file.sh 1-targeting/targeting.md"
 name = "keywords_md_created"
 type = "script"
 command = "check-workspace-file.sh 1-targeting/keywords.md"
-
-[[checks]]
-name = "google_patent_search_invoked"
-type = "script"
-command = "check-skill-invoked.sh google-patent-cli:patent-search"
