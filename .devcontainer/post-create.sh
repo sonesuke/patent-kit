@@ -102,10 +102,10 @@ EOF
 
         # Install skills
         echo "[Devcontainer Setup]   Installing google-patent-cli skills..."
-        claude plugin install google-patent-cli@sonesuke/google-patent-cli 2>/dev/null || echo "[Devcontainer Setup]   google-patent-cli skills already installed or failed"
+        claude plugin install google-patent-cli@google-patent-cli-marketplace 2>/dev/null || echo "[Devcontainer Setup]   google-patent-cli skills already installed or failed"
 
         echo "[Devcontainer Setup]   Installing arxiv-cli skills..."
-        claude plugin install arxiv-cli@sonesuke/arxiv-cli 2>/dev/null || echo "[Devcontainer Setup]   arxiv-cli skills already installed or failed"
+        claude plugin install arxiv-cli@arxiv-cli-marketplace 2>/dev/null || echo "[Devcontainer Setup]   arxiv-cli skills already installed or failed"
     else
         echo "[Devcontainer Setup] WARNING: Claude CLI not found, skipping skill installation"
     fi
