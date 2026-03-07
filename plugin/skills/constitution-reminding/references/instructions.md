@@ -44,7 +44,7 @@ For published applications (not yet granted), assume rights may be broadly secur
 Prior art searches MUST respect the target patent's effective filing/priority date.
 
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
-- **Requirement**: When requesting patent or paper searches, clearly specify that you only want results published BEFORE the target's priority date (format: YYYY-MM-DD). Let the search skills handle the date filtering appropriately.
+- **Requirement**: Use publication dates, not priority dates, when determining prior art cutoff. When requesting searches, specify the target's priority date so the search skills can filter appropriately by publication date.
 
 ## VII. Search Query Optimization
 
