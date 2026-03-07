@@ -59,7 +59,17 @@ Use the Glob tool to check if `1-targeting/csv/*.csv` files exist:
   5. **Do NOT** create targeting.md or keywords.md when CSV files are pre-downloaded
   6. Report completion: "Merged X patents from CSV files into target.jsonl"
 
-- **If NO CSV files**: See `references/instructions.md` for detailed execution steps.
+- **If NO CSV files**:
+  1. **Execute Competitor Patent Research**:
+     - Use `google-patent-cli:patent-search` with assignee search
+     - Analyze results and extract "Golden Keywords"
+     - Save keywords to `1-targeting/keywords.md`
+  2. **Execute Market Patent Research**:
+     - Use `google-patent-cli:patent-search` with keyword queries
+     - Refine queries based on noise analysis
+  3. **Create Output Files**:
+     - Fill `1-targeting/targeting.md` using the template
+     - Update `1-targeting/keywords.md` with golden keywords registry
 
 ### 4. Transition to Screening
 
