@@ -1,0 +1,78 @@
+# Test Case: Screening - Resume Capability
+
+name = "functional-resume-screening"
+description = "Verify screening skill can resume from partial screening without duplicates"
+timeout = 300 # seconds
+
+[[setup]]
+path = "0-specifications/specification.md"
+content = """
+# Product Specification
+
+**Product/Technology**:
+LLM-based multi-turn chatbot system with RAG (Retrieval-Augmented Generation) capabilities.
+
+**Key Technical Features**:
+
+1. LLM-driven multi-turn conversation management
+2. Vector database integration for retrieval-augmented generation
+3. Automatic quality assurance for information retrieval and intent detection
+
+**Target Release Date**: 2025-12-31
+
+**Priority Date Cutoff**: 2020-01-01
+"""
+
+[[setup]]
+path = "test-patents.csv"
+content = """
+search URL:,https://patents.google.com/?q=llm
+id,title,assignee,inventor/author,priority date,filing/creation date,publication date,grant date,result link,representative figure link
+KR-102637029-B1,Device for Generating Multi-turn Chat Bot Data Using LLM,주식회사 마인즈앤컴퍼니,"고석태, 백영상",2023-10-11,2023-10-11,2024-02-15,2024-02-15,https://patents.google.com/patent/KR102637029B1/en,
+US-2024292070-A1,Iterative ai prompt optimization,"Loop Now Technologies, Inc.","Wu-Hsi Li, Edwin Chiu",2023-02-24,2024-04-10,2024-08-29,,https://patents.google.com/patent/US20240292070A1/en,
+CN-123456789-A1,Medical Image Analysis System,"Beijing Medical Tech","Zhang San, Li Si",2023-05-10,2023-05-10,2024-01-20,,https://patents.google.com/patent/CN123456789A1/en,
+"""
+
+test_prompt = """
+Load the constitution-reminding and legal-checking skills first.
+Then initialize the patent database and import test-patents.csv.
+
+Simulate partial screening by manually screening KR-102637029-B1 as 'relevant'.
+Then resume screening for the remaining patents using parallel processing.
+Verify that no duplicate entries are created.
+"""
+
+[[checks]]
+name = "constitution_loaded"
+type = "script"
+command = "check-skill-loaded.sh constitution-reminding"
+
+[[checks]]
+name = "legal_checker_loaded"
+type = "script"
+command = "check-skill-loaded.sh legal-checking"
+
+[[checks]]
+name = "investigating_database_loaded"
+type = "script"
+command = "check-skill-loaded.sh investigating-database"
+
+[[checks]]
+name = "database_created"
+type = "script"
+command = "check-workspace-file.sh patents.db"
+
+[[checks]]
+name = "patents_imported"
+type = "script"
+command = "check-db-query.sh {} {} '3' 'SELECT COUNT(*) FROM target_patents;'"
+
+[[checks]]
+name = "all_patents_screened"
+type = "script"
+command = "check-db-query.sh {} {} '3' 'SELECT COUNT(*) FROM screened_patents;'"
+
+[[checks]]
+name = "no_duplicates"
+type = "script"
+command = "check-db-query.sh {} {} '0' 'SELECT patent_id, COUNT(*) FROM screened_patents GROUP BY patent_id HAVING COUNT(*) > 1;'"
