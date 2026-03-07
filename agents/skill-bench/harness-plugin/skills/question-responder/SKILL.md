@@ -15,6 +15,7 @@ Before asking the user questions, check if answers can be found in project conte
 ## When to Use
 
 Use this skill whenever you need to ask the user a question. First check if the answer exists in:
+
 - Project documentation
 - Test data files
 - Configuration files
@@ -70,6 +71,7 @@ The `[answers]` section contains keyword-value pairs that match common questions
 ## Context Isolation
 
 This skill uses `context: fork` to run in an isolated sub-agent context. This ensures:
+
 - The main AI agent doesn't see the answer files
 - Test integrity is maintained
 - Answers are only revealed when explicitly requested
