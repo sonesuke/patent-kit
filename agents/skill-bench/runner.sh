@@ -109,7 +109,7 @@ for IDX in "${!TEST_FILES[@]}"; do
         --verbose \
         --output-format stream-json \
         --plugin-dir ./claude-plugin \
-        --plugin-dir "$WORKSPACE_ROOT/agents/skill-bench/skills" \
+        --plugin-dir "$WORKSPACE_ROOT/agents/skill-bench/harness-plugin" \
         -- "$TEST_PROMPT" < /dev/null | jq -c '(. + {timestamp: now})') > "$LOG_FILE" 2>&1
 
     EXIT_CODE=$?
