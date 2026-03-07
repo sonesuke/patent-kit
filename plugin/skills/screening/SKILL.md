@@ -21,10 +21,6 @@ Your task is to filter the collected patents by legal status and relevance to pr
 
 - **Target Patents**: `patents.db` (generated in Phase 1 Targeting, `target_patents` table).
 - **Specification**: `0-specifications/specification.md` (Product/Theme definition).
-- **Arguments** (optional):
-  - `<start> - <end>`: Process records from row `start` to row `end` (inclusive).
-  - `<start>`: Process records from row `start` to the last row.
-  - (none): Process all records from the first to the last row.
 
 ### Process
 
@@ -43,19 +39,13 @@ Your task is to filter the collected patents by legal status and relevance to pr
 > - Recording screening results
 > - Getting progress statistics
 
-1. **Determine Range**:
-   - Parse the arguments to determine `START_ROW` and `END_ROW`.
-   - If no argument: `START_ROW = 1`, `END_ROW = (total patents in database)`.
-   - If `<start>` only: `START_ROW = start`, `END_ROW = (total patents)`.
-   - If `<start> - <end>`: `START_ROW = start`, `END_ROW = end`.
-
-2. **Initialize Database**:
+1. **Initialize Database**:
    - Ensure `patents.db` exists (created in Phase 1 Targeting).
    - Check existing screened patents to avoid duplicates (resume support).
 
-3. **Iterative Screening Loop**:
+2. **Iterative Screening Loop**:
 
-   Process patents from `START_ROW` to `END_ROW` from the `target_patents` table **sequentially**:
+   Process all patents from the `target_patents` table **sequentially**:
 
    > [!WARNING]
    > **Long-Running Sequential Task**:
@@ -66,9 +56,8 @@ Your task is to filter the collected patents by legal status and relevance to pr
    > - Do not output intermediate results; only provide the final output. Long output is acceptable.
    > - Accuracy over speed. Self-check every 5 records: "Am I processing one by one?"
    1. **Get Patent ID**:
-      - Use the Skill tool to load the `database` skill
-      - Request: "Get patent ID at row <ROW_NUMBER>"
-      - Or run: `bash plugin/skills/investigating-database/scripts/shell/get-patent-id.sh <ROW_NUMBER>`
+      - Use the Skill tool to load the `investigating-database` skill
+      - Request: "Get next patent ID" (this automatically gets the next unscreened patent)
 
    2. **Fetch Data**:
       - Run: `fetch-patent <PATENT_ID>`
@@ -90,16 +79,14 @@ Your task is to filter the collected patents by legal status and relevance to pr
       > **Judgment Values**: Use ONLY one of: `relevant`, `irrelevant`, `expired` (lowercase).
 
    4. **Record Result**:
-      - Use the Skill tool to load the `database` skill
+      - Use the Skill tool to load the `investigating-database` skill
       - Request: "Record screening result for patent <ID>: judgment=<JUDGMENT>, reason=<REASON>, legal_status=<STATUS>"
-      - Or run: `bash plugin/skills/investigating-database/scripts/shell/record-screening.sh <ID> <JUDGMENT> <REASON> <LEGAL_STATUS>`
 
 #### Step 2: Generate Summary Report
 
 1. **Aggregate Results**:
-   - Use the Skill tool to load the `database` skill
+   - Use the Skill tool to load the `investigating-database` skill
    - Request: "Get screening progress statistics"
-   - Or run: `bash plugin/skills/investigating-database/scripts/shell/get-statistics.sh`
    - Use the JSON output to fill the report:
      - Total: `total_targets`
      - Screened: `total_screened`
@@ -108,7 +95,7 @@ Your task is to filter the collected patents by legal status and relevance to pr
      - Expired: `expired`
    - For the **Top 10 Relevant Patents** table, query the database:
      ```sql
-     SELECT id, title, reason
+     SELECT patent_id, title, reason
      FROM screened_patents
      WHERE judgment = 'relevant'
      ORDER BY screened_at DESC
