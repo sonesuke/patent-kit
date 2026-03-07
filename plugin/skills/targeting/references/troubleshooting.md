@@ -1,21 +1,21 @@
 # Targeting - Troubleshooting
 
-## MCP Server Errors
+## Skill Errors
 
-### Error: MCP tool returns `isError: true`
+### Error: Patent search skill fails
 
-**Symptoms**: Patent search tools (google-patent-cli, arxiv-cli) fail with errors.
+**Symptoms**: Patent search skills (google-patent-cli:patent-search, google-patent-cli:patent-assignee-check) fail with errors.
 
-**Cause**: MCP server may be unavailable or misconfigured.
+**Cause**: Skills may not be properly loaded or configured in the marketplace.
 
 **Solution**:
 
-1. Verify MCP servers are connected: Check system initialization logs for connection status
-2. Restart the dev container if needed
-3. Check MCP server configuration in `.claude-settings.json` or `plugin/.claude-plugin/plugin.json`
-4. Refer to MCP server documentation (google-patent-cli, arxiv-cli) for setup instructions
+1. Verify skills are available: Check that google-patent-cli is installed from the marketplace
+2. Retry the skill invocation with simplified parameters
+3. Check skill documentation for proper usage and parameter formats
+4. Refer to skill documentation (google-patent-cli) for setup instructions
 
-**Important**: Do NOT proceed with fabricated search results. Wait for the MCP tools to function correctly.
+**Important**: Do NOT proceed with fabricated search results. Wait for the skills to function correctly.
 
 ## Error: "Permission denied" when running merge.sh
 
