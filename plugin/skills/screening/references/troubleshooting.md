@@ -125,13 +125,6 @@ sqlite3 patents.db "SELECT patent_id, COUNT(*) FROM screened_patents GROUP BY pa
 3. **Single process**: Ensure only one screening instance running
 4. **Close connections**: Verify no hanging SQLite connections
 
-## Validation Checklist
-
-Before finalizing screening:
-
-- [ ] All `target_patents` processed: `total_screened = total_targets`
-- [ ] No legal assertions in reasons
-
 ## Getting Help
 
 If issues persist:

@@ -74,10 +74,3 @@ Process all patents from the `target_patents` table using **parallel agents**:
 ## Output
 
 - `patents.db` (screened_patents table): Database of screened patents with judgments and reasons
-
-## Quality Gates
-
-- [ ] All patents in `target_patents` table have been processed
-- [ ] **NO Legal Assertions**:
-  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology"
-  - [ ] Do NOT cite court cases
