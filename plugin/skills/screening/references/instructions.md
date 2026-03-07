@@ -99,15 +99,6 @@ Process all patents from the `target_patents` table **sequentially**:
    - **DO NOT add extra sections**
    - Include: Progress, Relevant, Irrelevant, Expired, Not processed
 
-## Output Management
-
-To maintain context window efficiency:
-
-- **Rule**: `fetch_patent` results MUST be saved to JSON file
-  - Path: `2-screening/json/<patent-id>.json`
-  - **Requirement**: Do NOT load large JSON outputs directly into context
-  - **Action**: Use Read tool to access specific fields from saved JSON
-
 ## Output
 
 - `patents.db` (screened_patents table): Database of screened patents

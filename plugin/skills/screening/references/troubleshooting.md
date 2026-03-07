@@ -98,20 +98,6 @@ sqlite3 patents.db "SELECT patent_id, COUNT(*) FROM screened_patents GROUP BY pa
    - Relevance Distribution (Relevant, Irrelevant, Expired)
    - Top 10 Relevant Patents
 
-### Issue: "Context window full"
-
-**Symptoms**:
-
-- Response truncated
-- Cannot process all patents
-
-**Solutions**:
-
-1. **Output Management**: Save to `2-screening/json/<PATENT_ID>.json`
-2. **Read selectively**: Use Read tool for specific fields only
-3. **Do NOT load** entire JSON into context
-4. **Chunk processing**: Process in batches of 20-30 patents
-
 ### Issue: "Judgment consistency problems"
 
 **Symptoms**:
