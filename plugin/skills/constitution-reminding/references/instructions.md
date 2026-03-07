@@ -14,7 +14,7 @@ Every claim analysis or validity analysis MUST test the target invention against
 
 Prior art searches MUST cover both patent literature and non-patent literature.
 
-- **Rule**: Use BOTH `search_patents`/`fetch_patents` and `search_papers`/`fetch_paper` for every prior art investigation.
+- **Rule**: Use BOTH `google-patent-cli:patent-search`/`google-patent-cli:patent-fetch` and `arxiv-cli:arxiv-search`/`arxiv-cli:arxiv-fetch` for every prior art investigation.
 - **Rationale**: Comprehensive prior art analysis requires checking academic papers, conference proceedings, and technical publications alongside patents.
 - **Requirement**: Document search results from both sources in the final report.
 
@@ -44,11 +44,11 @@ For published applications (not yet granted), assume rights may be broadly secur
 Prior art searches MUST respect the target patent's effective filing/priority date.
 
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
-- **Requirement**: Use the `--before` flag in `search_patents`/`fetch_patents` or `search_papers`/`fetch_paper` with the correct date (YYYY-MM-DD).
+- **Requirement**: Use the `--before` parameter in `google-patent-cli:patent-search`/`google-patent-cli:patent-fetch` or `arxiv-cli:arxiv-search`/`arxiv-cli:arxiv-fetch` with the correct date (YYYY-MM-DD).
 
 ## VII. Search Query Optimization
 
-Long or overly complex queries often return zero results in both `search_patents`/`fetch_patents` and `search_papers`/`fetch_paper`.
+Long or overly complex queries often return zero results in both `google-patent-cli:patent-search`/`google-patent-cli:patent-fetch` and `arxiv-cli:arxiv-search`/`arxiv-cli:arxiv-fetch`.
 
 - **Rule**: Start with broad, essential keywords (2-4 terms maximum).
 - **Rule**: If a search returns zero results, progressively simplify the query:
