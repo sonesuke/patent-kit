@@ -53,3 +53,8 @@ command = "check-tool-use.sh Read file_path \"keywords-template.md\""
 name = "specification_md_created"
 type = "script"
 command = "check-workspace-file.sh 0-specifications/specification.md"
+
+[[checks]]
+name = "patent_assignee_check_invoked"
+type = "script"
+command = "check-skill-invoked.sh patent-assignee-check"
