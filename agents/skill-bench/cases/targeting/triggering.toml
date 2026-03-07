@@ -5,7 +5,7 @@ description = "Verify targeting skill is triggered when asked to execute targeti
 timeout = 60
 
 test_prompt = """
-Execute the targeting skill for a patent search project.
+特許調査を始めよう。ターゲット母集団を決めたい。
 """
 
 [[checks]]
