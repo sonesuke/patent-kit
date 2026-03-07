@@ -40,7 +40,7 @@ Follow the detailed screening process in `references/instructions.md`.
 
 ### 3. Generate Report
 
-Create `2-screening/screening.md` using template from `screening-template.md`.
+Use the `investigating-database` skill to get screening progress and generate report.
 
 ## State Management
 

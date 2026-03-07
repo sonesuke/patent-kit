@@ -13,7 +13,7 @@
    - Fetch patent details using google-patent-cli:patent-fetch skill
    - Analyze relevance from fetched data
    - Record result using investigating-database skill
-4. Generate screening.md report
+4. Get progress report from investigating-database skill
 
 **Result**:
 
