@@ -38,13 +38,6 @@ Use the Skill tool to load skills BEFORE starting any work:
 
 Follow the detailed screening process in `references/instructions.md`.
 
-Key operations:
-
-- Use `investigating-database` skill to get next patent ID
-- Use `fetch-patent` MCP tool to retrieve patent details
-- Use `investigating-database` skill to record screening results
-- Use `investigating-database` skill to get progress statistics
-
 ### 3. Generate Report
 
 Create `2-screening/screening.md` using template from `screening-template.md`.
