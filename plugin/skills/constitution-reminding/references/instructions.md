@@ -44,7 +44,7 @@ For published applications (not yet granted), assume rights may be broadly secur
 Prior art searches MUST respect the target patent's effective filing/priority date.
 
 - **Rule**: Prior art search results must be published BEFORE the target's priority date.
-- **Requirement**: Use the `--before` parameter in `google-patent-cli:patent-search`/`google-patent-cli:patent-fetch` or `arxiv-cli:arxiv-search`/`arxiv-cli:arxiv-fetch` with the correct date (YYYY-MM-DD).
+- **Requirement**: When requesting patent or paper searches, clearly specify that you only want results published BEFORE the target's priority date (format: YYYY-MM-DD). Let the search skills handle the date filtering appropriately.
 
 ## VII. Search Query Optimization
 
