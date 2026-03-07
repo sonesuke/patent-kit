@@ -10,9 +10,8 @@
 2. Initialize database connection
 3. For each patent in target_patents table:
    - Get next patent ID using investigating-database skill
-   - Fetch patent details using fetch-patent
-   - Save to `2-screening/json/<PATENT_ID>.json`
-   - Read JSON and analyze relevance
+   - Fetch patent details using google-patent-cli:patent-fetch skill
+   - Analyze relevance from fetched data
    - Record result using investigating-database skill
 4. Generate screening.md report
 

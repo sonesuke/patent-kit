@@ -65,9 +65,8 @@ sqlite3 patents.db "SELECT patent_id, COUNT(*) FROM screened_patents GROUP BY pa
 
 **Solutions**:
 
-1. Check if patent was fetched successfully
-2. Verify JSON file was saved: `2-screening/json/<PATENT_ID>.json`
-3. If abstract unavailable, use title and claims for relevance judgment
+1. Check if patent was fetched successfully using google-patent-cli:patent-fetch skill
+2. If abstract unavailable, use title and claims for relevance judgment
 
 ### Issue: "Legal status not available"
 
@@ -137,7 +136,6 @@ Before finalizing screening:
 - [ ] `screening.md` follows template structure
 - [ ] Top 10 patents table correctly ordered by `screened_at DESC`
 - [ ] Progress statistics accurate
-- [ ] JSON files saved to `2-screening/json/`
 
 ## Getting Help
 
@@ -151,8 +149,6 @@ If issues persist:
    sqlite3 patents.db "SELECT * FROM screened_patents LIMIT 5;"
    ```
 
-2. **Check logs**: Review `2-screening/json/` directory
+2. **Verify references**: Ensure `investigating-database` skill is functioning correctly
 
-3. **Verify references**: Ensure `investigating-database` skill is functioning correctly
-
-4. **Resume capability**: Screening should automatically resume from last processed patent
+3. **Resume capability**: Screening should automatically resume from last processed patent

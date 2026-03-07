@@ -49,11 +49,9 @@ Process all patents from the `target_patents` table **sequentially**:
    - Request: "Get next patent ID"
 
 2. **Fetch Data**:
-   - Run: `fetch-patent <PATENT_ID>`
-   - Saves to `2-screening/json/<PATENT_ID>.json`
+   - Use the `google-patent-cli:patent-fetch` skill to retrieve patent details
 
-3. **Read & Judgment**:
-   - Use Read tool to read `2-screening/json/<PATENT_ID>.json`
+3. **Judgment**:
    - Check `abstract_text` and `legal_status` (if available)
    - **Auto-Reject**: If status is Expired/Withdrawn → `expired`
      - Reason: "Status is [actual status]"
