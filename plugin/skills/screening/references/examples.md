@@ -13,12 +13,10 @@
    - Fetch patent details using google-patent-cli:patent-fetch skill
    - Analyze relevance from fetched data
    - Record result using investigating-database skill
-4. Get progress report from investigating-database skill
 
 **Result**:
 
 - `patents.db` updated with screening results
-- `2-screening/screening.md` created with summary
 
 ## Example 2: Resuming Interrupted Screening
 
@@ -64,55 +62,18 @@
 - **Judgment**: `relevant`
 - **Reason**: Infrastructure technology that could support the product platform
 
-## Example 5: Output Report Structure
-
-**Input**: 150 patents, screening completed
-
-**Output** (`2-screening/screening.md`):
-
-```markdown
-# Screening Report
-
-## Progress
-
-- **Screened**: 150/150 (100%)
-- **Not Processed**: 0
-
-## Relevance Distribution
-
-### Relevant (45)
-
-| Patent ID  | Title                 | Reason                       |
-| ---------- | --------------------- | ---------------------------- |
-| US1234567A | Multi-turn LLM System | Core technology for chatbots |
-| ...        | ...                   | ...                          |
-
-### Irrelevant (80)
-
-| Patent ID  | Title          | Reason                       |
-| ---------- | -------------- | ---------------------------- |
-| US9876543A | Surgical Robot | Different industry (Medical) |
-| ...        | ...            | ...                          |
-
-### Expired (25)
-
-| Patent ID  | Title                | Reason            |
-| ---------- | -------------------- | ----------------- |
-| US1111111A | Legacy Communication | Status is Expired |
-| ...        | ...                  | ...               |
-
-## Top 10 Relevant Patents
-
-| Patent ID      | Title                              | Reason                       |
-| -------------- | ---------------------------------- | ---------------------------- |
-| KR102637029B1  | Multi-turn Chatbot Data Generation | Core LLM technology          |
-| US2024292070A1 | AI Prompt Optimization             | Directly relevant to prompts |
-| ...            | ...                                | ...                          |
-```
-
-## Example 6: Legal Compliance
+## Example 5: Legal Compliance
 
 **❌ Incorrect Judgment**:
+
+- "This patent does not infringe our core technology"
+- "The method satisfies our claim requirements"
+
+**✅ Correct Judgment**:
+
+- "Relevant: Covers multi-turn conversation management"
+- "Irrelevant: Surgical robotics for medical applications"
+- "Expired: Legal status is Expired/Withdrawn"
 
 - "This patent does not infringe our core technology"
 - "The method satisfies our claim requirements"

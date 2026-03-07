@@ -38,10 +38,6 @@ Use the Skill tool to load skills BEFORE starting any work:
 
 Follow the detailed screening process in `references/instructions.md`.
 
-### 3. Generate Report
-
-Use the `investigating-database` skill to get screening progress and generate report.
-
 ## State Management
 
 ### Initial State
@@ -52,7 +48,6 @@ Use the `investigating-database` skill to get screening progress and generate re
 ### Final State
 
 - All patents in `target_patents` have corresponding entries in `screened_patents`
-- `2-screening/screening.md` created with screening summary
 
 ## References
 
