@@ -30,10 +30,14 @@ Current cat litter boxes require manual scooping and frequent bag changes, which
 2. A rotating internal drum that separates solid waste into a sealed compartment.
 3. An IoT module (Wi-Fi) that sends push notifications to a smartphone when the waste compartment is full.
 
+**Target Release Date**: 2025-12-31
+
+**Priority Date Cutoff**: 2015-01-01
+
 **Competitors**:
 
-- Litter-Robot
-- CatGenie
+- Litter-Robot (AutoPets, LLC)
+- CatGenie (PetNovations, Ltd.)
 """
 
 [[checks]]
