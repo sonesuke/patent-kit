@@ -60,7 +60,11 @@ Process all patents from the `target_patents` table using **parallel agents**:
 4. **Agent Screening Task** (each teammate executes independently):
 
    For each assigned patent:
-   - **Fetch Data**: Use `google-patent-cli:patent-fetch` skill
+   - **Fetch Data**: Use the Skill tool to load `google-patent-cli:patent-fetch` skill
+     - This will call `fetch_patent` with your patent_id
+     - The skill will automatically use `execute_cypher` to retrieve:
+       - title, abstract_text, assignee, legal_status
+     - **DO NOT** manually read JSON files or use Read tool on patent data files
    - **Judgment**: Check abstract and legal status
      - **Auto-Reject**: Expired/Withdrawn → `expired`
      - **Relevance**: Compare against Theme/Domain from specification

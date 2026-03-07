@@ -4,32 +4,17 @@
 
 Create a new patent investigation database with the proper schema if it doesn't exist.
 
-## SQL File
+## Execution
 
-See [`../sql/initialize-database.sql`](../sql/initialize-database.sql) for the complete SQL script.
-
-## Schema
-
-For detailed table definitions, columns, and constraints, see [`../schema.md`](../schema.md).
-
-## Usage
+**IMPORTANT**: Do NOT read the SQL file content. Execute directly:
 
 ```bash
-sqlite3 patents.db < ../sql/initialize-database.sql
+sqlite3 patents.db < references/sql/initialize-database.sql
 ```
 
-## Parameters
-
-None
+This single command creates all necessary tables, views, and triggers.
 
 ## Output
 
 - Creates `patents.db` file
 - Creates `patents.db-wal` and `patents.db-shm` (WAL mode files)
-
-## Recreate Database (WARNING: Deletes All Data)
-
-```bash
-rm -f patents.db patents.db-wal patents.db-shm
-sqlite3 patents.db < ../sql/initialize-database.sql
-```
