@@ -7,7 +7,7 @@ description: |
   - The user asks to:
     * "create a target population"
     * "determine the target population"
-    * "run the search (Step 1)"
+    * "run the patent search"
   - CSV files are detected in 1-targeting/csv/
 metadata:
   author: sonesuke
