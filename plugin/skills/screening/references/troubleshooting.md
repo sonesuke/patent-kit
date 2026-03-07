@@ -130,12 +130,7 @@ sqlite3 patents.db "SELECT patent_id, COUNT(*) FROM screened_patents GROUP BY pa
 Before finalizing screening:
 
 - [ ] All `target_patents` processed: `total_screened = total_targets`
-- [ ] No duplicate entries in `screened_patents`
-- [ ] All judgments are valid: `relevant`, `irrelevant`, or `expired`
 - [ ] No legal assertions in reasons
-- [ ] `screening.md` follows template structure
-- [ ] Top 10 patents table correctly ordered by `screened_at DESC`
-- [ ] Progress statistics accurate
 
 ## Getting Help
 

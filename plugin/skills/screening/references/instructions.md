@@ -78,9 +78,6 @@ Process all patents from the `target_patents` table using **parallel agents**:
 ## Quality Gates
 
 - [ ] All patents in `target_patents` table have been processed
-- [ ] Each judgment is one of: `relevant`, `irrelevant`, `expired`
-- [ ] Screened count matches (Relevant + Irrelevant + Expired)
-- [ ] Summary statistics are accurate
 - [ ] **NO Legal Assertions**:
   - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology"
   - [ ] Do NOT cite court cases
