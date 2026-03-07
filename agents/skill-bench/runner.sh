@@ -12,6 +12,8 @@ set -o pipefail
 WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # Determine skill-bench root
 SKILL_BENCH_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Determine tools directory
+TOOLS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/tools"
 # Resolve pattern relative to skill-bench root
 PATTERN="${1:-cases/*/*.toml}"
 # Convert to absolute path
@@ -62,8 +64,15 @@ for IDX in "${!TEST_FILES[@]}"; do
     TOTAL_CASES=$((TOTAL_CASES + 1))
 
     # Read test configuration
-    TEST_PROMPT=$(yq eval '.test_prompt' "$TEST_FILE")
-    TEST_TIMEOUT=$(yq eval '.timeout // 300' "$TEST_FILE")
+    # Use Python script for TOML files (yq v4 doesn't support TOML)
+    if [[ "$TEST_FILE" == *.toml ]]; then
+        TEST_PROMPT=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" test_prompt)
+        TEST_TIMEOUT=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" timeout)
+        TEST_TIMEOUT=${TEST_TIMEOUT:-300}  # Default to 300 if not found
+    else
+        TEST_PROMPT=$(yq eval '.test_prompt' "$TEST_FILE")
+        TEST_TIMEOUT=$(yq eval '.timeout // 300' "$TEST_FILE")
+    fi
 
     echo ""
     echo "──────────────────────────────────────────────────"
@@ -89,13 +98,23 @@ for IDX in "${!TEST_FILES[@]}"; do
     cp -r "$WORKSPACE_ROOT/plugin" "$WORK_DIR/claude-plugin" 2>/dev/null || true
 
     # Read setup files from test.toml [[setup]] array
-    NUM_SETUP=$(yq eval '.setup | length // 0' "$TEST_FILE")
+    if [[ "$TEST_FILE" == *.toml ]]; then
+        NUM_SETUP=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" setup_count)
+    else
+        NUM_SETUP=$(yq eval '.setup | length // 0' "$TEST_FILE")
+    fi
     if [ "$NUM_SETUP" -gt 0 ]; then
         for SETUP_IDX in $(seq 0 $((NUM_SETUP - 1))); do
-            SETUP_PATH=$(yq eval ".setup[$SETUP_IDX].path" "$TEST_FILE")
+            if [[ "$TEST_FILE" == *.toml ]]; then
+                SETUP_PATH=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" setup_path "$SETUP_IDX")
+                SETUP_CONTENT=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" setup_content "$SETUP_IDX")
+            else
+                SETUP_PATH=$(yq eval ".setup[$SETUP_IDX].path" "$TEST_FILE")
+                SETUP_CONTENT=$(yq eval ".setup[$SETUP_IDX].content" "$TEST_FILE")
+            fi
             SETUP_DIR=$(dirname "$WORK_DIR/$SETUP_PATH")
             mkdir -p "$SETUP_DIR"
-            yq eval ".setup[$SETUP_IDX].content" "$TEST_FILE" > "$WORK_DIR/${SETUP_PATH}"
+            echo "$SETUP_CONTENT" > "$WORK_DIR/${SETUP_PATH}"
         done
     fi
 
@@ -126,13 +145,21 @@ for IDX in "${!TEST_FILES[@]}"; do
     echo "[SkillBench]   Running evaluation..."
 
     CASE_PASS=true
-    TOOLS_DIR="$(cd "$(dirname "$0")" && pwd)/tools"
 
     # Run checks from test.toml
-    NUM_CHECKS=$(yq eval '.checks | length' "$TEST_FILE")
+    if [[ "$TEST_FILE" == *.toml ]]; then
+        NUM_CHECKS=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" checks_count)
+    else
+        NUM_CHECKS=$(yq eval '.checks | length' "$TEST_FILE")
+    fi
     for CHECK_IDX in $(seq 0 $((NUM_CHECKS - 1))); do
-        CHECK_NAME=$(yq eval ".checks[$CHECK_IDX].name" "$TEST_FILE")
-        CHECK_CMD=$(yq eval ".checks[$CHECK_IDX].command" "$TEST_FILE")
+        if [[ "$TEST_FILE" == *.toml ]]; then
+            CHECK_NAME=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" check_name "$CHECK_IDX")
+            CHECK_CMD=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" check_command "$CHECK_IDX")
+        else
+            CHECK_NAME=$(yq eval ".checks[$CHECK_IDX].name" "$TEST_FILE")
+            CHECK_CMD=$(yq eval ".checks[$CHECK_IDX].command" "$TEST_FILE")
+        fi
 
         # Parse check command into script and args
         # Use eval to properly handle quoted arguments
