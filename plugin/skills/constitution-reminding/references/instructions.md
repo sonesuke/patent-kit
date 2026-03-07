@@ -67,5 +67,5 @@ Long or overly complex queries often return zero results in both `google-patent-
 Large tool outputs MUST be saved to files to maintain context window efficiency.
 
 - **Rule**: Do NOT load large outputs directly into context.
-- **Action**: Save to files and use targeted access (Read tool, jq) when needed.
+- **Action**: Save search results to files immediately after retrieval.
 - **Specifics**: Each skill defines its own file output paths in its instructions.
