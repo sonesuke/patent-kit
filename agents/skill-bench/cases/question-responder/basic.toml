@@ -19,7 +19,7 @@ I need to ask: What are the product concept, target country, release date, and c
 [[checks]]
 name = "skill_loaded"
 type = "script"
-command = "check-skill-loaded.sh question-responder"
+command = "check-skill-loaded.sh skill-bench-harness:question-responder"
 
 [[checks]]
 name = "question_responder_invoked"

@@ -8,13 +8,13 @@ WORK_DIR="$2"
 SKILL_NAME="$3"
 
 if [[ -z "$LOG_FILE" ]] || [[ -z "$SKILL_NAME" ]]; then
-  echo "Usage: $0 <log_file> <work_dir> <skill_name>" >&2
-  exit 2
+    echo "Usage: $0 <log_file> <work_dir> <skill_name>" >&2
+    exit 2
 fi
 
 if [[ ! -f "$LOG_FILE" ]]; then
-  echo "Log file not found: $LOG_FILE" >&2
-  exit 2
+    echo "Log file not found: $LOG_FILE" >&2
+    exit 2
 fi
 
 # Check if skill is in the init skills array (first line is init message)

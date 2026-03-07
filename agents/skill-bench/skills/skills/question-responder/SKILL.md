@@ -1,9 +1,8 @@
 ---
 name: question-responder
-context: fork
 description: "Before asking the user any questions, always check this skill first to see if the answer already exists in the project context."
 metadata:
-  author: patent-kit
+  author: sonesuke
   version: 0.1.0
 ---
 
