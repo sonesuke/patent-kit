@@ -6,7 +6,8 @@ description: |
   Triggered when:
   - The user asks to:
     * "screen the patents"
-    * "remove noise (Step 2)"
+    * "remove noise"
+  - `patents.db` exists with `target_patents` table populated
 metadata:
   author: sonesuke
   version: 1.0.0
