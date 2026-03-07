@@ -1,6 +1,12 @@
 ---
 name: screening
-description: "Screens a collected patent list based on legal status and relevance. Triggered when the user asks to 'screen the patents' or 'remove noise (Step 2)'."
+description: |
+  Screens collected patents by legal status and relevance.
+
+  Triggered when:
+  - The user asks to:
+    * "screen the patents"
+    * "remove noise (Step 2)"
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -8,25 +14,61 @@ metadata:
 
 # Phase 2: Screening
 
-Your task is to filter the collected patents by legal status and relevance to prepare for Evaluation.
+## Purpose
 
-## Instructions
+Filter collected patents by legal status and relevance to prepare for Evaluation phase.
 
-### Template Adherence
+## Prerequisites
 
-- **Requirement**: Strict adherence to the output template is required.
-- **Template**: `templates/screening-template.md` - Use for `2-screening/screening.md`
+- `patents.db` must exist (generated in Phase 1 Targeting, `target_patents` table)
+- `0-specifications/specification.md` must exist (Product/Theme definition)
+- Constitution-reminding skill must be loaded
+- Legal-checking skill must be loaded
 
-### Input
+## Skill Orchestration
 
-- **Target Patents**: `patents.db` (generated in Phase 1 Targeting, `target_patents` table).
-- **Specification**: `0-specifications/specification.md` (Product/Theme definition).
+### 1. Load Required Skills (MANDATORY)
 
-### Process
+Use the Skill tool to load skills BEFORE starting any work:
 
-1. **Read Constitution**: Load the `constitution-reminding` skill to understand the core principles.
-2. **Load Legal Checker**: Load the `legal-checking` skill for legal compliance guidelines.
-3. **Read Specification**: Read `0-specifications/specification.md` to fully understand the **Theme**, **Domain**, and **Target Product**. This is the CRITERIA for relevance.
+1. **Constitution**: `constitution-reminding` - Understand core principles
+2. **Legal Checker**: `legal-checking` - Legal compliance guidelines
+
+### 2. Execute Screening
+
+Follow the detailed screening process in `references/instructions.md`.
+
+Key operations:
+
+- Use `investigating-database` skill to get next patent ID
+- Use `fetch-patent` MCP tool to retrieve patent details
+- Use `investigating-database` skill to record screening results
+- Use `investigating-database` skill to get progress statistics
+
+### 3. Generate Report
+
+Create `2-screening/screening.md` using template from `screening-template.md`.
+
+## State Management
+
+### Initial State
+
+- `patents.db` exists with `target_patents` table populated
+- No `screened_patents` entries (or partial screening in progress)
+
+### Final State
+
+- All patents in `target_patents` have corresponding entries in `screened_patents`
+- `2-screening/screening.md` created with screening summary
+- `2-screening/json/<patent-id>.json` files created for each patent
+
+## References
+
+See `references/` directory for:
+
+- **instructions.md**: Detailed screening process and workflow
+- **examples.md**: Usage examples and judgment examples
+- **troubleshooting.md**: Common issues and solutions
 
 #### Step 1: Automated Screening
 
