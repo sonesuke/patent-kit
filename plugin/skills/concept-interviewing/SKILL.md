@@ -1,6 +1,6 @@
 ---
 name: concept-interviewing
-description: "Conducts an interview to define the product concept and identify competitors. Triggered when the user says 'Define search requirements (Step 0)', 'conduct concept interview', or 'define product concept'."
+description: "Conducts an interview to define the product concept and identify competitors. Triggered when specification.md does not exist, or when the user explicitly requests 'Define search requirements (Step 0)', 'conduct concept interview', or 'define product concept'."
 metadata:
   author: sonesuke
   version: 1.0.0
