@@ -1,6 +1,6 @@
 ---
 name: concept-interviewing
-description: "Conducts an interview to define the product concept and identify competitors. Triggered when the user says 'I want to start a patent search' or 'Define search requirements (Step 0)'."
+description: "Conducts an interview to define the product concept and identify competitors. Triggered when the user says 'Define search requirements (Step 0)', 'conduct concept interview', or 'define product concept'."
 metadata:
   author: sonesuke
   version: 1.0.0
