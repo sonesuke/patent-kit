@@ -20,11 +20,6 @@ Please proceed with assignee verification and create the specification file auto
 """
 
 [[checks]]
-name = "mcp_server_loaded"
-type = "script"
-command = "check-mcp-loaded.sh google-patent-cli"
-
-[[checks]]
 name = "skill_loaded"
 type = "script"
 command = "check-skill-loaded.sh targeting"

@@ -37,11 +37,6 @@ Current cat litter boxes require manual scooping and frequent bag changes, which
 """
 
 [[checks]]
-name = "mcp_server_loaded"
-type = "script"
-command = "check-mcp-loaded.sh google-patent-cli"
-
-[[checks]]
 name = "skill_loaded"
 type = "script"
 command = "check-skill-loaded.sh targeting"
@@ -72,6 +67,11 @@ type = "script"
 command = "check-tool-use.sh Read file_path \"keywords-template.md\""
 
 [[checks]]
-name = "google_patent_mcp_succeeded"
+name = "targeting_md_created"
 type = "script"
-command = "check-mcp-success.sh search_patents"
+command = "check-workspace-file.sh 1-targeting/targeting.md"
+
+[[checks]]
+name = "keywords_md_created"
+type = "script"
+command = "check-workspace-file.sh 1-targeting/keywords.md"
