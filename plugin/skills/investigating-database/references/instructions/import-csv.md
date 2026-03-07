@@ -6,6 +6,83 @@ Import patent data from CSV files into the `target_patents` table.
 
 The CSV files may contain extra columns or have inconsistent formatting. This scene uses SQLite's ETL capabilities to clean and transform the data during import.
 
+> [!WARNING]
+> **CRITICAL: Always Use ETL Process**
+>
+> **NEVER** use direct `.import` command to target_patents table. This will fail due to:
+>
+> - CHECK constraint violations (hyphens/spaces in patent_id)
+> - Column count mismatches
+> - Data format inconsistencies
+>
+> **ALWAYS** follow the ETL process below:
+>
+> 1. Create temp table matching CSV structure
+> 2. Import CSV to temp table
+> 3. Transform and clean data with SQL
+> 4. Insert into target_patents
+> 5. Drop temp table
+
+## Quick Start: Complete ETL Script
+
+For standard Google Patents CSV export (10 columns):
+
+```bash
+sqlite3 patents.db <<'EOF'
+-- Step 1: Create temp table matching CSV structure
+CREATE TEMP TABLE raw_import (
+    col1 TEXT,  -- search URL
+    col2 TEXT,  -- id (patent_id with hyphens)
+    col3 TEXT,  -- title
+    col4 TEXT,  -- assignee
+    col5 TEXT,  -- inventor/author
+    col6 TEXT,  -- priority date
+    col7 TEXT,  -- filing/creation date
+    col8 TEXT,  -- publication date
+    col9 TEXT,  -- grant date
+    col10 TEXT  -- result link
+);
+
+-- Step 2: Import CSV to temp table
+.mode csv
+.import --skip 1 ./test-patents.csv raw_import
+
+-- Step 3: Transform and insert into target_patents
+INSERT INTO target_patents (
+    patent_id,
+    title,
+    assignee,
+    country,
+    publication_date,
+    filing_date,
+    grant_date,
+    extra_fields
+)
+SELECT
+    -- CRITICAL: Remove hyphens and spaces from patent_id
+    upper(replace(replace(trim(col2), '-', ''), ' ', '')) as patent_id,
+    trim(col3) as title,
+    trim(col4) as assignee,
+    -- Extract country code from patent_id (first 2 letters)
+    substr(upper(replace(replace(trim(col2), '-', ''), ' ', '')), 1, 2) as country,
+    -- Validate and normalize dates
+    date(col8) as publication_date,
+    NULLIF(date(col7), NULL) as filing_date,
+    NULLIF(date(col9), NULL) as grant_date,
+    '{"source": "csv"}' as extra_fields
+FROM raw_import
+WHERE col2 IS NOT NULL
+  AND col2 != ''
+  AND col2 != 'id';
+
+-- Step 4: Verify import
+SELECT 'Imported ' || COUNT(*) || ' patents' as result FROM target_patents;
+
+-- Step 5: Drop temp table
+DROP TABLE raw_import;
+EOF
+```
+
 ## Key Steps
 
 ### Step 1: Inspect CSV File
