@@ -55,6 +55,6 @@ type = "script"
 command = "check-workspace-file.sh 0-specifications/specification.md"
 
 [[checks]]
-name = "patent_assignee_check_invoked"
+name = "google_patent_cli_assignee_check_invoked"
 type = "script"
-command = "check-skill-invoked.sh patent-assignee-check"
+command = "check-skill-invoked.sh google-patent-cli:patent-assignee-check"
