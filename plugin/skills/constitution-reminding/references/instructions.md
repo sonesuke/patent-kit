@@ -62,10 +62,3 @@ Long or overly complex queries often return zero results in both `google-patent-
 - **Requirement**: Document the query evolution in your report (what worked, what didn't).
 - **Requirement**: If multiple simplified queries are needed, save each result separately with descriptive filenames.
 
-## VIII. Efficient Context Management
-
-Large tool outputs MUST be saved to files to maintain context window efficiency.
-
-- **Rule**: Do NOT load large outputs directly into context.
-- **Action**: Save search results to files immediately after retrieval.
-- **Specifics**: Each skill defines its own file output paths in its instructions.
