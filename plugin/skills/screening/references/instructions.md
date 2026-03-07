@@ -43,9 +43,9 @@ Process all patents from the `target_patents` table using **parallel agents**:
 **Process Steps**:
 
 1. **Get Unscreened Patents**:
-   - Use the Skill tool to load the `investigating-database` skill
-   - Request: "Get list of unscreened patent IDs"
-   - Divide the list into batches for parallel processing
+   - **Action**: Use the `investigating-database` skill
+   - **Request**: "Get list of unscreened patent IDs"
+   - **Divide** the list into batches for parallel processing
 
 2. **Create Screening Team**:
    - Use the Agent tool to create a team with multiple teammates
@@ -69,8 +69,8 @@ Process all patents from the `target_patents` table using **parallel agents**:
 
 5. **Aggregate Results**:
    - Wait for all teammates to complete their tasks
-   - Use the Skill tool to load the `investigating-database` skill
-   - Request: "Get screening progress statistics"
+   - **Action**: Use the `investigating-database` skill
+   - **Request**: "Get screening progress statistics"
 
 ### Phase 3: Generate Summary Report
 
