@@ -64,6 +64,11 @@ Process all patents from the `target_patents` table using **parallel agents**:
    - **Judgment**: Check abstract and legal status
      - **Auto-Reject**: Expired/Withdrawn → `expired`
      - **Relevance**: Compare against Theme/Domain from specification
+       - **Criteria**: Check at Theme/Domain level. Is it relevant to the business area?
+       - **Exception**: Even if the domain differs, KEEP if technology could serve as infrastructure or a common platform for the product
+       - **Examples**:
+         - **Relevant**: Defined Theme, Direct Competitors, Core Tech
+         - **Irrelevant**: Completely different industry (e.g., Medical vs Web)
      - **Judgment Values**: `relevant`, `irrelevant`, `expired` (lowercase)
    - **Record Result**: Use `investigating-database` skill to record judgment
 

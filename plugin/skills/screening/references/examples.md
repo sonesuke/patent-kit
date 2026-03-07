@@ -60,7 +60,7 @@
 - **Abstract**: Generic database architecture
 - **Domain**: Database technology (different from LLM)
 - **Judgment**: `relevant`
-- **Reason**: Infrastructure technology that could support the product platform
+- **Reason**: Even though domain differs, technology serves as infrastructure for the product platform
 
 ## Example 4: Handling Rate Limits
 
