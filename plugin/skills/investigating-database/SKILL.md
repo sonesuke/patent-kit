@@ -34,8 +34,8 @@ Manages the SQLite database (`patents.db`) for storing and retrieving patent dat
 
 Based on the user request, select the appropriate database operation:
 
-| Operation        | Trigger                                  | SQL Location                    |
-| ---------------- | ---------------------------------------- | ------------------------------- |
+| Operation        | Trigger                                  | SQL Location                          |
+| ---------------- | ---------------------------------------- | ------------------------------------- |
 | Initialize       | "initialize database", "create database" | `instructions/initialize-database.md` |
 | Import CSV       | "import CSV", "load data"                | `instructions/import-csv.md`          |
 | Get Patent ID    | "get patent ID", "fetch patent by row"   | `instructions/get-patent-id.md`       |
