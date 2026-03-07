@@ -58,3 +58,8 @@ command = "check-skill-loaded.sh targeting"
 name = "targeting_invoked"
 type = "script"
 command = "check-skill-invoked.sh targeting"
+
+[[checks]]
+name = "target_jsonl_created"
+type = "script"
+command = "check-workspace-file.sh 1-targeting/target.jsonl"
