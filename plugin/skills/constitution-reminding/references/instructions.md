@@ -61,4 +61,3 @@ Long or overly complex queries often return zero results in both `google-patent-
   - ✅ Better: `"interactive visualization"` OR `"data dashboard"`
 - **Requirement**: Document the query evolution in your report (what worked, what didn't).
 - **Requirement**: If multiple simplified queries are needed, save each result separately with descriptive filenames.
-
