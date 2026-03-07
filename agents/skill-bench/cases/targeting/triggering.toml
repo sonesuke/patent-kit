@@ -5,7 +5,7 @@ description = "Verify targeting skill is triggered when asked to execute targeti
 timeout = 60
 
 test_prompt = """
-I want to start a patent investigation. Let's determine the target population.
+I have a product concept. Now I need to create a target population for patent searching.
 """
 
 [[checks]]
