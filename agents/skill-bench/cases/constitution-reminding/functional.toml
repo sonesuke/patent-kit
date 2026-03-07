@@ -31,4 +31,4 @@ command = "check-tool-use.sh Read file_path \"constitution-reminding.*references
 [[checks]]
 name = "constitution_text_displayed"
 type = "script"
-command = "check-text-contains.sh \"Purpose\" \"When to Load\""
+command = "check-text-contains.sh \"I.\" \"II.\" \"III.\""

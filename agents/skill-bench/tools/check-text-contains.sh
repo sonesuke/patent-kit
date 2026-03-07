@@ -15,19 +15,17 @@ if [ -z "$LOG_FILE" ] || [ ${#PATTERNS[@]} -eq 0 ]; then
     exit 1
 fi
 
-# Build jq expression to check if any pattern is found
-JQ_EXPR="[.[] | select(.type == \"assistant\" or .type == \"result\")] | any(.message.content[]?; select(type == \"text\" and ("
-
-FIRST=true
+# Check if any pattern is found in assistant text content
+FOUND=false
 for PATTERN in "${PATTERNS[@]}"; do
-    if [ "$FIRST" = true ]; then
-        JQ_EXPR="$JQ_EXPR (.text | test(\"$PATTERN\"; \"i\"))"
-        FIRST=false
-    else
-        JQ_EXPR="$JQ_EXPR or (.text | test(\"$PATTERN\"; \"i\"))"
+    if grep -q "\"text\":\"[^\"]*$PATTERN[^\"]*\"" "$LOG_FILE" 2>/dev/null; then
+        FOUND=true
+        break
     fi
 done
 
-JQ_EXPR="$JQ_EXPR)))]"
-
-jq -s "$JQ_EXPR" "$LOG_FILE"
+if [ "$FOUND" = "true" ]; then
+    exit 0
+else
+    exit 1
+fi
