@@ -6,7 +6,7 @@ timeout = 300 # seconds
 
 [[setup]]
 path = "0-specifications/specification.md"
-content = """
+content = '''
 # Product Specification
 
 **Product/Technology**:
@@ -21,22 +21,29 @@ LLM-based multi-turn chatbot system with RAG (Retrieval-Augmented Generation) ca
 **Target Release Date**: 2025-12-31
 
 **Priority Date Cutoff**: 2020-01-01
-"""
+'''
 
 [[setup]]
 path = "test-patents.csv"
-content = """
+content = '''
 search URL:,https://patents.google.com/?q=llm
 id,title,assignee,inventor/author,priority date,filing/creation date,publication date,grant date,result link,representative figure link
 KR-102637029-B1,Device for Generating Multi-turn Chat Bot Data Using LLM,주식회사 마인즈앤컴퍼니,"고석태, 백영상",2023-10-11,2023-10-11,2024-02-15,2024-02-15,https://patents.google.com/patent/KR102637029B1/en,
 US-2024292070-A1,Iterative ai prompt optimization,"Loop Now Technologies, Inc.","Wu-Hsi Li, Edwin Chiu",2023-02-24,2024-04-10,2024-08-29,,https://patents.google.com/patent/US20240292070A1/en,
-"""
+'''
 
-test_prompt = """
-Load the constitution-reminding and legal-checking skills first.
-Then initialize the patent database and import test-patents.csv.
-Finally, screen all patents using parallel processing with a team of 2 agents.
-"""
+test_prompt = '''
+Execute the following steps:
+
+1. Use the Skill tool to load constitution-reminding skill
+2. Use the Skill tool to load legal-checking skill
+3. Use the Skill tool to load investigating-database skill
+4. Request: "Initialize the patent database and import test-patents.csv"
+5. Verify the import completed successfully
+6. Report the number of patents imported
+
+Do not stop until all steps are completed.
+'''
 
 [[checks]]
 name = "constitution_loaded"

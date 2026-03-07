@@ -4,9 +4,9 @@ name = "triggering"
 description = "Verify screening skill is triggered when asked to screen patents"
 timeout = 60
 
-test_prompt = """
+test_prompt = '''
 I have a database of collected patents. Now I need to screen them to remove noise and filter by relevance.
-"""
+'''
 
 [[checks]]
 name = "skill_loaded"
