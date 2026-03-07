@@ -60,44 +60,6 @@ Create `2-screening/screening.md` using template from `screening-template.md`.
 
 - All patents in `target_patents` have corresponding entries in `screened_patents`
 - `2-screening/screening.md` created with screening summary
-- `2-screening/json/<patent-id>.json` files created for each patent
-
-## Skill Orchestration
-
-### 1. Load Required Skills (MANDATORY)
-
-Use the Skill tool to load skills BEFORE starting any work:
-
-1. **Constitution**: `constitution-reminding` - Understand core principles
-2. **Legal Checker**: `legal-checking` - Legal compliance guidelines
-
-### 2. Execute Screening
-
-Follow the detailed screening process in `references/instructions.md`.
-
-Key operations:
-
-- Use `investigating-database` skill to get next patent ID
-- Use `fetch-patent` MCP tool to retrieve patent details
-- Use `investigating-database` skill to record screening results
-- Use `investigating-database` skill to get progress statistics
-
-### 3. Generate Report
-
-Create `2-screening/screening.md` using template from `screening-template.md`.
-
-## State Management
-
-### Initial State
-
-- `patents.db` exists with `target_patents` table populated
-- No `screened_patents` entries (or partial screening in progress)
-
-### Final State
-
-- All patents in `target_patents` have corresponding entries in `screened_patents`
-- `2-screening/screening.md` created with screening summary
-- `2-screening/json/<patent-id>.json` files created for each patent
 
 ## References
 
