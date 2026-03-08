@@ -30,12 +30,9 @@ EOF
 ## Parameters
 
 - **PATENT_ID**: Patent identifier (e.g., "US20240292070A1")
-- **CLAIM_ID**: Claim ID from patent data (e.g., "clm-1", "CLM-0001")
 - **CLAIM_NUMBER**: Claim number (1 for independent, 2+ for dependent)
 - **CLAIM_TYPE**: Either "independent" or "dependent"
 - **CLAIM_TEXT**: Full text of the claim
-
-**IMPORTANT**: Use the actual claim ID from the patent data (extracted from the `claim_id` field in the claims array) to maintain traceability with the source data.
 
 ## Use Cases
 

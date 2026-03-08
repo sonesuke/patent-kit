@@ -72,13 +72,12 @@ END;
 -- Create claims table for storing patent claims during evaluation
 CREATE TABLE IF NOT EXISTS claims (
     patent_id TEXT NOT NULL,
-    claim_id TEXT NOT NULL,  -- Use actual claim ID from patent data (e.g., "clm-1", "CLM-0001")
-    claim_number INTEGER NOT NULL,
+    claim_number INTEGER NOT NULL,  -- Claim number (1, 2, 3...)
     claim_type TEXT NOT NULL CHECK(claim_type IN ('independent', 'dependent')),
     claim_text TEXT NOT NULL,
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
-    PRIMARY KEY (patent_id, claim_id),
+    PRIMARY KEY (patent_id, claim_number),
     FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE
 );
 
@@ -86,13 +85,13 @@ CREATE TABLE IF NOT EXISTS claims (
 CREATE TABLE IF NOT EXISTS elements (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     patent_id TEXT NOT NULL,
-    claim_id TEXT NOT NULL,  -- Reference to claims composite primary key
+    claim_number INTEGER NOT NULL,  -- Reference to claims composite primary key
     element_label TEXT,
     element_description TEXT NOT NULL,
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
-    FOREIGN KEY (patent_id, claim_id) REFERENCES claims(patent_id, claim_id) ON DELETE CASCADE
+    FOREIGN KEY (patent_id, claim_number) REFERENCES claims(patent_id, claim_number) ON DELETE CASCADE
 );
 
 -- Create timestamp triggers for claims and elements
@@ -113,4 +112,4 @@ END;
 -- Create index for faster queries
 CREATE INDEX IF NOT EXISTS idx_claims_patent_id ON claims(patent_id);
 CREATE INDEX IF NOT EXISTS idx_elements_patent_id ON elements(patent_id);
-CREATE INDEX IF NOT EXISTS idx_elements_claim_id ON elements(claim_id);
+CREATE INDEX IF NOT EXISTS idx_elements_claim_number ON elements(claim_number);

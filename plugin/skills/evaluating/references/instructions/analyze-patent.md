@@ -60,14 +60,14 @@ Use the `investigating-database` skill to record claims and elements in the data
 ### Record Claims
 
 - Request: "Record claims for patent <patent-id>"
-- Extract claim data from the fetched patent (claim_id, claim_number, claim_type, claim_text)
+- Extract claim data from the fetched patent (claim_number, claim_type, claim_text)
 - Store all claims (independent and dependent) in the database
 
 ### Record Elements
 
-- Request: "Record elements for claim <claim_id>"
+- Request: "Record elements for claim <claim_number>"
 - For each analyzed claim, record its constituent elements
-- Use actual claim_id from patent data (e.g., "clm-1", "CLM-0001")
+- Use claim_number (1, 2, 3...)
 - Store element_label (A, B, C...) and element_description
 
 This enables:

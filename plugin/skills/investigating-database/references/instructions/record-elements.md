@@ -10,9 +10,9 @@ Store analyzed claim elements for future reference and comparison.
 
 ```bash
 sqlite3 patents.db <<EOF
-INSERT INTO elements (patent_id, claim_id, element_label, element_description)
+INSERT INTO elements (patent_id, claim_number, element_label, element_description)
 VALUES
-  ('${PATENT_ID}', ${CLAIM_ID}, '${ELEMENT_LABEL}', '${ELEMENT_DESCRIPTION}');
+  ('${PATENT_ID}', ${CLAIM_NUMBER}, '${ELEMENT_LABEL}', '${ELEMENT_DESCRIPTION}');
 EOF
 ```
 
@@ -20,30 +20,19 @@ For multiple elements (recommended):
 
 ```bash
 sqlite3 patents.db <<EOF
-INSERT INTO elements (patent_id, claim_id, element_label, element_description) VALUES
-  ('${PATENT_ID}', ${CLAIM_ID}, 'A', 'Element A description'),
-  ('${PATENT_ID}', ${CLAIM_ID}, 'B', 'Element B description'),
-  ('${PATENT_ID}', ${CLAIM_ID}, 'C', 'Element C description');
+INSERT INTO elements (patent_id, claim_number, element_label, element_description) VALUES
+  ('${PATENT_ID}', ${CLAIM_NUMBER}, 'A', 'Element A description'),
+  ('${PATENT_ID}', ${CLAIM_NUMBER}, 'B', 'Element B description'),
+  ('${PATENT_ID}', ${CLAIM_NUMBER}, 'C', 'Element C description');
 EOF
 ```
 
 ## Parameters
 
 - **PATENT_ID**: Patent identifier (e.g., "US20240292070A1")
-- **CLAIM_ID**: ID of the claim from claims table (use last_insert_rowid())
+- **CLAIM_NUMBER**: Claim number (1, 2, 3...)
 - **ELEMENT_LABEL**: Element label (A, B, C...)
 - **ELEMENT_DESCRIPTION**: Description of the constituent element
-
-## Get Claim ID
-
-When inserting elements, reference the claim by its claim_id (not auto-increment ID):
-
-```bash
-# Use the actual claim_id from patent data
-CLAIM_ID="clm-1"  # or extracted from patent data
-```
-
-The claim_id comes from the patent data's claims array (usually in the `claim_id` or similar field).
 
 ## Use Cases
 
@@ -58,7 +47,7 @@ The claim_id comes from the patent data's claims array (usually in the `claim_id
 sqlite3 patents.db "
 SELECT e.element_label, e.element_description, c.claim_number
 FROM elements e
-JOIN claims c ON e.claim_id = c.claim_id AND e.patent_id = c.patent_id
+JOIN claims c ON e.claim_number = c.claim_number AND e.patent_id = c.patent_id
 WHERE e.patent_id = '${PATENT_ID}'
 ORDER BY c.claim_number, e.element_label;
 "
@@ -67,4 +56,4 @@ ORDER BY c.claim_number, e.element_label;
 ## Output
 
 - **Success**: Elements recorded in database
-- **Error**: Failed to insert elements (check patent_id and claim_id exist)
+- **Error**: Failed to insert elements (check patent_id and claim_number exist)
