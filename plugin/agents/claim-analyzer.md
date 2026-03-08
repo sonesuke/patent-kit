@@ -59,55 +59,63 @@ When you receive a patent to analyze:
 ### Step 1: Get Data from Database
 
 1.1. **Get All Product Features**: Use `investigation-fetching` skill
-   - Request: "Search features"
-   - Store all returned features for comparison
+
+- Request: "Search features"
+- Store all returned features for comparison
 
 1.2. **Get Patent Elements**: Use `investigation-fetching` skill
-   - Request: "Get elements for patent <patent-id>"
-   - Store all returned elements for analysis
+
+- Request: "Get elements for patent <patent-id>"
+- Store all returned elements for analysis
 
 ### Step 2: Check Feature Coverage for Each Element
 
 For EACH patent element:
 
 2.1. **Search for Feature**: Use `investigation-fetching` skill
-   - Request: "Search feature: <element_label>"
-   - This searches the features table for a matching feature
+
+- Request: "Search feature: <element_label>"
+- This searches the features table for a matching feature
 
 2.2. **Handle Search Result**:
-   - **If feature found with `presence='present'`**: Proceed to comparison
-   - **If feature found with `presence='absent'`**: Treat as absent, proceed to comparison
-   - **If feature NOT found (empty result)**: **STOP - You MUST ASK before proceeding**
-     - Do NOT record as 'absent' automatically
-     - Do NOT skip to comparison
-     - Follow Step 2.3 below
+
+- **If feature found with `presence='present'`**: Proceed to comparison
+- **If feature found with `presence='absent'`**: Treat as absent, proceed to comparison
+- **If feature NOT found (empty result)**: **STOP - You MUST ASK before proceeding**
+  - Do NOT record as 'absent' automatically
+  - Do NOT skip to comparison
+  - Follow Step 2.3 below
 
 2.3. **Ask About Missing Feature** (only when feature is NOT found):
-   - **Check test environment**: Use Bash tool to run `echo $SKILL_BENCH_TEST_CASE`
-   - **If SKILL_BENCH_TEST_CASE is set** (testing mode):
-     - Use Skill tool with `skill-bench-harness:question-responder` and: "Does the product have this feature: <element_description>?"
-   - **If SKILL_BENCH_TEST_CASE is NOT set** (normal mode):
-     - Use `AskUserQuestion` tool with the question
-   - **Record the feature immediately**:
-     - If answer is "yes" or positive: Use `investigation-recording` skill to record feature with `presence='present'`
-     - If answer is "no" or negative: Use `investigation-recording` skill to record feature with `presence='absent'`
+
+- **Check test environment**: Use Bash tool to run `echo $SKILL_BENCH_TEST_CASE`
+- **If SKILL_BENCH_TEST_CASE is set** (testing mode):
+  - Use Skill tool with `skill-bench-harness:question-responder` and: "Does the product have this feature: <element_description>?"
+- **If SKILL_BENCH_TEST_CASE is NOT set** (normal mode):
+  - Use `AskUserQuestion` tool with the question
+- **Record the feature immediately**:
+  - If answer is "yes" or positive: Use `investigation-recording` skill to record feature with `presence='present'`
+  - If answer is "no" or negative: Use `investigation-recording` skill to record feature with `presence='absent'`
 
 ### Step 3: Comparison Analysis
 
 3.1. **Analyze Each Element**:
-   - Compare product features against patent elements
-   - Determine similarity level: Significant, Moderate, or Limited
-   - Write detailed analysis notes
+
+- Compare product features against patent elements
+- Determine similarity level: Significant, Moderate, or Limited
+- Write detailed analysis notes
 
 3.2. **Record Similarities**: Use `investigation-recording` skill
-   - Request: "Record similarities for patent <patent-id>: <similarities_data>"
-   - Include: element_label, similarity_level, analysis_notes
+
+- Request: "Record similarities for patent <patent-id>: <similarities_data>"
+- Include: element_label, similarity_level, analysis_notes
 
 ### Step 4: Legal Compliance Check (Optional but Recommended)
 
 4.1. **Check Analysis Notes**: Use `legal-checking` skill
-   - Request: "Check the following analysis notes for legal compliance: <analysis_notes>"
-   - Revise if violations found
+
+- Request: "Check the following analysis notes for legal compliance: <analysis_notes>"
+- Revise if violations found
 
 ## Return Format
 
