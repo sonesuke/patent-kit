@@ -70,7 +70,6 @@ When processing external requests, map them to internal instruction files:
 | "Get list of relevant patents without..." | references/instructions/get-relevant-patents.md   |
 | "Get all relevant patents"                | references/instructions/get-relevant-patents.md   |
 | "Get list of unscreened patent IDs"       | references/instructions/get-unscreened-patents.md |
-| "Get screening statistics"                | references/instructions/get-screening-stats.md    |
 | "Get evaluation progress"                 | references/instructions/get-evaluation-stats.md   |
 
 **CRITICAL**: These reference files are for INTERNAL USE ONLY. External agents
@@ -143,7 +142,6 @@ agents should NOT read these:
   - `get-next-patent.md`: Get next patent for evaluation
   - `get-relevant-patents.md`: Get list of relevant patents
   - `get-unscreened-patents.md`: Get list of unscreened patents
-  - `get-screening-stats.md`: Screening progress statistics
   - `get-evaluation-stats.md`: Evaluation progress statistics
 - \*\*references/schema.md`: Database schema documentation
 
