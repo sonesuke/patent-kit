@@ -78,11 +78,11 @@ Use the Glob tool to check if `csv/*.csv` files exist:
 
 - **If NO CSV files**:
   1. **Execute Competitor Patent Research**:
-     - Use `google-patent-cli:patent-search` MCP tool with assignee search
+     - Use `google-patent-cli:patent-search` skill with assignee search
      - Analyze results and extract "Golden Keywords"
      - Save keywords to `keywords.md`
   2. **Execute Market Patent Research**:
-     - Use `google-patent-cli:patent-search` MCP tool with keyword queries
+     - Use `google-patent-cli:patent-search` skill with keyword queries
      - Refine queries based on noise analysis
   3. **Create Output Files**:
      - Fill `targeting.md` using the template

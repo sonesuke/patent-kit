@@ -45,7 +45,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 #### Phase 1: Competitor Patent Research
 
 1. **Start Broad**:
-   - **Action**: Use the `google-patent-cli:patent-search` MCP tool with:
+   - **Action**: Use the `google-patent-cli:patent-search` skill with:
      - assignee: "<Combined Assignees>"
      - country: "<Target Country>"
      - before: "<Target Release Date>"
@@ -74,7 +74,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Apply Keywords**:
    - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `keywords.md`).
-   - **Action**: Use the `google-patent-cli:patent-search` MCP tool with:
+   - **Action**: Use the `google-patent-cli:patent-search` skill with:
      - query: "\"keyword1\" AND \"keyword2\" AND ..."
      - country: "<Target Country>"
      - before: "<Target Release Date>"
