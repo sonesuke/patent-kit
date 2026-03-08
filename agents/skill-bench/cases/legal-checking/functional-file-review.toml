@@ -2,7 +2,7 @@
 
 name = "functional-file-review"
 description = "Verify legal-checking reviews a file and identifies violations"
-timeout = 90 # seconds
+timeout = 90                                                                   # seconds
 
 test_prompt = """
 Review the following file for legal compliance violations:

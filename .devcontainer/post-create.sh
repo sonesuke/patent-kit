@@ -40,22 +40,52 @@ EOF
     echo 'alias claude="claude --allow-dangerously-skip-permissions"' >> $HOME/.bashrc
     echo 'alias claude="claude --allow-dangerously-skip-permissions"' >> $HOME/.zshrc
 
+    # Install mise
+    if ! command -v mise >/dev/null 2>&1; then
+        echo "[Devcontainer Setup] Installing mise..."
+        curl https://mise.run | sh
+
+        # Add .local/bin to PATH for current session
+        export PATH="$HOME/.local/bin:$PATH"
+
+        # Add to shell configs for future sessions
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> $HOME/.bashrc
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> $HOME/.zshrc
+    else
+        echo "[Devcontainer Setup] mise already installed: $(mise --version)"
+    fi
+
     echo "[Devcontainer Setup] Configuring mise..."
     echo 'eval "$(mise activate bash)"' >> $HOME/.bashrc
     echo 'eval "$(mise activate zsh)"' >> $HOME/.zshrc
 
-    # Run mise install
+    # Trust mise config and install tools
     if command -v mise >/dev/null 2>&1; then
-        echo "[Devcontainer Setup] Installing tools with mise..."
+        echo "[Devcontainer Setup] Trusting mise configuration..."
         mise trust
+
+        echo "[Devcontainer Setup] Installing tools with mise..."
         mise install
     else
         echo "[Devcontainer Setup] WARNING: mise is not installed."
     fi
 
+    echo "[Devcontainer Setup] Authenticating claude..."
     if [ -n "$Z_AI_API_KEY" ]; then
-        npx -y @z_ai/coding-helper auth glm_coding_plan_global "$Z_AI_API_KEY"
-        npx -y @z_ai/coding-helper auth reload claude
+        mkdir -p "$HOME/.claude"
+        cat > "$HOME/.claude/settings.json" <<EOF
+{
+    "env": {
+        "ANTHROPIC_AUTH_TOKEN": "$Z_AI_API_KEY",
+        "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+        "API_TIMEOUT_MS": "3000000",
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+        "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5",
+        "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
+        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air"
+    }
+}
+EOF
     fi
 
     echo "[Devcontainer Setup] Installing MCP tools..."

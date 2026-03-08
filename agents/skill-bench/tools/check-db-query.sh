@@ -12,7 +12,22 @@ cd "$WORK_DIR" || exit 1
 
 if [ -f "patents.db" ]; then
     RESULT=$(sqlite3 patents.db "$QUERY" 2>/dev/null | tr -d '\n')
-    if [ "$RESULT" = "$EXPECTED" ]; then
+    # Handle numeric comparisons like '>0', '<5', '=10'
+    if [[ "$EXPECTED" =~ ^([<>]=?|=)([0-9]+)$ ]]; then
+        OP="${BASH_REMATCH[1]}"
+        NUM="${BASH_REMATCH[2]}"
+        if [ "$OP" = ">" ] && [ "$RESULT" -gt "$NUM" ]; then
+            exit 0
+        elif [ "$OP" = ">=" ] && [ "$RESULT" -ge "$NUM" ]; then
+            exit 0
+        elif [ "$OP" = "<" ] && [ "$RESULT" -lt "$NUM" ]; then
+            exit 0
+        elif [ "$OP" = "<=" ] && [ "$RESULT" -le "$NUM" ]; then
+            exit 0
+        elif [ "$OP" = "=" ] && [ "$RESULT" -eq "$NUM" ]; then
+            exit 0
+        fi
+    elif [ "$RESULT" = "$EXPECTED" ]; then
         exit 0
     fi
 fi

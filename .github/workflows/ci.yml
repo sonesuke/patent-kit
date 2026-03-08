@@ -24,4 +24,4 @@ jobs:
           node-version: 20
 
       - name: Check formatting
-        run: npx --yes prettier@latest --check .
+        run: npx --yes prettier@latest --log-level=debug --check .

@@ -12,6 +12,8 @@ set -o pipefail
 WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # Determine skill-bench root
 SKILL_BENCH_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Determine tools directory
+TOOLS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/tools"
 # Resolve pattern relative to skill-bench root
 PATTERN="${1:-cases/*/*.toml}"
 # Convert to absolute path
@@ -92,10 +94,36 @@ for IDX in "${!TEST_FILES[@]}"; do
     NUM_SETUP=$(yq eval '.setup | length // 0' "$TEST_FILE")
     if [ "$NUM_SETUP" -gt 0 ]; then
         for SETUP_IDX in $(seq 0 $((NUM_SETUP - 1))); do
-            SETUP_PATH=$(yq eval ".setup[$SETUP_IDX].path" "$TEST_FILE")
-            SETUP_DIR=$(dirname "$WORK_DIR/$SETUP_PATH")
-            mkdir -p "$SETUP_DIR"
-            yq eval ".setup[$SETUP_IDX].content" "$TEST_FILE" > "$WORK_DIR/${SETUP_PATH}"
+            SETUP_TYPE=$(yq eval ".setup[$SETUP_IDX].type // \"\"" "$TEST_FILE")
+            SETUP_NAME=$(yq eval ".setup[$SETUP_IDX].name // \"\"" "$TEST_FILE")
+
+            if [ "$SETUP_TYPE" = "script" ]; then
+                # Execute script setup
+                SETUP_COMMAND=$(yq eval ".setup[$SETUP_IDX].command" "$TEST_FILE")
+                if [ -n "$SETUP_NAME" ]; then
+                    echo "[SkillBench]   → Setup: $SETUP_NAME"
+                else
+                    echo "[SkillBench]   → Setup: $SETUP_COMMAND"
+                fi
+
+                # Execute in WORK_DIR with tools in PATH
+                (cd "$WORK_DIR" && PATH="$TOOLS_DIR:$PATH" bash -c "$SETUP_COMMAND")
+            else
+                # File content setup (default behavior)
+                SETUP_PATH=$(yq eval ".setup[$SETUP_IDX].path" "$TEST_FILE")
+                if [ -z "$SETUP_PATH" ]; then
+                    echo "[SkillBench]   ⚠️  Skipping setup with no path (index $SETUP_IDX)"
+                    continue
+                fi
+
+                SETUP_DIR=$(dirname "$WORK_DIR/$SETUP_PATH")
+                mkdir -p "$SETUP_DIR"
+                yq eval ".setup[$SETUP_IDX].content" "$TEST_FILE" > "$WORK_DIR/${SETUP_PATH}"
+
+                if [ -n "$SETUP_NAME" ]; then
+                    echo "[SkillBench]   → Setup: $SETUP_NAME ($SETUP_PATH)"
+                fi
+            fi
         done
     fi
 
@@ -126,7 +154,6 @@ for IDX in "${!TEST_FILES[@]}"; do
     echo "[SkillBench]   Running evaluation..."
 
     CASE_PASS=true
-    TOOLS_DIR="$(cd "$(dirname "$0")" && pwd)/tools"
 
     # Run checks from test.toml
     NUM_CHECKS=$(yq eval '.checks | length' "$TEST_FILE")

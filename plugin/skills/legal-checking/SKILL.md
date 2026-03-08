@@ -61,4 +61,3 @@ The skill will:
 ## References
 
 - `references/instructions.md` - Detailed legal compliance rules
-- `references/examples.md` - Compliant vs non-compliant examples

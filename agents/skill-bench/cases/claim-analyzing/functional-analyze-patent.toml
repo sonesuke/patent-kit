@@ -1,0 +1,94 @@
+# Test Case: Claim Analyzing - Analyze Patent with User Questions
+
+name = "functional-analyze-patent"
+description = "Verify claim-analyzing skill uses Agent tool to analyze a patent, asks user about missing features, and stores similarities in database"
+timeout = 120
+
+test_prompt = """
+Perform claim analysis for patent US20240292070A1.
+- Compare product features against patent elements
+- Store similarity results in the database
+"""
+
+[answers]
+"API Gateway" = "yes"
+"Secure Key Management" = "no"
+
+[[setup]]
+path = "features.sql"
+content = """
+-- Initialize database
+PRAGMA foreign_keys = ON;
+
+-- Insert product features (only some features, not all)
+INSERT OR IGNORE INTO features (feature_name, description, category, presence, created_at, updated_at)
+VALUES
+    ('User Authentication', 'System authenticates users via email/password', 'Security', 'present', datetime('now'), datetime('now')),
+    ('Data Encryption', 'Data is encrypted at rest using AES-256', 'Security', 'present', datetime('now'), datetime('now'));
+-- Note: 'API Gateway' and 'Secure Key Management' are missing intentionally
+"""
+
+[[setup]]
+path = "patent-data.sql"
+content = """
+-- Insert target patents
+INSERT OR IGNORE INTO target_patents (patent_id, title, assignee, country, publication_date, filing_date, grant_date, extra_fields)
+VALUES
+    ('US20240292070A1', 'Method for Secure Data Processing', 'TechCorp Inc', 'US', '2024-09-26', '2024-03-15', NULL, '{"source": "test"}');
+
+-- Insert screened patents (marked as relevant)
+INSERT OR IGNORE INTO screened_patents (patent_id, judgment, reason, abstract_text, screened_at, updated_at)
+VALUES
+    ('US20240292070A1', 'relevant', 'Relates to secure data processing', 'A method for secure data processing comprising authentication, encryption, API gateway, and secure key management', datetime('now'), datetime('now'));
+
+-- Insert claims
+INSERT OR IGNORE INTO claims (patent_id, claim_number, claim_type, claim_text, created_at, updated_at)
+VALUES
+    ('US20240292070A1', 1, 'independent', '1. A method for secure data processing, comprising: authenticating a user; encrypting data; routing through API gateway; and managing secure keys.', datetime('now'), datetime('now'));
+
+-- Insert elements (including ones with missing features)
+INSERT OR IGNORE INTO elements (patent_id, claim_number, element_label, element_description, created_at, updated_at)
+VALUES
+    ('US20240292070A1', 1, 'A', 'authenticating a user', datetime('now'), datetime('now')),
+    ('US20240292070A1', 1, 'B', 'routing through API gateway', datetime('now'), datetime('now'));
+"""
+
+[[setup]]
+name = "init_db"
+type = "script"
+command = "setup-db.sh init"
+
+[[setup]]
+name = "load_features"
+type = "script"
+command = "setup-db.sh execute features.sql"
+
+[[setup]]
+name = "load_patent_data"
+type = "script"
+command = "setup-db.sh execute patent-data.sql"
+
+[[checks]]
+name = "skill_loaded"
+type = "script"
+command = "check-skill-loaded.sh claim-analyzing"
+
+[[checks]]
+name = "claim-analyzing_invoked"
+type = "script"
+command = "check-skill-invoked.sh claim-analyzing"
+
+[[checks]]
+name = "agent_used"
+type = "script"
+command = "check-tool-use.sh Agent"
+
+[[checks]]
+name = "similarities_stored"
+type = "script"
+command = "check-db-query.sh {} {} '>0' 'SELECT COUNT(*) FROM similarities;'"
+
+[[checks]]
+name = "new_feature_recorded"
+type = "script"
+command = "check-db-query.sh {} {} '>0' \"SELECT COUNT(*) FROM features WHERE feature_name LIKE 'API Gate%';\""

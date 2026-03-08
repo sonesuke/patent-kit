@@ -1,0 +1,19 @@
+# Test Case: Investigation Reporting - Triggering
+
+name = "triggering"
+description = "Verify investigation-reporting skill is triggered when asked for progress"
+timeout = 60
+
+test_prompt = """
+What is the current progress of the patent investigation?
+"""
+
+[[checks]]
+name = "skill_loaded"
+type = "script"
+command = "check-skill-loaded.sh investigation-reporting"
+
+[[checks]]
+name = "investigation_reporting_invoked"
+type = "script"
+command = "check-skill-invoked.sh investigation-reporting"

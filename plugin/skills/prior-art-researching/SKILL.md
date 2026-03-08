@@ -1,12 +1,12 @@
 ---
 name: prior-art-researching
-description: "Conducts an invalidation (prior art) search for a target patent. Triggered when the user asks to 'perform a prior art search' or 'find invalidating materials (Step 5)'."
+description: "Conducts an invalidation (prior art) search for a target patent. Triggered when the user asks to 'perform a prior art search'."
 metadata:
   author: sonesuke
   version: 1.0.0
 ---
 
-# Phase 5: Prior Art
+# Prior Art
 
 Your task is to Execute the Plan and Report Findings.
 
@@ -32,8 +32,40 @@ Your task is to Execute the Plan and Report Findings.
   - Message: "Prior Art report already exists for <patent-id>. Do you want to proceed with re-investigation?"
 - **If it does NOT exist**: Proceed with the standard process.
 
-1. **Initialize**: Load the `constitution-reminding` skill.
-2. **Load Legal Checker**: Load the `legal-checking` skill for legal compliance guidelines.
+## Constitution
+
+### Core Principles
+
+**Element-by-Element Analysis (The Golden Rule)**:
+
+- Every claim analysis MUST test the target invention against the reference patent element by element
+- Break down inventions into Elements A, B, C
+- Find references disclosing A AND B AND C for anticipation (Novelty)
+- Do not rely on "general similarity"
+
+**Comprehensive Literature Coverage**:
+
+- Use BOTH `google-patent-cli:patent-search`/`google-patent-cli:patent-fetch` and `arxiv-cli:arxiv-search`/`arxiv-cli:arxiv-fetch`
+- Check academic papers, conference proceedings, and technical publications alongside patents
+- Document search results from both sources in the final report
+
+**Evidence-Based Reporting**:
+
+- Every assertion MUST be backed by specific citations
+- Never say "This feature is known"
+- Say "This feature is disclosed in [Patent ID], Column X, Line Y"
+
+**Prior Art Cutoff Date**:
+
+- Prior art search results must be published BEFORE the target's priority date
+- Use publication dates, not priority dates, when determining prior art cutoff
+
+**Search Query Optimization**:
+
+- Start with broad, essential keywords (2-4 terms maximum)
+- If zero results, progressively simplify queries
+- Document query evolution in reports
+
 3. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
 4. **Plan & Execute Search**:
    - **Strategy: Multi-Layer Search** (Standard Procedure):
@@ -135,20 +167,3 @@ To maintain context window efficiency:
   - NPL Full-Text Path: `3-investigations/<patent-id>/json/npl_<arxiv-id>.json`
 - **Requirement**: Do NOT load large JSON outputs directly into context.
 - **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
-
-# Examples
-
-Example 1: Executing Prior Art Search
-User says: "Find prior art for US-9876543-B2, which looked promising in Step 4"
-Actions:
-
-1. Read claim-analysis.md to identify similarities
-2. Perform a hybrid search on patent and non-patent literature across General/Specific/Functional layers
-3. Compare the MCP tool results and create a claim chart
-   Result: 3-investigations/US-9876543-B2/prior-art.md is generated.
-
-# Troubleshooting
-
-Error: "No results found"
-Cause: The search query is too long or the AND conditions are too strict.
-Solution: Follow Rule IX and simplify the search query (e.g., remove modifiers) to search again.

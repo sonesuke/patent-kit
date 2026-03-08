@@ -1,0 +1,44 @@
+# Test Case: Investigation Recording - Record Screening
+
+name = "functional-record-screening"
+description = "Verify investigation-recording can record screening results"
+timeout = 120                                                               # seconds
+
+test_prompt = """
+Record screening result: patent US1234567A is relevant because it's core technology for LLM systems.
+"""
+
+[[setup]]
+name = "init_db"
+type = "script"
+command = "setup-db.sh init"
+
+[[setup]]
+name = "load_test_data"
+type = "script"
+command = """
+sqlite3 patents.db <<EOF
+INSERT OR IGNORE INTO target_patents (patent_id, title, assignee, country, publication_date, filing_date, extra_fields)
+VALUES ('US1234567A', 'LLM-based Chatbot System', 'TechCorp', 'US', '2023-01-15', '2022-06-01', '{"source": "test"}');
+EOF
+"""
+
+[[checks]]
+name = "skill_loaded"
+type = "script"
+command = "check-skill-loaded.sh investigation-recording"
+
+[[checks]]
+name = "investigation_recording_invoked"
+type = "script"
+command = "check-skill-invoked.sh investigation-recording"
+
+[[checks]]
+name = "screening_result_recorded"
+type = "script"
+command = """check-db-query.sh {} {} 'relevant' "SELECT judgment FROM screened_patents WHERE patent_id = 'US1234567A';" """
+
+[[checks]]
+name = "reason_recorded"
+type = "script"
+command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN reason LIKE '%LLM systems%' THEN '1' ELSE '0' END FROM screened_patents WHERE patent_id = 'US1234567A';" """

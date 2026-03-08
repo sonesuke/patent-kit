@@ -1,0 +1,112 @@
+# Test Case: Screening - Resume Capability
+
+name = "functional-resume-screening"
+description = "Verify screening skill can resume from partial screening without duplicates"
+timeout = 300                                                                               # seconds
+
+test_prompt = """
+I have already imported 3 patents into the database and partially screened them.
+
+Patent KR-102637029-B1 has already been screened and marked as 'relevant'.
+
+Please:
+1. Resume screening for the remaining unscreened patents
+2. Use parallel processing to speed up the work
+3. Ensure no duplicate screening entries are created
+4. Report the final screening status
+
+The product specification is in specification.md.
+Target domain: LLM-based multi-turn chatbot systems with RAG capabilities.
+"""
+
+[[setup]]
+path = "import-csv.sql"
+content = """
+INSERT OR IGNORE INTO target_patents (patent_id, title, assignee, country, publication_date, filing_date, grant_date, extra_fields)
+VALUES
+    ('KR102637029B1', 'Device for Generating Multi-turn Chat Bot Data Using LLM', '주식회사 마인즈앤컴퍼니', 'KR', '2024-02-15', '2023-10-11', '2024-02-15', '{"source": "test"}'),
+    ('US20240292070A1', 'Iterative AI prompt optimization', 'Loop Now Technologies, Inc.', 'US', '2024-08-29', '2024-04-10', NULL, '{"source": "test"}'),
+    ('CN123456789A1', 'Medical Image Analysis System', 'Beijing Medical Tech', 'CN', '2024-01-20', '2023-05-10', NULL, '{"source": "test"}');
+"""
+
+[[setup]]
+path = "pre-screened-data.sql"
+content = """
+INSERT INTO screened_patents (patent_id, judgment, reason, abstract_text, screened_at)
+VALUES (
+    'KR102637029B1',
+    'relevant',
+    'Directly relates to LLM-based multi-turn chatbot data generation',
+    'Device for Generating Multi-turn Chat Bot Data Using LLM',
+    datetime('now')
+);
+"""
+
+[[setup]]
+name = "init_db"
+type = "script"
+command = "setup-db.sh init"
+
+[[setup]]
+name = "import_csv_data"
+type = "script"
+command = "setup-db.sh execute import-csv.sql"
+
+[[setup]]
+name = "load_pre_screened_data"
+type = "script"
+command = "setup-db.sh execute pre-screened-data.sql"
+
+[[setup]]
+path = "specification.md"
+content = """
+# Product Specification
+
+**Product/Technology**:
+LLM-based multi-turn chatbot system with RAG (Retrieval-Augmented Generation) capabilities.
+
+**Key Technical Features**:
+
+1. LLM-driven multi-turn conversation management
+2. Vector database integration for retrieval-augmented generation
+3. Automatic quality assurance for information retrieval and intent detection
+
+**Target Release Date**: 2025-12-31
+
+**Priority Date Cutoff**: 2020-01-01
+"""
+
+[[setup]]
+path = "test-patents.csv"
+content = """
+search URL:,https://patents.google.com/?q=llm
+id,title,assignee,inventor/author,priority date,filing/creation date,publication date,grant date,result link,representative figure link
+KR-102637029-B1,Device for Generating Multi-turn Chat Bot Data Using LLM,주식회사 마인즈앤컴퍼니,"고석태, 백영상",2023-10-11,2023-10-11,2024-02-15,2024-02-15,https://patents.google.com/patent/KR102637029B1/en,
+US-2024292070-A1,Iterative ai prompt optimization,"Loop Now Technologies, Inc.","Wu-Hsi Li, Edwin Chiu",2023-02-24,2024-04-10,2024-08-29,,https://patents.google.com/patent/US20240292070A1/en,
+CN-123456789-A1,Medical Image Analysis System,"Beijing Medical Tech","Zhang San, Li Si",2023-05-10,2023-05-10,2024-01-20,,https://patents.google.com/patent/CN123456789A1/en,
+"""
+
+[[checks]]
+name = "skill_loaded"
+type = "script"
+command = "check-skill-loaded.sh screening"
+
+[[checks]]
+name = "screening_invoked"
+type = "script"
+command = "check-skill-invoked.sh screening"
+
+[[checks]]
+name = "agent_used"
+type = "script"
+command = "check-tool-use.sh Agent"
+
+[[checks]]
+name = "screened_stored"
+type = "script"
+command = "check-db-query.sh {} {} '>=3' 'SELECT COUNT(*) FROM screened_patents;'"
+
+[[checks]]
+name = "no_duplicates"
+type = "script"
+command = "check-db-query.sh {} {} '=1' 'SELECT COUNT(*) FROM screened_patents WHERE patent_id = \"KR102637029B1\";'"

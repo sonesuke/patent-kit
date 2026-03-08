@@ -1,0 +1,51 @@
+# Test Case: Investigation Recording - Triggering
+
+name = "triggering"
+description = "Verify investigation-recording skill is triggered when appropriate"
+timeout = 60                                                                       # seconds
+
+test_prompt = """
+I have evaluated a patent and need to record the screening result.
+
+The patent ID is US20240292070A1 and it's relevant to my research because it relates to AI prompt optimization.
+"""
+
+[[setup]]
+name = "init_db"
+type = "script"
+command = "setup-db.sh init"
+
+[[setup]]
+name = "load_test_data"
+type = "script"
+command = """
+sqlite3 patents.db <<EOF
+INSERT OR IGNORE INTO target_patents (patent_id, title, assignee, country, publication_date, filing_date, extra_fields)
+VALUES ('US20240292070A1', 'Iterative AI prompt optimization', 'Loop Now Technologies, Inc.', 'US', '2024-08-29', '2024-04-10', '{"source": "test"}');
+EOF
+"""
+
+[[checks]]
+name = "skill_loaded"
+type = "script"
+command = "check-skill-loaded.sh investigation-recording"
+
+[[checks]]
+name = "investigation_recording_invoked"
+type = "script"
+command = "check-skill-invoked.sh investigation-recording"
+
+[[checks]]
+name = "screening_result_recorded"
+type = "script"
+command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN COUNT(*) >= 1 THEN '1' ELSE '0' END FROM screened_patents WHERE patent_id = 'US20240292070A1';" """
+
+[[checks]]
+name = "correct_judgment"
+type = "script"
+command = """check-db-query.sh {} {} 'relevant' "SELECT judgment FROM screened_patents WHERE patent_id = 'US20240292070A1';" """
+
+[[checks]]
+name = "reason_provided"
+type = "script"
+command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN reason IS NOT NULL AND reason != '' THEN '1' ELSE '0' END FROM screened_patents WHERE patent_id = 'US20240292070A1';" """
