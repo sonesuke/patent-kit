@@ -59,6 +59,8 @@ Use the Glob tool to check if `specification.md` exists:
 
 ### 3. Execute Targeting
 
+**CRITICAL: Always use the Skill tool to load google-patent-cli skills for patent searches.**
+
 **IMPORTANT: First, check if CSV files already exist:**
 
 Use the Glob tool to check if `csv/*.csv` files exist:
