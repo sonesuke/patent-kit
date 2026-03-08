@@ -41,9 +41,11 @@ When assigned a patent to screen:
 ## Judgment Criteria
 
 **Legal Status**:
+
 - Expired or Withdrawn → `expired`
 
 **Relevance**:
+
 - Check at Theme/Domain level - Is it relevant to the business area?
 - Exception: Even if domain differs, KEEP if technology could serve as infrastructure or common platform
 - Examples:

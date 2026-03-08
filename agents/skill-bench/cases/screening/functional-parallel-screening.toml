@@ -82,4 +82,3 @@ command = "check-tool-use.sh Agent"
 name = "screened_stored"
 type = "script"
 command = "check-db-query.sh {} {} '>=2' 'SELECT COUNT(*) FROM screened_patents;'"
-

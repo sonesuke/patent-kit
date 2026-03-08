@@ -64,7 +64,3 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 ### Final State
 
 - All patents in `target_patents` have corresponding entries in `screened_patents`
-
-## References
-
-- `references/instructions.md` - Detailed screening process instructions

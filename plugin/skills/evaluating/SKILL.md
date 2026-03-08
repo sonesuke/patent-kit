@@ -67,7 +67,3 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 - Claims and elements stored in database (`claims` and `elements` tables)
 - Analysis data available for further processing
-
-## References
-
-- `references/instructions.md` - Detailed evaluation process instructions
