@@ -31,10 +31,10 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 The evaluation process consists of the following steps:
 
-| Step | Description      | Instruction File                            |
-| ---- | ---------------- | ------------------------------------------- |
-| 0    | Select Patent ID | Use `investigating-database` skill          |
-| 1    | Patent Analysis  | `references/instructions/analyze-patent.md` |
+| Step | Description      | Instruction File                   |
+| ---- | ---------------- | ---------------------------------- |
+| 0    | Select Patent ID | Use `investigating-database` skill |
+| 1    | Patent Analysis  | `references/instructions.md`      |
 
 ## Skill Orchestration
 
@@ -47,9 +47,7 @@ Use the Skill tool to load skills BEFORE starting any work:
 
 ### 2. Execute Evaluation
 
-Follow the detailed evaluation process:
-
-- **Step 1**: See `references/instructions/analyze-patent.md` for patent analysis
+Follow the detailed evaluation process in `references/instructions.md`.
 
 ## State Management
 
@@ -70,9 +68,6 @@ Follow the detailed evaluation process:
 
 ## References
 
-See `references/` directory for:
-
-- **instructions/**: Step-based documentation
-  - `analyze-patent.md`: Patent analysis and claim decomposition (parallel processing)
-- **examples.md**: Usage examples and detailed workflows
-- **troubleshooting.md`: Common issues and solutions
+- `references/instructions.md` - Detailed evaluation process instructions
+- `references/examples.md` - Usage examples and detailed workflows
+- `references/troubleshooting.md` - Common issues and solutions
