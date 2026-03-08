@@ -8,7 +8,18 @@ metadata:
 
 # Phase 3: Evaluation
 
-Your task is to Analyze the Patent and create the Specification.
+## Purpose
+
+Generate a detailed evaluation report for a screened patent by analyzing claim elements, legal status, and creating investigation specifications for prior art search.
+
+## Prerequisites
+
+- `patents.db` must exist with `screened_patents` table populated (from Phase 2 Screening)
+- `0-specifications/specification.md` must exist (Product/Theme definition from Phase 0)
+- `patent-kit:investigating-database` skill available for querying next patent
+- `constitution-reminding` skill must be loaded
+- `legal-checking` skill must be loaded
+- `google-patent-cli:patent-fetch` skill available for retrieving patent data
 
 ## Quick Start
 

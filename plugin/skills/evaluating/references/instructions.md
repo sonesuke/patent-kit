@@ -14,18 +14,8 @@ Generate a detailed evaluation report for a screened patent. This phase analyzes
 
 - **Patent ID**: `<patent-id>` (optional)
   - If not specified, the next uninvestigated relevant patent will be automatically selected from the database.
-- **Specification**: `0-specifications/specification.md` (generated in Phase 0).
-- **Skills**: `constitution-reminding`, `legal-checking`, `google-patent-cli` (patent-fetch) from marketplace.
 
 ## Process
-
-### User Interview for Product Understanding
-
-For accurate claim analysis, understanding the target product is crucial.
-
-- **Rule**: Ensure `0-specifications/specification.md` exists and contains complete product information.
-- **Check**: If specification is incomplete or missing, notify the user before proceeding.
-- **Information Needed**: Clear definition of the "Target Product" to compare against claim elements.
 
 ### Step 0: Determine Patent ID
 
@@ -72,7 +62,6 @@ If no patent ID is provided, query the database for the next patent:
 
 ## Quality Gates
 
-- [ ] **Specification Check**: Does `0-specifications/specification.md` exist with complete product information?
 - [ ] **Skills Loaded**: `constitution-reminding` and `legal-checking` skills loaded successfully.
 - [ ] **Patent Data Retrieved**: `google-patent-cli:patent-fetch` skill used to fetch patent details.
 - [ ] **Claim Analysis**: Constituent elements are clearly identified.
