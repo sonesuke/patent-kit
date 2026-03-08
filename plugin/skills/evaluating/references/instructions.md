@@ -49,13 +49,9 @@ If no patent ID is provided, query the database for the next patent:
    - Load `legal-checking` skill to understand legal compliance guidelines
 
 2. **Retrieve Data**:
-   - Use the `google-patent-cli:patent-fetch` MCP tool to get complete patent details
-   - The tool returns a dataset name (e.g., "fetch-abc123")
-   - Use `execute_cypher` to query specific fields from the dataset
-   - Example query:
-     ```cypher
-     MATCH (p:Patent) RETURN p.title, p.abstract_text, p.claims
-     ```
+   - Use the `google-patent-cli:patent-fetch` skill with the patent ID
+   - The skill handles data retrieval and provides access to patent details
+   - Refer to the patent-fetch skill documentation for data access methods
 
 3. **Analyze**: Identify Constituent Elements.
    - **Independent Claim**: Decompose Claim 1 into elements (A, B, C...).
@@ -69,15 +65,6 @@ If no patent ID is provided, query the database for the next patent:
 4. **Draft**: Fill `[evaluation-template.md](assets/evaluation-template.md)`.
 
 5. **Save**: `3-investigations/<patent-id>/evaluation.md`.
-
-### Output Management
-
-To maintain context window efficiency:
-
-- **Rule**: Use MCP tools for data access.
-  - **DO NOT** manually read JSON files or use Read tool on patent data files.
-  - **DO NOT** use jq or other CLI tools to parse patent data.
-  - **USE** `execute_cypher` to query specific fields from the MCP dataset.
 
 ## Output
 

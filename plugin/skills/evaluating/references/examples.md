@@ -9,9 +9,8 @@
 1. **Check Specification**: Verify `0-specifications/specification.md` exists
 2. **Load Skills**: Load `constitution-reminding` and `legal-checking` skills
 3. **Fetch Patent Data**:
-   - Use `google-patent-cli:patent-fetch` MCP tool with patent ID "JP-2023-12345-A"
-   - Note the returned dataset name (e.g., "fetch-abc123")
-   - Use `execute_cypher` to query fields like title, abstract, claims
+   - Use `google-patent-cli:patent-fetch` skill with patent ID "JP-2023-12345-A"
+   - The skill provides access to all patent details
 4. **Analyze Claims**:
    - Read Claim 1 and decompose into elements (A, B, C...)
    - Identify key dependent claims

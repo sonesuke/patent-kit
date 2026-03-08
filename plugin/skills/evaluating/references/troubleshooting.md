@@ -168,43 +168,6 @@ SELECT COUNT(*) FROM screened_patents WHERE judgment = 'relevant';
 - Don't move or rename template files
 - Regularly verify plugin integrity
 
-### Issue: "Patent data too large to process"
-
-**Possible Causes**:
-
-1. Patent description is very long
-2. Attempting to load entire dataset into context
-3. Querying too many fields at once
-
-**Solutions**:
-
-1. **Use Cypher Queries**:
-   - Use `execute_cypher` to query specific fields from the MCP dataset
-   - Example:
-     ```cypher
-     MATCH (p:Patent) RETURN p.title, p.abstract_text
-     ```
-   - Request only the fields you need
-
-2. **Query Specific Sections**:
-   - Use Cypher to filter specific data
-   - Example for claims only:
-     ```cypher
-     MATCH (p:Patent) RETURN p.claims
-     ```
-
-3. **Avoid Large Result Sets**:
-   - Use specific RETURN clauses
-   - Add WHERE clauses to filter data
-   - Process data in chunks if needed
-
-**Best Practice**:
-
-- Always use MCP tools and Cypher queries for data access
-- Do NOT manually read JSON files
-- Do NOT use jq or other CLI tools
-- Keep context window efficient by querying only needed fields
-
 ### Issue: "Constitution or Legal Checker skill not loaded"
 
 **Possible Causes**:
