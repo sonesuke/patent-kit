@@ -49,7 +49,6 @@ Process all patents from the `target_patents` table.
    - **Request**: "Get list of unscreened patent IDs"
 
 2. **Screen Patents**:
-
    - **If 1-2 patents**: Process directly following the steps below
    - **If multiple patents (3+)**: MUST use the Agent tool to launch subagents in parallel
      - Each subagent processes one patent

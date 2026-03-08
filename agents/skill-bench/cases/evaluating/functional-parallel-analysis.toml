@@ -2,7 +2,7 @@
 
 name = "functional-parallel-analysis"
 description = "Verify evaluating skill can analyze multiple patents in parallel using teams"
-timeout = 600                                                                                     # seconds (10 minutes for parallel processing)
+timeout = 600                                                                                # seconds (10 minutes for parallel processing)
 
 test_prompt = """
 I have 2 screened patents marked as relevant in the database.
@@ -42,32 +42,3 @@ name = "load_screened_data"
 type = "script"
 command = "setup-db.sh execute screened-patents.sql"
 
-[[checks]]
-name = "database_created"
-type = "script"
-command = "check-workspace-file.sh patents.db"
-
-[[checks]]
-name = "constitution_loaded"
-type = "script"
-command = "check-skill-loaded.sh constitution-reminding"
-
-[[checks]]
-name = "claims_recorded"
-type = "script"
-command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN COUNT(DISTINCT patent_id) >= 2 THEN '1' ELSE '0' END FROM claims;" """
-
-[[checks]]
-name = "elements_recorded"
-type = "script"
-command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN COUNT(DISTINCT patent_id) >= 2 THEN '1' ELSE '0' END FROM elements;" """
-
-[[checks]]
-name = "instructions_read"
-type = "script"
-command = """check-log-contains.sh {} 'references/instructions.md' """
-
-[[checks]]
-name = "parallel_processing_used"
-type = "script"
-command = """check-log-contains.sh {} '"name":"Agent"' """

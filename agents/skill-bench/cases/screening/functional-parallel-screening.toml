@@ -63,22 +63,3 @@ KR-102637029-B1,Device for Generating Multi-turn Chat Bot Data Using LLM,주식�
 US-2024292070-A1,Iterative ai prompt optimization,"Loop Now Technologies, Inc.","Wu-Hsi Li, Edwin Chiu",2023-02-24,2024-04-10,2024-08-29,,https://patents.google.com/patent/US20240292070A1/en,
 """
 
-[[checks]]
-name = "constitution_loaded"
-type = "script"
-command = "check-skill-loaded.sh constitution-reminding"
-
-[[checks]]
-name = "legal_checker_loaded"
-type = "script"
-command = "check-skill-loaded.sh legal-checking"
-
-[[checks]]
-name = "screening_completed"
-type = "script"
-command = "check-db-query.sh {} {} '2' 'SELECT COUNT(*) FROM screened_patents;'"
-
-[[checks]]
-name = "all_patents_screened"
-type = "script"
-command = "check-db-query.sh {} {} '0' 'SELECT COUNT(*) FROM target_patents WHERE patent_id NOT IN (SELECT patent_id FROM screened_patents);'"

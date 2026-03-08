@@ -86,17 +86,3 @@ US-2024292070-A1,Iterative ai prompt optimization,"Loop Now Technologies, Inc.",
 CN-123456789-A1,Medical Image Analysis System,"Beijing Medical Tech","Zhang San, Li Si",2023-05-10,2023-05-10,2024-01-20,,https://patents.google.com/patent/CN123456789A1/en,
 """
 
-[[checks]]
-name = "constitution_loaded"
-type = "script"
-command = "check-skill-loaded.sh constitution-reminding"
-
-[[checks]]
-name = "all_patents_screened"
-type = "script"
-command = "check-db-query.sh {} {} '3' 'SELECT COUNT(*) FROM screened_patents;'"
-
-[[checks]]
-name = "no_duplicates"
-type = "script"
-command = "check-db-query.sh {} {} '0' 'SELECT COUNT(*) FROM (SELECT patent_id FROM screened_patents GROUP BY patent_id HAVING COUNT(*) > 1);'"

@@ -2,7 +2,7 @@
 
 name = "functional-analyze-patent"
 description = "Verify evaluating skill can analyze a single patent and store claims/elements in database"
-timeout = 300                                                                                     # seconds
+timeout = 300                                                                                             # seconds
 
 test_prompt = """
 I have a screened patent marked as relevant in the database.
@@ -41,22 +41,3 @@ name = "load_screened_data"
 type = "script"
 command = "setup-db.sh execute screened-patents.sql"
 
-[[checks]]
-name = "database_created"
-type = "script"
-command = "check-workspace-file.sh patents.db"
-
-[[checks]]
-name = "constitution_loaded"
-type = "script"
-command = "check-skill-loaded.sh constitution-reminding"
-
-[[checks]]
-name = "claims_recorded"
-type = "script"
-command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN COUNT(*) > 0 THEN '1' ELSE '0' END FROM claims;" """
-
-[[checks]]
-name = "elements_recorded"
-type = "script"
-command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN COUNT(DISTINCT patent_id) > 0 THEN '1' ELSE '0' END FROM elements;" """

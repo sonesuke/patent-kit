@@ -22,10 +22,20 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 ## Prerequisites
 
 - `patents.db` must exist with `screened_patents` table populated (from Phase 2 Screening)
-- Load `constitution-reminding` skill before starting analysis
 - Load `investigation-preparing` skill for data retrieval operations
 - Load `investigation-recording` skill for data recording operations
 - `google-patent-cli:patent-fetch` skill available for retrieving patent data
+
+## Constitution
+
+### Core Principles
+
+**Element-by-Element Analysis (The Golden Rule)**:
+
+- Every claim analysis MUST test the target invention against the reference patent element by element
+- Break down inventions into Elements A, B, C
+- Find references disclosing A AND B AND C for anticipation (Novelty)
+- Do not rely on "general similarity"
 
 ## Skill Orchestration
 

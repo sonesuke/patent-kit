@@ -23,11 +23,28 @@ Generate high-precision search queries and create a consolidated patent populati
 ## Prerequisites
 
 - `0-specifications/specification.md` must exist (generated in Phase 0)
-- Constitution skill must be loaded
+
+## Constitution
+
+### Core Principles
+
+**Element-by-Element Analysis (The Golden Rule)**:
+
+- Every claim analysis MUST test the target invention against the reference patent element by element
+- Break down inventions into Elements A, B, C
+- Find references disclosing A AND B AND C for anticipation (Novelty)
+- Do not rely on "general similarity"
+
+**Search Query Optimization**:
+
+- Start with broad, essential keywords (2-4 terms maximum)
+- If zero results, progressively simplify:
+  1. Remove technical modifiers and adjectives
+  2. Break compound concepts into separate searches
+  3. Try synonyms or broader terms
+- Document query evolution in reports
 
 ## Skill Orchestration
-
-### 1. Load Constitution (MANDATORY)
 
 Use the Skill tool to load the `constitution-reminding` skill BEFORE starting any work. This is required to understand the core principles.
 

@@ -32,8 +32,40 @@ Your task is to Execute the Plan and Report Findings.
   - Message: "Prior Art report already exists for <patent-id>. Do you want to proceed with re-investigation?"
 - **If it does NOT exist**: Proceed with the standard process.
 
-1. **Initialize**: Load the `constitution-reminding` skill.
-2. **Load Legal Checker**: Load the `legal-checking` skill for legal compliance guidelines.
+## Constitution
+
+### Core Principles
+
+**Element-by-Element Analysis (The Golden Rule)**:
+
+- Every claim analysis MUST test the target invention against the reference patent element by element
+- Break down inventions into Elements A, B, C
+- Find references disclosing A AND B AND C for anticipation (Novelty)
+- Do not rely on "general similarity"
+
+**Comprehensive Literature Coverage**:
+
+- Use BOTH `google-patent-cli:patent-search`/`google-patent-cli:patent-fetch` and `arxiv-cli:arxiv-search`/`arxiv-cli:arxiv-fetch`
+- Check academic papers, conference proceedings, and technical publications alongside patents
+- Document search results from both sources in the final report
+
+**Evidence-Based Reporting**:
+
+- Every assertion MUST be backed by specific citations
+- Never say "This feature is known"
+- Say "This feature is disclosed in [Patent ID], Column X, Line Y"
+
+**Prior Art Cutoff Date**:
+
+- Prior art search results must be published BEFORE the target's priority date
+- Use publication dates, not priority dates, when determining prior art cutoff
+
+**Search Query Optimization**:
+
+- Start with broad, essential keywords (2-4 terms maximum)
+- If zero results, progressively simplify queries
+- Document query evolution in reports
+
 3. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
 4. **Plan & Execute Search**:
    - **Strategy: Multi-Layer Search** (Standard Procedure):

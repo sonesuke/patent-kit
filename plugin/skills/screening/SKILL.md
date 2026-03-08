@@ -23,16 +23,32 @@ Filter collected patents by legal status and relevance to prepare for Evaluation
 
 - `patents.db` must exist (generated in Phase 1 Targeting, `target_patents` table)
 - `0-specifications/specification.md` must exist (Product/Theme definition)
-- Constitution-reminding skill must be loaded
 - Legal-checking skill must be loaded
+
+## Constitution
+
+### Core Principles
+
+**Element-by-Element Analysis (The Golden Rule)**:
+
+- Every claim analysis MUST test the target invention against the reference patent element by element
+- Break down inventions into Elements A, B, C
+- Find references disclosing A AND B AND C for anticipation (Novelty)
+- Do not rely on "general similarity"
+
+**Risk-Averse Screening**:
+
+- When in doubt, err on the side of inclusion
+- If a reference is "borderline", grade it as 'B' (Relevant) rather than 'D' (Noise)
+- Missing a risk is worse than reviewing an extra document
+
+**Breadth of Published Applications**:
+
+- For published applications (not yet granted), consider "Detailed Description" and embodiments
+- Don't judge solely based on current claims
 
 ## Skill Orchestration
 
-### 1. Load Required Skills (MANDATORY)
-
-Use the Skill tool to load skills BEFORE starting any work:
-
-1. **Constitution**: `constitution-reminding` - Understand core principles
 2. **Legal Checker**: `legal-checking` - Legal compliance guidelines
 
 ### 2. Execute Screening
