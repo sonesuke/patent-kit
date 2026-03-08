@@ -1,82 +1,102 @@
 # Step 1: Patent Analysis
 
-Analyze the patent to extract key information for evaluation.
+Analyze patents to extract key information for evaluation.
 
-## 0. Load Required Skills
+## Prerequisites
 
-Use the Skill tool to load the following skills BEFORE starting analysis:
+- `patents.db` must exist (generated in Phase 2 Screening, `screened_patents` table)
+- `0-specifications/specification.md` must exist (Product/Theme definition)
+- Constitution-reminding skill loaded for core principles
 
-1. **Constitution**: `constitution-reminding`
-   - Purpose: Understand core principles for patent evaluation
-   - Provides guidelines on legal compliance and analysis
+## Process Overview
 
-## 1. Retrieve Patent Data
+### Phase 1: Preparation
 
-Use the `google-patent-cli:patent-fetch` skill with the patent ID:
+1. **Load Constitution**: Use the Skill tool to load the `constitution-reminding` skill
+2. **Read Specification**: Read `0-specifications/specification.md` to understand Theme, Domain, and Target Product
 
-- The skill handles data retrieval and provides access to patent details
-- Refer to patent-fetch skill documentation for data access methods
+### Phase 2: Automated Patent Analysis
 
-## 2. Analyze Claims
+#### Database Integration
 
-### Independent Claim Analysis
+Use the Skill tool to load the `investigating-database` skill for:
 
-- Decompose Claim 1 into constituent elements (A, B, C...)
-- Identify each element's technical scope
-- Document relationships between elements
+- Getting next relevant patent IDs for evaluation
+- Recording claims and elements
+- Getting progress statistics
 
-### Dependent Claims Analysis
+#### Analysis Process
 
-- Identify key dependent claims that meaningfully narrow the scope
-- Note dependent claims that add critical features
-- Summarize how dependent claims modify the independent claim
+Process all relevant patents from the `screened_patents` table using **parallel agents**:
 
-### Divisional Application Check
+> [!NOTE]
+> **Parallel Processing with Team**:
+>
+> - Create a team of multiple agents to process patents in parallel
+> - Each agent works independently on assigned patents
+> - Results are aggregated after all agents complete
 
-- Verify if this is a divisional application
-- **If yes**: Use the parent application's filing date (or priority date) as the effective reference date for prior art
-- Document divisional relationship in the report
+**Process Steps**:
 
-### Legal Status Verification
+1. **Get Patents to Analyze**:
+   - **Action**: Use the `investigating-database` skill
+   - **Request**: "Get list of relevant patents without evaluation"
+   - **Divide** the list into batches for parallel processing
 
-**3-Year Rule** (Japan):
+2. **Create Analysis Team**:
+   - Use the Agent tool to create a team with multiple teammates
+   - Recommended team size: 3-5 agents depending on patent volume
+   - Each teammate will process a subset of patents
 
-- Examination must be requested within 3 years of filing
-- Check if filing date exceeds 3 years from current date
+3. **Assign Patents to Agents**:
+   - Divide patents evenly among teammates
+   - For each agent, send message with assigned patent IDs
+   - Request: "Analyze these patents: [ID1, ID2, ID3, ...]"
 
-**Zombie Pending**:
+4. **Agent Analysis Task** (each teammate executes independently):
 
-- If Filing Date is > 3 years ago AND Status is "Pending" (and not Granted), it is likely "Deemed Withdrawn"
-- **Action**: Mark the Status as `Pending (Likely Withdrawn - Examination Deadline Exceeded)` in the report
+   For each assigned patent:
+   - **Fetch Data**: Use the Skill tool to load `google-patent-cli:patent-fetch` skill
+     - This will call `fetch_patent` with your patent_id
+     - The skill will automatically retrieve patent details including claims
+     - **DO NOT** manually read JSON files or use Read tool on patent data files
+   - **Analyze Claims**:
+     - **Independent Claims**: Decompose Claim 1 into constituent elements (A, B, C...)
+       - Identify each element's technical scope
+       - Document relationships between elements
+     - **Dependent Claims**: Identify key dependent claims that meaningfully narrow the scope
+       - Note dependent claims that add critical features
+       - Summarize how dependent claims modify the independent claim
+   - **Divisional Application Check**:
+     - Verify if this is a divisional application
+     - **If yes**: Use the parent application's filing date (or priority date) as the effective reference date for prior art
+     - Document divisional relationship
+   - **Legal Status Verification**:
+     - **3-Year Rule** (Japan): Examination must be requested within 3 years of filing
+     - **Zombie Pending**: If Filing Date > 3 years ago AND Status is "Pending", mark as "Pending (Likely Withdrawn - Examination Deadline Exceeded)"
+   - **Record Claims**: Use `investigating-database` skill
+     - Request: "Record claims for patent <patent-id>"
+     - Extract claim data (claim_number, claim_type, claim_text)
+     - Store all claims in database
+   - **Record Elements**: Use `investigating-database` skill
+     - Request: "Record elements for claim <claim_number>"
+     - For each analyzed claim, record constituent elements
+     - Store element_label (A, B, C...) and element_description
 
-## 3. Store Analysis in Database
+5. **Wait for Completion**:
+   - Wait for all teammates to complete their tasks
+   - All claims and elements are now in the database
 
-Use the `investigating-database` skill to record claims and elements in the database:
+## Output
 
-### Record Claims
-
-- Request: "Record claims for patent <patent-id>"
-- Extract claim data from the fetched patent (claim_number, claim_type, claim_text)
-- Store all claims (independent and dependent) in the database
-
-### Record Elements
-
-- Request: "Record elements for claim <claim_number>"
-- For each analyzed claim, record its constituent elements
-- Use claim_number (1, 2, 3...)
-- Store element_label (A, B, C...) and element_description
-
-This enables:
-
-- Future querying and comparison of claims and elements
-- Progress tracking across multiple evaluation sessions
-- Data-driven analysis and reporting
+- `patents.db` (claims table): Patent claims with types and text
+- `patents.db` (elements table): Constituent elements of claims with labels and descriptions
 
 ## Quality Gates
 
 - [ ] **Constitution Loaded**: `constitution-reminding` skill loaded successfully
-- [ ] **Patent Data Retrieved**: `google-patent-cli:patent-fetch` skill used to fetch patent details
-- [ ] **Independent Claim Analyzed**: Claim 1 decomposed into elements (A, B, C...)
+- [ ] **Patents Retrieved**: All assigned patents fetched using `google-patent-cli:patent-fetch` skill
+- [ ] **Independent Claims Analyzed**: Claim 1 decomposed into elements (A, B, C...)
 - [ ] **Dependent Claims Identified**: Key dependent claims summarized
 - [ ] **Divisional Check Completed**: Divisional application status verified (if applicable)
 - [ ] **Status Verification Completed**: Legal status and 3-year rule checked
