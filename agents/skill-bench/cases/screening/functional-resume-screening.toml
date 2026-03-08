@@ -107,5 +107,6 @@ type = "script"
 command = "check-db-query.sh {} {} '>=3' 'SELECT COUNT(*) FROM screened_patents;'"
 
 [[checks]]
-command = "check-db-query.sh {} {} '=1' 'SELECT COUNT(*) FROM screened_patents WHERE patent_id = '\''KR102637029B1'\'';'"name = "no_duplicates"
+name = "no_duplicates"
 type = "script"
+command = "check-db-query.sh {} {} '=1' 'SELECT COUNT(*) FROM screened_patents WHERE patent_id = \"KR102637029B1\";'"
