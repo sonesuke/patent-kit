@@ -57,11 +57,11 @@ type = "script"
 command = "check-db-initialized.sh"
 
 [[checks]]
-name = "patent_selected"
+name = "relevant_patents_exist"
 type = "script"
-command = "evaluating/check-patent-selected.sh US20240346271A1"
+command = "check-db-query.sh {} {} '2' 'SELECT COUNT(*) FROM screened_patents WHERE judgment = \"relevant\";'"
 
 [[checks]]
-name = "not_already_evaluated"
+name = "patent_selected"
 type = "script"
-command = "evaluating/check-not-evaluated.sh US20240346271A1"
+command = "check-db-query.sh {} {} 'US20240346271A1' 'SELECT patent_id FROM screened_patents WHERE judgment = \"relevant\" AND patent_id NOT IN (SELECT DISTINCT SUBSTR(path, LENGTH(\"3-investigations/\") + 1, INSTR(SUBSTR(path, LENGTH(\"3-investigations/\") + 1), \"/\") - 1) FROM (SELECT path FROM fsdir WHERE path LIKE \"3-investigations/%\")) ORDER BY screened_at ASC LIMIT 1;'"

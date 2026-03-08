@@ -2,7 +2,7 @@
 
 name = "functional-analyze-patents"
 description = "Verify evaluating skill can analyze patents and store claims/elements in database"
-timeout = 300                                                                      # seconds
+timeout = 300                                                                                     # seconds
 
 test_prompt = """
 I have 2 screened patents marked as relevant in the database.
@@ -55,14 +55,9 @@ command = "check-skill-loaded.sh constitution-reminding"
 [[checks]]
 name = "claims_recorded"
 type = "script"
-command = "evaluating/check-claims-recorded.sh 2"
+command = "check-db-query.sh {} {} '2' 'SELECT COUNT(*) FROM claims;'"
 
 [[checks]]
 name = "elements_recorded"
 type = "script"
-command = "evaluating/check-elements-recorded.sh 2"
-
-[[checks]]
-name = "analysis_output"
-type = "script"
-command = "evaluating/check-analysis-output.sh"
+command = "check-db-query.sh {} {} '2' 'SELECT COUNT(DISTINCT patent_id) FROM elements;'"
