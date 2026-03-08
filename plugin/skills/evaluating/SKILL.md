@@ -1,6 +1,13 @@
 ---
 name: evaluating
-description: "Generates a detailed evaluation report for a screened patent. Triggered when the user asks to 'evaluate the patent' or 'analyze claim elements (Step 3)'."
+description: |
+  Analyzes screened patents by decomposing claims and elements.
+
+  Triggered when:
+  - The user asks to:
+    * "evaluate the patent"
+    * "analyze claim elements"
+  - `patents.db` exists with `screened_patents` table populated
 metadata:
   author: sonesuke
   version: 1.0.0

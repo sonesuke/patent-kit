@@ -64,16 +64,16 @@ This command creates all necessary tables (`target_patents`, `screened_patents`)
 
 Based on the user request, select the appropriate database operation:
 
-| Operation              | Trigger                                       | Instruction File Path                          |
-| ---------------------- | --------------------------------------------- | ---------------------------------------------- |
-| Initialize             | Database not found (auto-check)               | SKILL.md → Database Initialization section     |
-| Import CSV             | "import CSV", "load data"                     | `references/instructions/import-csv.md`        |
-| Get Patent ID          | "get patent ID", "fetch patent by row"        | `references/instructions/get-patent-id.md`     |
-| Select Patent for Eval | "select patent ID", "next patent to evaluate" | `references/instructions/select-patent-id.md`  |
-| Record Screening       | "record screening", "save result"             | `references/instructions/record-screening.md`  |
-| Record Claims          | "record claims", "save claims"                | `references/instructions/record-claims.md`     |
-| Record Elements        | "record elements", "save elements"            | `references/instructions/record-elements.md`   |
-| Get Statistics         | "get statistics", "show progress"             | `references/instructions/get-statistics.md`    |
+| Operation              | Trigger                                       | Instruction File Path                         |
+| ---------------------- | --------------------------------------------- | --------------------------------------------- |
+| Initialize             | Database not found (auto-check)               | SKILL.md → Database Initialization section    |
+| Import CSV             | "import CSV", "load data"                     | `references/instructions/import-csv.md`       |
+| Get Patent ID          | "get patent ID", "fetch patent by row"        | `references/instructions/get-patent-id.md`    |
+| Select Patent for Eval | "select patent ID", "next patent to evaluate" | `references/instructions/select-patent-id.md` |
+| Record Screening       | "record screening", "save result"             | `references/instructions/record-screening.md` |
+| Record Claims          | "record claims", "save claims"                | `references/instructions/record-claims.md`    |
+| Record Elements        | "record elements", "save elements"            | `references/instructions/record-elements.md`  |
+| Get Statistics         | "get statistics", "show progress"             | `references/instructions/get-statistics.md`   |
 
 **IMPORTANT**: Always use the full path starting with `references/instructions/` to avoid file search delays.
 
