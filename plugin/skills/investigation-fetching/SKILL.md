@@ -41,8 +41,6 @@ internal reference files for this skill's internal use only.
 - "Get list of all relevant patents"
 - "Get list of relevant patents without evaluation"
 - "Get list of unscreened patent IDs"
-- "Get screening statistics"
-- "Get evaluation progress"
 - "Execute SQL: SELECT COUNT(\*) FROM screened_patents WHERE judgment = 'relevant'"
 
 ## Purpose
@@ -70,7 +68,6 @@ When processing external requests, map them to internal instruction files:
 | "Get list of relevant patents without..." | references/instructions/get-relevant-patents.md   |
 | "Get all relevant patents"                | references/instructions/get-relevant-patents.md   |
 | "Get list of unscreened patent IDs"       | references/instructions/get-unscreened-patents.md |
-| "Get evaluation progress"                 | references/instructions/get-evaluation-stats.md   |
 
 **CRITICAL**: These reference files are for INTERNAL USE ONLY. External agents
 should invoke via Skill tool, not read these files.
@@ -118,11 +115,6 @@ WHERE judgment = 'relevant'
   AND patent_id NOT IN (SELECT patent_id FROM claims);
 ```
 
-### Workflow 3: Get Statistics
-
-1. External: "Get evaluation progress"
-2. Internal: Execute get-evaluation-stats.md → Return JSON stats
-
 ## State Management
 
 ### Initial State
@@ -142,7 +134,6 @@ agents should NOT read these:
   - `get-next-patent.md`: Get next patent for evaluation
   - `get-relevant-patents.md`: Get list of relevant patents
   - `get-unscreened-patents.md`: Get list of unscreened patents
-  - `get-evaluation-stats.md`: Evaluation progress statistics
 - \*\*references/schema.md`: Database schema documentation
 
 **IMPORTANT**: External agents should invoke this skill via the Skill tool, not

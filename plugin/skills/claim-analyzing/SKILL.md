@@ -1,6 +1,13 @@
 ---
 name: claim-analyzing
-description: "Generates a claim analysis report for a patent. Triggered when the user asks to 'perform claim analysis'."
+description: |
+  Performs claim analysis by comparing product specification against patent evaluation results.
+
+  Triggered when:
+  - The user asks to:
+    * "perform claim analysis"
+    * "analyze claim elements"
+  - `3-investigations/<patent-id>/evaluation.md` exists for patents
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -8,108 +15,61 @@ metadata:
 
 # Claim Analysis
 
-Your task is to create the Claim Analysis Report based on the Spec.
+## Purpose
 
-## Instructions
+Perform detailed claim analysis by comparing product specification against patent evaluation results, generating claim analysis reports for each patent.
 
-### User Interview for Product Understanding
+## Prerequisites
 
-For accurate claim analysis, understanding the target product is crucial.
+- `specification.md` must exist with complete product information
+- `3-investigations/<patent-id>/evaluation.md` must exist for patents to analyze
+- Load `legal-checking` skill for legal compliance guidelines
 
-- **Rule**: Ensure `specification.md` exists and contains complete product information.
-- **Check**: If specification is incomplete or missing, notify the user before proceeding.
-- **Information Needed**: Clear definition of the "Target Product" to compare against claim elements.
+## Constitution
 
-### Template Adherence
+### Core Principles
 
-- **Requirement**: Strict adherence to the output template is required.
-- **Template**: `templates/claim-analysis-template.md` - Use for `3-investigations/<patent-id>/claim-analysis.md`
+**Element-by-Element Analysis (The Golden Rule)**:
 
-### Input
+- Every claim analysis MUST test the target product against the patent elements element by element
+- Break down inventions into Elements A, B, C
+- Find references disclosing A AND B AND C for anticipation (Novelty)
+- Do not rely on "general similarity"
 
-- **Patent ID**: `<patent-id>` (optional)
-  - If not specified, the next patent pending claim analysis will be automatically selected.
+**No Legal Assertions**:
 
-### Process
+- Use descriptive technical language only
+- Avoid legal conclusions like "infringes" or "does not infringe"
+- Focus on feature comparison and technical overlap
 
-2. **Read Legal Checker**: Load the `legal-checking` skill to understand legal compliance guidelines.
+## Skill Orchestration
 
-#### Step 0: Determine Patent ID
+### Execute Claim Analysis
 
-If no patent ID is provided, run the following to get the next patent:
+**CRITICAL**: Always use subagents for claim analysis. **EVEN FOR A SINGLE PATENT - always launch a subagent.**
 
-- Run: `next-claim-analysis-patent`
+**Process**:
 
-**If a Patent ID IS provided**:
+1. **Get Patents to Analyze**:
+   - Find patents with `evaluation.md` but no `claim-analysis.md`
+   - If user provides patent ID, verify `evaluation.md` exists
+   - If `evaluation.md` does not exist, notify user and wait for confirmation
 
-- Check if `3-investigations/<patent-id>/evaluation.md` already exists.
-- **If it exists**: **ASK the User for confirmation** via `notify_user`.
-  - Message: "Evaluation report already exists for <patent-id>. Do you want to proceed with Claim Analysis based on this evaluation?"
-- **If it does NOT exist**: Proceed with the standard process.
+2. **Analyze Patents**: Launch `claim-analyzer` subagents
 
-> [!NOTE]
-> **Scripts Location**:
->
-> - Linux/Mac: `./scripts/shell/next-claim-analysis-patent.sh`
-> - Windows: `.\scripts\powershell\next-claim-analysis-patent.ps1`
+   For each patent:
+   - Start a `claim-analyzer` subagent
+   - **Each subagent handles exactly one patent**
+   - **CRITICAL: Even if there is only ONE patent, you MUST still use a subagent**
 
-This script finds the first patent in `3-investigations/` that has `evaluation.md` but no `claim-analysis.md` yet.
+3. **Verify Results**: Confirm `claim-analysis.md` files were created
 
-#### Step 1: Comparison Analysis
+## State Management
 
-1. **Read Inputs**: `evaluation.md` (Patent) and `specification.md` (Product) if available.
-   - **Check Sufficiency**: Is the product specification detailed enough to determine the presence/absence of EACH element?
-     - **Potential Feature Check**: Even if a patent feature is MISSING in the spec, if it seems like a useful feature that fits the product concept, **DO NOT assume it is absent**. Instead, **ASK the User** via `notify_user` if they plan to implement it or if it exists.
-   - **Update Specification IMMEDIATELY**: If you conduct a hearing or receive ANY new information (e.g., specific features, presence/absence of elements) from the user, YOU MUST UPDATE `specification.md` FIRST. Do not proceed with analysis until the specification is updated.
+### Initial State
 
-2. **Analyze Comparison**:
-   - Compare Product Features vs Patent Elements.
-   - Identify Matches/Similarities.
-     - **Direct correspondence (Significant Similarity)**: All constituent elements are fully satisfied.
-       - **Note**: In Japanese output, use "対応関係が確認" instead of "文言的一致".
-     - **Equivalence/Similarity**: If direct correspondence is not found but functionality is similar:
-       - **Strict Rule**: Do NOT state "Satisfies the 5 requirements" or "Equivalent".
-       - **Requirement**: Use descriptive language focusing on function and behavior.
-         - **Example**: "The alternative implementation achieves the same functional outcome and exhibits comparable system behavior under typical operating conditions."
-         - **Example**: "The variation represents a commonly used implementation approach."
-       - **Logic Check (Internal only)**: You may consider the standard equivalence factors (Interchangeability, Ease of Interchangeability, etc.) to form your technical opinion, but do NOT explicitly list them as legal requirements in the output.
+- Patents with `evaluation.md` but no `claim-analysis.md` exist
 
-3. **Draft**: Fill `[claim-analysis-template.md](templates/claim-analysis-template.md)`.
-   - **Similarity Assessment**:
-     - **Definitions**:
-       - **Significant**: All elements overlap (Direct correspondence).
-       - **Moderate**: Functional overlap without direct correspondence (See Equivalence).
-       - **Limited**: Clear difference in at least one element.
-     - **Format**:
-       - Overall Similarity MUST be written exactly as: `Overall Similarity: Significant Similarity` (or Moderate Similarity, Limited Similarity).
-       - **Reiteration**: Add the following line at the end of the conclusion: "Note: This technical comparison does not constitute a legal opinion."
-       - Do NOT use other formats like "High (高リスク)".
+### Final State
 
-4. **Save**: `3-investigations/<patent-id>/claim-analysis.md`.
-
-### Output Management
-
-To maintain context window efficiency:
-
-- **Rule**: When reading evaluation.md, use the saved JSON file for patent data.
-  - Path: `3-investigations/<patent-id>/json/<patent-id>.json`
-  - **Requirement**: Do NOT load large JSON outputs directly into context.
-  - **Action**: Use Read tool or jq to access specific fields (e.g., constituent_elements, dependent_claims) from saved JSON.
-
-### Output
-
-- `3-investigations/<patent-id>/claim-analysis.md`: The claim analysis report.
-
-### Quality Gates
-
-- [ ] Product specification is complete and up-to-date.
-- [ ] Conflict Analysis (Claim Chart) is complete and compares all elements.
-- [ ] Similarity levels are assigned to each element (Significant/Moderate/Limited).
-- [ ] Overall Similarity follows strict format: `Overall Similarity: Significant Similarity` (or Moderate/Limited).
-- [ ] **NO Legal Assertions**:
-  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology".
-  - [ ] Avoid citing specific court case examples.
-  - [ ] Use descriptive technical language (e.g., "features not found", "low likelihood of mapping", "fundamental feature").
-- [ ] Claim analysis report follows the template format.
-
-Run /patent-kit:prior-art-researching <patent-id>
+- No patents with `evaluation.md` without corresponding `claim-analysis.md` (all analyzed)
