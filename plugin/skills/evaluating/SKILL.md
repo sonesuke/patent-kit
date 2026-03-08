@@ -22,7 +22,6 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 ## Prerequisites
 
 - `patents.db` must exist with `screened_patents` table populated (from Phase 2 Screening)
-- `0-specifications/specification.md` must exist (Product/Theme definition from Phase 0)
 - Load `constitution-reminding` skill before starting analysis
 - Load `investigating-database` skill for database operations
 - `google-patent-cli:patent-fetch` skill available for retrieving patent data
@@ -34,7 +33,7 @@ The evaluation process consists of the following steps:
 | Step | Description      | Instruction File                   |
 | ---- | ---------------- | ---------------------------------- |
 | 0    | Select Patent ID | Use `investigating-database` skill |
-| 1    | Patent Analysis  | `references/instructions.md`      |
+| 1    | Patent Analysis  | `references/instructions.md`       |
 
 ## Skill Orchestration
 
@@ -43,7 +42,6 @@ The evaluation process consists of the following steps:
 Use the Skill tool to load skills BEFORE starting any work:
 
 1. **Constitution**: `constitution-reminding` - Understand core principles
-2. **Read Specification**: Read `0-specifications/specification.md` to understand Theme, Domain, and Target Product
 
 ### 2. Execute Evaluation
 
@@ -54,7 +52,6 @@ Follow the detailed evaluation process in `references/instructions.md`.
 ### Initial State
 
 - `patents.db` exists with `screened_patents` table populated (from Phase 2 Screening)
-- `0-specifications/specification.md` exists (Product/Theme definition)
 - No claims/elements data in database (or partial evaluation in progress)
 
 ### Final State
