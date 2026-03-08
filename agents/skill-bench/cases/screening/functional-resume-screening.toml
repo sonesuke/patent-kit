@@ -32,11 +32,12 @@ VALUES
 [[setup]]
 path = "pre-screened-data.sql"
 content = """
-INSERT INTO screened_patents (patent_id, judgment, reason, created_at)
+INSERT INTO screened_patents (patent_id, judgment, reason, abstract_text, screened_at)
 VALUES (
     'KR102637029B1',
     'relevant',
     'Directly relates to LLM-based multi-turn chatbot data generation',
+    'Device for Generating Multi-turn Chat Bot Data Using LLM',
     datetime('now')
 );
 """
@@ -98,4 +99,4 @@ command = "check-db-query.sh {} {} '3' 'SELECT COUNT(*) FROM screened_patents;'"
 [[checks]]
 name = "no_duplicates"
 type = "script"
-command = "check-db-query.sh {} {} '0' 'SELECT patent_id, COUNT(*) FROM screened_patents GROUP BY patent_id HAVING COUNT(*) > 1;'"
+command = "check-db-query.sh {} {} '0' 'SELECT COUNT(*) FROM (SELECT patent_id FROM screened_patents GROUP BY patent_id HAVING COUNT(*) > 1);'"
