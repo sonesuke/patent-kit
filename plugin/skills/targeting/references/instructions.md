@@ -45,12 +45,17 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 #### Phase 1: Competitor Patent Research
 
 1. **Start Broad**:
-   - **Action**: Use the `google-patent-cli:patent-search` skill with:
-     - assignee: "<Combined Assignees>"
-     - country: "<Target Country>"
-     - before: "<Target Release Date>"
-     - after: "<Priority Date Cutoff>"
-     - limit: 20
+   - **Action**: Use the **Skill tool** to load `google-patent-cli:patent-search`
+   - **Request format**:
+     ```
+     patent_search({
+       assignee: ["<Combined Assignees>"],
+       country: "<Target Country>",
+       filing_before: "<Target Release Date>",
+       filing_after: "<Priority Date Cutoff>",
+       limit: 20
+     })
+     ```
    - **CRITICAL: Check skill response**:
      - Verify the skill completed successfully and returned results
      - **If skill fails**: Refer to `references/troubleshooting.md` for error handling
@@ -74,12 +79,17 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 
 1. **Apply Keywords**:
    - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `keywords.md`).
-   - **Action**: Use the `google-patent-cli:patent-search` skill with:
-     - query: "\"keyword1\" AND \"keyword2\" AND ..."
-     - country: "<Target Country>"
-     - before: "<Target Release Date>"
-     - after: "<Priority Date Cutoff>"
-     - limit: 20
+   - **Action**: Use the **Skill tool** to load `google-patent-cli:patent-search`
+   - **Request format**:
+     ```
+     patent_search({
+       query: "\"keyword1\" AND \"keyword2\" AND ...",
+       country: "<Target Country>",
+       filing_before: "<Target Release Date>",
+       filing_after: "<Priority Date Cutoff>",
+       limit: 20
+     })
+     ```
    - **CRITICAL: Check skill response**:
      - Verify the skill completed successfully and returned results
      - **If skill fails**: Refer to `references/troubleshooting.md` for error handling

@@ -5,7 +5,7 @@ description = "Verify claim-analyzing skill uses Agent tool to analyze a patent,
 timeout = 120
 
 test_prompt = """
-Analyze patent US20240292070A1 for claim analysis.
+Perform claim analysis for patent US20240292070A1.
 - Compare product features against patent elements
 - Store similarity results in the database
 

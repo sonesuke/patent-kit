@@ -1,13 +1,14 @@
 ---
 name: claim-analyzing
 description: |
-  Performs claim analysis by comparing product specification against patent evaluation results.
+  Performs claim analysis by comparing product features against patent elements.
 
   Triggered when:
   - The user asks to:
     * "perform claim analysis"
     * "analyze claim elements"
-  - `3-investigations/<patent-id>/evaluation.md` exists for patents
+    * "analyze claims"
+  - `patents.db` exists with `elements` table populated and `features` table populated
 metadata:
   author: sonesuke
   version: 1.0.0
