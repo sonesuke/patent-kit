@@ -23,13 +23,9 @@ Define the product concept and identify competitors. This phase establishes the 
 
 ## Prerequisites
 
-- Constitution skill must be loaded
+No specific prerequisites required.
 
 ## Skill Orchestration
-
-### 1. Load Constitution (MANDATORY)
-
-### 2. Load Required Skills
 
 Use the Skill tool to verify that the following skills are available:
 
