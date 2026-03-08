@@ -17,7 +17,7 @@ metadata:
 
 ## Purpose
 
-Generate a detailed evaluation report for a screened patent by analyzing claim elements, legal status, and creating investigation specifications for prior art search.
+Analyze screened patents by decomposing claims into elements and storing analysis data in the database for further processing.
 
 ## Prerequisites
 
@@ -31,11 +31,10 @@ Generate a detailed evaluation report for a screened patent by analyzing claim e
 
 The evaluation process consists of the following steps:
 
-| Step | Description       | Instruction File                             |
-| ---- | ----------------- | -------------------------------------------- |
-| 0    | Select Patent ID  | Use `investigating-database` skill           |
-| 1    | Patent Analysis   | `references/instructions/analyze-patent.md`  |
-| 2    | Report Generation | `references/instructions/generate-report.md` |
+| Step | Description      | Instruction File                            |
+| ---- | ---------------- | ------------------------------------------- |
+| 0    | Select Patent ID | Use `investigating-database` skill          |
+| 1    | Patent Analysis  | `references/instructions/analyze-patent.md` |
 
 ## Skill Orchestration
 
@@ -51,7 +50,6 @@ Use the Skill tool to load skills BEFORE starting any work:
 Follow the detailed evaluation process:
 
 - **Step 1**: See `references/instructions/analyze-patent.md` for patent analysis
-- **Step 2**: See `references/instructions/generate-report.md` for report generation
 
 ## State Management
 
@@ -59,17 +57,12 @@ Follow the detailed evaluation process:
 
 - `patents.db` exists with `screened_patents` table populated (from Phase 2 Screening)
 - `0-specifications/specification.md` exists (Product/Theme definition)
-- No evaluation reports in `3-investigations/` directory (or partial evaluation in progress)
+- No claims/elements data in database (or partial evaluation in progress)
 
 ### Final State
 
-- Evaluation reports generated for relevant patents in `3-investigations/<patent-id>/evaluation.md`
 - Claims and elements stored in database (`claims` and `elements` tables)
-
-## Template
-
-- **Evaluation Template**: `assets/evaluation-template.md`
-- **Output**: `3-investigations/<patent-id>/evaluation.md`
+- Analysis data available for further processing
 
 ## Examples
 
@@ -80,9 +73,6 @@ Follow the detailed evaluation process:
 See `references/` directory for:
 
 - **instructions/**: Step-based documentation
-  - `analyze-patent.md`: Patent analysis and claim decomposition (includes skill loading)
-  - `generate-report.md`: Report generation and output
+  - `analyze-patent.md`: Patent analysis and claim decomposition (parallel processing)
 - **examples.md**: Usage examples and detailed workflows
-- **troubleshooting.md**: Common issues and solutions
-- **assets/**: Templates and output formats
-  - `evaluation-template.md`: Template for evaluation reports
+- **troubleshooting.md`: Common issues and solutions

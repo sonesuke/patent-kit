@@ -88,7 +88,3 @@ Process all relevant patents from the `screened_patents` table using **parallel 
 - [ ] **Status Verification Completed**: Legal status and 3-year rule checked
 - [ ] **Claims Recorded**: Claims stored in database using `investigating-database` skill
 - [ ] **Elements Recorded**: Constituent elements stored in database using `investigating-database` skill
-
-## Next Step
-
-Proceed to Step 2: `generate-report.md` for report generation.
