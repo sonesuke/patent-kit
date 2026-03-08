@@ -32,29 +32,39 @@ If no patent ID is provided, query the database for the next patent:
   - Message: "Evaluation report already exists for <patent-id>. Do you want to proceed with re-evaluating?"
 - **If it does NOT exist**: Proceed with the standard process.
 
-### Step 1: Patent Analysis
+### Step 1: Load Required Skills
 
-1. **Load Required Skills**:
-   - Load `constitution-reminding` skill to understand core principles
-   - Load `legal-checking` skill to understand legal compliance guidelines
+Use the Skill tool to load skills BEFORE starting any work:
 
-2. **Retrieve Data**:
+1. **Constitution**: `constitution-reminding` - Understand core principles
+2. **Legal Checker**: `legal-checking` - Legal compliance guidelines
+
+### Step 2: Patent Analysis
+
+1. **Retrieve Data**:
    - Use the `google-patent-cli:patent-fetch` skill with the patent ID
    - The skill handles data retrieval and provides access to patent details
-   - Refer to the patent-fetch skill documentation for data access methods
 
-3. **Analyze**: Identify Constituent Elements.
-   - **Independent Claim**: Decompose Claim 1 into elements (A, B, C...).
-   - **Dependent Claims**: Identify key dependent claims that meaningfully narrow the scope or add critical features.
-   - **Divisional Check**: Verify if this is a divisional application. If yes, use the parent application's filing date (or priority date) as the effective reference date for prior art.
+2. **Analyze Claims**:
+   - **Independent Claim**: Decompose Claim 1 into elements (A, B, C...)
+   - **Dependent Claims**: Identify key dependent claims that meaningfully narrow the scope or add critical features
+   - **Divisional Check**: Verify if this is a divisional application
+     - If yes, use the parent application's filing date (or priority date) as the effective reference date for prior art
    - **Status Verification**:
-     - **3-Year Rule**: In Japan, examination must be requested within 3 years of filing.
-     - **Zombie Pending**: If Filing Date is > 3 years ago AND Status is "Pending" (and not Granted), it is likely "Deemed Withdrawn".
-     - **Action**: In such cases, mark the Status as `Pending (Likely Withdrawn - Examination Deadline Exceeded)` in the report.
+     - **3-Year Rule**: In Japan, examination must be requested within 3 years of filing
+     - **Zombie Pending**: If Filing Date is > 3 years ago AND Status is "Pending" (and not Granted), it is likely "Deemed Withdrawn"
+     - **Action**: In such cases, mark the Status as `Pending (Likely Withdrawn - Examination Deadline Exceeded)` in the report
 
-4. **Draft**: Fill `[evaluation-template.md](assets/evaluation-template.md)`.
+### Step 3: Report Generation
 
-5. **Save**: `3-investigations/<patent-id>/evaluation.md`.
+1. **Draft Report**: Fill in the evaluation template
+   - Use `assets/evaluation-template.md` as the template
+   - Include all claim analysis results
+   - Add legal status and divisional application notes (if applicable)
+
+2. **Save Report**: Create the evaluation report file
+   - Path: `3-investigations/<patent-id>/evaluation.md`
+   - Ensure the report follows the template format
 
 ## Output
 
@@ -62,17 +72,26 @@ If no patent ID is provided, query the database for the next patent:
 
 ## Quality Gates
 
-- [ ] **Skills Loaded**: `constitution-reminding` and `legal-checking` skills loaded successfully.
-- [ ] **Patent Data Retrieved**: `google-patent-cli:patent-fetch` skill used to fetch patent details.
-- [ ] **Claim Analysis**: Constituent elements are clearly identified.
-- [ ] **Dependent Claims**: Notable dependent claims are summarized.
-- [ ] **Divisional Check**: Divisional application check completed (if applicable).
-- [ ] **Status Verification**: Legal status and 3-year rule check completed.
-- [ ] **Template Adherence**: Evaluation report follows the template format.
+### Step 1: Load Required Skills
+
+- [ ] **Constitution Loaded**: `constitution-reminding` skill loaded successfully
+- [ ] **Legal Checker Loaded**: `legal-checking` skill loaded successfully
+
+### Step 2: Patent Analysis
+
+- [ ] **Patent Data Retrieved**: `google-patent-cli:patent-fetch` skill used to fetch patent details
+- [ ] **Independent Claim Analyzed**: Claim 1 decomposed into elements (A, B, C...)
+- [ ] **Dependent Claims Identified**: Key dependent claims summarized
+- [ ] **Divisional Check Completed**: Divisional application status verified (if applicable)
+- [ ] **Status Verification Completed**: Legal status and 3-year rule checked
+
+### Step 3: Report Generation
+
+- [ ] **Template Filled**: All analysis results entered into evaluation template
 - [ ] **NO Legal Assertions**:
-  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology".
-  - [ ] Avoid citing specific court case examples.
-- [ ] **Output File**: `3-investigations/<patent-id>/evaluation.md` created.
+  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology"
+  - [ ] Avoid citing specific court case examples
+- [ ] **Report Saved**: `3-investigations/<patent-id>/evaluation.md` created
 
 ## Deliverables
 

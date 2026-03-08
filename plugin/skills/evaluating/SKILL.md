@@ -25,9 +25,10 @@ Generate a detailed evaluation report for a screened patent by analyzing claim e
 
 1. **Load Required Skills**: Load `constitution-reminding` and `legal-checking` skills
 2. **Get Patent ID**: If not provided, query database for next relevant patent
-3. **Fetch Patent Data**: Use `google-patent-cli:patent-fetch` to get patent details
-4. **Analyze Claims**: Decompose claims into elements and identify key features
-5. **Generate Report**: Create evaluation report using template
+3. **Analyze Patent**:
+   - Fetch patent details using `google-patent-cli:patent-fetch`
+   - Decompose claims into elements and identify key features
+4. **Generate Report**: Create evaluation report using template
 
 For detailed instructions, see `references/instructions.md`.
 
