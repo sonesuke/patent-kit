@@ -23,6 +23,7 @@ Perform detailed claim analysis by comparing product specification against paten
 
 - `specification.md` must exist with complete product information
 - `3-investigations/<patent-id>/evaluation.md` must exist for patents to analyze
+- Load `investigation-fetching` skill for data retrieval operations
 - Load `legal-checking` skill for legal compliance guidelines
 
 ## Constitution
@@ -51,7 +52,8 @@ Perform detailed claim analysis by comparing product specification against paten
 **Process**:
 
 1. **Get Patents to Analyze**:
-   - Find patents with `evaluation.md` but no `claim-analysis.md`
+   - Use `investigation-fetching` skill
+   - Request: "Get next patent for claim analysis"
    - If user provides patent ID, verify `evaluation.md` exists
    - If `evaluation.md` does not exist, notify user and wait for confirmation
 

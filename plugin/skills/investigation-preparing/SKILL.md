@@ -9,9 +9,7 @@ description: |
   Supported operations:
   - "Initialize the database"
   - "Import CSV files from <directory>"
-  - "Get patent ID at row <number>"
   - "Select next patent for evaluation"
-  - "Get statistics"
 
   This skill handles all database preparation operations. Just provide the request
   and let the skill manage the database.
@@ -39,9 +37,7 @@ internal reference files for this skill's internal use only.
 
 - "Initialize the database"
 - "Import CSV files from 1-targeting/csv/ directory"
-- "Get patent ID at row 5"
 - "Select next patent for evaluation"
-- "Get statistics on screening progress"
 - "Execute SQL query: SELECT COUNT(\*) FROM screened_patents"
 
 ## Purpose
@@ -96,9 +92,7 @@ When processing external requests, map them to internal instruction files:
 | ------------------------------ | ------------------------------------------- |
 | "Initialize database"          | SKILL.md → Database Initialization          |
 | "Import CSV files..."          | references/instructions/import-csv.md       |
-| "Get patent ID at row..."      | references/instructions/get-patent-id.md    |
 | "Select patent for evaluation" | references/instructions/select-patent-id.md |
-| "Get statistics"               | references/instructions/get-statistics.md   |
 
 **CRITICAL**: These reference files are for INTERNAL USE ONLY. External agents
 should invoke via Skill tool, not read these files.
@@ -134,20 +128,10 @@ EOF
 1. External: "Initialize the database and import CSV files from 1-targeting/csv/"
 2. Internal: Check database status → Execute import-csv.md instructions
 
-### Workflow 2: Get Patent ID
-
-1. External: "Get patent ID at row 5"
-2. Internal: Execute get-patent-id.md → Return patent ID
-
-### Workflow 3: Select Patent for Evaluation
+### Workflow 2: Select Patent for Evaluation
 
 1. External: "Select next patent for evaluation"
 2. Internal: Execute select-patent-id.md → Return patent ID
-
-### Workflow 4: Get Statistics
-
-1. External: "Get statistics on screening progress"
-2. Internal: Execute get-statistics.md → Return JSON statistics
 
 ## State Management
 
@@ -168,9 +152,7 @@ agents should NOT read these:
 
 - **references/instructions/**: Operation-based documentation (SQL queries and operations)
   - `import-csv.md`: CSV file import with ETL processing
-  - `get-patent-id.md`: Patent ID retrieval by row number
   - `select-patent-id.md`: Select next patent for evaluation (relevant, not yet evaluated)
-  - `get-statistics.md`: Progress statistics retrieval
   - `execute-sql-with-retry.md`: Generic SQL execution with retry logic
 - **references/sql/**: SQL schema and query files
   - `initialize-database.sql`: Database schema definition
