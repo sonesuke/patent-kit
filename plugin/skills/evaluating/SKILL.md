@@ -34,13 +34,13 @@ The evaluation process consists of the following steps:
 ## Quick Start
 
 1. **Select Patent ID**: Use `investigating-database` skill to get next relevant patent without evaluation
-2. **Load Required Skills**: Load `constitution-reminding` and `legal-checking` skills
+2. **Load Required Skills**: Load `constitution-reminding` skill
 3. **Analyze Patent**:
    - Fetch patent details using `google-patent-cli:patent-fetch`
    - Decompose claims into elements and identify key features
+   - See `references/instructions/analyze-patent.md` for detailed instructions
 4. **Generate Report**: Create evaluation report using template
-
-For detailed instructions, see `references/instructions.md`.
+   - See `references/instructions/generate-report.md` for detailed instructions
 
 ## Template
 
