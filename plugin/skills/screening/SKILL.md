@@ -55,4 +55,4 @@ Follow the detailed screening process in `references/instructions.md`.
 - `references/instructions.md` - Detailed screening process instructions
 - `references/examples.md` - Usage examples and judgment examples
 - `references/troubleshooting.md` - Common issues and solutions
-- `assets/templates/screening-template.md` - Output template for screening results
+- `assets/screening-template.md` - Output template for screening results
