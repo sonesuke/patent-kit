@@ -63,7 +63,7 @@ When you receive a patent to analyze:
 - Request: "Search features"
 - Store all returned features for comparison
 
-1.2. **Get Patent Elements**: Use `investigation-fetching` skill
+  1.2. **Get Patent Elements**: Use `investigation-fetching` skill
 
 - Request: "Get elements for patent <patent-id>"
 - Store all returned elements for analysis
@@ -77,7 +77,7 @@ For EACH patent element:
 - Request: "Search feature: <element_label>"
 - This searches the features table for a matching feature
 
-2.2. **Handle Search Result**:
+  2.2. **Handle Search Result**:
 
 - **If feature found with `presence='present'`**: Proceed to comparison
 - **If feature found with `presence='absent'`**: Treat as absent, proceed to comparison
@@ -86,7 +86,7 @@ For EACH patent element:
   - Do NOT skip to comparison
   - Follow Step 2.3 below
 
-2.3. **Ask About Missing Feature** (only when feature is NOT found):
+    2.3. **Ask About Missing Feature** (only when feature is NOT found):
 
 - **Check test environment**: Use Bash tool to run `echo $SKILL_BENCH_TEST_CASE`
 - **If SKILL_BENCH_TEST_CASE is set** (testing mode):
@@ -105,7 +105,7 @@ For EACH patent element:
 - Determine similarity level: Significant, Moderate, or Limited
 - Write detailed analysis notes
 
-3.2. **Record Similarities**: Use `investigation-recording` skill
+  3.2. **Record Similarities**: Use `investigation-recording` skill
 
 - Request: "Record similarities for patent <patent-id>: <similarities_data>"
 - Include: element_label, similarity_level, analysis_notes
