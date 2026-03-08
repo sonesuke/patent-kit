@@ -23,37 +23,36 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
 - `patents.db` must exist (generated in targeting skill, `target_patents` table)
 - `specification.md` must exist (Product/Theme definition)
-- Legal-checking skill must be loaded
+- Load `investigation-fetching` skill for data retrieval operations
+- Load `investigation-recording` skill for data recording operations
 
 ## Constitution
 
 ### Core Principles
 
-**Element-by-Element Analysis (The Golden Rule)**:
-
-- Every claim analysis MUST test the target invention against the reference patent element by element
-- Break down inventions into Elements A, B, C
-- Find references disclosing A AND B AND C for anticipation (Novelty)
-- Do not rely on "general similarity"
-
 **Risk-Averse Screening**:
 
 - When in doubt, err on the side of inclusion
-- If a reference is "borderline", grade it as 'B' (Relevant) rather than 'D' (Noise)
+- If a reference is "borderline", mark it as 'relevant' rather than 'irrelevant'
 - Missing a risk is worse than reviewing an extra document
-
-**Breadth of Published Applications**:
-
-- For published applications (not yet granted), consider "Detailed Description" and embodiments
-- Don't judge solely based on current claims
 
 ## Skill Orchestration
 
-2. **Legal Checker**: `legal-checking` - Legal compliance guidelines
+### Execute Screening
 
-### 2. Execute Screening
+**CRITICAL**: Always use subagents for patent screening, regardless of patent count.
 
-Follow the detailed screening process in `references/instructions.md`.
+**Process**:
+
+1. **Get Patents to Screen**:
+   - Use `investigation-fetching` skill
+   - Request: "Get list of unscreened patent IDs"
+
+2. **Screen Patents**: Launch `patent-screener` subagents
+
+   For each patent:
+   - Start a `patent-screener` subagent
+   - **Each subagent handles exactly one patent**
 
 ## State Management
 
@@ -69,4 +68,3 @@ Follow the detailed screening process in `references/instructions.md`.
 ## References
 
 - `references/instructions.md` - Detailed screening process instructions
-- `assets/screening-template.md` - Output template for screening results
