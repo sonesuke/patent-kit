@@ -17,54 +17,49 @@ Generate a detailed evaluation report for a screened patent. This phase analyzes
 
 ## Process
 
+The evaluation process consists of the following steps:
+
+| Step | Description          | Instruction File                                 |
+| ---- | -------------------- | ------------------------------------------------ |
+| 0    | Determine Patent ID  | `references/instructions/determine-patent-id.md` |
+| 1    | Load Required Skills | `references/instructions/load-skills.md`         |
+| 2    | Patent Analysis      | `references/instructions/analyze-patent.md`      |
+| 3    | Report Generation    | `references/instructions/generate-report.md`     |
+
+## Step Summaries
+
 ### Step 0: Determine Patent ID
 
-If no patent ID is provided, query the database for the next patent:
+Determine which patent to evaluate based on user input or database query.
 
-- Use the `investigating-database` skill
-- Request: "Get the next patent ID for evaluation"
-- The skill will find the first patent marked as `relevant` that doesn't yet have an evaluation report.
-
-**If a Patent ID IS provided**:
-
-- Check if `3-investigations/<patent-id>/evaluation.md` already exists.
-- **If it exists**: **ASK the User for confirmation**
-  - Message: "Evaluation report already exists for <patent-id>. Do you want to proceed with re-evaluating?"
-- **If it does NOT exist**: Proceed with the standard process.
+**Details**: See `references/instructions/determine-patent-id.md`
 
 ### Step 1: Load Required Skills
 
-Use the Skill tool to load skills BEFORE starting any work:
+Load required skills (`constitution-reminding`, `legal-checking`) before starting patent evaluation.
 
-1. **Constitution**: `constitution-reminding` - Understand core principles
-2. **Legal Checker**: `legal-checking` - Legal compliance guidelines
+**Details**: See `references/instructions/load-skills.md`
 
 ### Step 2: Patent Analysis
 
-1. **Retrieve Data**:
-   - Use the `google-patent-cli:patent-fetch` skill with the patent ID
-   - The skill handles data retrieval and provides access to patent details
+Analyze the patent to extract key information:
 
-2. **Analyze Claims**:
-   - **Independent Claim**: Decompose Claim 1 into elements (A, B, C...)
-   - **Dependent Claims**: Identify key dependent claims that meaningfully narrow the scope or add critical features
-   - **Divisional Check**: Verify if this is a divisional application
-     - If yes, use the parent application's filing date (or priority date) as the effective reference date for prior art
-   - **Status Verification**:
-     - **3-Year Rule**: In Japan, examination must be requested within 3 years of filing
-     - **Zombie Pending**: If Filing Date is > 3 years ago AND Status is "Pending" (and not Granted), it is likely "Deemed Withdrawn"
-     - **Action**: In such cases, mark the Status as `Pending (Likely Withdrawn - Examination Deadline Exceeded)` in the report
+- Retrieve patent data using `google-patent-cli:patent-fetch`
+- Analyze independent and dependent claims
+- Check for divisional applications
+- Verify legal status and 3-year rule
+
+**Details**: See `references/instructions/analyze-patent.md`
 
 ### Step 3: Report Generation
 
-1. **Draft Report**: Fill in the evaluation template
-   - Use `assets/evaluation-template.md` as the template
-   - Include all claim analysis results
-   - Add legal status and divisional application notes (if applicable)
+Generate the evaluation report based on patent analysis:
 
-2. **Save Report**: Create the evaluation report file
-   - Path: `3-investigations/<patent-id>/evaluation.md`
-   - Ensure the report follows the template format
+- Fill in evaluation template
+- Avoid legal assertions
+- Save report to `3-investigations/<patent-id>/evaluation.md`
+
+**Details**: See `references/instructions/generate-report.md`
 
 ## Output
 
@@ -72,26 +67,11 @@ Use the Skill tool to load skills BEFORE starting any work:
 
 ## Quality Gates
 
-### Step 1: Load Required Skills
+See individual instruction files for detailed quality gates:
 
-- [ ] **Constitution Loaded**: `constitution-reminding` skill loaded successfully
-- [ ] **Legal Checker Loaded**: `legal-checking` skill loaded successfully
-
-### Step 2: Patent Analysis
-
-- [ ] **Patent Data Retrieved**: `google-patent-cli:patent-fetch` skill used to fetch patent details
-- [ ] **Independent Claim Analyzed**: Claim 1 decomposed into elements (A, B, C...)
-- [ ] **Dependent Claims Identified**: Key dependent claims summarized
-- [ ] **Divisional Check Completed**: Divisional application status verified (if applicable)
-- [ ] **Status Verification Completed**: Legal status and 3-year rule checked
-
-### Step 3: Report Generation
-
-- [ ] **Template Filled**: All analysis results entered into evaluation template
-- [ ] **NO Legal Assertions**:
-  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology"
-  - [ ] Avoid citing specific court case examples
-- [ ] **Report Saved**: `3-investigations/<patent-id>/evaluation.md` created
+- **Step 1**: `load-skills.md`
+- **Step 2**: `analyze-patent.md`
+- **Step 3**: `generate-report.md`
 
 ## Deliverables
 

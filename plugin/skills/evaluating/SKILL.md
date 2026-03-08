@@ -21,6 +21,17 @@ Generate a detailed evaluation report for a screened patent by analyzing claim e
 - `legal-checking` skill must be loaded
 - `google-patent-cli:patent-fetch` skill available for retrieving patent data
 
+## Process
+
+The evaluation process consists of the following steps:
+
+| Step | Description          | Instruction File                                 |
+| ---- | -------------------- | ------------------------------------------------ |
+| 0    | Determine Patent ID  | `references/instructions/determine-patent-id.md` |
+| 1    | Load Required Skills | `references/instructions/load-skills.md`         |
+| 2    | Patent Analysis      | `references/instructions/analyze-patent.md`      |
+| 3    | Report Generation    | `references/instructions/generate-report.md`     |
+
 ## Quick Start
 
 1. **Load Required Skills**: Load `constitution-reminding` and `legal-checking` skills
@@ -41,6 +52,16 @@ For detailed instructions, see `references/instructions.md`.
 
 - See `references/examples.md` for detailed usage examples
 
-## Troubleshooting
+## References
 
-- See `references/troubleshooting.md` for common issues and solutions
+See `references/` directory for:
+
+- **instructions/**: Step-based documentation
+  - `determine-patent-id.md`: Determine which patent to evaluate
+  - `load-skills.md`: Load required skills (constitution-reminding, legal-checking)
+  - `analyze-patent.md`: Patent analysis and claim decomposition
+  - `generate-report.md`: Report generation and output
+- **examples.md**: Usage examples and detailed workflows
+- **troubleshooting.md**: Common issues and solutions
+- **assets/**: Templates and output formats
+  - `evaluation-template.md`: Template for evaluation reports
