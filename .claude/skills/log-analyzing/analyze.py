@@ -26,6 +26,9 @@ def analyze_log(log_file: str) -> Tuple[List[Tuple[float, str, str]], float]:
     """
     entries = []
     tool_uses = {}  # tool_use_id -> (elapsed, name, input_data)
+    agent_tool_ids = set()  # Track Agent tool IDs
+    agent_active = False  # Track if any agent is currently active
+    agent_start_time = 0.0  # Track when agent started
 
     with open(log_file, 'r') as f:
         first_ts = None
@@ -71,6 +74,12 @@ def analyze_log(log_file: str) -> Tuple[List[Tuple[float, str, str]], float]:
                         name = item.get('name', '')
                         input_data = item.get('input', {})
 
+                        # Track Agent tool launches
+                        if name == 'Agent':
+                            agent_tool_ids.add(tool_id)
+                            agent_active = True
+                            agent_start_time = elapsed
+
                         # Store for later pairing with result
                         tool_uses[tool_id] = (elapsed, name, input_data)
 
@@ -80,15 +89,26 @@ def analyze_log(log_file: str) -> Tuple[List[Tuple[float, str, str]], float]:
                         is_error = item.get('is_error', False)
                         result_content = item.get('content', '')
 
+                        # Check if this is an Agent tool completing
+                        if tool_use_id in agent_tool_ids:
+                            agent_active = False
+                            agent_tool_ids.remove(tool_use_id)
+
                         # Get the corresponding tool use
                         if tool_use_id in tool_uses:
                             tool_elapsed, name, input_data = tool_uses[tool_use_id]
+
+                            # Determine role: if agent was active when this tool was used, mark as SUBAGENT
+                            tool_role = 'TOOL'
+                            if agent_active and tool_elapsed > agent_start_time and tool_use_id not in agent_tool_ids:
+                                # This tool was used while an agent was active (and it's not the agent launch itself)
+                                tool_role = 'SUBAGENT'
 
                             # Create tool summary with result
                             tool_summary = summarize_tool_with_result(
                                 name, input_data, result_content, is_error
                             )
-                            entries.append((tool_elapsed, 'TOOL', tool_summary))
+                            entries.append((tool_elapsed, tool_role, tool_summary))
 
                             # Remove from pending
                             del tool_uses[tool_use_id]
@@ -155,6 +175,10 @@ def summarize_tool_with_result(name: str, input_data: dict, result: str, is_erro
     if not name:
         return ''
 
+    # Special handling for Agent tool
+    if name == 'Agent':
+        return format_agent_tool(input_data, result, is_error)
+
     # Extract relevant input parameters
     summary_parts = [name]
 
@@ -219,6 +243,73 @@ def summarize_tool_with_result(name: str, input_data: dict, result: str, is_erro
     return ' | '.join(summary_parts)
 
 
+def format_agent_tool(input_data: dict, result: str, is_error: bool) -> str:
+    """Format Agent tool use with subagent information."""
+    summary_parts = ['🤖 Agent']
+
+    # Extract subagent info
+    subagent_type = input_data.get('subagent_type', 'unknown')
+    subagent_name = input_data.get('name', 'unnamed')
+    description = input_data.get('description', '')
+    prompt = input_data.get('prompt', '')
+
+    summary_parts.append(f"type={subagent_type}")
+    summary_parts.append(f"name={subagent_name}")
+
+    if description and len(description) < 30:
+        summary_parts.append(f"desc={description}")
+    elif description:
+        summary_parts.append(f"desc={description[:27]}...")
+
+    # Show prompt preview (first task)
+    if prompt:
+        lines = prompt.strip().split('\n')
+        for line in lines[:3]:  # Show first 3 lines
+            line = line.strip()
+            if line and not line.startswith('#'):
+                # Extract key info
+                if line.startswith(('1.', '2.', '3.', '4.', '-', '*')):
+                    summary_parts.append(f"task={line[:50]}")
+                    break
+
+    # Add result status
+    if is_error:
+        summary_parts.append("❌ ERROR")
+    elif result:
+        # Try to extract useful summary from agent result
+        if isinstance(result, str) and len(result) > 100:
+            # Extract key patterns from agent result
+            if 'Patent ID and title' in result:
+                summary_parts.append("✅ Analysis complete")
+            elif '## Summary' in result or 'Summary:' in result:
+                # Extract summary line
+                for line in result.split('\n'):
+                    if 'summary' in line.lower() and len(line) < 100:
+                        summary_parts.append(f"✅ {line.strip()[:50]}")
+                        break
+                else:
+                    summary_parts.append("✅ Result received")
+            else:
+                # Show first line of result
+                first_line = result.split('\n')[0].strip()
+                if first_line and len(first_line) < 80:
+                    summary_parts.append(f"✅ {first_line}")
+                else:
+                    summary_parts.append("✅ Result received")
+        elif isinstance(result, str):
+            result = result.strip()
+            if result and len(result) < 100:
+                summary_parts.append(f"✅ {result}")
+            else:
+                summary_parts.append("✅")
+        else:
+            summary_parts.append("✅")
+    else:
+        summary_parts.append("⏳ Running...")
+
+    return ' | '.join(summary_parts)
+
+
 def format_timeline(entries: List[Tuple[float, str, str]]) -> str:
     """Format entries as a timeline."""
     lines = []
@@ -227,7 +318,7 @@ def format_timeline(entries: List[Tuple[float, str, str]]) -> str:
     for elapsed, role, content in entries:
         # Format with fixed width columns
         time_str = f"T+{elapsed:7.2f}s"
-        role_str = f"{role:10s}"
+        role_str = f"{role:12s}"  # Increased width for SUBAGENT
 
         # Truncate long content
         if len(content) > 70:
@@ -249,10 +340,20 @@ def identify_bottlenecks(entries: List[Tuple[float, str, str]]) -> List[str]:
     long_gaps = []
     slow_reads = []
     failed_ops = []
+    agent_ops = []
+    subagent_ops = []
 
     prev_time = 0
 
     for elapsed, role, content in entries:
+        # Check for Agent operations (parallel processing)
+        if role == 'TOOL' and '🤖 Agent' in content:
+            agent_ops.append((elapsed, content))
+
+        # Check for Subagent operations
+        if role == 'SUBAGENT':
+            subagent_ops.append((elapsed, content))
+
         # Check for glob/find operations
         if role == 'TOOL' and ('Glob' in content or 'find' in content):
             glob_ops.append((elapsed, content))
@@ -273,6 +374,33 @@ def identify_bottlenecks(entries: List[Tuple[float, str, str]]) -> List[str]:
         prev_time = elapsed
 
     # Generate bottleneck report
+    if subagent_ops:
+        bottlenecks.append(f"🤖 Subagent Activity: {len(subagent_ops)} operations")
+        # Group subagent operations by type
+        op_types = {}
+        for _, content in subagent_ops:
+            op_name = content.split('|')[0].strip()
+            op_types[op_name] = op_types.get(op_name, 0) + 1
+        for op_type, count in sorted(op_types.items(), key=lambda x: -x[1]):
+            bottlenecks.append(f"    {op_type}: {count} operation(s)")
+
+    if agent_ops:
+        bottlenecks.append(f"🤖 Found {len(agent_ops)} Agent tool uses (parallel processing)")
+        # Check if multiple agents were launched in quick succession (< 1 second)
+        if len(agent_ops) > 1:
+            quick_launches = []
+            for i in range(len(agent_ops) - 1):
+                time_diff = agent_ops[i + 1][0] - agent_ops[i][0]
+                if time_diff < 1.0:
+                    quick_launches.append((agent_ops[i][0], agent_ops[i + 1][0], time_diff))
+            if quick_launches:
+                bottlenecks.append(f"    ✅ {len(quick_launches)} agents launched for parallel processing")
+                for t1, t2, diff in quick_launches:
+                    bottlenecks.append(f"       T+{t1:.2f}s and T+{t2:.2f}s (Δ{diff:.3f}s)")
+        # Show first few agent launches
+        for t, content in agent_ops[:2]:
+            bottlenecks.append(f"    T+{t:.2f}s: {content[:80]}...")
+
     if failed_ops:
         bottlenecks.append(f"❌ Found {len(failed_ops)} failed operations")
         for t, content in failed_ops[:3]:
@@ -284,8 +412,8 @@ def identify_bottlenecks(entries: List[Tuple[float, str, str]]) -> List[str]:
             bottlenecks.append(f"    T+{t:.2f}s: {content}")
 
     if long_gaps:
-        bottlenecks.append(f"⚠️  Found {len(long_gaps)} gaps > 5 seconds (possible AI thinking time)")
-        for start, end, duration in long_gaps[:3]:
+        bottlenecks.append(f"⚠️  Found {len(long_gaps)} gaps > 5 seconds (possible AI thinking or subagent execution)")
+        for start, end, duration in long_gaps[:5]:
             bottlenecks.append(f"    T+{start:.2f}s to T+{end:.2f}s: {duration:.2f}s")
 
     if not bottlenecks:
@@ -312,6 +440,15 @@ def main():
 
     print(f"Total execution time: {total_time:.2f}s")
     print()
+
+    # Count Agent and Subagent operations
+    agent_count = sum(1 for _, role, content in entries if role == 'TOOL' and '🤖 Agent' in content)
+    subagent_count = sum(1 for _, role, _ in entries if role == 'SUBAGENT')
+
+    if agent_count > 0:
+        print(f"🤖 Parallel Processing: {agent_count} subagent(s) launched")
+        print(f"📊 Subagent Activity: {subagent_count} operations executed by subagents")
+        print()
 
     print("Timeline:")
     print(format_timeline(entries))

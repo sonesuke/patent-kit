@@ -1,14 +1,14 @@
-# Test Case: Evaluating - Analyze Patents
+# Test Case: Evaluating - Parallel Analysis
 
-name = "functional-analyze-patents"
-description = "Verify evaluating skill can analyze patents and store claims/elements in database"
-timeout = 300                                                                                     # seconds
+name = "functional-parallel-analysis"
+description = "Verify evaluating skill can analyze multiple patents in parallel using teams"
+timeout = 600                                                                                     # seconds (10 minutes for parallel processing)
 
 test_prompt = """
 I have 2 screened patents marked as relevant in the database.
 
 Please:
-1. Analyze these patents by decomposing claims into constituent elements
+1. Analyze both patents by decomposing claims into constituent elements
 2. Store claims and elements in the database
 3. Report the analysis results including patent IDs, claim counts, and element counts
 """
@@ -55,9 +55,19 @@ command = "check-skill-loaded.sh constitution-reminding"
 [[checks]]
 name = "claims_recorded"
 type = "script"
-command = "check-db-query.sh {} {} '2' 'SELECT COUNT(*) FROM claims;'"
+command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN COUNT(DISTINCT patent_id) >= 2 THEN '1' ELSE '0' END FROM claims;" """
 
 [[checks]]
 name = "elements_recorded"
 type = "script"
-command = "check-db-query.sh {} {} '2' 'SELECT COUNT(DISTINCT patent_id) FROM elements;'"
+command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN COUNT(DISTINCT patent_id) >= 2 THEN '1' ELSE '0' END FROM elements;" """
+
+[[checks]]
+name = "instructions_read"
+type = "script"
+command = """check-log-contains.sh {} 'references/instructions.md' """
+
+[[checks]]
+name = "parallel_processing_used"
+type = "script"
+command = """check-log-contains.sh {} '"name":"Agent"' """

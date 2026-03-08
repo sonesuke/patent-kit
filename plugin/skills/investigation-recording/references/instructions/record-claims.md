@@ -8,22 +8,27 @@ Store analyzed patent claims for future reference and analysis.
 
 ## SQL Insert
 
-```bash
-sqlite3 patents.db <<EOF
-INSERT INTO claims (patent_id, claim_number, claim_type, claim_text)
-VALUES
-  ('${PATENT_ID}', ${CLAIM_NUMBER}, '${CLAIM_TYPE}', '${CLAIM_TEXT}');
-EOF
-```
-
-For multiple claims (recommended):
+**Recommended**: Use timeout for concurrent access
 
 ```bash
-sqlite3 patents.db <<EOF
+sqlite3 patents.db -cmd ".timeout 30000" <<EOF
 INSERT INTO claims (patent_id, claim_number, claim_type, claim_text) VALUES
   ('${PATENT_ID}', 1, 'independent', '${CLAIM_1_TEXT}'),
   ('${PATENT_ID}', 2, 'dependent', '${CLAIM_2_TEXT}'),
   ('${PATENT_ID}', 3, 'dependent', '${CLAIM_3_TEXT}');
+EOF
+```
+
+**For large batches** (10+ claims):
+
+```bash
+sqlite3 patents.db -cmd ".timeout 30000" <<EOF
+INSERT INTO claims (patent_id, claim_number, claim_type, claim_text) VALUES
+  ('${PATENT_ID}', 1, 'independent', '${CLAIM_1_TEXT}'),
+  ('${PATENT_ID}', 2, 'dependent', '${CLAIM_2_TEXT}'),
+  ('${PATENT_ID}', 3, 'dependent', '${CLAIM_3_TEXT}'),
+  ('${PATENT_ID}', 4, 'dependent', '${CLAIM_4_TEXT}'),
+  ('${PATENT_ID}', 5, 'dependent', '${CLAIM_5_TEXT}');
 EOF
 ```
 

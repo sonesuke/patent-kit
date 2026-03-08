@@ -23,29 +23,40 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 - `patents.db` must exist with `screened_patents` table populated (from Phase 2 Screening)
 - Load `constitution-reminding` skill before starting analysis
-- Load `investigating-database` skill for database operations
+- Load `investigation-preparing` skill for data retrieval operations
+- Load `investigation-recording` skill for data recording operations
 - `google-patent-cli:patent-fetch` skill available for retrieving patent data
-
-## Process
-
-The evaluation process consists of the following steps:
-
-| Step | Description      | Instruction File                   |
-| ---- | ---------------- | ---------------------------------- |
-| 0    | Select Patent ID | Use `investigating-database` skill |
-| 1    | Patent Analysis  | `references/instructions.md`       |
 
 ## Skill Orchestration
 
-### 1. Load Required Skills (MANDATORY)
+### Execute Evaluation
 
-Use the Skill tool to load skills BEFORE starting any work:
+**CRITICAL**: For multiple patents (2+), you MUST use the Agent tool with patent-evaluator subagent for parallel processing.
 
-1. **Constitution**: `constitution-reminding` - Understand core principles
+**Process**:
 
-### 2. Execute Evaluation
+1. **Get Patents to Analyze**:
+   - Use `investigation-preparing` skill
+   - Request: "Get list of relevant patents without evaluation"
 
-Follow the detailed evaluation process in `references/instructions.md`.
+2. **Analyze Patents**:
+
+   **If single patent**: Process directly following steps 3-4
+
+   **If multiple patents (2+)**: MUST use Agent tool with patent-evaluator subagent
+
+   ```
+   Agent tool parameters:
+   - subagent_type: "patent-evaluator"
+   - name: "evaluator-<patent-id>"
+   - description: "Analyze patent <PATENT_ID> and record claims/elements"
+   - prompt: "Fetch patent <PATENT_ID> using google-patent-cli:patent-fetch skill, decompose Claim 1 into elements, and record all claims and elements using investigation-recording skill"
+   ```
+
+3. **Record Claims**: Use `investigation-recording` skill
+4. **Record Elements**: Use `investigation-recording` skill
+
+5. **Verify Results**: Query database to confirm data recorded
 
 ## State Management
 

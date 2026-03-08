@@ -1,4 +1,4 @@
-# Test Case: Investigating Database - Various Patent ID Formats
+# Test Case: Investigation Preparing - Various Patent ID Formats
 
 name = "functional-various-patent-id"
 description = "Verify ETL correctly transforms various patent ID formats from real Google Patents data"

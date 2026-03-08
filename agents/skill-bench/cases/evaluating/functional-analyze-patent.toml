@@ -1,0 +1,62 @@
+# Test Case: Evaluating - Analyze Patent (Single)
+
+name = "functional-analyze-patent"
+description = "Verify evaluating skill can analyze a single patent and store claims/elements in database"
+timeout = 300                                                                                     # seconds
+
+test_prompt = """
+I have a screened patent marked as relevant in the database.
+
+Please:
+1. Get the next relevant patent that has not been evaluated
+2. Analyze the patent by decomposing claims into constituent elements
+3. Store claims and elements in the database
+4. Report the analysis results including patent ID, claim count, and element count
+"""
+
+[[setup]]
+path = "screened-patents.sql"
+content = """
+-- Initialize database
+PRAGMA foreign_keys = ON;
+
+-- Insert target patents
+INSERT OR IGNORE INTO target_patents (patent_id, title, assignee, country, publication_date, filing_date, grant_date, extra_fields)
+VALUES
+    ('US20240292070A1', 'Iterative AI prompt optimization', 'Loop Now Technologies, Inc.', 'US', '2024-08-29', '2024-04-10', NULL, '{"source": "test"}');
+
+-- Insert screened patents (marked as relevant)
+INSERT OR IGNORE INTO screened_patents (patent_id, judgment, reason, abstract_text, screened_at, updated_at)
+VALUES
+    ('US20240292070A1', 'relevant', 'Relates to AI prompt optimization', 'Systems and methods for optimizing AI prompts through iterative refinement', datetime('now'), datetime('now'));
+"""
+
+[[setup]]
+name = "init_db"
+type = "script"
+command = "setup-db.sh init"
+
+[[setup]]
+name = "load_screened_data"
+type = "script"
+command = "setup-db.sh execute screened-patents.sql"
+
+[[checks]]
+name = "database_created"
+type = "script"
+command = "check-workspace-file.sh patents.db"
+
+[[checks]]
+name = "constitution_loaded"
+type = "script"
+command = "check-skill-loaded.sh constitution-reminding"
+
+[[checks]]
+name = "claims_recorded"
+type = "script"
+command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN COUNT(*) > 0 THEN '1' ELSE '0' END FROM claims;" """
+
+[[checks]]
+name = "elements_recorded"
+type = "script"
+command = """check-db-query.sh {} {} '1' "SELECT CASE WHEN COUNT(DISTINCT patent_id) > 0 THEN '1' ELSE '0' END FROM elements;" """

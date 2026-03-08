@@ -8,18 +8,10 @@ Store analyzed claim elements for future reference and comparison.
 
 ## SQL Insert
 
-```bash
-sqlite3 patents.db <<EOF
-INSERT INTO elements (patent_id, claim_number, element_label, element_description)
-VALUES
-  ('${PATENT_ID}', ${CLAIM_NUMBER}, '${ELEMENT_LABEL}', '${ELEMENT_DESCRIPTION}');
-EOF
-```
-
-For multiple elements (recommended):
+**Recommended**: Use timeout for concurrent access
 
 ```bash
-sqlite3 patents.db <<EOF
+sqlite3 patents.db -cmd ".timeout 30000" <<EOF
 INSERT INTO elements (patent_id, claim_number, element_label, element_description) VALUES
   ('${PATENT_ID}', ${CLAIM_NUMBER}, 'A', 'Element A description'),
   ('${PATENT_ID}', ${CLAIM_NUMBER}, 'B', 'Element B description'),

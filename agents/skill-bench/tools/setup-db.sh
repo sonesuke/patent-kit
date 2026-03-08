@@ -23,13 +23,13 @@ case "$COMMAND" in
 
         # Check if we're in workspace (has claude-plugin directory)
         if [ -d "./claude-plugin" ]; then
-            SQL_FILE="./claude-plugin/skills/investigating-database/references/sql/initialize-database.sql"
+            SQL_FILE="./claude-plugin/skills/investigation-preparing/references/sql/initialize-database.sql"
         fi
 
         # Fallback to script-relative path
         if [ -z "$SQL_FILE" ] || [ ! -f "$SQL_FILE" ]; then
             SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-            SQL_FILE="$SCRIPT_DIR/../../plugin/skills/investigating-database/references/sql/initialize-database.sql"
+            SQL_FILE="$SCRIPT_DIR/../../plugin/skills/investigation-preparing/references/sql/initialize-database.sql"
         fi
 
         if [ -z "$SQL_FILE" ] || [ ! -f "$SQL_FILE" ]; then

@@ -31,35 +31,32 @@ Use the Skill tool to load the `investigating-database` skill for:
 
 #### Screening Process
 
-Process all patents from the `target_patents` table using **parallel agents**:
+Process all patents from the `target_patents` table.
 
 > [!NOTE]
-> **Parallel Processing with Team**:
+> **Parallel Processing**:
 >
-> - Create a team of multiple agents to process patents in parallel
-> - Each agent works independently on assigned patents
-> - Results are aggregated after all agents complete
+> - **For multiple patents (3+)**: MUST use the Agent tool with subagents for parallel processing
+> - **For 1-2 patents**: Process directly
+> - Subagents work independently on assigned patents
+> - Results are reported back to the main agent for aggregation
+> - **CRITICAL**: Use retry logic when recording to database (see `execute-sql-with-retry.md`)
 
 **Process Steps**:
 
 1. **Get Unscreened Patents**:
    - **Action**: Use the `investigating-database` skill
    - **Request**: "Get list of unscreened patent IDs"
-   - **Divide** the list into batches for parallel processing
 
-2. **Create Screening Team**:
-   - Use the Agent tool to create a team with multiple teammates
-   - Recommended team size: 3-5 agents depending on patent volume
-   - Each teammate will process a subset of patents
+2. **Screen Patents**:
 
-3. **Assign Patents to Agents**:
-   - Divide unscreened patents evenly among teammates
-   - For each agent, send message with assigned patent IDs
-   - Request: "Screen these patents: [ID1, ID2, ID3, ...]"
+   - **If 1-2 patents**: Process directly following the steps below
+   - **If multiple patents (3+)**: MUST use the Agent tool to launch subagents in parallel
+     - Each subagent processes one patent
+     - All subagents work in parallel
+     - Each subagent follows the same screening steps independently
 
-4. **Agent Screening Task** (each teammate executes independently):
-
-   For each assigned patent:
+   For each patent (or for each subagent):
    - **Fetch Data**: Use the Skill tool to load `google-patent-cli:patent-fetch` skill
      - This will call `fetch_patent` with your patent_id
      - The skill will automatically use `execute_cypher` to retrieve:
@@ -75,10 +72,9 @@ Process all patents from the `target_patents` table using **parallel agents**:
          - **Irrelevant**: Completely different industry (e.g., Medical vs Web)
      - **Judgment Values**: `relevant`, `irrelevant`, `expired` (lowercase)
    - **Record Result**: Use `investigating-database` skill to record judgment
-
-5. **Wait for Completion**:
-   - Wait for all teammates to complete their tasks
-   - All screening results are now in the database
+     - Request: "Record screening result for patent <patent-id>"
+     - Provide judgment data (judgment, reason, abstract_text)
+     - Use retry logic when recording to database
 
 ## Output
 
