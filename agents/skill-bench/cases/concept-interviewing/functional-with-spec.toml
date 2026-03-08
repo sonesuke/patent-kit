@@ -2,7 +2,7 @@
 
 name = "functional-with-spec"
 description = "Verify concept-interview verifies existing specification without re-interviewing"
-timeout = 120 # seconds
+timeout = 120                                                                                    # seconds
 
 test_prompt = """
 Use concept-interview to verify our existing product specification is complete and ready for the targeting phase. Do not perform any additional assignee checks - just verify the existing specification.

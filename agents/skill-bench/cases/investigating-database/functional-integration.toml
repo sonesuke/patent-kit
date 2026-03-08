@@ -2,7 +2,7 @@
 
 name = "functional-integration"
 description = "Verify complete workflow: init, import, retrieve, record, and statistics"
-timeout = 300 # seconds
+timeout = 300                                                                            # seconds
 
 test_prompt = """
 I have patent data in CSV format. Initialize the database, import the CSV, get a patent ID by row number, record a screening result, and show me the statistics.

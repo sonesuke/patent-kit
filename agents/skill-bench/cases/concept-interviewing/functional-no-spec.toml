@@ -2,7 +2,7 @@
 
 name = "functional-no-spec"
 description = "Verify concept-interview uses question-responder when information is missing"
-timeout = 180 # seconds
+timeout = 180                                                                                # seconds
 
 test_prompt = """
 I want to start a patent search for a new voice recognition system for smart home devices with real-time transcription and noise-resistant recognition.

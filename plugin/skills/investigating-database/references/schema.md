@@ -45,6 +45,47 @@ Stores latest screening results only (no history tracking).
 - `judgment` only allows: `relevant`, `irrelevant`, `expired`
 - `reason` and `abstract_text` must NOT be NULL
 
+### claims
+
+Stores patent claims analyzed during evaluation phase.
+
+| Column       | Type    | Description                                           |
+| ------------ | ------- | ----------------------------------------------------- |
+| patent_id    | TEXT PK | Patent number (FK to screened_patents.patent_id)      |
+| claim_id     | TEXT PK | Claim ID from patent data (e.g., `clm-1`, `CLM-0001`) |
+| claim_number | INTEGER | Claim sequence number                                 |
+| claim_type   | TEXT    | Claim type: `independent` or `dependent`              |
+| claim_text   | TEXT    | Full text of the claim                                |
+| created_at   | TEXT    | Record creation timestamp                             |
+| updated_at   | TEXT    | Last update timestamp                                 |
+
+**Constraints**:
+
+- **Primary Key**: `(patent_id, claim_id)` - ensures unique claim_id per patent
+- `patent_id` is a FOREIGN KEY referencing `screened_patents(patent_id)` with `ON DELETE CASCADE`
+- `claim_id` uses actual claim ID from patent data (not auto-increment) for traceability
+- `claim_type` only allows: `independent`, `dependent`
+
+### elements
+
+Stores constituent elements of claims analyzed during evaluation phase.
+
+| Column              | Type       | Description                                              |
+| ------------------- | ---------- | -------------------------------------------------------- |
+| id                  | INTEGER PK | Auto-increment primary key                               |
+| patent_id           | TEXT       | Patent number (FK to screened_patents.patent_id)         |
+| claim_id            | TEXT       | Claim ID (part of composite FK to claims with patent_id) |
+| element_label       | TEXT       | Element label (e.g., A, B, C...)                         |
+| element_description | TEXT       | Description of the constituent element                   |
+| created_at          | TEXT       | Record creation timestamp                                |
+| updated_at          | TEXT       | Last update timestamp                                    |
+
+**Constraints**:
+
+- `patent_id` is a FOREIGN KEY referencing `screened_patents(patent_id)` with `ON DELETE CASCADE`
+- `(patent_id, claim_id)` is a composite FOREIGN KEY referencing `claims(patent_id, claim_id)` with `ON DELETE CASCADE`
+- `element_description` must NOT be NULL
+
 ## Views
 
 ### v_screening_progress
@@ -72,19 +113,26 @@ Automatically updates `updated_at` when a row in `screened_patents` is modified.
 ## Relationships
 
 ```
-target_patents (1) -----> (1) screened_patents
-     |                            |
-     |-- patent_id (PK)            |-- patent_id (PK, FK)
-     |-- title                     |-- judgment
-     |-- country                   |-- reason
-     |-- assignee                  |-- abstract_text
-     |-- extra_fields              |-- screened_at
-     |-- publication_date          |-- updated_at
-     |-- filing_date
-     |-- grant_date
-     |-- created_at
-     |-- updated_at
+target_patents (1) -----> (1) screened_patents (1) -----> (*) claims (1) -----> (*) elements
+     |                            |                            |                    |
+     |-- patent_id (PK)            |-- patent_id (PK, FK)        |-- patent_id (FK)     |-- patent_id (FK)
+     |-- title                     |-- judgment                  |-- id (PK, claim_id) |-- claim_id (FK)
+     |-- country                   |-- reason                    |-- claim_number       |-- id (PK)
+     |-- assignee                  |-- abstract_text             |-- claim_type         |-- element_label
+     |-- extra_fields              |-- screened_at               |-- claim_text         |-- element_description
+     |-- publication_date          |-- updated_at                |-- created_at         |-- created_at
+     |-- filing_date               |                            |-- updated_at         |-- updated_at
+     |-- grant_date                |
+     |-- created_at                |
+     |-- updated_at                |
 ```
+
+**Legend**:
+
+- `(1)`: One-to-one relationship
+- `(*)`: One-to-many relationship
+- `PK`: Primary Key
+- `FK`: Foreign Key
 
 ## Column Naming Convention
 

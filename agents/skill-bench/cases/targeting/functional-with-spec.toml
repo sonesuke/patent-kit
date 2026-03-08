@@ -2,7 +2,7 @@
 
 name = "functional-with-spec"
 description = "Verify targeting process with existing specification"
-timeout = 600 # seconds
+timeout = 600                                                        # seconds
 
 test_prompt = """
 I have placed an invention specification in `0-specifications/specification.md`. Please create a target population and run the patent search for a 2025 product release.

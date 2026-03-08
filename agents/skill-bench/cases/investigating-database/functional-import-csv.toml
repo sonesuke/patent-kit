@@ -2,7 +2,7 @@
 
 name = "functional-import-csv"
 description = "Verify investigating-database can import CSV data into target_patents"
-timeout = 120 # seconds
+timeout = 120                                                                         # seconds
 
 test_prompt = "Import test-patents.csv"
 

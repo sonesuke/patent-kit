@@ -2,7 +2,7 @@
 
 name = "functional"
 description = "Verify constitution-reminding loads and displays core principles"
-timeout = 60 # seconds
+timeout = 60                                                                     # seconds
 
 test_prompt = """
 Load the constitution skill to understand the core principles.

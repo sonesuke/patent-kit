@@ -8,9 +8,6 @@ test_prompt = """
 I have a database of collected patents. Now I need to screen them to remove noise and filter by relevance.
 """
 
-
-
-
 [[checks]]
 name = "skill_loaded"
 type = "script"

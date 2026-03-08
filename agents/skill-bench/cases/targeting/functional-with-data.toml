@@ -2,7 +2,7 @@
 
 name = "functional-with-data"
 description = "Verify targeting process with pre-downloaded CSV data"
-timeout = 600 # seconds
+timeout = 600                                                         # seconds
 
 test_prompt = """
 I have placed downloaded CSV files in `1-targeting/csv/`.

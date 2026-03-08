@@ -2,7 +2,7 @@
 
 name = "functional"
 description = "Verify legal-checking automatically triggers on legal compliance keywords"
-timeout = 60 # seconds
+timeout = 60                                                                              # seconds
 
 test_prompt = """
 Review this patent analysis for legal compliance violations:

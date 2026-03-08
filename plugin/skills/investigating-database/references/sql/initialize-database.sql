@@ -68,3 +68,49 @@ FOR EACH ROW
 BEGIN
     UPDATE screened_patents SET updated_at = datetime('now') WHERE patent_id = NEW.patent_id;
 END;
+
+-- Create claims table for storing patent claims during evaluation
+CREATE TABLE IF NOT EXISTS claims (
+    patent_id TEXT NOT NULL,
+    claim_id TEXT NOT NULL,  -- Use actual claim ID from patent data (e.g., "clm-1", "CLM-0001")
+    claim_number INTEGER NOT NULL,
+    claim_type TEXT NOT NULL CHECK(claim_type IN ('independent', 'dependent')),
+    claim_text TEXT NOT NULL,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now')),
+    PRIMARY KEY (patent_id, claim_id),
+    FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE
+);
+
+-- Create elements table for storing claim constituent elements
+CREATE TABLE IF NOT EXISTS elements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    patent_id TEXT NOT NULL,
+    claim_id TEXT NOT NULL,  -- Reference to claims composite primary key
+    element_label TEXT,
+    element_description TEXT NOT NULL,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now')),
+    FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
+    FOREIGN KEY (patent_id, claim_id) REFERENCES claims(patent_id, claim_id) ON DELETE CASCADE
+);
+
+-- Create timestamp triggers for claims and elements
+CREATE TRIGGER IF NOT EXISTS update_claims_timestamp
+AFTER UPDATE ON claims
+FOR EACH ROW
+BEGIN
+    UPDATE claims SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS update_elements_timestamp
+AFTER UPDATE ON elements
+FOR EACH ROW
+BEGIN
+    UPDATE elements SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
+-- Create index for faster queries
+CREATE INDEX IF NOT EXISTS idx_claims_patent_id ON claims(patent_id);
+CREATE INDEX IF NOT EXISTS idx_elements_patent_id ON elements(patent_id);
+CREATE INDEX IF NOT EXISTS idx_elements_claim_id ON elements(claim_id);

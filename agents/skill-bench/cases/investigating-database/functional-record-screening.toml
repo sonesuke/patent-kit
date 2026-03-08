@@ -2,7 +2,7 @@
 
 name = "functional-record-screening"
 description = "Verify investigating-database can record screening results"
-timeout = 120 # seconds
+timeout = 120                                                              # seconds
 
 test_prompt = """
 Record a screening result for patent US1234567A with judgment 'relevant' and reason 'Core technology for LLM systems'.

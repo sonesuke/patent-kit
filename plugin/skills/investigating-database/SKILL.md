@@ -10,6 +10,8 @@ description: |
     * "get patent ID"
     * "select patent ID for evaluation"
     * "record screening result"
+    * "record claims"
+    * "record elements"
     * "record evaluation result"
     * "get statistics"
   - Other skills need database operations
@@ -138,6 +140,8 @@ See `references/` directory for:
   - `get-patent-id.md`: Patent ID retrieval by row number
   - `select-patent-id.md`: Select next patent for evaluation (relevant, not yet evaluated)
   - `record-screening.md`: Screening result recording
+  - `record-claims.md`: Patent claims recording
+  - `record-elements.md`: Constituent elements recording
   - `record-evaluation.md`: Evaluation completion recording
   - `get-statistics.md`: Progress statistics retrieval
 - **sql/**: SQL schema and query files

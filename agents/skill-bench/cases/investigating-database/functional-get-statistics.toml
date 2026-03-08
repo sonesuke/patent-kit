@@ -2,7 +2,7 @@
 
 name = "functional-get-statistics"
 description = "Verify investigating-database can retrieve screening progress statistics"
-timeout = 120 # seconds
+timeout = 120                                                                            # seconds
 
 test_prompt = """
 Get the screening progress statistics from the database.

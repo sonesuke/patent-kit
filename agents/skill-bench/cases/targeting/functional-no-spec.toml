@@ -2,7 +2,7 @@
 
 name = "functional-no-spec"
 description = "Verify targeting calls concept-interview when specification is missing"
-timeout = 600 # seconds
+timeout = 600                                                                          # seconds
 
 test_prompt = """
 I want to search for patents related to a "folding dual-screen smartphone" for release in the US in Q1 2025. The main competitor is Samsung.

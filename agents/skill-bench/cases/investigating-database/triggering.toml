@@ -2,7 +2,7 @@
 
 name = "triggering"
 description = "Verify investigating-database skill is triggered when appropriate"
-timeout = 60 # seconds
+timeout = 60                                                                      # seconds
 
 test_prompt = """
 I need to check the screening progress statistics.

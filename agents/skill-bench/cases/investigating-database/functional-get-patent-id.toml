@@ -2,7 +2,7 @@
 
 name = "functional-get-patent-id"
 description = "Verify investigating-database can retrieve patent ID by row number"
-timeout = 120 # seconds
+timeout = 120                                                                      # seconds
 
 test_prompt = """
 Get the patent ID at row 2 from the database.
