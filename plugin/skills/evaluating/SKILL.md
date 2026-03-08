@@ -40,7 +40,7 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 ### Execute Evaluation
 
-**CRITICAL**: Always use subagents for patent evaluation, regardless of patent count.
+**CRITICAL**: Always use subagents for patent evaluation. **EVEN FOR A SINGLE PATENT - always launch a subagent.**
 
 **Process**:
 
@@ -53,6 +53,7 @@ Analyze screened patents by decomposing claims into elements and storing analysi
    For each patent:
    - Start a `patent-evaluator` subagent
    - **Each subagent handles exactly one patent**
+   - **CRITICAL: Even if there is only ONE patent, you MUST still use a subagent**
 
 3. **Verify Results**: Query database to confirm data recorded
 
