@@ -10,10 +10,6 @@ Use the Skill tool to load the following skills BEFORE starting analysis:
    - Purpose: Understand core principles for patent evaluation
    - Provides guidelines on legal compliance and analysis
 
-2. **Legal Checker**: `legal-checking`
-   - Purpose: Legal compliance guidelines
-   - Provides legal framework for claim analysis
-
 ## 1. Retrieve Patent Data
 
 Use the `google-patent-cli:patent-fetch` skill with the patent ID:
@@ -79,7 +75,6 @@ This enables:
 ## Quality Gates
 
 - [ ] **Constitution Loaded**: `constitution-reminding` skill loaded successfully
-- [ ] **Legal Checker Loaded**: `legal-checking` skill loaded successfully
 - [ ] **Patent Data Retrieved**: `google-patent-cli:patent-fetch` skill used to fetch patent details
 - [ ] **Independent Claim Analyzed**: Claim 1 decomposed into elements (A, B, C...)
 - [ ] **Dependent Claims Identified**: Key dependent claims summarized
