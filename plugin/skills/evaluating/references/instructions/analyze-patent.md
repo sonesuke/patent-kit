@@ -71,6 +71,7 @@ Use the `investigating-database` skill to record claims and elements in the data
 - Store element_label (A, B, C...) and element_description
 
 This enables:
+
 - Future querying and comparison of claims and elements
 - Progress tracking across multiple evaluation sessions
 - Data-driven analysis and reporting

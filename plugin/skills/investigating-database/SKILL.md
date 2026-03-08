@@ -72,6 +72,8 @@ Based on the user request, select the appropriate database operation:
 | Get Patent ID          | "get patent ID", "fetch patent by row"        | `references/instructions/get-patent-id.md`     |
 | Select Patent for Eval | "select patent ID", "next patent to evaluate" | `references/instructions/select-patent-id.md`  |
 | Record Screening       | "record screening", "save result"             | `references/instructions/record-screening.md`  |
+| Record Claims          | "record claims", "save claims"                | `references/instructions/record-claims.md`     |
+| Record Elements        | "record elements", "save elements"            | `references/instructions/record-elements.md`   |
 | Record Evaluation      | "record evaluation", "save evaluation result" | `references/instructions/record-evaluation.md` |
 | Get Statistics         | "get statistics", "show progress"             | `references/instructions/get-statistics.md`    |
 
@@ -114,7 +116,15 @@ EOF
 2. Fetch patent details using `fetch-patent` MCP tool
 3. Record result: Use SQL from `instructions/record-screening.md`
 
-### Workflow 3: Report Progress
+### Workflow 3: Evaluate Patents
+
+1. Select patent ID: `references/instructions/select-patent-id.md` (find relevant, not yet evaluated)
+2. Fetch patent details using `google-patent-cli:patent-fetch` MCP tool
+3. Record claims: Use SQL from `instructions/record-claims.md`
+4. Record elements: Use SQL from `instructions/record-elements.md`
+5. Record evaluation: Use SQL from `instructions/record-evaluation.md`
+
+### Workflow 4: Report Progress
 
 1. Execute SQL from `instructions/get-statistics.md`
 2. Parse JSON output for reporting
