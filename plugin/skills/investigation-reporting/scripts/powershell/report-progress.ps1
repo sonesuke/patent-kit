@@ -1,45 +1,20 @@
 # Report detailed progress of the project in JSON format
 # Usage: .\report-progress.ps1
 
-# Phase 0
-$p0_spec = Test-Path "0-specifications\specification.md"
+# Concept Interviewing
+$concept_spec = Test-Path "specification.md"
 
-# Phase 1
-$p1_targeting = Test-Path "1-targeting\targeting.md"
-$p1_keywords = Test-Path "1-targeting\keywords.md"
-$p1_target_jsonl = Test-Path "1-targeting\target.jsonl"
-$p1_total_count = 0
-if ($p1_target_jsonl) {
-    $measures = Get-Content "1-targeting\target.jsonl" -ErrorAction SilentlyContinue | Measure-Object
-    $p1_total_count = $measures.Count
-}
+# Targeting
+$targeting = Test-Path "targeting.md"
+$keywords = Test-Path "keywords.md"
 
-# Phase 2
-$p2_screened_jsonl = Test-Path "2-screening\screened.jsonl"
-$p2_screened_count = 0
-$p2_relevant = 0
-$p2_irrelevant = 0
-$p2_expired = 0
-$top_10 = @()
+# Screening (use database statistics)
+# The screening progress is tracked in patents.db
 
-if ($p2_screened_jsonl) {
-    $content = Get-Content "2-screening\screened.jsonl" -ErrorAction SilentlyContinue
-    if ($content) {
-        $p2_screened_count = ($content | Measure-Object).Count
-        $p2_relevant = ($content | Select-String '"judgment":"relevant"').Count
-        $p2_irrelevant = ($content | Select-String '"judgment":"irrelevant"').Count
-        $p2_expired = ($content | Select-String '"judgment":"expired"').Count
-        
-        # Extract Top 10 Relevant
-        $relevantRecords = $content | ForEach-Object { $_ | ConvertFrom-Json } | Where-Object { $_.judgment -eq "relevant" }
-        $top_10 = $relevantRecords | Select-Object -First 10
-    }
-}
-
-# Phase 3-5
+# Evaluations & Investigations
 $investigations = @()
-if (Test-Path "3-investigations") {
-    $dirs = Get-ChildItem -Path "3-investigations" -Directory
+if (Test-Path "investigations") {
+    $dirs = Get-ChildItem -Path "investigations" -Directory
     foreach ($d in $dirs) {
         $id = $d.Name
         $has_eval = Test-Path (Join-Path $d.FullName "evaluation.md")
@@ -79,22 +54,15 @@ if (Test-Path "3-investigations") {
 }
 
 $output = @{
-    phase0 = @{
-        specification_md = $p0_spec
+    concept_interviewing = @{
+        specification_md = $concept_spec
     }
-    phase1 = @{
-        targeting_md = $p1_targeting
-        keywords_md = $p1_keywords
-        target_jsonl = $p1_target_jsonl
-        total_targets = $p1_total_count
+    targeting = @{
+        targeting_md = $targeting
+        keywords_md = $keywords
     }
-    phase2 = @{
-        screened_jsonl = $p2_screened_jsonl
-        total_screened = $p2_screened_count
-        relevant = $p2_relevant
-        irrelevant = $p2_irrelevant
-        expired = $p2_expired
-        top_10_relevant = $top_10
+    screening = @{
+        tracked_in_database = $true
     }
     investigations = $investigations
 }

@@ -13,15 +13,15 @@ metadata:
   version: 1.0.0
 ---
 
-# Phase 2: Screening
+# Screening
 
 ## Purpose
 
-Filter collected patents by legal status and relevance to prepare for Evaluation phase.
+Filter collected patents by legal status and relevance to prepare for evaluation skill.
 
 ## Prerequisites
 
-- `patents.db` must exist (generated in Phase 1 Targeting, `target_patents` table)
+- `patents.db` must exist (generated in targeting skill, `target_patents` table)
 - `specification.md` must exist (Product/Theme definition)
 - Legal-checking skill must be loaded
 
@@ -69,6 +69,4 @@ Follow the detailed screening process in `references/instructions.md`.
 ## References
 
 - `references/instructions.md` - Detailed screening process instructions
-- `references/examples.md` - Usage examples and judgment examples
-- `references/troubleshooting.md` - Common issues and solutions
 - `assets/screening-template.md` - Output template for screening results

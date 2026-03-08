@@ -7,7 +7,7 @@
 
 ## Overview
 
-Define the product concept and identify competitors. This phase establishes the foundation for patent targeting.
+Define the product concept and identify competitors. This establishes the foundation for patent targeting.
 
 ## Input
 

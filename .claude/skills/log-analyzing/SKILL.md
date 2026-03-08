@@ -35,6 +35,12 @@ Provide the log file path:
 Analyze the performance of /workspaces/patent-kit/agents/skill-bench/logs/screening/20260307_221408_functional-parallel-screening.log
 ```
 
+Or run the analyzer script directly:
+
+```
+python3 .claude/skills/log-analyzing/scripts/analyze.py <log_file>
+```
+
 ## Output Format
 
 The analyzer produces a timeline showing:

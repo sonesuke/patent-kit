@@ -1,12 +1,12 @@
 ---
-name: progress-reporting
+name: investigation-reporting
 description: "Outputs a progress report for the current patent investigation workflow. Triggered when the user asks 'What is the current progress?' or 'Give me a summary'."
 metadata:
   author: sonesuke
   version: 1.0.0
 ---
 
-# Progress Report
+# Investigation Report
 
 Your task is to report the current status of the patent analysis workflow.
 
@@ -20,7 +20,7 @@ Use the database skill to get the current status:
 
 - Use the Skill tool to load the `investigation-preparing` skill
 - Request: "Get screening progress statistics"
-- Or run: `bash plugin/skills/investigation-preparing/scripts/shell/get-statistics.sh`
+- Or run: `bash plugin/skills/investigation-reporting/scripts/shell/report-progress.sh`
 
 This returns JSON with:
 
@@ -34,10 +34,10 @@ This returns JSON with:
 
 Based on the database statistics and file analysis:
 
-- **Phase 0**: Check `specification.md` exists.
-- **Phase 1**: Check `1-targeting/targeting.md`, `1-targeting/keywords.md` exist and database has patents.
-- **Phase 2**: Use database statistics (total_screened vs total_targets, relevant/irrelevant/expired counts).
-- **Phase 3-5**: Parse investigation directories and JSON files.
+- **Concept Interviewing**: Check `specification.md` exists.
+- **Targeting**: Check `targeting.md`, `keywords.md` exist and database has patents.
+- **Screening**: Use database statistics (total_screened vs total_targets, relevant/irrelevant/expired counts).
+- **Evaluation-Claim Analysis-Prior Art**: Parse investigation directories and JSON files.
   - Calculate **Claim Analysis Progress** (Claim Analysis Done / Relevant Patents from database).
   - Calculate **Prior Art Progress** (Prior Art Done / Claim Analysis Done).
   - **List Filtering (Critical)**:
@@ -51,7 +51,7 @@ Based on the database statistics and file analysis:
 
 ### Output
 
-Generate a summary report using the template `[progress-template.md](templates/progress-template.md)`.
+Generate a summary report using the template `[investigation-report-template.md](templates/investigation-report-template.md)`.
 
 - **Strictly follow the template structure.**
 - **DO NOT add any extra sections** (e.g., "Top Patents", "Current Status", "Risk Summary", "Recommendations").

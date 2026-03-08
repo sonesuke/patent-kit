@@ -1,12 +1,12 @@
 ---
 name: claim-analyzing
-description: "Generates a claim analysis report for a patent. Triggered when the user asks to 'perform claim analysis' or 'execute step 4'."
+description: "Generates a claim analysis report for a patent. Triggered when the user asks to 'perform claim analysis'."
 metadata:
   author: sonesuke
   version: 1.0.0
 ---
 
-# Phase 4: Claim Analysis
+# Claim Analysis
 
 Your task is to create the Claim Analysis Report based on the Spec.
 
@@ -113,20 +113,3 @@ To maintain context window efficiency:
 - [ ] Claim analysis report follows the template format.
 
 Run /patent-kit:prior-art-researching <patent-id>
-
-# Examples
-
-Example 1: Starting Claim Analysis
-User says: "Please perform a claim analysis on US-1234567-B2"
-Actions:
-
-1. Load the constitution
-2. Read 3-investigations/US-1234567-B2/evaluation.md and the product specification
-3. Perform comparative analysis on each claim element
-   Result: claim-analysis.md is generated, saving the comparison between the specific patent and the product
-
-# Troubleshooting
-
-Error: "Missing evaluation.md"
-Cause: Attempted to run claim analysis on a patent that hasn't completed the evaluation phase (Phase 3).
-Solution: Run `/patent-kit:evaluating <patent-id>` first to generate the evaluation report.

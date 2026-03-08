@@ -2,29 +2,29 @@
 
 ## Purpose
 
-Filter collected patents by legal status and relevance to prepare for Evaluation phase.
+Filter collected patents by legal status and relevance to prepare for evaluation skill.
 
 ## Prerequisites
 
-- `patents.db` must exist (generated in Phase 1 Targeting, `target_patents` table)
+- `patents.db` must exist (generated in targeting skill, `target_patents` table)
 - `specification.md` must exist (Product/Theme definition)
 - Constitution-reminding skill loaded for core principles
 - Legal-checking skill loaded for legal compliance guidelines
 
 ## Process Overview
 
-### Phase 1: Preparation
+### Step 1: Preparation
 
 2. **Load Legal Checker**: Use the Skill tool to load the `legal-checking` skill
 3. **Read Specification**: Read `specification.md` to understand Theme, Domain, and Target Product
 
-### Phase 2: Automated Screening
+### Step 2: Automated Screening
 
 #### Database Integration
 
 Use the Skill tool to load the appropriate database skills:
 
-- **For data retrieval**: Use `investigation-preparing` skill
+- **For data retrieval**: Use `investigation-fetching` skill
   - Getting next patent ID
   - Getting progress statistics
 
@@ -47,7 +47,7 @@ Process all patents from the `target_patents` table.
 **Process Steps**:
 
 1. **Get Unscreened Patents**:
-   - **Action**: Use the `investigation-preparing` skill
+   - **Action**: Use the `investigation-fetching` skill
    - **Request**: "Get list of unscreened patent IDs"
 
 2. **Screen Patents**:

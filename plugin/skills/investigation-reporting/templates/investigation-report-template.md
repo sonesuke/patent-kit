@@ -2,12 +2,12 @@
 
 ## Overview
 
-| Phase                      | Status                   | Details           |
-| -------------------------- | ------------------------ | ----------------- |
-| Phase 0: Concept Interview | Done/Pending             | specification.md  |
-| Phase 1: Targeting         | Done/In Progress/Pending | X target patents  |
-| Phase 2: Screening         | Done/In Progress/Pending | X/Y screened (Z%) |
-| Phase 3-5: Investigations  | In Progress              | See below         |
+| Phase                     | Status                   | Details           |
+| ------------------------- | ------------------------ | ----------------- |
+| Concept Interview         | Done/Pending             | specification.md  |
+| Targeting                 | Done/In Progress/Pending | X target patents  |
+| Screening                 | Done/In Progress/Pending | X/Y screened (Z%) |
+| Evaluation & Investigations | In Progress              | See below         |
 
 ## Screening Summary
 

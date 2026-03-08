@@ -15,11 +15,11 @@ metadata:
   version: 1.0.0
 ---
 
-# Phase 0: Concept Interview
+# Concept Interview
 
 ## Purpose
 
-Define the product concept and identify competitors. This phase establishes the foundation for patent targeting.
+Define the product concept and identify competitors. This establishes the foundation for patent targeting.
 
 ## Prerequisites
 
@@ -62,7 +62,7 @@ Upon successful completion:
 - **Output File**: `specification.md`
 - **Template**: Use `assets/templates/specification-template.md`
 - **Format**: Markdown (not JSON)
-- **Note**: This file is referenced by all subsequent phases (targeting, screening, evaluating, claim-analyzing)
+- **Note**: This file is referenced by all subsequent skills (targeting, screening, evaluating, claim-analyzing)
 
 ## State Management
 
@@ -82,6 +82,4 @@ Upon successful completion:
 ## References
 
 - `references/instructions.md` - Detailed concept interview process
-- `references/examples.md` - Usage examples
-- `references/troubleshooting.md` - Common issues and solutions
 - `assets/templates/specification-template.md` - Output template for specification

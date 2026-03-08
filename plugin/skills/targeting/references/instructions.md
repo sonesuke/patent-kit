@@ -4,8 +4,8 @@
 
 - **Requirement**: Strict adherence to the output templates is required.
 - **Templates**: Located in `assets/` directory.
-  - `targeting-template.md` - Use for `1-targeting/targeting.md`
-  - `keywords-template.md` - Use for `1-targeting/keywords.md`
+  - `targeting-template.md` - Use for `targeting.md`
+  - `keywords-template.md` - Use for `keywords.md`
 
 ## Unified Search Scope
 
@@ -17,16 +17,16 @@ Patent investigations MUST cover the "Big 4" jurisdictions unless explicitly res
 
 ## Overview
 
-Generate high-precision search queries based on the product concept and competitors defined in Phase 0. This phase concludes with a set of validated search commands and merged patent data for screening.
+Generate high-precision search queries based on the product concept and competitors defined in concept-interviewing. This concludes with a set of validated search commands.
 
 ## Input
 
-- **Specification**: `specification.md` (generated in Phase 0).
+- **Specification**: `specification.md` (generated in concept-interviewing skill).
 - **Skills**: `google-patent-cli` (patent-search, patent-assignee-check) from marketplace.
 
 ## Process
 
-### Step 1: Targeting Process
+### Targeting Process
 
 Perform the following targeting process relative to the `Priority Date Cutoff` from `specification.md`.
 
@@ -42,7 +42,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 - **Generic**: Keywords are too general and lack technical specificity.
 - **Irrelevant**: Unrelated to the competitor's known products or the target use case.
 
-#### Phase 1.1: Competitor Patent Research
+#### Phase 1: Competitor Patent Research
 
 1. **Start Broad**:
    - **Action**: Use the `google-patent-cli:patent-search` skill with:
@@ -66,14 +66,14 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
      - **Check**: Does it meet the **High Noise** criteria (8+ irrelevant results)?
      - **Refine**: If **High Noise**, you MUST adjust the query (add exclusions or specific constraints) BEFORE proceeding to the next keyword.
      - **Identify**: Look for **Technical Terms** ("Golden Keywords").
-     - **Register**: Immediately add verified keywords to `1-targeting/keywords.md` (see Output section for format).
+     - **Register**: Immediately add verified keywords to `keywords.md` (see Output section for format).
    - **CRITICAL RULE 3**: **Over-Filtering Check**. If adding a keyword reduces the count to **under 200**, this might be too narrow. **Ask the user** if this is acceptable (e.g., for niche markets) or if they want to broaden the query.
    - **Repeat**: Continue adding quoted keywords (e.g., query: "\"keyword1\" AND \"keyword2\"") until the count is reasonable (< 1000) and relevance is high.
 
-#### Phase 1.2: Market Patent Research
+#### Phase 2: Market Patent Research
 
 1. **Apply Keywords**:
-   - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `1-targeting/keywords.md`).
+   - Use the "Golden Keywords" discovered in Phase 1.1 (refer to `keywords.md`).
    - **Action**: Use the `google-patent-cli:patent-search` skill with:
      - query: "\"keyword1\" AND \"keyword2\" AND ..."
      - country: "<Target Country>"
@@ -94,33 +94,9 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
    - **Goal**: Reach < 1000 hits with high relevance.
    - **Over-Filtering**: If count < 200, **confirm with the user** before proceeding.
 
-### Step 2: Data Acquisition
-
-1. **Instruct User**: Ask the user to perform the following:
-   - **Action**: Go to Google Patents (<https://patents.google.com/>).
-   - For each query generated in Step 1:
-     - Execute the query.
-     - Download the results as a CSV file.
-   - **Save Location**: Place all downloaded CSV files in `1-targeting/csv/`.
-
-### Step 3: Merge & Deduplicate
-
-1. **Run Merge Command**:
-   - Execute the following command to combine the CSV files and remove duplicates.
-   - **Important**: Use `./plugin/skills/targeting/scripts/shell/merge.sh` (Mac/Linux) or `.\plugin\skills\targeting\scripts\powershell\merge.ps1` (Windows).
-   - Command: `./plugin/skills/targeting/scripts/shell/merge.sh 1-targeting/csv 1-targeting/target.jsonl`
-
-2. **Verify Output**:
-   - Check that `1-targeting/target.jsonl` has been created.
-   - This file contains the consolidated list of unique patents to be screened/evaluated.
-
-3. **Check Count**:
-   - The merge command output displays the number of unique patents (e.g., `Merged 150 unique patents...`).
-   - Confirm this count to understand the volume of patents to be screened.
-
 ## Output
 
-- Create a file `1-targeting/targeting.md` using the template `[targeting-template.md](assets/targeting-template.md)`.
+- Create a file `targeting.md` using the template `[targeting-template.md](assets/targeting-template.md)`.
 - Fill in the **Generated Search Commands** with:
   - **Query**: The final command.
   - **Hit Count**: Number of hits.
@@ -132,8 +108,7 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
   - **Noise Cause**: Polysemy, Generic, Domain, etc. (Why was it noise?)
   - **Adjustment**: What keywords/exclusions were added.
   - **Result Count**: Count after adjustment.
-- Create a file `1-targeting/keywords.md` using the template `[keywords-template.md](assets/keywords-template.md)`. This is the **Golden Keywords Registry**.
-- `1-targeting/target.jsonl`: The merged list of unique patents ready for screening.
+- Create a file `keywords.md` using the template `[keywords-template.md](assets/keywords-template.md)`. This is the **Golden Keywords Registry**.
 
 ## Quality Gates
 
@@ -141,11 +116,9 @@ A search result is considered **"High Noise"** if **8 or more** of the top 20 sn
 - [ ] **Over-Filtering Check**: If count < 200, did you confirm with the user that this is intended?
 - [ ] **Volume Control**: Is the final General Search count under 1000 (or reasonably low)?
 - [ ] **Output**: Is `targeting.md` created with both query patterns and the validation log?
-- [ ] **Data Acquisition**: Are all CSV files downloaded to `1-targeting/csv/`?
-- [ ] **Merge**: Is `1-targeting/target.jsonl` created with unique patents?
+- [ ] **Keywords Registry**: Is `keywords.md` created with golden keywords?
 
 ## Deliverables
 
-1. `1-targeting/targeting.md`
-2. `1-targeting/keywords.md`
-3. `1-targeting/target.jsonl`
+1. `targeting.md`
+2. `keywords.md`

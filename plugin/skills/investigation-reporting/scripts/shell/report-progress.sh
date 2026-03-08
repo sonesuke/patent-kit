@@ -2,52 +2,27 @@
 # Report detailed progress of the project in JSON format
 # Usage: ./report-progress.sh
 
-# Phase 0
-p0_spec="false"
-[ -f "specification.md" ] && p0_spec="true"
+# Concept Interviewing
+concept_spec="false"
+[ -f "specification.md" ] && concept_spec="true"
 
-# Phase 1
-p1_targeting="false"
-p1_keywords="false"
-p1_target_jsonl="false"
-p1_total_count=0
+# Targeting
+targeting="false"
+keywords="false"
 
-[ -f "1-targeting/targeting.md" ] && p1_targeting="true"
-[ -f "1-targeting/keywords.md" ] && p1_keywords="true"
-if [ -f "1-targeting/target.jsonl" ]; then
-    p1_target_jsonl="true"
-    p1_total_count=$(wc -l < "1-targeting/target.jsonl" | tr -d ' ')
-fi
+[ -f "targeting.md" ] && targeting="true"
+[ -f "keywords.md" ] && keywords="true"
 
-# Phase 2
-p2_screened_jsonl="false"
-p2_screened_count=0
-p2_relevant=0
-p2_irrelevant=0
-p2_expired=0
-top_10="[]"
+# Screening (use database statistics)
+# The screening progress is tracked in patents.db
 
-if [ -f "2-screening/screened.jsonl" ]; then
-    p2_screened_jsonl="true"
-    p2_screened_count=$(wc -l < "2-screening/screened.jsonl" | tr -d ' ')
-    p2_relevant=$(grep -c '"judgment":"relevant"' "2-screening/screened.jsonl")
-    p2_irrelevant=$(grep -c '"judgment":"irrelevant"' "2-screening/screened.jsonl")
-    p2_expired=$(grep -c '"judgment":"expired"' "2-screening/screened.jsonl")
-    
-    # Extract Top 10
-    relevant_lines=$(grep '"judgment":"relevant"' "2-screening/screened.jsonl" | head -n 10)
-    if [ -n "$relevant_lines" ]; then
-        top_10=$(echo "$relevant_lines" | jq -s '.')
-    fi
-fi
-
-# Phase 3-5
+# Evaluations & Investigations
 investigations="[]"
-if [ -d "3-investigations" ]; then
+if [ -d "investigations" ]; then
     # Start JSON array
     investigations="["
     first=true
-    for dir in 3-investigations/*/; do
+    for dir in investigations/*/; do
         [ -d "$dir" ] || continue
         id=$(basename "$dir")
         
@@ -100,22 +75,15 @@ fi
 # Construct final JSON
 cat <<EOF
 {
-  "phase0": {
-    "specification_md": $p0_spec
+  "concept_interviewing": {
+    "specification_md": $concept_spec
   },
-  "phase1": {
-    "targeting_md": $p1_targeting,
-    "keywords_md": $p1_keywords,
-    "target_jsonl": $p1_target_jsonl,
-    "total_targets": $p1_total_count
+  "targeting": {
+    "targeting_md": $targeting,
+    "keywords_md": $keywords
   },
-  "phase2": {
-    "screened_jsonl": $p2_screened_jsonl,
-    "total_screened": $p2_screened_count,
-    "relevant": $p2_relevant,
-    "irrelevant": $p2_irrelevant,
-    "expired": $p2_expired,
-    "top_10_relevant": $top_10
+  "screening": {
+    "tracked_in_database": true
   },
   "investigations": $investigations
 }

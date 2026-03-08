@@ -18,6 +18,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     jq \
     sudo \
     ca-certificates \
+    sqlite3 \
+    python3 \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Note: mise is installed in post-create.sh to allow user-specific configuration

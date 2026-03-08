@@ -424,7 +424,7 @@ def identify_bottlenecks(entries: List[Tuple[float, str, str]]) -> List[str]:
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python analyze.py <log_file>")
+        print("Usage: python3 analyze.py <log_file>")
         sys.exit(1)
 
     log_file = sys.argv[1]

@@ -1,12 +1,12 @@
 ---
 name: prior-art-researching
-description: "Conducts an invalidation (prior art) search for a target patent. Triggered when the user asks to 'perform a prior art search' or 'find invalidating materials (Step 5)'."
+description: "Conducts an invalidation (prior art) search for a target patent. Triggered when the user asks to 'perform a prior art search'."
 metadata:
   author: sonesuke
   version: 1.0.0
 ---
 
-# Phase 5: Prior Art
+# Prior Art
 
 Your task is to Execute the Plan and Report Findings.
 
@@ -167,20 +167,3 @@ To maintain context window efficiency:
   - NPL Full-Text Path: `3-investigations/<patent-id>/json/npl_<arxiv-id>.json`
 - **Requirement**: Do NOT load large JSON outputs directly into context.
 - **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
-
-# Examples
-
-Example 1: Executing Prior Art Search
-User says: "Find prior art for US-9876543-B2, which looked promising in Step 4"
-Actions:
-
-1. Read claim-analysis.md to identify similarities
-2. Perform a hybrid search on patent and non-patent literature across General/Specific/Functional layers
-3. Compare the MCP tool results and create a claim chart
-   Result: 3-investigations/US-9876543-B2/prior-art.md is generated.
-
-# Troubleshooting
-
-Error: "No results found"
-Cause: The search query is too long or the AND conditions are too strict.
-Solution: Follow Rule IX and simplify the search query (e.g., remove modifiers) to search again.

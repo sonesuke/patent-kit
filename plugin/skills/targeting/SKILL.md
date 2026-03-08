@@ -8,13 +8,13 @@ description: |
     * "create a target population"
     * "determine the target population"
     * "run the patent search"
-  - CSV files are detected in 1-targeting/csv/
+  - CSV files are detected in csv/
 metadata:
   author: sonesuke
   version: 1.0.0
 ---
 
-# Phase 1: Targeting
+# Targeting
 
 ## Purpose
 
@@ -22,7 +22,7 @@ Generate high-precision search queries and create a consolidated patent populati
 
 ## Prerequisites
 
-- `specification.md` must exist (generated in Phase 0)
+- `specification.md` must exist (generated in concept-interviewing skill)
 
 ## Constitution
 
@@ -61,14 +61,14 @@ Use the Glob tool to check if `specification.md` exists:
 
 **IMPORTANT: First, check if CSV files already exist:**
 
-Use the Glob tool to check if `1-targeting/csv/*.csv` files exist:
+Use the Glob tool to check if `csv/*.csv` files exist:
 
 - **If CSV files exist**:
   1. **Do NOT** ask the user what to do. **Immediately proceed to database import.**
-  2. **Skip** the patent search and keyword extraction steps (Step 1 & 2 from instructions)
+  2. **Skip** the patent search and keyword extraction steps (Targeting Process from instructions)
   3. **Initialize database and import CSV files**:
      - Use the Skill tool to load the `investigation-preparing` skill
-     - Request: "Initialize the patent database and import CSV files from 1-targeting/csv/"
+     - Request: "Initialize the patent database and import CSV files from csv/"
      - This will:
        - Create `patents.db` if it doesn't exist
        - Import all CSV files into the `target_patents` table
@@ -80,19 +80,19 @@ Use the Glob tool to check if `1-targeting/csv/*.csv` files exist:
   1. **Execute Competitor Patent Research**:
      - Use `google-patent-cli:patent-search` with assignee search
      - Analyze results and extract "Golden Keywords"
-     - Save keywords to `1-targeting/keywords.md`
+     - Save keywords to `keywords.md`
   2. **Execute Market Patent Research**:
      - Use `google-patent-cli:patent-search` with keyword queries
      - Refine queries based on noise analysis
   3. **Create Output Files**:
-     - Fill `1-targeting/targeting.md` using the template
-     - Update `1-targeting/keywords.md` with golden keywords registry
+     - Fill `targeting.md` using the template
+     - Update `keywords.md` with golden keywords registry
 
 ### 4. Transition to Screening
 
 Upon successful completion:
 
-- Deliverables: `1-targeting/targeting.md`, `1-targeting/keywords.md` (if not from CSV), `patents.db`
+- Deliverables: `targeting.md`, `keywords.md` (if not from CSV), `patents.db`
 - Next skill: `/patent-kit:screening`
 
 ## State Management
@@ -100,19 +100,17 @@ Upon successful completion:
 ### Initial State
 
 - `specification.md` exists
-- No `1-targeting/` directory (or empty)
+- No `targeting.md`, `keywords.md`, or `csv/` directory (or empty)
 
 ### Final State
 
-- `1-targeting/targeting.md` created with validated search commands (if not from CSV)
-- `1-targeting/keywords.md` created with golden keywords registry (if not from CSV)
+- `targeting.md` created with validated search commands (if not from CSV)
+- `keywords.md` created with golden keywords registry (if not from CSV)
 - `patents.db` created with patents imported into `target_patents` table
-- Ready to proceed to screening phase
+- Ready to proceed to screening skill
 
 ## References
 
 - `references/instructions.md` - Detailed targeting process instructions
-- `references/examples.md` - Usage examples
-- `references/troubleshooting.md` - Common issues and solutions
 - `assets/templates/targeting-template.md` - Output template for targeting results
 - `assets/templates/keywords-template.md` - Output template for keywords registry

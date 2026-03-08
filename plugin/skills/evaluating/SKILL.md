@@ -13,7 +13,7 @@ metadata:
   version: 1.0.0
 ---
 
-# Phase 3: Evaluation
+# Evaluation
 
 ## Purpose
 
@@ -21,10 +21,9 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 ## Prerequisites
 
-- `patents.db` must exist with `screened_patents` table populated (from Phase 2 Screening)
-- Load `investigation-preparing` skill for data retrieval operations
+- `patents.db` must exist with `screened_patents` table populated (from screening skill)
+- Load `investigation-fetching` skill for data retrieval operations
 - Load `investigation-recording` skill for data recording operations
-- `google-patent-cli:patent-fetch` skill available for retrieving patent data
 
 ## Constitution
 
@@ -41,38 +40,27 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 ### Execute Evaluation
 
-**CRITICAL**: For multiple patents (2+), you MUST use the Agent tool with patent-evaluator subagent for parallel processing.
+**CRITICAL**: Always use subagents for patent evaluation, regardless of patent count.
 
 **Process**:
 
 1. **Get Patents to Analyze**:
-   - Use `investigation-preparing` skill
+   - Use `investigation-fetching` skill
    - Request: "Get list of relevant patents without evaluation"
 
-2. **Analyze Patents**:
+2. **Analyze Patents**: Launch `patent-evaluator` subagents
 
-   **If single patent**: Process directly following steps 3-4
+   For each patent:
+   - Start a `patent-evaluator` subagent
+   - **Each subagent handles exactly one patent**
 
-   **If multiple patents (2+)**: MUST use Agent tool with patent-evaluator subagent
-
-   ```
-   Agent tool parameters:
-   - subagent_type: "patent-evaluator"
-   - name: "evaluator-<patent-id>"
-   - description: "Analyze patent <PATENT_ID> and record claims/elements"
-   - prompt: "Fetch patent <PATENT_ID> using google-patent-cli:patent-fetch skill, decompose Claim 1 into elements, and record all claims and elements using investigation-recording skill"
-   ```
-
-3. **Record Claims**: Use `investigation-recording` skill
-4. **Record Elements**: Use `investigation-recording` skill
-
-5. **Verify Results**: Query database to confirm data recorded
+3. **Verify Results**: Query database to confirm data recorded
 
 ## State Management
 
 ### Initial State
 
-- `patents.db` exists with `screened_patents` table populated (from Phase 2 Screening)
+- `patents.db` exists with `screened_patents` table populated (from screening skill)
 - No claims/elements data in database (or partial evaluation in progress)
 
 ### Final State
@@ -80,12 +68,6 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 - Claims and elements stored in database (`claims` and `elements` tables)
 - Analysis data available for further processing
 
-## Examples
-
-- See `references/examples.md` for detailed usage examples
-
 ## References
 
 - `references/instructions.md` - Detailed evaluation process instructions
-- `references/examples.md` - Usage examples and detailed workflows
-- `references/troubleshooting.md` - Common issues and solutions
