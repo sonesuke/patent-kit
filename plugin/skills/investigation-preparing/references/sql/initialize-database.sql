@@ -101,13 +101,23 @@ CREATE TABLE IF NOT EXISTS similarities (
     element_label TEXT NOT NULL,
     similarity_level TEXT CHECK(similarity_level IN ('Significant', 'Moderate', 'Limited')),
     analysis_notes TEXT,
-    overall_similarity TEXT CHECK(overall_similarity IN ('Significant', 'Moderate', 'Limited')),
     analyzed_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     PRIMARY KEY (patent_id, claim_number, element_label),
     FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
     FOREIGN KEY (patent_id, claim_number) REFERENCES claims(patent_id, claim_number) ON DELETE CASCADE,
     FOREIGN KEY (patent_id, claim_number, element_label) REFERENCES elements(patent_id, claim_number, element_label) ON DELETE CASCADE
+);
+
+-- Create features table for storing product/target features
+CREATE TABLE IF NOT EXISTS features (
+    feature_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    feature_name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    category TEXT,
+    presence TEXT CHECK(presence IN ('present', 'absent')),
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
 );
 
 -- Create timestamp triggers for claims and elements
@@ -137,6 +147,13 @@ BEGIN
     WHERE patent_id = NEW.patent_id
       AND claim_number = NEW.claim_number
       AND element_label = NEW.element_label;
+END;
+
+CREATE TRIGGER IF NOT EXISTS update_features_timestamp
+AFTER UPDATE ON features
+FOR EACH ROW
+BEGIN
+    UPDATE features SET updated_at = datetime('now') WHERE feature_id = NEW.feature_id;
 END;
 
 -- Create index for faster queries

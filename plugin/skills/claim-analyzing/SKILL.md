@@ -17,31 +17,14 @@ metadata:
 
 ## Purpose
 
-Perform detailed claim analysis by comparing product specification against patent evaluation results, generating claim analysis reports for each patent.
+Perform detailed claim analysis by comparing product specification against patent elements from database and recording similarity results.
 
 ## Prerequisites
 
-- `specification.md` must exist with complete product information
-- `3-investigations/<patent-id>/evaluation.md` must exist for patents to analyze
+- `features` table must exist with product features populated
+- `patents.db` must exist with `elements` table populated (from evaluation skill)
 - Load `investigation-fetching` skill for data retrieval operations
-- Load `legal-checking` skill for legal compliance guidelines
-
-## Constitution
-
-### Core Principles
-
-**Element-by-Element Analysis (The Golden Rule)**:
-
-- Every claim analysis MUST test the target product against the patent elements element by element
-- Break down inventions into Elements A, B, C
-- Find references disclosing A AND B AND C for anticipation (Novelty)
-- Do not rely on "general similarity"
-
-**No Legal Assertions**:
-
-- Use descriptive technical language only
-- Avoid legal conclusions like "infringes" or "does not infringe"
-- Focus on feature comparison and technical overlap
+- Load `investigation-recording` skill for data recording operations
 
 ## Skill Orchestration
 
@@ -53,9 +36,7 @@ Perform detailed claim analysis by comparing product specification against paten
 
 1. **Get Patents to Analyze**:
    - Use `investigation-fetching` skill
-   - Request: "Get next patent for claim analysis"
-   - If user provides patent ID, verify `evaluation.md` exists
-   - If `evaluation.md` does not exist, notify user and wait for confirmation
+   - Request: "Get list of patents with elements but no similarities"
 
 2. **Analyze Patents**: Launch `claim-analyzer` subagents
 
@@ -64,14 +45,14 @@ Perform detailed claim analysis by comparing product specification against paten
    - **Each subagent handles exactly one patent**
    - **CRITICAL: Even if there is only ONE patent, you MUST still use a subagent**
 
-3. **Verify Results**: Confirm `claim-analysis.md` files were created
+3. **Verify Results**: Confirm similarities were recorded to database
 
 ## State Management
 
 ### Initial State
 
-- Patents with `evaluation.md` but no `claim-analysis.md` exist
+- Patents in `elements` table without corresponding `similarities` entries exist
 
 ### Final State
 
-- No patents with `evaluation.md` without corresponding `claim-analysis.md` (all analyzed)
+- No patents in `elements` without corresponding `similarities` entries (all analyzed)

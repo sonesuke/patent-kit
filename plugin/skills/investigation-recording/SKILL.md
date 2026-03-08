@@ -11,9 +11,11 @@ description: |
   - "Record claims for patent <patent-id>: <claims_data>"
   - "Record elements for patent <patent-id>: <elements_data>"
   - "Record similarities for patent <patent-id>: <similarities_data>"
+  - "Record features: <features_data>"
   - "Batch insert claims: <claims_list>"
   - "Batch insert elements: <elements_list>"
   - "Batch insert similarities: <similarities_list>"
+  - "Batch insert features: <features_list>"
 
   This skill handles all database recording operations with efficient batch INSERT.
   Just provide the data and let the skill manage the database.
@@ -46,6 +48,7 @@ internal reference files for this skill's internal use only.
 - "Record claims for patent US1234567A1: claim_1=..., claim_2=..."
 - "Record elements for patent US1234567A1: element_a=..., element_b=..."
 - "Record similarities for patent US1234567A1: element_a=Significant, element_b=Moderate..."
+- "Record features: feature_a=..., feature_b=..."
 - "Batch insert 3 claims for patent US1234567A1: <claims_data>"
 
 ## Purpose
@@ -93,6 +96,7 @@ When processing external requests, map them to internal instruction files:
 | "Record claims for patent..."   | references/instructions/record-claims.md       |
 | "Record elements for patent..." | references/instructions/record-elements.md     |
 | "Record similarities..."        | references/instructions/record-similarities.md |
+| "Record features..."            | references/instructions/record-features.md     |
 
 **CRITICAL**: These reference files are for INTERNAL USE ONLY. External agents
 should invoke via Skill tool, not read these files.
@@ -155,7 +159,13 @@ EOF
 2. Internal: Parse similarities data → Execute batch INSERT via record-similarities.md
 3. Verify: Return count of inserted similarities
 
-### Workflow 5: Batch Recording
+### Workflow 5: Record Features
+
+1. External: "Record features: feature_a=..., feature_b=..."
+2. Internal: Parse features data → Execute batch INSERT via record-features.md
+3. Verify: Return count of inserted features
+
+### Workflow 6: Batch Recording
 
 1. External: "Batch insert 5 claims for patent US1234567A1: <claims_list>"
 2. Internal: Parse all claims → Execute single batch INSERT statement
@@ -166,7 +176,7 @@ EOF
 ### Prerequisites
 
 - `patents.db` exists in working directory
-- Relevant tables (screened_patents, claims, elements, similarities) are created
+- Relevant tables (screened_patents, claims, elements, similarities, features) are created
 
 ### Final State
 
@@ -174,6 +184,7 @@ EOF
 - Claims recorded in claims table
 - Elements recorded in elements table
 - Similarities recorded in similarities table
+- Features recorded in features table
 - Data available for querying via investigation-preparing skill
 
 ## Internal References (For This Skill Only)
@@ -186,6 +197,7 @@ agents should NOT read these:
   - `record-claims.md`: Patent claims recording with batch INSERT
   - `record-elements.md`: Constituent elements recording with batch INSERT
   - `record-similarities.md`: Similarity analysis recording with batch INSERT
+  - `record-features.md`: Product features recording with batch INSERT
 
 **IMPORTANT**: External agents should invoke this skill via the Skill tool, not
 access these internal files directly.

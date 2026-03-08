@@ -88,16 +88,15 @@ Stores constituent elements of claims analyzed during evaluation phase.
 
 Stores claim analysis results comparing product features against patent elements.
 
-| Column             | Type       | Description                                                        |
-| ------------------ | ---------- | ------------------------------------------------------------------ |
-| patent_id          | TEXT PK    | Patent number (FK to screened_patents.patent_id)                   |
-| claim_number       | INTEGER PK | Claim number (part of composite FK to claims with patent_id)       |
-| element_label      | TEXT PK    | Element label (part of composite FK to elements with patent_id...) |
-| similarity_level   | TEXT       | Similarity level: `Significant`, `Moderate`, or `Limited`          |
-| analysis_notes     | TEXT       | Detailed analysis notes explaining the similarity assessment       |
-| overall_similarity | TEXT       | Overall similarity level for the patent                            |
-| analyzed_at        | TEXT       | Analysis timestamp                                                 |
-| updated_at         | TEXT       | Last update timestamp                                              |
+| Column           | Type       | Description                                                        |
+| ---------------- | ---------- | ------------------------------------------------------------------ |
+| patent_id        | TEXT PK    | Patent number (FK to screened_patents.patent_id)                   |
+| claim_number     | INTEGER PK | Claim number (part of composite FK to claims with patent_id)       |
+| element_label    | TEXT PK    | Element label (part of composite FK to elements with patent_id...) |
+| similarity_level | TEXT       | Similarity level: `Significant`, `Moderate`, or `Limited`          |
+| analysis_notes   | TEXT       | Detailed analysis notes explaining the similarity assessment       |
+| analyzed_at      | TEXT       | Analysis timestamp                                                 |
+| updated_at       | TEXT       | Last update timestamp                                              |
 
 **Constraints**:
 
@@ -106,6 +105,27 @@ Stores claim analysis results comparing product features against patent elements
 - `(patent_id, claim_number)` is a composite FOREIGN KEY referencing `claims(patent_id, claim_number)` with `ON DELETE CASCADE`
 - `(patent_id, claim_number, element_label)` is a composite FOREIGN KEY referencing `elements(patent_id, claim_number, element_label)` with `ON DELETE CASCADE`
 - `similarity_level` only allows: `Significant`, `Moderate`, `Limited`
+
+### features
+
+Stores product/target features for claim analysis comparison.
+
+| Column       | Type       | Description                             |
+| ------------ | ---------- | --------------------------------------- |
+| feature_id   | INTEGER PK | Auto-incrementing primary key           |
+| feature_name | TEXT       | Feature name/label                      |
+| description  | TEXT       | Detailed feature description            |
+| category     | TEXT       | Feature category (optional)             |
+| presence     | TEXT       | Feature presence: 'present' or 'absent' |
+| created_at   | TEXT       | Record creation timestamp               |
+| updated_at   | TEXT       | Last update timestamp                   |
+
+**Constraints**:
+
+- `feature_id` is PRIMARY KEY with AUTOINCREMENT
+- `feature_name` and `description` must NOT be NULL
+- `feature_name` must be unique
+- `presence` only allows: `present`, `absent`
 
 ## Views
 

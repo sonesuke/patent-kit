@@ -83,4 +83,4 @@ command = "check-workspace-file.sh keywords.md"
 [[checks]]
 name = "google_patent_search_invoked"
 type = "script"
-command = "check-skill-invoked.sh google-patent-cli:patent-search"
+command = "check-mcp-tool-invoked.sh {} {} search_patents"

@@ -86,10 +86,10 @@ This command creates all necessary tables (`target_patents`, `screened_patents`,
 
 When processing external requests, map them to internal instruction files:
 
-| External Request      | Internal Reference File                 |
-| --------------------- | ---------------------------------------- |
-| "Initialize database" | SKILL.md → Database Initialization      |
-| "Import CSV files..." | references/instructions/import-csv.md    |
+| External Request      | Internal Reference File               |
+| --------------------- | ------------------------------------- |
+| "Initialize database" | SKILL.md → Database Initialization    |
+| "Import CSV files..." | references/instructions/import-csv.md |
 
 **CRITICAL**: These reference files are for INTERNAL USE ONLY. External agents
 should invoke via Skill tool, not read these files.

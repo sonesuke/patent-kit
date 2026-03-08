@@ -42,6 +42,10 @@ internal reference files for this skill's internal use only.
 - "Get list of relevant patents without evaluation"
 - "Get list of unscreened patent IDs"
 - "Get next patent for claim analysis"
+- "Get elements for patent <patent-id>"
+- "Get list of patents with elements but no similarities"
+- "Search features"
+- "Search feature: <feature_name>"
 - "Execute SQL: SELECT COUNT(\*) FROM screened_patents WHERE judgment = 'relevant'"
 
 ## Purpose
@@ -63,13 +67,17 @@ requests from external agents.
 
 When processing external requests, map them to internal instruction files:
 
-| External Request                          | Internal Reference File                                   |
-| ----------------------------------------- | --------------------------------------------------------- |
-| "Get next relevant patent for evaluation" | references/instructions/get-next-patent.md                |
-| "Get list of relevant patents without..." | references/instructions/get-relevant-patents.md           |
-| "Get all relevant patents"                | references/instructions/get-relevant-patents.md           |
-| "Get list of unscreened patent IDs"       | references/instructions/get-unscreened-patents.md         |
-| "Get next patent for claim analysis"      | references/instructions/get-next-claim-analysis-patent.md |
+| External Request                           | Internal Reference File                                     |
+| ------------------------------------------ | ----------------------------------------------------------- |
+| "Get next relevant patent for evaluation"  | references/instructions/get-next-patent.md                  |
+| "Get list of relevant patents without..."  | references/instructions/get-relevant-patents.md             |
+| "Get all relevant patents"                 | references/instructions/get-relevant-patents.md             |
+| "Get list of unscreened patent IDs"        | references/instructions/get-unscreened-patents.md           |
+| "Get next patent for claim analysis"       | references/instructions/get-next-claim-analysis-patent.md   |
+| "Get elements for patent..."               | references/instructions/get-elements.md                     |
+| "Get list of patents with elements but..." | references/instructions/get-patents-without-similarities.md |
+| "Search features"                          | references/instructions/get-features.md                     |
+| "Search feature: <feature_name>"           | references/instructions/search-feature.md                   |
 
 **CRITICAL**: These reference files are for INTERNAL USE ONLY. External agents
 should invoke via Skill tool, not read these files.
@@ -134,6 +142,73 @@ find 3-investigations -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
 done
 ```
 
+### Workflow 4: Get Elements for Patent
+
+1. External: "Get elements for patent <patent-id>"
+2. Internal: Execute get-elements.md → Return array of elements
+
+Query:
+
+```sql
+SELECT
+  claim_number,
+  element_label,
+  element_description
+FROM elements
+WHERE patent_id = '<patent_id>'
+ORDER BY claim_number, element_label;
+```
+
+### Workflow 5: Get Patents Without Similarities
+
+1. External: "Get list of patents with elements but no similarities"
+2. Internal: Execute get-patents-without-similarities.md → Return array of patent_ids
+
+Query:
+
+```sql
+SELECT DISTINCT e.patent_id
+FROM elements e
+LEFT JOIN similarities s ON e.patent_id = s.patent_id
+  AND e.claim_number = s.claim_number
+  AND e.element_label = s.element_label
+WHERE s.patent_id IS NULL;
+```
+
+### Workflow 6: Search Features
+
+1. External: "Search features"
+2. Internal: Execute get-features.md → Return array of features
+
+Query:
+
+```sql
+SELECT
+  feature_name,
+  description,
+  category,
+  presence
+FROM features
+ORDER BY feature_id;
+```
+
+### Workflow 7: Search Feature
+
+1. External: "Search feature: <feature_name>"
+2. Internal: Execute search-feature.md → Return single feature or empty array
+
+Query:
+
+```sql
+SELECT
+  feature_name,
+  description,
+  category,
+  presence
+FROM features
+WHERE feature_name = '<feature_name>';
+```
+
 ## State Management
 
 ### Initial State
@@ -154,6 +229,10 @@ agents should NOT read these:
   - `get-relevant-patents.md`: Get list of relevant patents
   - `get-unscreened-patents.md`: Get list of unscreened patents
   - `get-next-claim-analysis-patent.md`: Get next patent for claim analysis
+  - `get-elements.md`: Get elements for a specific patent
+  - `get-patents-without-similarities.md`: Get list of patents with elements but no similarities
+  - `get-features.md`: Get all product features
+  - `search-feature.md`: Search for a specific feature by name
 - \*\*references/schema.md`: Database schema documentation
 
 **IMPORTANT**: External agents should invoke this skill via the Skill tool, not
