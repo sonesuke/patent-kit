@@ -30,7 +30,7 @@ internal reference files for this skill's internal use only.
 
 **To use this skill**:
 
-1. Invoke via Skill tool: `Skill: investigating-database-preparing`
+1. Invoke via Skill tool: `Skill: investigation-preparing`
 2. Provide your request with data
 3. The skill will handle all SQL operations automatically
 

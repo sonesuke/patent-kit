@@ -10,4 +10,4 @@
 2. Ask the user for the target country, target release date, and competitor companies.
 3. Validate the formal Assignee Name of the competitors.
 
-**Result**: `0-specifications/specification.md` is generated, defining the concept and search criteria.
+**Result**: `specification.md` is generated, defining the concept and search criteria.

@@ -18,9 +18,9 @@ Your task is to report the current status of the patent analysis workflow.
 
 Use the database skill to get the current status:
 
-- Use the Skill tool to load the `investigating-database` skill
+- Use the Skill tool to load the `investigation-preparing` skill
 - Request: "Get screening progress statistics"
-- Or run: `bash plugin/skills/investigating-database/scripts/shell/get-statistics.sh`
+- Or run: `bash plugin/skills/investigation-preparing/scripts/shell/get-statistics.sh`
 
 This returns JSON with:
 
@@ -34,7 +34,7 @@ This returns JSON with:
 
 Based on the database statistics and file analysis:
 
-- **Phase 0**: Check `0-specifications/specification.md` exists.
+- **Phase 0**: Check `specification.md` exists.
 - **Phase 1**: Check `1-targeting/targeting.md`, `1-targeting/keywords.md` exist and database has patents.
 - **Phase 2**: Use database statistics (total_screened vs total_targets, relevant/irrelevant/expired counts).
 - **Phase 3-5**: Parse investigation directories and JSON files.

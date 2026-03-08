@@ -3,7 +3,7 @@
 ## Template Adherence
 
 - **Requirement**: Strict adherence to the output template is required.
-- **Template**: `assets/templates/specification-template.md` - Use for `0-specifications/specification.md`
+- **Template**: `assets/templates/specification-template.md` - Use for `specification.md`
 
 ## Overview
 
@@ -21,7 +21,7 @@ Use the Skill tool to load the `constitution` skill BEFORE starting any work. Th
 
 ### Step 2: Concept Interview
 
-1. **Check Existing Specification**: Use the Glob tool to check if `0-specifications/specification.md` exists.
+1. **Check Existing Specification**: Use the Glob tool to check if `specification.md` exists.
 
    **If exists**:
    - Read the existing specification
@@ -71,13 +71,13 @@ Use the Skill tool to load the `constitution` skill BEFORE starting any work. Th
    - **Refine**: If incorrect or no hits, try variations (e.g., "Google LLC" instead of "Google").
 
 2. **Finalize**:
-   - Fill the **Verified Assignee Names (Canonicalized)** table in `0-specifications/specification.md`.
+   - Fill the **Verified Assignee Names (Canonicalized)** table in `specification.md`.
    - Record **all** identified official Assignee Names, **including all name variations** found in the skill results. These variations must be included in the final search query.
    - Record the verification status and any notes (e.g., holding company, subsidiary).
 
 ## Output
 
-- `0-specifications/specification.md`: The product specification with verified assignee names.
+- `specification.md`: The product specification with verified assignee names.
 
 ## Quality Gates
 

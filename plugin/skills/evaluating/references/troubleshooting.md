@@ -44,14 +44,13 @@ Correct: "US20240292070A1"
 
 **Possible Causes**:
 
-1. `0-specifications/specification.md` does not exist
+1. `specification.md` does not exist
 2. Specification is incomplete or missing product details
 3. Wrong file path or filename
 
 **Solutions**:
 
 1. **Check File Existence**:
-   - Use `ls 0-specifications/` to verify directory exists
    - Check if `specification.md` file is present
    - Verify correct filename (not "spec.md" or "specification.txt")
 
@@ -74,7 +73,7 @@ Correct: "US20240292070A1"
 
 **Possible Causes**:
 
-1. `investigating-database` skill not loaded
+1. `investigation-preparing` skill not loaded
 2. Database file not initialized
 3. SQL query syntax error
 4. No patents marked as "relevant" in database
@@ -84,7 +83,7 @@ Correct: "US20240292070A1"
 1. **Check Database Status**:
    - Verify `patents.db` exists in workspace
    - Check if database is initialized
-   - Use `investigating-database` skill to query database status
+   - Use `investigation-preparing` skill to query database status
 
 2. **Verify Screening Complete**:
    - Check if screening phase has been completed

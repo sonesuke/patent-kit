@@ -16,7 +16,7 @@ Your task is to create the Claim Analysis Report based on the Spec.
 
 For accurate claim analysis, understanding the target product is crucial.
 
-- **Rule**: Ensure `0-specifications/specification.md` exists and contains complete product information.
+- **Rule**: Ensure `specification.md` exists and contains complete product information.
 - **Check**: If specification is incomplete or missing, notify the user before proceeding.
 - **Information Needed**: Clear definition of the "Target Product" to compare against claim elements.
 
@@ -57,10 +57,10 @@ This script finds the first patent in `3-investigations/` that has `evaluation.m
 
 #### Step 1: Comparison Analysis
 
-1. **Read Inputs**: `evaluation.md` (Patent) and `0-specifications/specification.md` (Product) if available.
+1. **Read Inputs**: `evaluation.md` (Patent) and `specification.md` (Product) if available.
    - **Check Sufficiency**: Is the product specification detailed enough to determine the presence/absence of EACH element?
      - **Potential Feature Check**: Even if a patent feature is MISSING in the spec, if it seems like a useful feature that fits the product concept, **DO NOT assume it is absent**. Instead, **ASK the User** via `notify_user` if they plan to implement it or if it exists.
-   - **Update Specification IMMEDIATELY**: If you conduct a hearing or receive ANY new information (e.g., specific features, presence/absence of elements) from the user, YOU MUST UPDATE `0-specifications/specification.md` FIRST. Do not proceed with analysis until the specification is updated.
+   - **Update Specification IMMEDIATELY**: If you conduct a hearing or receive ANY new information (e.g., specific features, presence/absence of elements) from the user, YOU MUST UPDATE `specification.md` FIRST. Do not proceed with analysis until the specification is updated.
 
 2. **Analyze Comparison**:
    - Compare Product Features vs Patent Elements.

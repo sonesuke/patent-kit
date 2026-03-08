@@ -15,7 +15,7 @@ Please:
 3. Ensure no duplicate screening entries are created
 4. Report the final screening status
 
-The product specification is in 0-specifications/specification.md.
+The product specification is in specification.md.
 Target domain: LLM-based multi-turn chatbot systems with RAG capabilities.
 """
 
@@ -58,7 +58,7 @@ type = "script"
 command = "setup-db.sh execute pre-screened-data.sql"
 
 [[setup]]
-path = "0-specifications/specification.md"
+path = "specification.md"
 content = """
 # Product Specification
 

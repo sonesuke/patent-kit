@@ -4,7 +4,7 @@
 
 # Phase 0
 p0_spec="false"
-[ -f "0-specifications/specification.md" ] && p0_spec="true"
+[ -f "specification.md" ] && p0_spec="true"
 
 # Phase 1
 p1_targeting="false"

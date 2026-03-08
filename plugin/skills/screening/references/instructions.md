@@ -7,7 +7,7 @@ Filter collected patents by legal status and relevance to prepare for Evaluation
 ## Prerequisites
 
 - `patents.db` must exist (generated in Phase 1 Targeting, `target_patents` table)
-- `0-specifications/specification.md` must exist (Product/Theme definition)
+- `specification.md` must exist (Product/Theme definition)
 - Constitution-reminding skill loaded for core principles
 - Legal-checking skill loaded for legal compliance guidelines
 
@@ -16,17 +16,20 @@ Filter collected patents by legal status and relevance to prepare for Evaluation
 ### Phase 1: Preparation
 
 2. **Load Legal Checker**: Use the Skill tool to load the `legal-checking` skill
-3. **Read Specification**: Read `0-specifications/specification.md` to understand Theme, Domain, and Target Product
+3. **Read Specification**: Read `specification.md` to understand Theme, Domain, and Target Product
 
 ### Phase 2: Automated Screening
 
 #### Database Integration
 
-Use the Skill tool to load the `investigating-database` skill for:
+Use the Skill tool to load the appropriate database skills:
 
-- Getting next patent ID
-- Recording screening results
-- Getting progress statistics
+- **For data retrieval**: Use `investigation-preparing` skill
+  - Getting next patent ID
+  - Getting progress statistics
+
+- **For data recording**: Use `investigation-recording` skill
+  - Recording screening results
 
 #### Screening Process
 
@@ -44,7 +47,7 @@ Process all patents from the `target_patents` table.
 **Process Steps**:
 
 1. **Get Unscreened Patents**:
-   - **Action**: Use the `investigating-database` skill
+   - **Action**: Use the `investigation-preparing` skill
    - **Request**: "Get list of unscreened patent IDs"
 
 2. **Screen Patents**:
@@ -69,7 +72,7 @@ Process all patents from the `target_patents` table.
          - **Relevant**: Defined Theme, Direct Competitors, Core Tech
          - **Irrelevant**: Completely different industry (e.g., Medical vs Web)
      - **Judgment Values**: `relevant`, `irrelevant`, `expired` (lowercase)
-   - **Record Result**: Use `investigating-database` skill to record judgment
+   - **Record Result**: Use `investigation-recording` skill to record judgment
      - Request: "Record screening result for patent <patent-id>"
      - Provide judgment data (judgment, reason, abstract_text)
      - Use retry logic when recording to database

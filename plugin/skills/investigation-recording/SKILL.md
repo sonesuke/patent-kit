@@ -33,7 +33,7 @@ internal reference files for this skill's internal use only.
 
 **To use this skill**:
 
-1. Invoke via Skill tool: `Skill: investigating-database-recording`
+1. Invoke via Skill tool: `Skill: investigation-recording`
 2. Provide your request with data
 3. The skill will handle all SQL operations automatically using batch INSERT
 
@@ -65,7 +65,7 @@ in the working directory, including screening results, claims, and elements.
 
 3. **Database must exist**
    - This skill assumes `patents.db` exists in working directory
-   - Use investigating-database-preparing skill for initialization
+   - Use investigation-preparing skill for initialization
 
 ## Internal Reference (For This Skill Only)
 

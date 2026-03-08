@@ -50,10 +50,10 @@ Process all relevant patents from the `screened_patents` table.
      - subagent_type: "patent-evaluator"
      - name: "evaluator-<patent-id>"
      - description: "Analyze patent <PATENT_ID> and record claims/elements"
-     - prompt: "Fetch patent <PATENT_ID> using google-patent-cli:patent-fetch skill, decompose Claim 1 into elements, and record all claims and elements using investigating-database skill"
+     - prompt: "Fetch patent <PATENT_ID> using google-patent-cli:patent-fetch skill, decompose Claim 1 into elements, and record all claims and elements using investigation-recording skill"
      ```
 
-     Each subagent processes one patent independently with investigating-database skill preloaded.
+     Each subagent processes one patent independently with investigation-recording skill preloaded.
 
 ## Output
 

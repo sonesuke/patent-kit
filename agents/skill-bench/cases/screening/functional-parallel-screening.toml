@@ -13,7 +13,7 @@ Please:
 1. Screen all patents in the database to determine relevance for LLM-based multi-turn chatbot systems with RAG capabilities
 2. Report the screening results including patent IDs, titles, and relevance judgments
 
-The product specification is in 0-specifications/specification.md.
+The product specification is in specification.md.
 """
 
 [[setup]]
@@ -36,7 +36,7 @@ type = "script"
 command = "setup-db.sh execute import-csv.sql"
 
 [[setup]]
-path = "0-specifications/specification.md"
+path = "specification.md"
 content = """
 # Product Specification
 

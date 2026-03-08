@@ -28,7 +28,7 @@
 1. **Reduce parallelism**: Decrease team size to reduce concurrent requests
 2. **Add delays**: Implement brief delays between batch processing
 3. **Resume capability**: Screening automatically skips processed patents on retry
-4. **Check progress**: Use investigating-database skill to monitor completion
+4. **Check progress**: Use investigation-preparing skill to monitor completion
 
 ### Issue: "Inconsistent judgments across agents"
 
@@ -39,7 +39,7 @@
 
 **Solutions**:
 
-1. **Clear specification**: Ensure all agents read `0-specifications/specification.md`
+1. **Clear specification**: Ensure all agents read `specification.md`
 2. **Provide examples**: Include judgment examples in agent instructions
 3. **Quality check**: Review sample results from each agent
 4. **Standardize criteria**: Document edge cases and share with all agents
@@ -56,13 +56,13 @@
 1. **Check agent status**: Use TaskOutput to check if agent is still running
 2. **Reassign patents**: Assign failed agent's patents to another teammate
 3. **Investigate logs**: Check agent's output for error messages
-4. **Retry failed patents**: Use investigating-database skill to identify unprocessed patents
+4. **Retry failed patents**: Use investigation-preparing skill to identify unprocessed patents
 
 ### Issue: "Skill not available"
 
 **Symptoms**:
 
-- investigating-database skill fails to load
+- investigation-preparing skill fails to load
 - google-patent-cli skill returns error
 
 **Solutions**:
@@ -77,5 +77,5 @@ If issues persist:
 
 1. **Check team status**: Verify all teammates are running and responsive
 2. **Review agent outputs**: Check individual agent results for errors
-3. **Verify database**: Use investigating-database skill to check database state
+3. **Verify database**: Use investigation-preparing skill to check database state
 4. **Consult references**: Review instructions.md for detailed process steps

@@ -6,7 +6,7 @@
 
 **Actions**:
 
-1. **Check Specification**: Verify `0-specifications/specification.md` exists
+1. **Check Specification**: Verify `specification.md` exists
 2. **Fetch Patent Data**:
    - Use `google-patent-cli:patent-fetch` skill with patent ID "JP-2023-12345-A"
    - The skill provides access to all patent details
@@ -34,7 +34,7 @@
 **Actions**:
 
 1. **Query Database**:
-   - Use `investigating-database` skill
+   - Use `investigation-preparing` skill
    - Request: "Get the next patent ID for evaluation"
 2. **Receive Result**: Database returns "US20240292070A1"
 3. **Check for Existing Report**:

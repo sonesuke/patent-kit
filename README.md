@@ -56,7 +56,7 @@ You must have the following CLI tools installed and accessible in your system PA
 
    ```bash
    /patent-kit.concept-interview
-   # Output: 0-specifications/specification.md
+   # Output: specification.md
    ```
 
 2. **Phase 1: Targeting**: Generate search queries and targets.

@@ -6,12 +6,12 @@
 
 **Actions**:
 
-2. Use investigating-database skill to get list of unscreened patent IDs
+2. Use investigation-preparing skill to get list of unscreened patent IDs
 3. Create a team of 3-5 agents using Agent tool
 4. Divide patent IDs evenly among teammates
 5. Send message to each agent: "Screen these patents: [ID1, ID2, ID3, ...]"
 6. Wait for all teammates to complete
-7. Verify completion with investigating-database skill
+7. Verify completion with investigation-preparing skill
 
 **Result**:
 
@@ -24,7 +24,7 @@
 
 **Actions**:
 
-1. Use investigating-database skill to get unscreened patent IDs
+1. Use investigation-preparing skill to get unscreened patent IDs
 2. Create team and assign remaining patents (51-150) to agents
 3. Agents process only unassigned patents
 4. Continue until all 150 patents are processed
@@ -69,7 +69,7 @@
 
 1. Reduce team size from 5 to 3 agents
 2. Add brief delays between batch processing
-3. Resume processing - investigating-database skill skips completed patents
+3. Resume processing - investigation-preparing skill skips completed patents
 4. Continue until all patents processed
 
 **Result**: Screening completes with reduced parallelism

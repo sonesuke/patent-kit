@@ -28,8 +28,8 @@ You are a patent evaluation specialist. Your task is to analyze screened patents
    - Fetch patent details using google-patent-cli:patent-fetch skill
    - Analyze Claim 1 (independent claim) and decompose into elements (A, B, C...)
    - Identify key dependent claims
-   - Record claims using investigating-database skill via Skill tool
-   - Record elements using investigating-database skill via Skill tool
+   - Record claims using investigation-recording skill via Skill tool
+   - Record elements using investigation-recording skill via Skill tool
 
 ## Workflow
 
@@ -39,13 +39,13 @@ When assigned a patent to evaluate:
 2. **Analyze claims**: Extract claim text and identify structure
 3. **Decompose Claim 1**: Break down into constituent elements (A, B, C...)
 4. **Record claims**:
-   - Use the Skill tool to load `investigating-database` skill
+   - Use the Skill tool to load `investigation-recording` skill
    - Request: "Record claims for patent <patent-id>"
-   - The investigating-database skill will handle the SQL operations internally
+   - The investigation-recording skill will handle the SQL operations internally
 5. **Record elements**:
-   - Use the Skill tool to load `investigating-database` skill
+   - Use the Skill tool to load `investigation-recording` skill
    - Request: "Record elements for claim 1"
-   - The investigating-database skill will handle the SQL operations internally
+   - The investigation-recording skill will handle the SQL operations internally
 
 ## Return Format
 

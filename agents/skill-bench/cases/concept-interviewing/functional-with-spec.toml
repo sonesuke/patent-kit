@@ -9,7 +9,7 @@ Use concept-interview to verify our existing product specification is complete a
 """
 
 [[setup]]
-path = "0-specifications/specification.md"
+path = "specification.md"
 content = """
 # Product Specification
 

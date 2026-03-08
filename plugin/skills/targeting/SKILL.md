@@ -22,7 +22,7 @@ Generate high-precision search queries and create a consolidated patent populati
 
 ## Prerequisites
 
-- `0-specifications/specification.md` must exist (generated in Phase 0)
+- `specification.md` must exist (generated in Phase 0)
 
 ## Constitution
 
@@ -48,13 +48,13 @@ Generate high-precision search queries and create a consolidated patent populati
 
 ### 2. Check Specification
 
-Use the Glob tool to check if `0-specifications/specification.md` exists:
+Use the Glob tool to check if `specification.md` exists:
 
 - **If exists**: Proceed to targeting execution
 - **If NOT exists**:
   1. Use the Skill tool to load the `concept-interviewing` skill to create the specification
   2. Wait for the concept-interviewing to complete
-  3. Verify that `0-specifications/specification.md` has been created
+  3. Verify that `specification.md` has been created
   4. Only proceed after the specification file exists
 
 ### 3. Execute Targeting
@@ -67,7 +67,7 @@ Use the Glob tool to check if `1-targeting/csv/*.csv` files exist:
   1. **Do NOT** ask the user what to do. **Immediately proceed to database import.**
   2. **Skip** the patent search and keyword extraction steps (Step 1 & 2 from instructions)
   3. **Initialize database and import CSV files**:
-     - Use the Skill tool to load the `investigating-database` skill
+     - Use the Skill tool to load the `investigation-preparing` skill
      - Request: "Initialize the patent database and import CSV files from 1-targeting/csv/"
      - This will:
        - Create `patents.db` if it doesn't exist
@@ -99,7 +99,7 @@ Upon successful completion:
 
 ### Initial State
 
-- `0-specifications/specification.md` exists
+- `specification.md` exists
 - No `1-targeting/` directory (or empty)
 
 ### Final State

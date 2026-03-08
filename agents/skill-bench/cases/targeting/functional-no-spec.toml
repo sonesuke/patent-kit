@@ -52,7 +52,7 @@ command = "check-tool-use.sh Read file_path \"keywords-template.md\""
 [[checks]]
 name = "specification_md_created"
 type = "script"
-command = "check-workspace-file.sh 0-specifications/specification.md"
+command = "check-workspace-file.sh specification.md"
 
 [[checks]]
 name = "google_patent_search_invoked"

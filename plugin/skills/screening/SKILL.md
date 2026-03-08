@@ -22,7 +22,7 @@ Filter collected patents by legal status and relevance to prepare for Evaluation
 ## Prerequisites
 
 - `patents.db` must exist (generated in Phase 1 Targeting, `target_patents` table)
-- `0-specifications/specification.md` must exist (Product/Theme definition)
+- `specification.md` must exist (Product/Theme definition)
 - Legal-checking skill must be loaded
 
 ## Constitution

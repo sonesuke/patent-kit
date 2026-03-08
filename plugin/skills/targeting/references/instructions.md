@@ -21,14 +21,14 @@ Generate high-precision search queries based on the product concept and competit
 
 ## Input
 
-- **Specification**: `0-specifications/specification.md` (generated in Phase 0).
+- **Specification**: `specification.md` (generated in Phase 0).
 - **Skills**: `google-patent-cli` (patent-search, patent-assignee-check) from marketplace.
 
 ## Process
 
 ### Step 1: Targeting Process
 
-Perform the following targeting process relative to the `Priority Date Cutoff` from `0-specifications/specification.md`.
+Perform the following targeting process relative to the `Priority Date Cutoff` from `specification.md`.
 
 **IMPORTANT**: For prior art searches, use the **Priority Date** as the cutoff. Patents published before the Priority Date are considered prior art.
 

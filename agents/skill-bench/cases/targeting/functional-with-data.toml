@@ -9,7 +9,7 @@ I have placed downloaded CSV files in `1-targeting/csv/`.
 """
 
 [[setup]]
-path = "0-specifications/specification.md"
+path = "specification.md"
 content = """
 # Product Specification
 
