@@ -2,22 +2,12 @@
 
 Analyze patents to extract key information for evaluation.
 
-## Prerequisites
-
-- `patents.db` must exist (generated in Phase 2 Screening, `screened_patents` table)
-- `0-specifications/specification.md` must exist (Product/Theme definition)
-- Constitution-reminding skill loaded for core principles
+> [!NOTE]
+> **Prerequisites**: Load `constitution-reminding` skill and read `0-specifications/specification.md` before starting.
 
 ## Process Overview
 
-### Phase 1: Preparation
-
-1. **Load Constitution**: Use the Skill tool to load the `constitution-reminding` skill
-2. **Read Specification**: Read `0-specifications/specification.md` to understand Theme, Domain, and Target Product
-
-### Phase 2: Automated Patent Analysis
-
-#### Database Integration
+### Database Integration
 
 Use the Skill tool to load the `investigating-database` skill for:
 
@@ -25,7 +15,7 @@ Use the Skill tool to load the `investigating-database` skill for:
 - Recording claims and elements
 - Getting progress statistics
 
-#### Analysis Process
+### Automated Patent Analysis
 
 Process all relevant patents from the `screened_patents` table using **parallel agents**:
 
@@ -94,7 +84,6 @@ Process all relevant patents from the `screened_patents` table using **parallel 
 
 ## Quality Gates
 
-- [ ] **Constitution Loaded**: `constitution-reminding` skill loaded successfully
 - [ ] **Patents Retrieved**: All assigned patents fetched using `google-patent-cli:patent-fetch` skill
 - [ ] **Independent Claims Analyzed**: Claim 1 decomposed into elements (A, B, C...)
 - [ ] **Dependent Claims Identified**: Key dependent claims summarized

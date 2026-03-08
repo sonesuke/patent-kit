@@ -16,9 +16,8 @@ Generate a detailed evaluation report for a screened patent by analyzing claim e
 
 - `patents.db` must exist with `screened_patents` table populated (from Phase 2 Screening)
 - `0-specifications/specification.md` must exist (Product/Theme definition from Phase 0)
-- `patent-kit:investigating-database` skill available for querying next patent
-- `constitution-reminding` skill must be loaded
-- `legal-checking` skill must be loaded
+- Load `constitution-reminding` skill before starting analysis
+- Load `investigating-database` skill for database operations
 - `google-patent-cli:patent-fetch` skill available for retrieving patent data
 
 ## Process
@@ -33,13 +32,14 @@ The evaluation process consists of the following steps:
 
 ## Quick Start
 
-1. **Select Patent ID**: Use `investigating-database` skill to get next relevant patent without evaluation
-2. **Load Required Skills**: Load `constitution-reminding` skill
-3. **Analyze Patent**:
+1. **Load Required Skills**: Load `constitution-reminding` skill
+2. **Read Specification**: Read `0-specifications/specification.md` to understand Theme, Domain, and Target Product
+3. **Select Patent ID**: Use `investigating-database` skill to get next relevant patent without evaluation
+4. **Analyze Patent**:
    - Fetch patent details using `google-patent-cli:patent-fetch`
    - Decompose claims into elements and identify key features
    - See `references/instructions/analyze-patent.md` for detailed instructions
-4. **Generate Report**: Create evaluation report using template
+5. **Generate Report**: Create evaluation report using template
    - See `references/instructions/generate-report.md` for detailed instructions
 
 ## Template
