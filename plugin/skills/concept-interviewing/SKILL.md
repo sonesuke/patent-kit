@@ -29,8 +29,6 @@ Define the product concept and identify competitors. This phase establishes the 
 
 ### 1. Load Constitution (MANDATORY)
 
-Use the Skill tool to load the `constitution-reminding` skill BEFORE starting any work. This is required to understand the core principles.
-
 ### 2. Load Required Skills
 
 Use the Skill tool to verify that the following skills are available:

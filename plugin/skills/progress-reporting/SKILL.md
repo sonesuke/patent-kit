@@ -14,8 +14,6 @@ Your task is to report the current status of the patent analysis workflow.
 
 ### Process
 
-1. **Read Constitution**: Load the `constitution-reminding` skill to understand the core principles.
-
 #### Step 1: Get Database Statistics
 
 Use the database skill to get the current status:

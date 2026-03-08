@@ -6,7 +6,6 @@
 
 **Actions**:
 
-1. Load constitution-reminding and legal-checking skills
 2. Use investigating-database skill to get list of unscreened patent IDs
 3. Create a team of 3-5 agents using Agent tool
 4. Divide patent IDs evenly among teammates

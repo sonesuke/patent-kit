@@ -181,7 +181,6 @@ SELECT COUNT(*) FROM screened_patents WHERE judgment = 'relevant';
 1. **Explicitly Load Skills**:
 
    ```
-   Skill: constitution-reminding
    Skill: legal-checking
    ```
 
@@ -190,10 +189,7 @@ SELECT COUNT(*) FROM screened_patents WHERE judgment = 'relevant';
    - Look for error messages in skill output
    - Confirm skill is available in marketplace
 
-3. **Load in Correct Order**:
-   1. Load constitution-reminding
-   2. Load legal-checking
-   3. Then proceed with evaluation
+3. **Load in Correct Order**: 2. Load legal-checking 3. Then proceed with evaluation
 
 **Prevention**:
 

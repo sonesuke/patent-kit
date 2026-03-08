@@ -46,8 +46,6 @@ Generate high-precision search queries and create a consolidated patent populati
 
 ## Skill Orchestration
 
-Use the Skill tool to load the `constitution-reminding` skill BEFORE starting any work. This is required to understand the core principles.
-
 ### 2. Check Specification
 
 Use the Glob tool to check if `0-specifications/specification.md` exists:

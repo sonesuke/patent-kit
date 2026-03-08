@@ -15,7 +15,6 @@ Filter collected patents by legal status and relevance to prepare for Evaluation
 
 ### Phase 1: Preparation
 
-1. **Load Constitution**: Use the Skill tool to load the `constitution-reminding` skill
 2. **Load Legal Checker**: Use the Skill tool to load the `legal-checking` skill
 3. **Read Specification**: Read `0-specifications/specification.md` to understand Theme, Domain, and Target Product
 

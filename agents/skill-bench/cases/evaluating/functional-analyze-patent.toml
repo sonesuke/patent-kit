@@ -40,4 +40,3 @@ command = "setup-db.sh init"
 name = "load_screened_data"
 type = "script"
 command = "setup-db.sh execute screened-patents.sql"
-

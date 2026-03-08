@@ -32,7 +32,6 @@ For accurate claim analysis, understanding the target product is crucial.
 
 ### Process
 
-1. **Read Constitution**: Load the `constitution-reminding` skill to understand the core principles.
 2. **Read Legal Checker**: Load the `legal-checking` skill to understand legal compliance guidelines.
 
 #### Step 0: Determine Patent ID

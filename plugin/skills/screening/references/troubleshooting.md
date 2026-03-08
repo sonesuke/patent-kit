@@ -68,9 +68,8 @@
 **Solutions**:
 
 1. **Verify skill installation**: Check skills are available in marketplace
-2. **Load dependencies**: Ensure constitution-reminding and legal-checking are loaded
-3. **Check skill configuration**: Verify skill settings are correct
-4. **Retry skill loading**: Reload skill and retry operation
+2. **Check skill configuration**: Verify skill settings are correct
+3. **Retry skill loading**: Reload skill and retry operation
 
 ## Getting Help
 

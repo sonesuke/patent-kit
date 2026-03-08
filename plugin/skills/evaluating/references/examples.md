@@ -7,19 +7,18 @@
 **Actions**:
 
 1. **Check Specification**: Verify `0-specifications/specification.md` exists
-2. **Load Skills**: Load `constitution-reminding` and `legal-checking` skills
-3. **Fetch Patent Data**:
+2. **Fetch Patent Data**:
    - Use `google-patent-cli:patent-fetch` skill with patent ID "JP-2023-12345-A"
    - The skill provides access to all patent details
-4. **Analyze Claims**:
+3. **Analyze Claims**:
    - Read Claim 1 and decompose into elements (A, B, C...)
    - Identify key dependent claims
    - Check legal status and filing dates
-5. **Draft Report**:
+4. **Draft Report**:
    - Fill in `assets/evaluation-template.md`
    - Include constituent elements analysis
    - Note any divisional applications or status issues
-6. **Save Report**: `3-investigations/JP-2023-12345-A/evaluation.md`
+5. **Save Report**: `3-investigations/JP-2023-12345-A/evaluation.md`
 
 **Result**: Evaluation report created with:
 
