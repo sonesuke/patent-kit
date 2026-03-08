@@ -30,17 +30,34 @@ The evaluation process consists of the following steps:
 | 1    | Patent Analysis   | `references/instructions/analyze-patent.md`  |
 | 2    | Report Generation | `references/instructions/generate-report.md` |
 
-## Quick Start
+## Skill Orchestration
 
-1. **Load Required Skills**: Load `constitution-reminding` skill
+### 1. Load Required Skills (MANDATORY)
+
+Use the Skill tool to load skills BEFORE starting any work:
+
+1. **Constitution**: `constitution-reminding` - Understand core principles
 2. **Read Specification**: Read `0-specifications/specification.md` to understand Theme, Domain, and Target Product
-3. **Select Patent ID**: Use `investigating-database` skill to get next relevant patent without evaluation
-4. **Analyze Patent**:
-   - Fetch patent details using `google-patent-cli:patent-fetch`
-   - Decompose claims into elements and identify key features
-   - See `references/instructions/analyze-patent.md` for detailed instructions
-5. **Generate Report**: Create evaluation report using template
-   - See `references/instructions/generate-report.md` for detailed instructions
+
+### 2. Execute Evaluation
+
+Follow the detailed evaluation process:
+
+- **Step 1**: See `references/instructions/analyze-patent.md` for patent analysis
+- **Step 2**: See `references/instructions/generate-report.md` for report generation
+
+## State Management
+
+### Initial State
+
+- `patents.db` exists with `screened_patents` table populated (from Phase 2 Screening)
+- `0-specifications/specification.md` exists (Product/Theme definition)
+- No evaluation reports in `3-investigations/` directory (or partial evaluation in progress)
+
+### Final State
+
+- Evaluation reports generated for relevant patents in `3-investigations/<patent-id>/evaluation.md`
+- Claims and elements stored in database (`claims` and `elements` tables)
 
 ## Template
 
