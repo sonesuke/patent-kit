@@ -18,7 +18,7 @@ LIMIT 1;
 JSON array with single patent_id:
 
 ```json
-[{"patent_id": "US20240292070A1"}]
+[{ "patent_id": "US20240292070A1" }]
 ```
 
 Empty array if no patents pending:

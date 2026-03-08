@@ -17,5 +17,5 @@ SELECT
 ## Output Format
 
 ```json
-[{"total_relevant": 10, "evaluated": 5, "pending": 5}]
+[{ "total_relevant": 10, "evaluated": 5, "pending": 5 }]
 ```

@@ -2,12 +2,12 @@
 
 name = "functional-analyze-patent"
 description = "Verify evaluating skill uses Agent tool to analyze a patent and store claims/elements in database"
-timeout = 300                                                                                             # seconds
+timeout = 300                                                                                                     # seconds
 
 test_prompt = """
 I have a screened patent marked as relevant in the database.
 
-Please:
+Please evaluate the patent:
 1. Get the next relevant patent that has not been evaluated
 2. Analyze the patent by decomposing claims into constituent elements
 3. Store claims and elements in the database

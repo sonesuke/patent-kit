@@ -15,6 +15,7 @@ description: |
 
   This skill handles all database preparation operations. Just provide the request
   and let the skill manage the database.
+user_invocable: false
 metadata:
   author: sonesuke
   version: 1.0.0

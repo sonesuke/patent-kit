@@ -18,6 +18,7 @@ description: |
 
   NOTE: This skill assumes `patents.db` already exists in the working directory.
   Use investigation-preparing skill for database initialization.
+user_invocable: false
 metadata:
   author: sonesuke
   version: 1.0.0

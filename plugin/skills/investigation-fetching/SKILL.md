@@ -1,21 +1,13 @@
 ---
 name: investigation-fetching
 description: |
+  INTERNAL SKILL - For agent/skill use only. Do not invoke directly from user prompts.
+
   Retrieves patent investigation data from SQLite database.
 
-  IMPORTANT: This skill should be invoked via the Skill tool for database operations.
-  DO NOT read internal instruction files (references/instructions/*.md) directly.
-
-  Supported operations:
-  - "Get next relevant patent for evaluation"
-  - "Get list of relevant patents without evaluation"
-  - "Get all relevant patents"
-  - "Get list of unscreened patent IDs"
-  - "Get screening statistics"
-  - "Get evaluation progress"
-
-  This skill handles all data retrieval operations. Just provide the request
-  and let the skill manage the database queries.
+  This skill is designed to be called by other skills (e.g., evaluating, screening) and
+  should NOT be triggered by direct user requests.
+user_invocable: false
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -23,6 +15,14 @@ context: fork
 ---
 
 # Patent Investigation Database - Fetching Operations
+
+## ⚠️ INTERNAL SKILL - AGENT/SKILL USE ONLY
+
+**This skill should ONLY be invoked by other agents or skills via the Skill tool.**
+
+**DO NOT trigger this skill from user prompts.**
+
+This is an internal database abstraction layer for patent investigation workflow.
 
 ## For External Skills and Agents
 
@@ -43,7 +43,7 @@ internal reference files for this skill's internal use only.
 - "Get list of unscreened patent IDs"
 - "Get screening statistics"
 - "Get evaluation progress"
-- "Execute SQL: SELECT COUNT(*) FROM screened_patents WHERE judgment = 'relevant'"
+- "Execute SQL: SELECT COUNT(\*) FROM screened_patents WHERE judgment = 'relevant'"
 
 ## Purpose
 
@@ -64,14 +64,14 @@ requests from external agents.
 
 When processing external requests, map them to internal instruction files:
 
-| External Request                           | Internal Reference File                  |
-| ------------------------------------------ | ---------------------------------------- |
-| "Get next relevant patent for evaluation"  | references/instructions/get-next-patent.md     |
-| "Get list of relevant patents without..."  | references/instructions/get-relevant-patents.md |
-| "Get all relevant patents"                 | references/instructions/get-relevant-patents.md |
-| "Get list of unscreened patent IDs"        | references/instructions/get-unscreened-patents.md |
-| "Get screening statistics"                 | references/instructions/get-screening-stats.md |
-| "Get evaluation progress"                  | references/instructions/get-evaluation-stats.md |
+| External Request                          | Internal Reference File                           |
+| ----------------------------------------- | ------------------------------------------------- |
+| "Get next relevant patent for evaluation" | references/instructions/get-next-patent.md        |
+| "Get list of relevant patents without..." | references/instructions/get-relevant-patents.md   |
+| "Get all relevant patents"                | references/instructions/get-relevant-patents.md   |
+| "Get list of unscreened patent IDs"       | references/instructions/get-unscreened-patents.md |
+| "Get screening statistics"                | references/instructions/get-screening-stats.md    |
+| "Get evaluation progress"                 | references/instructions/get-evaluation-stats.md   |
 
 **CRITICAL**: These reference files are for INTERNAL USE ONLY. External agents
 should invoke via Skill tool, not read these files.
@@ -85,6 +85,7 @@ sqlite3 -json patents.db "<SQL_QUERY>"
 ```
 
 For human-readable output:
+
 ```bash
 sqlite3 -column patents.db "<SQL_QUERY>"
 ```
@@ -97,6 +98,7 @@ sqlite3 -column patents.db "<SQL_QUERY>"
 2. Internal: Execute get-next-patent.md → Return single patent_id
 
 Query:
+
 ```sql
 SELECT patent_id FROM screened_patents
 WHERE judgment = 'relevant'
@@ -110,6 +112,7 @@ LIMIT 1;
 2. Internal: Execute get-relevant-patents.md → Return array of patent_ids
 
 Query:
+
 ```sql
 SELECT patent_id FROM screened_patents
 WHERE judgment = 'relevant'
@@ -142,7 +145,7 @@ agents should NOT read these:
   - `get-unscreened-patents.md`: Get list of unscreened patents
   - `get-screening-stats.md`: Screening progress statistics
   - `get-evaluation-stats.md`: Evaluation progress statistics
-- **references/schema.md`: Database schema documentation
+- \*\*references/schema.md`: Database schema documentation
 
 **IMPORTANT**: External agents should invoke this skill via the Skill tool, not
 access these internal files directly.

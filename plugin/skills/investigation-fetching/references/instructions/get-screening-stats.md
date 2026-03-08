@@ -17,5 +17,8 @@ GROUP BY judgment;
 ## Output Format
 
 ```json
-[{"judgment": "relevant", "count": 5}, {"judgment": "not_relevant", "count": 10}]
+[
+  { "judgment": "relevant", "count": 5 },
+  { "judgment": "not_relevant", "count": 10 }
+]
 ```

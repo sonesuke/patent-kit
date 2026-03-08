@@ -17,5 +17,5 @@ WHERE sp.patent_id IS NULL;
 JSON array of patent_ids:
 
 ```json
-[{"patent_id": "US20240292070A1"}, {"patent_id": "US20240346271A1"}]
+[{ "patent_id": "US20240292070A1" }, { "patent_id": "US20240346271A1" }]
 ```
