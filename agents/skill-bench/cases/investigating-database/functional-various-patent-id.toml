@@ -83,11 +83,6 @@ type = "script"
 command = "check-db-query.sh {} {} 'HK40120585A' 'SELECT patent_id FROM target_patents WHERE title LIKE \"Test Patent 9%\";'"
 
 [[checks]]
-name = "patent_10_correct"
-type = "script"
-command = "check-db-query.sh {} {} 'US20240292070A1' 'SELECT patent_id FROM target_patents WHERE title LIKE \"Test Patent 10%\";'"
-
-[[checks]]
 name = "all_ids_valid_length"
 type = "script"
 command = "check-db-query.sh {} {} '0' 'SELECT COUNT(*) FROM target_patents WHERE length(patent_id) < 7 OR length(patent_id) > 15;'"

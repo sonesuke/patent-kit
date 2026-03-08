@@ -28,19 +28,48 @@ Manages the SQLite database (`patents.db`) for storing and retrieving patent dat
 - SQLite3 command must be available
 - Workspace root must be writable for database creation
 
+## Database Initialization
+
+**IMPORTANT**: Before executing any database operation, verify that `patents.db` exists and is properly initialized.
+
+### Check Database Status
+
+```bash
+# Check if database exists and has the required tables
+if [ ! -f patents.db ]; then
+    echo "Database not found. Initializing..."
+    sqlite3 patents.db < references/sql/initialize-database.sql
+else
+    # Verify schema
+    sqlite3 patents.db ".tables"
+fi
+```
+
+### Initialize Database (if needed)
+
+If `patents.db` does not exist or has an invalid schema:
+
+```bash
+sqlite3 patents.db < references/sql/initialize-database.sql
+```
+
+This command creates all necessary tables (`target_patents`, `screened_patents`), views, and triggers.
+
 ## Skill Orchestration
 
 ### 1. Determine Operation
 
 Based on the user request, select the appropriate database operation:
 
-| Operation        | Trigger                                  | SQL Location                          |
-| ---------------- | ---------------------------------------- | ------------------------------------- |
-| Initialize       | "initialize database", "create database" | `instructions/initialize-database.md` |
-| Import CSV       | "import CSV", "load data"                | `instructions/import-csv.md`          |
-| Get Patent ID    | "get patent ID", "fetch patent by row"   | `instructions/get-patent-id.md`       |
-| Record Screening | "record screening", "save result"        | `instructions/record-screening.md`    |
-| Get Statistics   | "get statistics", "show progress"        | `instructions/get-statistics.md`      |
+| Operation        | Trigger                                  | Instruction File Path                            |
+| ---------------- | ---------------------------------------- | ------------------------------------------------ |
+| Initialize       | Database not found (auto-check)          | SKILL.md → Database Initialization section       |
+| Import CSV       | "import CSV", "load data"                | `references/instructions/import-csv.md`          |
+| Get Patent ID    | "get patent ID", "fetch patent by row"   | `references/instructions/get-patent-id.md`       |
+| Record Screening | "record screening", "save result"        | `references/instructions/record-screening.md`    |
+| Get Statistics   | "get statistics", "show progress"        | `references/instructions/get-statistics.md`      |
+
+**IMPORTANT**: Always use the full path starting with `references/instructions/` to avoid file search delays.
 
 ### 2. Execute SQL Query
 
@@ -70,8 +99,8 @@ EOF
 
 ### Workflow 1: Initialize and Import
 
-1. Execute SQL from `instructions/initialize-database.md`
-2. Import CSV: `sqlite3 patents.db ".import 1-targeting/csv/patents.csv target_patents"`
+1. **Check database status** (SKILL.md → Database Initialization)
+2. **Import CSV** (Follow `references/instructions/import-csv.md`)
 
 ### Workflow 2: Screen Patents
 
@@ -101,10 +130,11 @@ EOF
 See `references/` directory for:
 
 - **instructions/**: Operation-based documentation (SQL queries and operations)
-  - `initialize-database.md`: Database schema creation
-  - `import-csv.md`: CSV file import
+  - `import-csv.md`: CSV file import with ETL processing
   - `get-patent-id.md`: Patent ID retrieval by row number
   - `record-screening.md`: Screening result recording
   - `get-statistics.md`: Progress statistics retrieval
+- **sql/**: SQL schema and query files
+  - `initialize-database.sql`: Database schema definition
 - **examples.md**: Usage examples and workflows
-- **troubleshooting.md**: Common issues and solutions
+- **troubleshooting.md`: Common issues and solutions
