@@ -60,10 +60,8 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 ### Initial State
 
-- `patents.db` exists with `screened_patents` table populated (from screening skill)
-- No claims/elements data in database (or partial evaluation in progress)
+- Patents in `screened_patents` table marked as `relevant` without corresponding claims/elements entries exist
 
 ### Final State
 
-- Claims and elements stored in database (`claims` and `elements` tables)
-- Analysis data available for further processing
+- No patents in `screened_patents` marked as `relevant` without corresponding claims/elements entries (all evaluated)

@@ -58,9 +58,8 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
 ### Initial State
 
-- `patents.db` exists with `target_patents` table populated
-- No `screened_patents` entries (or partial screening in progress)
+- Patents in `target_patents` table without corresponding `screened_patents` entries exist
 
 ### Final State
 
-- All patents in `target_patents` have corresponding entries in `screened_patents`
+- No patents in `target_patents` without corresponding `screened_patents` entries (all screened)
