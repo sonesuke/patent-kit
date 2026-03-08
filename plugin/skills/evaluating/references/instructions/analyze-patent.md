@@ -2,9 +2,6 @@
 
 Analyze patents to extract key information for evaluation.
 
-> [!NOTE]
-> **Prerequisites**: Load `constitution-reminding` skill and read `0-specifications/specification.md` before starting.
-
 ## Process Overview
 
 ### Database Integration
