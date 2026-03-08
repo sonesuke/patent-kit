@@ -8,7 +8,7 @@ Analyze patents to extract key information for evaluation.
 
 Use the Skill tool to load the `investigating-database` skill for:
 
-- Getting next relevant patent IDs for evaluation
+- Getting next patent IDs (relevant but not yet evaluated)
 - Recording claims and elements
 - Getting progress statistics
 
