@@ -64,15 +64,8 @@ for IDX in "${!TEST_FILES[@]}"; do
     TOTAL_CASES=$((TOTAL_CASES + 1))
 
     # Read test configuration
-    # Use Python script for TOML files (yq v4 doesn't support TOML)
-    if [[ "$TEST_FILE" == *.toml ]]; then
-        TEST_PROMPT=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" test_prompt)
-        TEST_TIMEOUT=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" timeout)
-        TEST_TIMEOUT=${TEST_TIMEOUT:-300}  # Default to 300 if not found
-    else
-        TEST_PROMPT=$(yq eval '.test_prompt' "$TEST_FILE")
-        TEST_TIMEOUT=$(yq eval '.timeout // 300' "$TEST_FILE")
-    fi
+    TEST_PROMPT=$(yq eval '.test_prompt' "$TEST_FILE")
+    TEST_TIMEOUT=$(yq eval '.timeout // 300' "$TEST_FILE")
 
     echo ""
     echo "──────────────────────────────────────────────────"
@@ -98,23 +91,39 @@ for IDX in "${!TEST_FILES[@]}"; do
     cp -r "$WORKSPACE_ROOT/plugin" "$WORK_DIR/claude-plugin" 2>/dev/null || true
 
     # Read setup files from test.toml [[setup]] array
-    if [[ "$TEST_FILE" == *.toml ]]; then
-        NUM_SETUP=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" setup_count)
-    else
-        NUM_SETUP=$(yq eval '.setup | length // 0' "$TEST_FILE")
-    fi
+    NUM_SETUP=$(yq eval '.setup | length // 0' "$TEST_FILE")
     if [ "$NUM_SETUP" -gt 0 ]; then
         for SETUP_IDX in $(seq 0 $((NUM_SETUP - 1))); do
-            if [[ "$TEST_FILE" == *.toml ]]; then
-                SETUP_PATH=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" setup_path "$SETUP_IDX")
-                SETUP_CONTENT=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" setup_content "$SETUP_IDX")
+            SETUP_TYPE=$(yq eval ".setup[$SETUP_IDX].type // \"\"" "$TEST_FILE")
+            SETUP_NAME=$(yq eval ".setup[$SETUP_IDX].name // \"\"" "$TEST_FILE")
+
+            if [ "$SETUP_TYPE" = "script" ]; then
+                # Execute script setup
+                SETUP_COMMAND=$(yq eval ".setup[$SETUP_IDX].command" "$TEST_FILE")
+                if [ -n "$SETUP_NAME" ]; then
+                    echo "[SkillBench]   → Setup: $SETUP_NAME"
+                else
+                    echo "[SkillBench]   → Setup: $SETUP_COMMAND"
+                fi
+
+                # Execute in WORK_DIR with tools in PATH
+                (cd "$WORK_DIR" && PATH="$TOOLS_DIR:$PATH" bash -c "$SETUP_COMMAND")
             else
+                # File content setup (default behavior)
                 SETUP_PATH=$(yq eval ".setup[$SETUP_IDX].path" "$TEST_FILE")
-                SETUP_CONTENT=$(yq eval ".setup[$SETUP_IDX].content" "$TEST_FILE")
+                if [ -z "$SETUP_PATH" ]; then
+                    echo "[SkillBench]   ⚠️  Skipping setup with no path (index $SETUP_IDX)"
+                    continue
+                fi
+
+                SETUP_DIR=$(dirname "$WORK_DIR/$SETUP_PATH")
+                mkdir -p "$SETUP_DIR"
+                yq eval ".setup[$SETUP_IDX].content" "$TEST_FILE" > "$WORK_DIR/${SETUP_PATH}"
+
+                if [ -n "$SETUP_NAME" ]; then
+                    echo "[SkillBench]   → Setup: $SETUP_NAME ($SETUP_PATH)"
+                fi
             fi
-            SETUP_DIR=$(dirname "$WORK_DIR/$SETUP_PATH")
-            mkdir -p "$SETUP_DIR"
-            echo "$SETUP_CONTENT" > "$WORK_DIR/${SETUP_PATH}"
         done
     fi
 
@@ -147,19 +156,10 @@ for IDX in "${!TEST_FILES[@]}"; do
     CASE_PASS=true
 
     # Run checks from test.toml
-    if [[ "$TEST_FILE" == *.toml ]]; then
-        NUM_CHECKS=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" checks_count)
-    else
-        NUM_CHECKS=$(yq eval '.checks | length' "$TEST_FILE")
-    fi
+    NUM_CHECKS=$(yq eval '.checks | length' "$TEST_FILE")
     for CHECK_IDX in $(seq 0 $((NUM_CHECKS - 1))); do
-        if [[ "$TEST_FILE" == *.toml ]]; then
-            CHECK_NAME=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" check_name "$CHECK_IDX")
-            CHECK_CMD=$("$TOOLS_DIR/parse-toml.py" "$TEST_FILE" check_command "$CHECK_IDX")
-        else
-            CHECK_NAME=$(yq eval ".checks[$CHECK_IDX].name" "$TEST_FILE")
-            CHECK_CMD=$(yq eval ".checks[$CHECK_IDX].command" "$TEST_FILE")
-        fi
+        CHECK_NAME=$(yq eval ".checks[$CHECK_IDX].name" "$TEST_FILE")
+        CHECK_CMD=$(yq eval ".checks[$CHECK_IDX].command" "$TEST_FILE")
 
         # Parse check command into script and args
         # Use eval to properly handle quoted arguments
