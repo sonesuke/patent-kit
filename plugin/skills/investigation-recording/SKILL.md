@@ -10,8 +10,10 @@ description: |
   - "Record screening result for <patent-id>: <data>"
   - "Record claims for patent <patent-id>: <claims_data>"
   - "Record elements for patent <patent-id>: <elements_data>"
+  - "Record similarities for patent <patent-id>: <similarities_data>"
   - "Batch insert claims: <claims_list>"
   - "Batch insert elements: <elements_list>"
+  - "Batch insert similarities: <similarities_list>"
 
   This skill handles all database recording operations with efficient batch INSERT.
   Just provide the data and let the skill manage the database.
@@ -43,6 +45,7 @@ internal reference files for this skill's internal use only.
 - "Record screening result: id=US1234567A1, judgment=relevant, reason=..."
 - "Record claims for patent US1234567A1: claim_1=..., claim_2=..."
 - "Record elements for patent US1234567A1: element_a=..., element_b=..."
+- "Record similarities for patent US1234567A1: element_a=Significant, element_b=Moderate..."
 - "Batch insert 3 claims for patent US1234567A1: <claims_data>"
 
 ## Purpose
@@ -62,6 +65,7 @@ in the working directory, including screening results, claims, and elements.
 2. **Provide data in structured format**
    - For claims: Provide claim_number, claim_type, claim_text
    - For elements: Provide element_label, description, claim_number
+   - For similarities: Provide element_label, similarity_level, analysis_notes, overall_similarity
    - The skill will format and execute batch INSERT
 
 3. **Database must exist**
@@ -83,11 +87,12 @@ requests from external agents.
 
 When processing external requests, map them to internal instruction files:
 
-| External Request                | Internal Reference File                     |
-| ------------------------------- | ------------------------------------------- |
-| "Record screening result..."    | references/instructions/record-screening.md |
-| "Record claims for patent..."   | references/instructions/record-claims.md    |
-| "Record elements for patent..." | references/instructions/record-elements.md  |
+| External Request                | Internal Reference File                        |
+| ------------------------------- | ---------------------------------------------- |
+| "Record screening result..."    | references/instructions/record-screening.md    |
+| "Record claims for patent..."   | references/instructions/record-claims.md       |
+| "Record elements for patent..." | references/instructions/record-elements.md     |
+| "Record similarities..."        | references/instructions/record-similarities.md |
 
 **CRITICAL**: These reference files are for INTERNAL USE ONLY. External agents
 should invoke via Skill tool, not read these files.
@@ -144,7 +149,13 @@ EOF
 2. Internal: Parse elements data → Execute batch INSERT via record-elements.md
 3. Verify: Return count of inserted elements
 
-### Workflow 4: Batch Recording
+### Workflow 4: Record Similarities
+
+1. External: "Record similarities for patent US1234567A1: element_a=Significant, element_b=Moderate..."
+2. Internal: Parse similarities data → Execute batch INSERT via record-similarities.md
+3. Verify: Return count of inserted similarities
+
+### Workflow 5: Batch Recording
 
 1. External: "Batch insert 5 claims for patent US1234567A1: <claims_list>"
 2. Internal: Parse all claims → Execute single batch INSERT statement
@@ -155,13 +166,14 @@ EOF
 ### Prerequisites
 
 - `patents.db` exists in working directory
-- Relevant tables (screened_patents, claims, elements) are created
+- Relevant tables (screened_patents, claims, elements, similarities) are created
 
 ### Final State
 
 - Screening results recorded in screened_patents table
 - Claims recorded in claims table
 - Elements recorded in elements table
+- Similarities recorded in similarities table
 - Data available for querying via investigation-preparing skill
 
 ## Internal References (For This Skill Only)
@@ -173,6 +185,7 @@ agents should NOT read these:
   - `record-screening.md`: Screening result recording with batch INSERT
   - `record-claims.md`: Patent claims recording with batch INSERT
   - `record-elements.md`: Constituent elements recording with batch INSERT
+  - `record-similarities.md`: Similarity analysis recording with batch INSERT
 
 **IMPORTANT**: External agents should invoke this skill via the Skill tool, not
 access these internal files directly.

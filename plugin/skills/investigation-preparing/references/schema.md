@@ -84,6 +84,29 @@ Stores constituent elements of claims analyzed during evaluation phase.
 - `(patent_id, claim_number)` is a composite FOREIGN KEY referencing `claims(patent_id, claim_number)` with `ON DELETE CASCADE`
 - `element_label` and `element_description` must NOT be NULL
 
+### similarities
+
+Stores claim analysis results comparing product features against patent elements.
+
+| Column             | Type       | Description                                                        |
+| ------------------ | ---------- | ------------------------------------------------------------------ |
+| patent_id          | TEXT PK    | Patent number (FK to screened_patents.patent_id)                   |
+| claim_number       | INTEGER PK | Claim number (part of composite FK to claims with patent_id)       |
+| element_label      | TEXT PK    | Element label (part of composite FK to elements with patent_id...) |
+| similarity_level   | TEXT       | Similarity level: `Significant`, `Moderate`, or `Limited`          |
+| analysis_notes     | TEXT       | Detailed analysis notes explaining the similarity assessment       |
+| overall_similarity | TEXT       | Overall similarity level for the patent                            |
+| analyzed_at        | TEXT       | Analysis timestamp                                                 |
+| updated_at         | TEXT       | Last update timestamp                                              |
+
+**Constraints**:
+
+- **Primary Key**: `(patent_id, claim_number, element_label)` - ensures unique similarity per element
+- `patent_id` is a FOREIGN KEY referencing `screened_patents(patent_id)` with `ON DELETE CASCADE`
+- `(patent_id, claim_number)` is a composite FOREIGN KEY referencing `claims(patent_id, claim_number)` with `ON DELETE CASCADE`
+- `(patent_id, claim_number, element_label)` is a composite FOREIGN KEY referencing `elements(patent_id, claim_number, element_label)` with `ON DELETE CASCADE`
+- `similarity_level` only allows: `Significant`, `Moderate`, `Limited`
+
 ## Views
 
 ### v_screening_progress
@@ -111,18 +134,18 @@ Automatically updates `updated_at` when a row in `screened_patents` is modified.
 ## Relationships
 
 ```
-target_patents (1) -----> (1) screened_patents (1) -----> (*) claims (1) -----> (*) elements
-     |                            |                            |                    |
-     |-- patent_id (PK)            |-- patent_id (PK, FK)        |-- patent_id (FK)     |-- patent_id (PK, FK)
-     |-- title                     |-- judgment                  |-- claim_number (FK)  |-- claim_number (PK, FK)
-     |-- country                   |-- reason                    |-- claim_type         |-- element_label (PK)
-     |-- assignee                  |-- abstract_text             |-- claim_text         |-- element_description
-     |-- extra_fields              |-- screened_at               |-- created_at         |-- created_at
-     |-- publication_date          |-- updated_at                |-- updated_at         |-- updated_at
-     |-- filing_date               |                            |
-     |-- grant_date                |
-     |-- created_at                |
-     |-- updated_at                |
+target_patents (1) -----> (1) screened_patents (1) -----> (*) claims (1) -----> (*) elements (1) -----> (*) similarities
+     |                            |                            |                    |                        |
+     |-- patent_id (PK)            |-- patent_id (PK, FK)        |-- patent_id (FK)     |-- patent_id (PK, FK)     |-- patent_id (PK, FK)
+     |-- title                     |-- judgment                  |-- claim_number (FK)  |-- claim_number (PK, FK)  |-- claim_number (PK, FK)
+     |-- country                   |-- reason                    |-- claim_type         |-- element_label (PK)     |-- element_label (PK, FK)
+     |-- assignee                  |-- abstract_text             |-- claim_text         |-- element_description    |-- similarity_level
+     |-- extra_fields              |-- screened_at               |-- created_at         |-- created_at             |-- analysis_notes
+     |-- publication_date          |-- updated_at                |-- updated_at         |-- updated_at             |-- overall_similarity
+     |-- filing_date               |                            |                    |                        |-- analyzed_at
+     |-- grant_date                |                            |                    |                        |-- updated_at
+     |-- created_at                |                            |                    |
+     |-- updated_at                |                            |                    |
 ```
 
 **Legend**:
