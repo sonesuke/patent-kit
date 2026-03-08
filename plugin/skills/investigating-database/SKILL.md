@@ -12,7 +12,6 @@ description: |
     * "record screening result"
     * "record claims"
     * "record elements"
-    * "record evaluation result"
     * "get statistics"
   - Other skills need database operations
 context: fork
@@ -74,7 +73,6 @@ Based on the user request, select the appropriate database operation:
 | Record Screening       | "record screening", "save result"             | `references/instructions/record-screening.md`  |
 | Record Claims          | "record claims", "save claims"                | `references/instructions/record-claims.md`     |
 | Record Elements        | "record elements", "save elements"            | `references/instructions/record-elements.md`   |
-| Record Evaluation      | "record evaluation", "save evaluation result" | `references/instructions/record-evaluation.md` |
 | Get Statistics         | "get statistics", "show progress"             | `references/instructions/get-statistics.md`    |
 
 **IMPORTANT**: Always use the full path starting with `references/instructions/` to avoid file search delays.
@@ -122,7 +120,6 @@ EOF
 2. Fetch patent details using `google-patent-cli:patent-fetch` MCP tool
 3. Record claims: Use SQL from `instructions/record-claims.md`
 4. Record elements: Use SQL from `instructions/record-elements.md`
-5. Record evaluation: Use SQL from `instructions/record-evaluation.md`
 
 ### Workflow 4: Report Progress
 
@@ -152,7 +149,6 @@ See `references/` directory for:
   - `record-screening.md`: Screening result recording
   - `record-claims.md`: Patent claims recording
   - `record-elements.md`: Constituent elements recording
-  - `record-evaluation.md`: Evaluation completion recording
   - `get-statistics.md`: Progress statistics retrieval
 - **sql/**: SQL schema and query files
   - `initialize-database.sql`: Database schema definition
