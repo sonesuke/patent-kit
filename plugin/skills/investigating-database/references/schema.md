@@ -22,6 +22,7 @@ Stores patent master data imported from CSV files.
 **Constraints**:
 
 - `patent_id` must not contain hyphens (`-`), underscores (`_`), or spaces
+- `patent_id` must be 9-15 characters (country + year/month/number + kind)
 - `patent_id` must be non-empty
 - Date columns (`publication_date`, `filing_date`, `grant_date`) must be in ISO 8601 format (`YYYY-MM-DD`) or NULL
 

@@ -38,6 +38,19 @@ Create the evaluation report file:
 - **Format**: Follow the template structure
 - **Content**: Complete analysis results
 
+## 4. Record Evaluation
+
+Use the `investigating-database` skill to record evaluation completion:
+
+- Request: "Record evaluation for patent <patent-id>"
+- The skill will verify the evaluation report exists and record the completion
+
+This enables:
+
+- Progress tracking
+- Resume functionality (skip evaluated patents in future sessions)
+- Statistics generation
+
 ## Quality Gates
 
 - [ ] **Template Filled**: All analysis results entered into evaluation template
@@ -45,6 +58,7 @@ Create the evaluation report file:
   - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology"
   - [ ] Avoid citing specific court case examples
 - [ ] **Report Saved**: `3-investigations/<patent-id>/evaluation.md` created
+- [ ] **Evaluation Recorded**: `investigating-database` skill confirms evaluation completion
 
 ## Deliverables
 
@@ -53,3 +67,5 @@ Create the evaluation report file:
 ## Next Step
 
 Evaluation complete. Report is ready for prior art search phase.
+
+To continue evaluating more patents, return to Step 0: Select Patent ID.

@@ -8,7 +8,8 @@ PRAGMA journal_mode = WAL;
 -- Create target_patents table
 CREATE TABLE IF NOT EXISTS target_patents (
     patent_id TEXT PRIMARY KEY NOT NULL CHECK(
-        length(patent_id) > 0 AND
+        length(patent_id) >= 9 AND
+        length(patent_id) <= 15 AND
         instr(patent_id, '-') = 0 AND
         instr(patent_id, '_') = 0 AND
         instr(patent_id, ' ') = 0

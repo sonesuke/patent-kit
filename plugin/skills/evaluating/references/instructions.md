@@ -59,6 +59,7 @@ Generate the evaluation report based on patent analysis:
 - Fill in evaluation template
 - Avoid legal assertions
 - Save report to `3-investigations/<patent-id>/evaluation.md`
+- Record evaluation completion using `investigating-database` skill
 
 **Details**: See `references/instructions/generate-report.md`
 

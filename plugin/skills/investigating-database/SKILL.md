@@ -10,6 +10,7 @@ description: |
     * "get patent ID"
     * "select patent ID for evaluation"
     * "record screening result"
+    * "record evaluation result"
     * "get statistics"
   - Other skills need database operations
 context: fork
@@ -62,14 +63,15 @@ This command creates all necessary tables (`target_patents`, `screened_patents`)
 
 Based on the user request, select the appropriate database operation:
 
-| Operation              | Trigger                                       | Instruction File Path                         |
-| ---------------------- | --------------------------------------------- | --------------------------------------------- |
-| Initialize             | Database not found (auto-check)               | SKILL.md → Database Initialization section    |
-| Import CSV             | "import CSV", "load data"                     | `references/instructions/import-csv.md`       |
-| Get Patent ID          | "get patent ID", "fetch patent by row"        | `references/instructions/get-patent-id.md`    |
-| Select Patent for Eval | "select patent ID", "next patent to evaluate" | `references/instructions/select-patent-id.md` |
-| Record Screening       | "record screening", "save result"             | `references/instructions/record-screening.md` |
-| Get Statistics         | "get statistics", "show progress"             | `references/instructions/get-statistics.md`   |
+| Operation              | Trigger                                       | Instruction File Path                          |
+| ---------------------- | --------------------------------------------- | ---------------------------------------------- |
+| Initialize             | Database not found (auto-check)               | SKILL.md → Database Initialization section     |
+| Import CSV             | "import CSV", "load data"                     | `references/instructions/import-csv.md`        |
+| Get Patent ID          | "get patent ID", "fetch patent by row"        | `references/instructions/get-patent-id.md`     |
+| Select Patent for Eval | "select patent ID", "next patent to evaluate" | `references/instructions/select-patent-id.md`  |
+| Record Screening       | "record screening", "save result"             | `references/instructions/record-screening.md`  |
+| Record Evaluation      | "record evaluation", "save evaluation result" | `references/instructions/record-evaluation.md` |
+| Get Statistics         | "get statistics", "show progress"             | `references/instructions/get-statistics.md`    |
 
 **IMPORTANT**: Always use the full path starting with `references/instructions/` to avoid file search delays.
 
@@ -136,6 +138,7 @@ See `references/` directory for:
   - `get-patent-id.md`: Patent ID retrieval by row number
   - `select-patent-id.md`: Select next patent for evaluation (relevant, not yet evaluated)
   - `record-screening.md`: Screening result recording
+  - `record-evaluation.md`: Evaluation completion recording
   - `get-statistics.md`: Progress statistics retrieval
 - **sql/**: SQL schema and query files
   - `initialize-database.sql`: Database schema definition

@@ -13,6 +13,7 @@ CSV files require ETL (Extract, Transform, Load) processing before import. Direc
 - **Schema requirements**: Target table has specific column order and data types
 
 This instruction provides a **step-by-step procedure** that must be followed exactly:
+
 1. Inspect CSV structure
 2. Create import table
 3. Import raw CSV data
@@ -36,6 +37,7 @@ head -n 1 test-patents.csv | awk -F',' '{print NF}'
 ```
 
 **Expected Output**:
+
 - **Data starts at**: Row 3 (skip 2 rows: search URL + header)
 - **Column mapping**:
   - col1 = id (patent_id with hyphens)
@@ -93,6 +95,7 @@ EOF
 **Skip calculation**: Row 3 - 1 = skip 2 rows (0-indexed)
 
 **Verification**: Confirm import succeeded:
+
 ```bash
 sqlite3 patents.db "SELECT COUNT(*) FROM raw_import;"
 ```
@@ -178,6 +181,7 @@ sqlite3 patents.db "DROP TABLE raw_import;"
 ```
 
 **This ETL script handles:**
+
 - ✅ Google Patents CSV format (10 columns)
 - ✅ US patent month zero padding (e.g., US-2024-2-92070-A1 → US20240292070A1)
 - ✅ All other patent formats (KR, JP, CN, WO, CA, HK, etc.)
