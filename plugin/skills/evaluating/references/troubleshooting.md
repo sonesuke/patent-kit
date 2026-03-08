@@ -168,41 +168,42 @@ SELECT COUNT(*) FROM screened_patents WHERE judgment = 'relevant';
 - Don't move or rename template files
 - Regularly verify plugin integrity
 
-### Issue: "JSON file too large to load"
+### Issue: "Patent data too large to process"
 
 **Possible Causes**:
 
 1. Patent description is very long
-2. Multiple patents in single JSON file
-3. Attempting to load entire JSON into context
+2. Attempting to load entire dataset into context
+3. Querying too many fields at once
 
 **Solutions**:
 
-1. **Use jq to Extract Fields**:
+1. **Use Cypher Queries**:
+   - Use `execute_cypher` to query specific fields from the MCP dataset
+   - Example:
+     ```cypher
+     MATCH (p:Patent) RETURN p.title, p.abstract_text
+     ```
+   - Request only the fields you need
 
-   ```bash
-   jq '.title' 3-investigations/<patent-id>/json/<patent-id>.json
-   jq '.abstract_text' 3-investigations/<patent-id>/json/<patent-id>.json
-   jq '.claims' 3-investigations/<patent-id>/json/<patent-id>.json
-   ```
+2. **Query Specific Sections**:
+   - Use Cypher to filter specific data
+   - Example for claims only:
+     ```cypher
+     MATCH (p:Patent) RETURN p.claims
+     ```
 
-2. **Use Read Tool with Line Ranges**:
-
-   ```
-   Read specific sections using offset and limit parameters
-   Example: Read lines 1-100 for title and abstract
-   ```
-
-3. **Query Specific Data**:
-   - Use Cypher queries if data is in MCP dataset
-   - Request specific fields from patent data
-   - Avoid loading entire JSON at once
+3. **Avoid Large Result Sets**:
+   - Use specific RETURN clauses
+   - Add WHERE clauses to filter data
+   - Process data in chunks if needed
 
 **Best Practice**:
 
-- Always save JSON to file first
-- Use selective reading for large files
-- Keep context window efficient
+- Always use MCP tools and Cypher queries for data access
+- Do NOT manually read JSON files
+- Do NOT use jq or other CLI tools
+- Keep context window efficient by querying only needed fields
 
 ### Issue: "Constitution or Legal Checker skill not loaded"
 

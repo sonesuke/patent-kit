@@ -49,10 +49,13 @@ If no patent ID is provided, query the database for the next patent:
    - Load `legal-checking` skill to understand legal compliance guidelines
 
 2. **Retrieve Data**:
-   - Use the `google-patent-cli:patent-fetch` skill to get complete patent details
-   - Save results to JSON: `3-investigations/<patent-id>/json/<patent-id>.json`
-   - **Important**: Do NOT load large JSON outputs directly into context
-   - Use Read tool or jq to access specific fields from saved JSON when needed
+   - Use the `google-patent-cli:patent-fetch` MCP tool to get complete patent details
+   - The tool returns a dataset name (e.g., "fetch-abc123")
+   - Use `execute_cypher` to query specific fields from the dataset
+   - Example query:
+     ```cypher
+     MATCH (p:Patent) RETURN p.title, p.abstract_text, p.claims
+     ```
 
 3. **Analyze**: Identify Constituent Elements.
    - **Independent Claim**: Decompose Claim 1 into elements (A, B, C...).
@@ -71,10 +74,10 @@ If no patent ID is provided, query the database for the next patent:
 
 To maintain context window efficiency:
 
-- **Rule**: Patent data MUST be saved to a JSON file.
-  - Path: `3-investigations/<patent-id>/json/<patent-id>.json`
-  - **Requirement**: Do NOT load large JSON outputs directly into context.
-  - **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
+- **Rule**: Use MCP tools for data access.
+  - **DO NOT** manually read JSON files or use Read tool on patent data files.
+  - **DO NOT** use jq or other CLI tools to parse patent data.
+  - **USE** `execute_cypher` to query specific fields from the MCP dataset.
 
 ## Output
 
@@ -83,7 +86,7 @@ To maintain context window efficiency:
 ## Quality Gates
 
 - [ ] **Specification Check**: Does `0-specifications/specification.md` exist with complete product information?
-- [ ] **Data Retrieval**: Patent data successfully fetched and saved to JSON.
+- [ ] **Data Retrieval**: Patent data successfully fetched using MCP tools.
 - [ ] **Claim Analysis**: Constituent elements are clearly identified.
 - [ ] **Dependent Claims**: Notable dependent claims are summarized.
 - [ ] **Divisional Check**: Divisional application check completed (if applicable).
@@ -96,5 +99,6 @@ To maintain context window efficiency:
 
 ## Deliverables
 
-1. `3-investigations/<patent-id>/json/<patent-id>.json`
-2. `3-investigations/<patent-id>/evaluation.md`
+1. `3-investigations/<patent-id>/evaluation.md`
+
+Note: Patent data is accessed via MCP tools, not saved as JSON files.
