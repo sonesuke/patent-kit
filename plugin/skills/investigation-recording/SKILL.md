@@ -68,7 +68,8 @@ in the working directory, including screening results, claims, and elements.
 2. **Provide data in structured format**
    - For claims: Provide claim_number, claim_type, claim_text
    - For elements: Provide element_label, description, claim_number
-   - For similarities: Provide element_label, similarity_level, analysis_notes, overall_similarity
+   - For similarities: Provide element_label, similarity_level, analysis_notes
+   - For features: Provide feature_name, description, category, presence
    - The skill will format and execute batch INSERT
 
 3. **Database must exist**

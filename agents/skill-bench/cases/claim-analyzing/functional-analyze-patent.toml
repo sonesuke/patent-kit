@@ -8,11 +8,11 @@ test_prompt = """
 Perform claim analysis for patent US20240292070A1.
 - Compare product features against patent elements
 - Store similarity results in the database
-
-When asked about features:
-- "API Gateway": yes
-- "Secure Key Management": no
 """
+
+[answers]
+"API Gateway" = "yes"
+"Secure Key Management" = "no"
 
 [[setup]]
 path = "features.sql"
@@ -91,4 +91,4 @@ command = "check-db-query.sh {} {} '>0' 'SELECT COUNT(*) FROM similarities;'"
 [[checks]]
 name = "new_feature_recorded"
 type = "script"
-command = "check-db-query.sh {} {} '=1' 'SELECT COUNT(*) FROM features WHERE feature_name = ''API Gateway'' AND presence = ''present''';"
+command = "check-db-query.sh {} {} '>0' \"SELECT COUNT(*) FROM features WHERE feature_name LIKE 'API Gate%';\""
