@@ -43,9 +43,9 @@ type = "script"
 command = "setup-db.sh execute screened-patents.sql"
 
 [[checks]]
-name = "database_initialized"
+name = "database_created"
 type = "script"
-command = "check-db-initialized.sh"
+command = "check-workspace-file.sh patents.db"
 
 [[checks]]
 name = "constitution_loaded"

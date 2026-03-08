@@ -52,9 +52,9 @@ type = "script"
 command = "mkdir -p 3-investigations/US20240292070A1"
 
 [[checks]]
-name = "database_initialized"
+name = "database_created"
 type = "script"
-command = "check-db-initialized.sh"
+command = "check-workspace-file.sh patents.db"
 
 [[checks]]
 name = "relevant_patents_exist"
