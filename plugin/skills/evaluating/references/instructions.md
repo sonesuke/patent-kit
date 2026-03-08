@@ -73,7 +73,8 @@ If no patent ID is provided, query the database for the next patent:
 ## Quality Gates
 
 - [ ] **Specification Check**: Does `0-specifications/specification.md` exist with complete product information?
-- [ ] **Data Retrieval**: Patent data successfully fetched using MCP tools.
+- [ ] **Skills Loaded**: `constitution-reminding` and `legal-checking` skills loaded successfully.
+- [ ] **Patent Data Retrieved**: `google-patent-cli:patent-fetch` skill used to fetch patent details.
 - [ ] **Claim Analysis**: Constituent elements are clearly identified.
 - [ ] **Dependent Claims**: Notable dependent claims are summarized.
 - [ ] **Divisional Check**: Divisional application check completed (if applicable).
@@ -87,5 +88,3 @@ If no patent ID is provided, query the database for the next patent:
 ## Deliverables
 
 1. `3-investigations/<patent-id>/evaluation.md`
-
-Note: Patent data is accessed via MCP tools, not saved as JSON files.
