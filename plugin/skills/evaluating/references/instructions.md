@@ -19,12 +19,11 @@ Generate a detailed evaluation report for a screened patent. This phase analyzes
 
 The evaluation process consists of the following steps:
 
-| Step | Description          | Instruction File                                 |
-| ---- | -------------------- | ------------------------------------------------ |
-| 0    | Determine Patent ID  | `references/instructions/determine-patent-id.md` |
-| 1    | Load Required Skills | `references/instructions/load-skills.md`         |
-| 2    | Patent Analysis      | `references/instructions/analyze-patent.md`      |
-| 3    | Report Generation    | `references/instructions/generate-report.md`     |
+| Step | Description         | Instruction File                                 |
+| ---- | ------------------- | ------------------------------------------------ |
+| 0    | Determine Patent ID | `references/instructions/determine-patent-id.md` |
+| 1    | Patent Analysis     | `references/instructions/analyze-patent.md`      |
+| 2    | Report Generation   | `references/instructions/generate-report.md`     |
 
 ## Step Summaries
 
@@ -34,13 +33,7 @@ Determine which patent to evaluate based on user input or database query.
 
 **Details**: See `references/instructions/determine-patent-id.md`
 
-### Step 1: Load Required Skills
-
-Load required skills (`constitution-reminding`, `legal-checking`) before starting patent evaluation.
-
-**Details**: See `references/instructions/load-skills.md`
-
-### Step 2: Patent Analysis
+### Step 1: Patent Analysis
 
 Analyze the patent to extract key information:
 
@@ -51,7 +44,7 @@ Analyze the patent to extract key information:
 
 **Details**: See `references/instructions/analyze-patent.md`
 
-### Step 3: Report Generation
+### Step 2: Report Generation
 
 Generate the evaluation report based on patent analysis:
 
@@ -69,9 +62,8 @@ Generate the evaluation report based on patent analysis:
 
 See individual instruction files for detailed quality gates:
 
-- **Step 1**: `load-skills.md`
-- **Step 2**: `analyze-patent.md`
-- **Step 3**: `generate-report.md`
+- **Step 1**: `analyze-patent.md`
+- **Step 2**: `generate-report.md`
 
 ## Deliverables
 

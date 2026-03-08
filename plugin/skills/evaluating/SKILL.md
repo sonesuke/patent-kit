@@ -25,12 +25,11 @@ Generate a detailed evaluation report for a screened patent by analyzing claim e
 
 The evaluation process consists of the following steps:
 
-| Step | Description          | Instruction File                                 |
-| ---- | -------------------- | ------------------------------------------------ |
-| 0    | Determine Patent ID  | `references/instructions/determine-patent-id.md` |
-| 1    | Load Required Skills | `references/instructions/load-skills.md`         |
-| 2    | Patent Analysis      | `references/instructions/analyze-patent.md`      |
-| 3    | Report Generation    | `references/instructions/generate-report.md`     |
+| Step | Description         | Instruction File                                 |
+| ---- | ------------------- | ------------------------------------------------ |
+| 0    | Determine Patent ID | `references/instructions/determine-patent-id.md` |
+| 1    | Patent Analysis     | `references/instructions/analyze-patent.md`      |
+| 2    | Report Generation   | `references/instructions/generate-report.md`     |
 
 ## Quick Start
 
@@ -58,8 +57,7 @@ See `references/` directory for:
 
 - **instructions/**: Step-based documentation
   - `determine-patent-id.md`: Determine which patent to evaluate
-  - `load-skills.md`: Load required skills (constitution-reminding, legal-checking)
-  - `analyze-patent.md`: Patent analysis and claim decomposition
+  - `analyze-patent.md`: Patent analysis and claim decomposition (includes skill loading)
   - `generate-report.md`: Report generation and output
 - **examples.md**: Usage examples and detailed workflows
 - **troubleshooting.md**: Common issues and solutions

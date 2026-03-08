@@ -1,4 +1,4 @@
-# Step 3: Report Generation
+# Step 2: Report Generation
 
 Generate the evaluation report based on patent analysis.
 
@@ -49,3 +49,7 @@ Create the evaluation report file:
 ## Deliverables
 
 1. `3-investigations/<patent-id>/evaluation.md` - Complete evaluation report
+
+## Next Step
+
+Evaluation complete. Report is ready for prior art search phase.
