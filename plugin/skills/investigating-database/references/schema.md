@@ -49,14 +49,14 @@ Stores latest screening results only (no history tracking).
 
 Stores patent claims analyzed during evaluation phase.
 
-| Column       | Type    | Description                                      |
-| ------------ | ------- | ------------------------------------------------ |
-| patent_id    | TEXT PK | Patent number (FK to screened_patents.patent_id) |
-| claim_number | INTEGER PK | Claim number (1, 2, 3...)                      |
-| claim_type   | TEXT    | Claim type: `independent` or `dependent`         |
-| claim_text   | TEXT    | Full text of the claim                           |
-| created_at   | TEXT    | Record creation timestamp                        |
-| updated_at   | TEXT    | Last update timestamp                            |
+| Column       | Type       | Description                                      |
+| ------------ | ---------- | ------------------------------------------------ |
+| patent_id    | TEXT PK    | Patent number (FK to screened_patents.patent_id) |
+| claim_number | INTEGER PK | Claim number (1, 2, 3...)                        |
+| claim_type   | TEXT       | Claim type: `independent` or `dependent`         |
+| claim_text   | TEXT       | Full text of the claim                           |
+| created_at   | TEXT       | Record creation timestamp                        |
+| updated_at   | TEXT       | Last update timestamp                            |
 
 **Constraints**:
 
@@ -68,21 +68,21 @@ Stores patent claims analyzed during evaluation phase.
 
 Stores constituent elements of claims analyzed during evaluation phase.
 
-| Column              | Type       | Description                                                     |
-| ------------------- | ---------- | --------------------------------------------------------------- |
-| id                  | INTEGER PK | Auto-increment primary key                                      |
-| patent_id           | TEXT       | Patent number (FK to screened_patents.patent_id)               |
-| claim_number        | INTEGER    | Claim number (part of composite FK to claims with patent_id)    |
-| element_label       | TEXT       | Element label (e.g., A, B, C...)                               |
-| element_description | TEXT       | Description of the constituent element                         |
-| created_at          | TEXT       | Record creation timestamp                                      |
-| updated_at          | TEXT       | Last update timestamp                                          |
+| Column              | Type       | Description                                                  |
+| ------------------- | ---------- | ------------------------------------------------------------ |
+| patent_id           | TEXT PK    | Patent number (FK to screened_patents.patent_id)             |
+| claim_number        | INTEGER PK | Claim number (part of composite FK to claims with patent_id) |
+| element_label       | TEXT PK    | Element label (e.g., A, B, C...)                             |
+| element_description | TEXT       | Description of the constituent element                       |
+| created_at          | TEXT       | Record creation timestamp                                    |
+| updated_at          | TEXT       | Last update timestamp                                        |
 
 **Constraints**:
 
+- **Primary Key**: `(patent_id, claim_number, element_label)` - ensures unique element per claim
 - `patent_id` is a FOREIGN KEY referencing `screened_patents(patent_id)` with `ON DELETE CASCADE`
 - `(patent_id, claim_number)` is a composite FOREIGN KEY referencing `claims(patent_id, claim_number)` with `ON DELETE CASCADE`
-- `element_description` must NOT be NULL
+- `element_label` and `element_description` must NOT be NULL
 
 ## Views
 
@@ -113,13 +113,13 @@ Automatically updates `updated_at` when a row in `screened_patents` is modified.
 ```
 target_patents (1) -----> (1) screened_patents (1) -----> (*) claims (1) -----> (*) elements
      |                            |                            |                    |
-     |-- patent_id (PK)            |-- patent_id (PK, FK)        |-- patent_id (FK)     |-- patent_id (FK)
-     |-- title                     |-- judgment                  |-- claim_number (FK)  |-- claim_number (FK)
-     |-- country                   |-- reason                    |-- claim_type         |-- id (PK)
-     |-- assignee                  |-- abstract_text             |-- claim_text         |-- element_label
-     |-- extra_fields              |-- screened_at               |-- created_at         |-- element_description
-     |-- publication_date          |-- updated_at                |-- updated_at         |-- created_at
-     |-- filing_date               |                                                |-- updated_at
+     |-- patent_id (PK)            |-- patent_id (PK, FK)        |-- patent_id (FK)     |-- patent_id (PK, FK)
+     |-- title                     |-- judgment                  |-- claim_number (FK)  |-- claim_number (PK, FK)
+     |-- country                   |-- reason                    |-- claim_type         |-- element_label (PK)
+     |-- assignee                  |-- abstract_text             |-- claim_text         |-- element_description
+     |-- extra_fields              |-- screened_at               |-- created_at         |-- created_at
+     |-- publication_date          |-- updated_at                |-- updated_at         |-- updated_at
+     |-- filing_date               |                            |
      |-- grant_date                |
      |-- created_at                |
      |-- updated_at                |

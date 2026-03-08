@@ -31,8 +31,10 @@ EOF
 
 - **PATENT_ID**: Patent identifier (e.g., "US20240292070A1")
 - **CLAIM_NUMBER**: Claim number (1, 2, 3...)
-- **ELEMENT_LABEL**: Element label (A, B, C...)
-- **ELEMENT_DESCRIPTION**: Description of the constituent element
+- **ELEMENT_LABEL**: Element label (A, B, C...) - Required
+- **ELEMENT_DESCRIPTION**: Description of the constituent element - Required
+
+**Note**: `element_label` and `element_description` are required (NOT NULL).
 
 ## Use Cases
 

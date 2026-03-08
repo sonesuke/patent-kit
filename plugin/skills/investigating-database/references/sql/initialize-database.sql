@@ -83,13 +83,13 @@ CREATE TABLE IF NOT EXISTS claims (
 
 -- Create elements table for storing claim constituent elements
 CREATE TABLE IF NOT EXISTS elements (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
     patent_id TEXT NOT NULL,
-    claim_number INTEGER NOT NULL,  -- Reference to claims composite primary key
-    element_label TEXT,
+    claim_number INTEGER NOT NULL,
+    element_label TEXT NOT NULL,
     element_description TEXT NOT NULL,
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
+    PRIMARY KEY (patent_id, claim_number, element_label),
     FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
     FOREIGN KEY (patent_id, claim_number) REFERENCES claims(patent_id, claim_number) ON DELETE CASCADE
 );
@@ -99,17 +99,20 @@ CREATE TRIGGER IF NOT EXISTS update_claims_timestamp
 AFTER UPDATE ON claims
 FOR EACH ROW
 BEGIN
-    UPDATE claims SET updated_at = datetime('now') WHERE id = NEW.id;
+    UPDATE claims SET updated_at = datetime('now')
+    WHERE patent_id = NEW.patent_id AND claim_number = NEW.claim_number;
 END;
 
 CREATE TRIGGER IF NOT EXISTS update_elements_timestamp
 AFTER UPDATE ON elements
 FOR EACH ROW
 BEGIN
-    UPDATE elements SET updated_at = datetime('now') WHERE id = NEW.id;
+    UPDATE elements SET updated_at = datetime('now')
+    WHERE patent_id = NEW.patent_id
+      AND claim_number = NEW.claim_number
+      AND element_label = NEW.element_label;
 END;
 
 -- Create index for faster queries
+-- Composite primary keys automatically create indexes, so no additional indexes needed
 CREATE INDEX IF NOT EXISTS idx_claims_patent_id ON claims(patent_id);
-CREATE INDEX IF NOT EXISTS idx_elements_patent_id ON elements(patent_id);
-CREATE INDEX IF NOT EXISTS idx_elements_claim_number ON elements(claim_number);
