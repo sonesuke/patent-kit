@@ -7,7 +7,7 @@ timeout = 600                                                                   
 test_prompt = """
 I have 2 screened patents marked as relevant in the database.
 
-Please:
+Please evaluate both patents:
 1. Analyze both patents by decomposing claims into constituent elements
 2. Store claims and elements in the database
 3. Report the analysis results including patent IDs, claim counts, and element counts
