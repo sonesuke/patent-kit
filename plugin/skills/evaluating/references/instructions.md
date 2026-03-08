@@ -19,19 +19,27 @@ Generate a detailed evaluation report for a screened patent. This phase analyzes
 
 The evaluation process consists of the following steps:
 
-| Step | Description         | Instruction File                                 |
-| ---- | ------------------- | ------------------------------------------------ |
-| 0    | Determine Patent ID | `references/instructions/determine-patent-id.md` |
-| 1    | Patent Analysis     | `references/instructions/analyze-patent.md`      |
-| 2    | Report Generation   | `references/instructions/generate-report.md`     |
+| Step | Description       | Instruction File                             |
+| ---- | ----------------- | -------------------------------------------- |
+| 0    | Select Patent ID  | Use `investigating-database` skill           |
+| 1    | Patent Analysis   | `references/instructions/analyze-patent.md`  |
+| 2    | Report Generation | `references/instructions/generate-report.md` |
 
 ## Step Summaries
 
-### Step 0: Determine Patent ID
+### Step 0: Select Patent ID
 
-Determine which patent to evaluate based on user input or database query.
+Select which patent to evaluate:
 
-**Details**: See `references/instructions/determine-patent-id.md`
+**If no patent ID provided**: Use the `investigating-database` skill to get the next relevant patent without evaluation
+
+- Request: "Select patent ID for evaluation"
+- The skill will find the first patent marked as `relevant` that doesn't yet have an evaluation report
+
+**If patent ID provided**: Check for existing evaluation report
+
+- If exists: Ask user for re-evaluation confirmation
+- If not exists: Proceed with standard process
 
 ### Step 1: Patent Analysis
 

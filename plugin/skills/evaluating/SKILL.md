@@ -25,16 +25,16 @@ Generate a detailed evaluation report for a screened patent by analyzing claim e
 
 The evaluation process consists of the following steps:
 
-| Step | Description         | Instruction File                                 |
-| ---- | ------------------- | ------------------------------------------------ |
-| 0    | Determine Patent ID | `references/instructions/determine-patent-id.md` |
-| 1    | Patent Analysis     | `references/instructions/analyze-patent.md`      |
-| 2    | Report Generation   | `references/instructions/generate-report.md`     |
+| Step | Description       | Instruction File                             |
+| ---- | ----------------- | -------------------------------------------- |
+| 0    | Select Patent ID  | Use `investigating-database` skill           |
+| 1    | Patent Analysis   | `references/instructions/analyze-patent.md`  |
+| 2    | Report Generation | `references/instructions/generate-report.md` |
 
 ## Quick Start
 
-1. **Load Required Skills**: Load `constitution-reminding` and `legal-checking` skills
-2. **Get Patent ID**: If not provided, query database for next relevant patent
+1. **Select Patent ID**: Use `investigating-database` skill to get next relevant patent without evaluation
+2. **Load Required Skills**: Load `constitution-reminding` and `legal-checking` skills
 3. **Analyze Patent**:
    - Fetch patent details using `google-patent-cli:patent-fetch`
    - Decompose claims into elements and identify key features
@@ -56,7 +56,6 @@ For detailed instructions, see `references/instructions.md`.
 See `references/` directory for:
 
 - **instructions/**: Step-based documentation
-  - `determine-patent-id.md`: Determine which patent to evaluate
   - `analyze-patent.md`: Patent analysis and claim decomposition (includes skill loading)
   - `generate-report.md`: Report generation and output
 - **examples.md**: Usage examples and detailed workflows
