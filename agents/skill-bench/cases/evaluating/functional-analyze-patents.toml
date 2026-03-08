@@ -1,0 +1,68 @@
+# Test Case: Evaluating - Analyze Patents
+
+name = "functional-analyze-patents"
+description = "Verify evaluating skill can analyze patents and store claims/elements in database"
+timeout = 300                                                                      # seconds
+
+test_prompt = """
+I have 2 screened patents marked as relevant in the database.
+
+Please:
+1. Analyze these patents by decomposing claims into constituent elements
+2. Store claims and elements in the database
+3. Report the analysis results including patent IDs, claim counts, and element counts
+"""
+
+[[setup]]
+path = "screened-patents.sql"
+content = """
+-- Initialize database
+PRAGMA foreign_keys = ON;
+
+-- Insert target patents
+INSERT OR IGNORE INTO target_patents (patent_id, title, assignee, country, publication_date, filing_date, grant_date, extra_fields)
+VALUES
+    ('US20240292070A1', 'Iterative AI prompt optimization', 'Loop Now Technologies, Inc.', 'US', '2024-08-29', '2024-04-10', NULL, '{"source": "test"}'),
+    ('US20240346271A1', 'Conversational AI System', 'Tech Corp', 'US', '2024-10-03', '2024-05-01', NULL, '{"source": "test"}');
+
+-- Insert screened patents (marked as relevant)
+INSERT OR IGNORE INTO screened_patents (patent_id, judgment, reason, abstract_text, screened_at, updated_at)
+VALUES
+    ('US20240292070A1', 'relevant', 'Relates to AI prompt optimization', 'Systems and methods for optimizing AI prompts through iterative refinement', datetime('now'), datetime('now')),
+    ('US20240346271A1', 'relevant', 'Relates to conversational AI', 'A conversational AI system with multi-turn capabilities', datetime('now'), datetime('now'));
+"""
+
+[[setup]]
+name = "init_db"
+type = "script"
+command = "setup-db.sh init"
+
+[[setup]]
+name = "load_screened_data"
+type = "script"
+command = "setup-db.sh execute screened-patents.sql"
+
+[[checks]]
+name = "database_initialized"
+type = "script"
+command = "check-db-initialized.sh"
+
+[[checks]]
+name = "constitution_loaded"
+type = "script"
+command = "check-skill-loaded.sh constitution-reminding"
+
+[[checks]]
+name = "claims_recorded"
+type = "script"
+command = "evaluating/check-claims-recorded.sh 2"
+
+[[checks]]
+name = "elements_recorded"
+type = "script"
+command = "evaluating/check-elements-recorded.sh 2"
+
+[[checks]]
+name = "analysis_output"
+type = "script"
+command = "evaluating/check-analysis-output.sh"
