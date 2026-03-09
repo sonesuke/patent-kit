@@ -20,9 +20,9 @@ ORDER BY pa.reference_type, pa.reference_id;
 
 ## Parameters
 
-| Parameter | Type | Description             |
-| --------- | ---- | ----------------------- |
-| patent_id | TEXT | Patent number to query  |
+| Parameter | Type | Description            |
+| --------- | ---- | ---------------------- |
+| patent_id | TEXT | Patent number to query |
 
 ## Output Format
 

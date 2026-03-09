@@ -31,12 +31,12 @@ VALUES
 
 ## Parameters
 
-| Parameter        | Type   | Description                                                  |
-| ---------------- | ------ | ------------------------------------------------------------ |
-| reference_id     | TEXT   | Prior art reference ID (e.g., US1234567A, arXiv:2305.13657) |
-| reference_type   | TEXT   | Reference type: 'patent' or 'npl'                           |
-| title            | TEXT   | Title of the prior art reference                            |
-| publication_date | TEXT   | Publication date (ISO 8601 format: YYYY-MM-DD)              |
+| Parameter        | Type | Description                                                 |
+| ---------------- | ---- | ----------------------------------------------------------- |
+| reference_id     | TEXT | Prior art reference ID (e.g., US1234567A, arXiv:2305.13657) |
+| reference_type   | TEXT | Reference type: 'patent' or 'npl'                           |
+| title            | TEXT | Title of the prior art reference                            |
+| publication_date | TEXT | Publication date (ISO 8601 format: YYYY-MM-DD)              |
 
 ## Output Format
 

@@ -27,9 +27,9 @@ ORDER BY pae.claim_number, pae.element_label, pae.reference_id;
 
 ## Parameters
 
-| Parameter | Type | Description             |
-| --------- | ---- | ----------------------- |
-| patent_id | TEXT | Patent number to query  |
+| Parameter | Type | Description            |
+| --------- | ---- | ---------------------- |
+| patent_id | TEXT | Patent number to query |
 
 ## Output Format
 

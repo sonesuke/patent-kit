@@ -36,15 +36,15 @@ VALUES
 
 ## Parameters
 
-| Parameter       | Type    | Description                                                  |
-| --------------- | ------- | ------------------------------------------------------------ |
+| Parameter       | Type    | Description                                                 |
+| --------------- | ------- | ----------------------------------------------------------- |
 | patent_id       | TEXT    | Target patent number (must exist in screened_patents)       |
-| claim_number    | INTEGER | Claim number (must exist in claims)                          |
-| element_label   | TEXT    | Element label (must exist in elements, e.g., 'A', 'B', 'C')  |
-| reference_id    | TEXT    | Prior art reference ID (must exist in prior_arts)            |
-| relevance_level | TEXT    | Relevance level: 'Significant', 'Moderate', or 'Limited'     |
-| analysis_notes  | TEXT    | Detailed analysis notes explaining the relevance assessment   |
-| claim_chart     | TEXT    | Claim chart comparing prior art to target patent elements    |
+| claim_number    | INTEGER | Claim number (must exist in claims)                         |
+| element_label   | TEXT    | Element label (must exist in elements, e.g., 'A', 'B', 'C') |
+| reference_id    | TEXT    | Prior art reference ID (must exist in prior_arts)           |
+| relevance_level | TEXT    | Relevance level: 'Significant', 'Moderate', or 'Limited'    |
+| analysis_notes  | TEXT    | Detailed analysis notes explaining the relevance assessment |
+| claim_chart     | TEXT    | Claim chart comparing prior art to target patent elements   |
 
 ## Output Format
 

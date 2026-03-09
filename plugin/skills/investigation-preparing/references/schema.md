@@ -131,14 +131,14 @@ Stores product/target features for claim analysis comparison.
 
 Stores prior art master data (patent and non-patent literature references).
 
-| Column          | Type    | Description                                 |
-| --------------- | ------- | ------------------------------------------- |
-| reference_id    | TEXT PK | Prior art reference ID (e.g., US1234567A)   |
-| reference_type  | TEXT    | Reference type: `patent` or `npl`            |
-| title           | TEXT    | Title of the prior art reference            |
-| publication_date| TEXT    | Publication date (ISO 8601)                 |
-| created_at      | TEXT    | Record creation timestamp                   |
-| updated_at      | TEXT    | Last update timestamp                       |
+| Column           | Type    | Description                               |
+| ---------------- | ------- | ----------------------------------------- |
+| reference_id     | TEXT PK | Prior art reference ID (e.g., US1234567A) |
+| reference_type   | TEXT    | Reference type: `patent` or `npl`         |
+| title            | TEXT    | Title of the prior art reference          |
+| publication_date | TEXT    | Publication date (ISO 8601)               |
+| created_at       | TEXT    | Record creation timestamp                 |
+| updated_at       | TEXT    | Last update timestamp                     |
 
 **Constraints**:
 
@@ -152,12 +152,12 @@ Stores element-level mappings between patent elements and prior art references.
 
 | Column          | Type       | Description                                                  |
 | --------------- | ---------- | ------------------------------------------------------------ |
-| patent_id       | TEXT PK    | Target patent number (FK to screened_patents.patent_id)     |
+| patent_id       | TEXT PK    | Target patent number (FK to screened_patents.patent_id)      |
 | claim_number    | INTEGER PK | Claim number (part of composite FK to claims with patent_id) |
 | element_label   | TEXT PK    | Element label (part of composite FK to elements)             |
 | reference_id    | TEXT PK    | Prior art reference ID (FK to prior_arts.reference_id)       |
 | relevance_level | TEXT       | Relevance level: `Significant`, `Moderate`, or `Limited`     |
-| analysis_notes  | TEXT       | Detailed analysis notes explaining the relevance assessment   |
+| analysis_notes  | TEXT       | Detailed analysis notes explaining the relevance assessment  |
 | claim_chart     | TEXT       | Claim chart comparing prior art to target patent elements    |
 | researched_at   | TEXT       | Research timestamp                                           |
 | updated_at      | TEXT       | Last update timestamp                                        |
