@@ -98,4 +98,4 @@ command = "check-tool-use.sh Agent"
 [[checks]]
 name = "prior_arts_stored"
 type = "script"
-command = "check-db-query.sh {} {} '>=2' 'SELECT COUNT(DISTINCT patent_id) FROM prior_arts;'"
+command = "check-db-query.sh {} {} '>=2' 'SELECT COUNT(DISTINCT patent_id) FROM prior_art_elements;'"
