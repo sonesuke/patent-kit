@@ -83,11 +83,11 @@ VALUES
     ('CN123456789A', 'Unrelated Patent About Refrigerator', 'Appliance Co', 'CN', '2024-03-10', '2023-09-05', NULL, '{"source": "test"}');
 
 -- Insert screened patents (3 out of 5)
-INSERT OR IGNORE INTO screened_patents (patent_id, title, assignee, country, publication_date, filing_date, grant_date, relevance, legal_status, extra_fields)
+INSERT OR IGNORE INTO screened_patents (patent_id, judgment, reason, abstract_text)
 VALUES
-    ('US20240292070A1', 'Iterative AI prompt optimization', 'Loop Now Technologies, Inc.', 'US', '2024-08-29', '2024-04-10', NULL, 'relevant', 'pending', '{"source": "test"}'),
-    ('KR102637029B1', 'Device for Generating Multi-turn Chat Bot Data Using LLM', '주식회사 마인즈앤컴퍼니', 'KR', '2024-02-15', '2023-10-11', '2024-02-15', 'relevant', 'granted', '{"source": "test"}'),
-    ('JP2024000555A', 'Expired Patent about Old Chatbot', 'Old Company', 'JP', '2020-01-01', '2019-01-01', NULL, 'irrelevant', 'expired', '{"source": "test"}');
+    ('US20240292070A1', 'relevant', 'Multi-turn LLM chatbot system with iterative prompt optimization', 'Iterative AI prompt optimization system for multi-turn conversations using large language models.'),
+    ('KR102637029B1', 'relevant', 'Multi-turn chatbot data generation using LLM', 'Device for generating training data for multi-turn chatbot systems using large language models.'),
+    ('JP2024000555A', 'expired', 'Priority date before cutoff (2019-01-01 < 2020-01-01)', 'Expired patent about old chatbot technology with priority date before cutoff.');
 """
 
 [[setup]]

@@ -89,11 +89,11 @@ VALUES
     ('US20240056789A1', 'IoT-Connected Animal Hygiene Device', 'SmartPet Inc.', 'US', '2024-03-01', '2023-09-01', NULL, '{"source": "test"}');
 
 -- Insert screened patents (all 3)
-INSERT OR IGNORE INTO screened_patents (patent_id, title, assignee, country, publication_date, filing_date, grant_date, relevance, legal_status, extra_fields)
+INSERT OR IGNORE INTO screened_patents (patent_id, judgment, reason, abstract_text)
 VALUES
-    ('US9876543B2', 'Automatic Pet Litter Box with Rotating Drum', 'AutoPets, LLC', 'US', '2018-05-15', '2016-11-10', '2018-05-15', 'relevant', 'granted', '{"source": "test"}'),
-    ('US20230123456A1', 'Solar-Powered Pet Waste Disposal System', 'EcoPet Solutions', 'US', '2023-08-20', '2022-02-14', NULL, 'relevant', 'pending', '{"source": "test"}'),
-    ('US20240056789A1', 'IoT-Connected Animal Hygiene Device', 'SmartPet Inc.', 'US', '2024-03-01', '2023-09-01', NULL, 'relevant', 'pending', '{"source": "test"}');
+    ('US9876543B2', 'relevant', 'Rotating drum mechanism with IoT notifications present', 'Automatic pet litter box with rotating drum for waste separation and Wi-Fi notifications.'),
+    ('US20230123456A1', 'relevant', 'Solar charging and IoT notifications present', 'Solar-powered pet waste disposal system with mobile app notifications.'),
+    ('US20240056789A1', 'relevant', 'IoT connectivity present but other key features missing', 'Animal hygiene device with IoT connectivity for remote monitoring.');
 """
 
 [[setup]]
