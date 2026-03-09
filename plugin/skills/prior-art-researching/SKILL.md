@@ -7,6 +7,11 @@ description: |
   - The user asks to:
     * "search for prior art"
     * "perform prior art research"
+    * "find prior art references"
+    * "conduct prior art search"
+  - The user mentions:
+    * "prior art" with "database" or "similarities"
+    * "Moderate/Significant" with "prior art"
   - `patents.db` exists with `similarities` table containing Moderate/Significant entries
 metadata:
   author: sonesuke
