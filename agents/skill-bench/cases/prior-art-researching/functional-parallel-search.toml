@@ -5,12 +5,14 @@ description = "Verify prior-art-researching skill can process multiple patents i
 timeout = 600
 
 test_prompt = """
-I have collected 2 patents with similarities analyzed in the database.
+I have 2 patents with similarities analyzed in the database.
 
-Please:
-1. Search for prior art for all patents in the database
-2. For each patent, analyze elements and search for relevant prior art references
-3. Report the search results including patent IDs, reference counts, and relevance levels
+Please search for prior art:
+1. Get the patents with Moderate/Significant similarities but no prior art results
+2. Search for prior art references (both patent and non-patent literature) for each patent
+3. Analyze relevance of each reference
+4. Store prior art results in the database
+5. Report the search results including patent IDs, reference counts, and relevance levels
 """
 
 [[setup]]
