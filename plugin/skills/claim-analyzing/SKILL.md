@@ -8,6 +8,11 @@ description: |
     * "perform claim analysis"
     * "analyze claim elements"
     * "analyze claims"
+    * "analyze claim similarities"
+    * "compare product features against patent elements"
+  - The user mentions:
+    * "claim analysis" with "patent" or "elements"
+    * "similarity" with "elements" or "claims"
   - `patents.db` exists with `elements` table populated and `features` table populated
 metadata:
   author: sonesuke
