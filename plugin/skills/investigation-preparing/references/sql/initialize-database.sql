@@ -210,5 +210,5 @@ END;
 -- Create index for faster queries
 -- Composite primary keys automatically create indexes, so no additional indexes needed
 CREATE INDEX IF NOT EXISTS idx_claims_patent_id ON claims(patent_id);
-CREATE INDEX IF NOT EXISTS idx_prior_arts_patent_id ON prior_arts(patent_id);
+CREATE INDEX IF NOT EXISTS idx_prior_art_elements_patent_id ON prior_art_elements(patent_id);
 CREATE INDEX IF NOT EXISTS idx_prior_arts_reference_type ON prior_arts(reference_type);
