@@ -1,0 +1,98 @@
+# Test Case: Claim Analyzing - Parallel Analysis
+
+name = "functional-parallel-analysis"
+description = "Verify claim-analyzing skill can analyze multiple patents in parallel using teams"
+timeout = 600
+
+test_prompt = """
+I have 2 screened patents with claims and elements analyzed in the database.
+
+Please analyze claim similarities for both patents:
+1. Compare product features against patent elements for each patent
+2. Analyze each element for similarity level
+3. Store similarity results in the database
+4. Report the analysis results including patent IDs, similarity counts, and overall assessments
+"""
+
+[[setup]]
+path = "patents-with-elements.sql"
+content = """
+-- Initialize database
+PRAGMA foreign_keys = ON;
+
+-- Insert product features
+INSERT OR REPLACE INTO features (feature_name, description, category, presence, created_at, updated_at)
+VALUES
+    ('AI prompt generation', 'System generates initial prompts for AI models', 'Core', 'present', datetime('now'), datetime('now')),
+    ('AI output processing', 'System processes and analyzes AI model output', 'Core', 'present', datetime('now'), datetime('now')),
+    ('Quality metrics analysis', 'System analyzes quality metrics of AI output', 'Core', 'present', datetime('now'), datetime('now')),
+    ('Iterative refinement', 'System iteratively refines prompts based on feedback', 'Core', 'present', datetime('now'), datetime('now')),
+    ('Conversation context manager', 'Maintains context across multiple conversation turns', 'Core', 'present', datetime('now'), datetime('now')),
+    ('Response generator', 'Generates responses based on conversation context', 'Core', 'present', datetime('now'), datetime('now'));
+
+-- Insert target patents
+INSERT OR IGNORE INTO target_patents (patent_id, title, assignee, country, publication_date, filing_date, grant_date, extra_fields)
+VALUES
+    ('US20240292070A1', 'Iterative AI prompt optimization', 'Loop Now Technologies, Inc.', 'US', '2024-08-29', '2024-04-10', NULL, '{"source": "test"}'),
+    ('US20240320708A1', 'Multi-turn conversation system', 'Tech Corp', 'US', '2024-09-12', '2024-03-15', NULL, '{"source": "test"}');
+
+-- Insert screened patents (marked as relevant)
+INSERT OR IGNORE INTO screened_patents (patent_id, judgment, reason, abstract_text, screened_at, updated_at)
+VALUES
+    ('US20240292070A1', 'relevant', 'Relates to AI prompt optimization', 'Systems and methods for optimizing AI prompts through iterative refinement', datetime('now'), datetime('now')),
+    ('US20240320708A1', 'relevant', 'Relates to multi-turn conversations', 'A system for managing multi-turn conversations with context tracking', datetime('now'), datetime('now'));
+
+-- Insert claims for patent 1
+INSERT OR REPLACE INTO claims (patent_id, claim_number, claim_type, claim_text, created_at, updated_at)
+VALUES
+    ('US20240292070A1', 1, 'independent', 'A method for optimizing AI prompts, comprising: generating an initial prompt; receiving output from an AI model; analyzing the output for quality metrics; and iteratively refining the prompt based on the quality metrics.', datetime('now'), datetime('now'));
+
+-- Insert elements for patent 1
+INSERT OR REPLACE INTO elements (patent_id, claim_number, element_label, element_description, created_at, updated_at)
+VALUES
+    ('US20240292070A1', 1, 'A', 'generating an initial prompt', datetime('now'), datetime('now')),
+    ('US20240292070A1', 1, 'B', 'receiving output from an AI model', datetime('now'), datetime('now')),
+    ('US20240292070A1', 1, 'C', 'analyzing the output for quality metrics', datetime('now'), datetime('now')),
+    ('US20240292070A1', 1, 'D', 'iteratively refining the prompt based on the quality metrics', datetime('now'), datetime('now'));
+
+-- Insert claims for patent 2
+INSERT OR REPLACE INTO claims (patent_id, claim_number, claim_type, claim_text, created_at, updated_at)
+VALUES
+    ('US20240320708A1', 1, 'independent', 'A system for multi-turn conversations, comprising: a conversation manager configured to maintain context across multiple turns; and a response generator configured to generate responses based on the maintained context.', datetime('now'), datetime('now'));
+
+-- Insert elements for patent 2
+INSERT OR REPLACE INTO elements (patent_id, claim_number, element_label, element_description, created_at, updated_at)
+VALUES
+    ('US20240320708A1', 1, 'A', 'a conversation manager configured to maintain context across multiple turns', datetime('now'), datetime('now')),
+    ('US20240320708A1', 1, 'B', 'a response generator configured to generate responses based on the maintained context', datetime('now'), datetime('now'));
+"""
+
+[[setup]]
+name = "init_db"
+type = "script"
+command = "setup-db.sh init"
+
+[[setup]]
+name = "load_patent_data"
+type = "script"
+command = "setup-db.sh execute patents-with-elements.sql"
+
+[[checks]]
+name = "skill_loaded"
+type = "script"
+command = "check-skill-loaded.sh claim-analyzing"
+
+[[checks]]
+name = "claim_analyzing_invoked"
+type = "script"
+command = "check-skill-invoked.sh claim-analyzing"
+
+[[checks]]
+name = "agent_used"
+type = "script"
+command = "check-tool-use.sh Agent"
+
+[[checks]]
+name = "similarities_stored"
+type = "script"
+command = "check-db-query.sh {} {} '>=2' 'SELECT COUNT(DISTINCT patent_id) FROM similarities;'"

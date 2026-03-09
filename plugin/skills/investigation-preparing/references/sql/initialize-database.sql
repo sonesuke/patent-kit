@@ -156,6 +156,59 @@ BEGIN
     UPDATE features SET updated_at = datetime('now') WHERE feature_id = NEW.feature_id;
 END;
 
+-- Create prior_arts table for storing prior art master data
+CREATE TABLE IF NOT EXISTS prior_arts (
+    reference_id TEXT PRIMARY KEY NOT NULL,
+    reference_type TEXT NOT NULL CHECK(reference_type IN ('patent', 'npl')),
+    title TEXT NOT NULL,
+    publication_date TEXT CHECK(
+        publication_date IS NULL OR
+        date(publication_date) IS publication_date
+    ),
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Create prior_art_elements table for linking prior art to patent elements
+CREATE TABLE IF NOT EXISTS prior_art_elements (
+    patent_id TEXT NOT NULL,
+    claim_number INTEGER NOT NULL,
+    element_label TEXT NOT NULL,
+    reference_id TEXT NOT NULL,
+    relevance_level TEXT CHECK(relevance_level IN ('Significant', 'Moderate', 'Limited')),
+    analysis_notes TEXT,
+    claim_chart TEXT,
+    researched_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now')),
+    PRIMARY KEY (patent_id, claim_number, element_label, reference_id),
+    FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
+    FOREIGN KEY (patent_id, claim_number) REFERENCES claims(patent_id, claim_number) ON DELETE CASCADE,
+    FOREIGN KEY (patent_id, claim_number, element_label) REFERENCES elements(patent_id, claim_number, element_label) ON DELETE CASCADE,
+    FOREIGN KEY (reference_id) REFERENCES prior_arts(reference_id) ON DELETE CASCADE
+);
+
+-- Create timestamp triggers for prior_arts and prior_art_elements
+CREATE TRIGGER IF NOT EXISTS update_prior_arts_timestamp
+AFTER UPDATE ON prior_arts
+FOR EACH ROW
+BEGIN
+    UPDATE prior_arts SET updated_at = datetime('now')
+    WHERE reference_id = NEW.reference_id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS update_prior_art_elements_timestamp
+AFTER UPDATE ON prior_art_elements
+FOR EACH ROW
+BEGIN
+    UPDATE prior_art_elements SET updated_at = datetime('now')
+    WHERE patent_id = NEW.patent_id
+      AND claim_number = NEW.claim_number
+      AND element_label = NEW.element_label
+      AND reference_id = NEW.reference_id;
+END;
+
 -- Create index for faster queries
 -- Composite primary keys automatically create indexes, so no additional indexes needed
 CREATE INDEX IF NOT EXISTS idx_claims_patent_id ON claims(patent_id);
+CREATE INDEX IF NOT EXISTS idx_prior_arts_patent_id ON prior_arts(patent_id);
+CREATE INDEX IF NOT EXISTS idx_prior_arts_reference_type ON prior_arts(reference_type);

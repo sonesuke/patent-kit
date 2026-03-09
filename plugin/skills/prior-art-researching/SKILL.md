@@ -1,36 +1,29 @@
 ---
 name: prior-art-researching
-description: "Conducts an invalidation (prior art) search for a target patent. Triggered when the user asks to 'perform a prior art search'."
+description: |
+  Conducts prior art search for patents with Moderate/Significant similarities.
+
+  Triggered when:
+  - The user asks to:
+    * "search for prior art"
+    * "perform prior art research"
+  - `patents.db` exists with `similarities` table containing Moderate/Significant entries
 metadata:
   author: sonesuke
   version: 1.0.0
 ---
 
-# Prior Art
+# Prior Art Researching
 
-Your task is to Execute the Plan and Report Findings.
+## Purpose
 
-## Instructions
+Search for prior art references (both patent and non-patent literature) for patents with Moderate/Significant similarity levels and store results in the database for further analysis.
 
-### Template Adherence
+## Prerequisites
 
-- **Requirement**: Strict adherence to the output template is required.
-- **Template**: `templates/prior-art-template.md` - Use for `3-investigations/<patent-id>/prior-art.md`
-
-### Input
-
-- **Plan File**: `3-investigations/<patent-id>/claim-analysis.md`
-
-### Process
-
-#### Step 0: Check Existing Report
-
-**If a Patent ID IS provided**:
-
-- Check if `3-investigations/<patent-id>/prior-art.md` already exists.
-- **If it exists**: **ASK the User for confirmation** via `notify_user`.
-  - Message: "Prior Art report already exists for <patent-id>. Do you want to proceed with re-investigation?"
-- **If it does NOT exist**: Proceed with the standard process.
+- `patents.db` must exist with `similarities` table containing Moderate/Significant entries (from claim-analyzing skill)
+- Load `investigation-fetching` skill for data retrieval operations
+- Load `investigation-recording` skill for data recording operations
 
 ## Constitution
 
@@ -45,9 +38,9 @@ Your task is to Execute the Plan and Report Findings.
 
 **Comprehensive Literature Coverage**:
 
-- Use BOTH `google-patent-cli:patent-search`/`google-patent-cli:patent-fetch` and `arxiv-cli:arxiv-search`/`arxiv-cli:arxiv-fetch`
-- Check academic papers, conference proceedings, and technical publications alongside patents
-- Document search results from both sources in the final report
+- Use BOTH patent and non-patent literature sources
+- Check academic papers, conference proceedings, and technical publications
+- Document search results from both sources
 
 **Evidence-Based Reporting**:
 
@@ -57,113 +50,36 @@ Your task is to Execute the Plan and Report Findings.
 
 **Prior Art Cutoff Date**:
 
-- Prior art search results must be published BEFORE the target's priority date
-- Use publication dates, not priority dates, when determining prior art cutoff
+- Prior art must be published BEFORE the target's priority date
+- Use publication dates, not priority dates, for cutoff determination
 
-**Search Query Optimization**:
+## Skill Orchestration
 
-- Start with broad, essential keywords (2-4 terms maximum)
-- If zero results, progressively simplify queries
-- Document query evolution in reports
+### Execute Prior Art Search
 
-3. **Read Similarity**: Read `claim-analysis.md` to understand the comparison results.
-4. **Plan & Execute Search**:
-   - **Strategy: Multi-Layer Search** (Standard Procedure):
-     - **Layer 1: General Terminology**:
-       - **Purpose**: Capture broad technical concepts and context.
-       - **Keywords**: High-level terms (e.g., "Language Model", "Search").
-       - **Limit**: Recommended **10-20**.
-     - **Layer 2: Specific Nomenclature**:
-       - **Purpose**: Find exact matches using specific technical terms (Critical for finding key NPL like arXiv:2305.13657).
-       - **Keywords**: Specific model names, exact algorithms, unique parameter names.
-       - **Limit**: **MUST** Expand to **30-50** to capture subtle matches.
-     - **Layer 3: Functional/Role-based**:
-       - **Purpose**: Catch patents describing the _function_ rather than the specific name.
-       - **Keywords**: "Means for...", "configured to...", functional descriptions.
-       - **Limit**: Recommended **10-20**.
+**CRITICAL**: Always use subagents for prior art search. **EVEN FOR A SINGLE PATENT - always launch a subagent.**
 
-   - **Adaptive Verification Loop** (New Standard):
-     1. **Analyze**: Review initial results. Are there key terms missing?
-     2. **Re-Search**: If gaps exist, refine queries and run a targeted search (e.g., specific authors, new synonyms).
-     3. **Check**: Verify if the new top results cover the missing aspects.
-     4. **Document**: Record the logic for the refined search.
+**Process**:
 
-   - **Strategic Limit Expansion**:
-     - **RULE**: For critical search axes (high relevance probability), expand `--limit` to **30-50**.
-     - Standard searches can use lower limits (e.g., 10-20).
+1. **Get Patents to Search**:
+   - Use `investigation-fetching` skill
+   - Request: "Get list of patents with Moderate/Significant similarities without prior art"
 
-   - **Synonym Expansion**:
-     - Construct a list of frequent synonyms for the technical field to avoid missing documents due to terminology mismatch.
+2. **Search Prior Art**: Launch `prior-art-searcher` subagents
 
-   - **Tools & Configuration** (Both Required):
-     - **CRITICAL**: Use `--before <priority-date>` for both `MCP tool search_patents / fetch_patent` and `MCP tool search_papers / fetch_paper`.
-     - **MUST** use `MCP tool search_patents / fetch_patent` for patent literature.
-     - **MUST** use `MCP tool search_papers / fetch_paper` for non-patent literature (academic papers).
-     - Example: `MCP tool search_papers --query "<query>" --before "<priority-date>" --limit 50`.
-     - **Requirement**: Save output to `3-investigations/<patent-id>/json/search_results_<desc>.json`.
-     - **Check**: Did the command succeed? IF NO -> **STOP** and Debug.
+   For each patent:
+   - Start a `prior-art-searcher` subagent
+   - **Each subagent handles exactly one patent**
+   - **CRITICAL: Even if there is only ONE patent, you MUST still use a subagent**
 
-5. **Screen Results** (MANDATORY for BOTH patent and non-patent literature):
-   - **Non-Patent Literature Screening** (CRITICAL - DO NOT SKIP):
-     - **RULE**: Papers with titles directly relevant to the target patent's technical field MUST be included for detailed analysis.
-     - Identify Grade A NPL candidates and summarize their technical contributions.
-     - Map the technical elements of the paper to the patent's constituent elements.
+3. **Verify Results**: Query database to confirm data recorded
 
-6. **Detailed Analysis** (MANDATORY):
-   - **For Non-Patent Literature (Grade A)** (CRITICAL):
-     - **Full-Text Acquisition**:
-       - **MUST** run Use the MCP tool `fetch_paper` (Arguments: --id <arxiv-id>) to get full-text JSON for Grade A NPLs.
-       - Save output to `3-investigations/<patent-id>/json/npl_<id>.json`.
-     - **Claim Chart Creation**:
-       - **Requirement**: Create a Claim Chart comparing the NPL against the Patent Claims.
-       - **Citation**: **MUST** include specific **paragraph-level citations** (or section/line numbers) from the fetched JSON text.
-     - **Evidence Quality Check**:
-       - Verify that the cited paragraph explicitly supports the mapping.
-       - Verify that the publication date is strictly before the priority date.
-     - **RULE**: Even if strong prior art is found in patent literature, NPL analysis results MUST be included in the report (Constitution III).
+## State Management
 
-7. **Draft Report**: Fill `[prior-art-template.md](templates/prior-art-template.md)`.
-   - **Verdict Selection**:
-     - **Relevant prior art identified**: Strong evidence found (investigation required).
-     - **Alternative implementation selected**: Path changed to avoid conflict.
-     - **Aligned with existing techniques**: Technology is standard/safe.
-     - **Escalated for legal review**: Use when none of the above apply (e.g., complex legal interpretation needed).
-   - **Similarity Assessment (Prior Art)**:
-     - **Definitions**:
-       - **Significant**: References likely demonstrate significant similarity (Strong Relevance).
-       - **Moderate**: References show partial/arguable similarity.
-       - **Limited**: No strong references found (Patent Potentially Valid).
-     - **Format**:
-       - Overall Similarity MUST be written exactly as: `Overall Similarity: Significant Similarity` (or Moderate Similarity, Limited Similarity).
-       - Do NOT use other formats.
-8. **Save**: `3-investigations/<patent-id>/prior-art.md`.
+### Initial State
 
-### Quality Gates
+- Patents in `similarities` table with Moderate/Significant levels without corresponding `prior_arts` entries exist
 
-- [ ] **Multi-Layer Search**: Did you execute comprehensive searches across all 3 layers (General, Specific, Functional)?
-- [ ] **NPL Coverage**: Did you specifically target NPL (Layer 2) with expanded limits (30-50)?
-- [ ] **Full-Text Analysis**: Did you fetch the JSON using `fetch_paper` for top NPLs?
-- [ ] **Claim Chart**: Does the report include a Claim Chart with precise paragraph-level citations?
-- [ ] **Priority Date**: Is every piece of evidence confirmed to be prior to the cutoff?
-- [ ] **Overall Similarity**: Does it follow the strict format `Overall Similarity: Significant Similarity` (or Moderate/Limited)?
-- [ ] **Conclusion**: Verdict is strictly one of the 4 standard options.
-- [ ] **NO Legal Assertions**:
-  - [ ] Avoid definitive legal terms (e.g., "invalid", "valid") in favor of technical comparisons.
-  - [ ] Avoid terms: "Does not satisfy", "Does not infringe".
-  - [ ] **Terminology**: Avoid "Is a core technology". Instead, use:
-    - "Characteristic configuration"
-    - "Major technical configuration"
-    - "Characteristic implementation described in the patent"
-  - [ ] Avoid citing specific court case examples.
-  - [ ] Use descriptive technical language.
+### Final State
 
-## Output Management
-
-To maintain context window efficiency:
-
-- **Rule**: `search_patents` and `search_papers` results MUST be saved to JSON files.
-  - Patent Search Path: `3-investigations/<patent-id>/json/search_results_<timestamp>.json`
-  - NPL Search Path: `3-investigations/<patent-id>/json/search_results_<timestamp>.json`
-  - NPL Full-Text Path: `3-investigations/<patent-id>/json/npl_<arxiv-id>.json`
-- **Requirement**: Do NOT load large JSON outputs directly into context.
-- **Action**: Use Read tool or jq to access specific fields from saved JSON when needed.
+- No patents in `similarities` table with Moderate/Significant levels without corresponding `prior_arts` entries (all searched)
