@@ -127,6 +127,49 @@ Stores product/target features for claim analysis comparison.
 - `feature_name` must be unique
 - `presence` only allows: `present`, `absent`
 
+### prior_arts
+
+Stores prior art master data (patent and non-patent literature references).
+
+| Column           | Type    | Description                               |
+| ---------------- | ------- | ----------------------------------------- |
+| reference_id     | TEXT PK | Prior art reference ID (e.g., US1234567A) |
+| reference_type   | TEXT    | Reference type: `patent` or `npl`         |
+| title            | TEXT    | Title of the prior art reference          |
+| publication_date | TEXT    | Publication date (ISO 8601)               |
+| created_at       | TEXT    | Record creation timestamp                 |
+| updated_at       | TEXT    | Last update timestamp                     |
+
+**Constraints**:
+
+- `reference_id` is PRIMARY KEY
+- `reference_type` only allows: `patent`, `npl`
+- `title` must NOT be NULL
+
+### prior_art_elements
+
+Stores element-level mappings between patent elements and prior art references.
+
+| Column          | Type       | Description                                                  |
+| --------------- | ---------- | ------------------------------------------------------------ |
+| patent_id       | TEXT PK    | Target patent number (FK to screened_patents.patent_id)      |
+| claim_number    | INTEGER PK | Claim number (part of composite FK to claims with patent_id) |
+| element_label   | TEXT PK    | Element label (part of composite FK to elements)             |
+| reference_id    | TEXT PK    | Prior art reference ID (FK to prior_arts.reference_id)       |
+| relevance_level | TEXT       | Relevance level: `Significant`, `Moderate`, or `Limited`     |
+| analysis_notes  | TEXT       | Detailed analysis notes explaining the relevance assessment  |
+| claim_chart     | TEXT       | Claim chart comparing prior art to target patent elements    |
+| researched_at   | TEXT       | Research timestamp                                           |
+| updated_at      | TEXT       | Last update timestamp                                        |
+
+**Constraints**:
+
+- **Primary Key**: `(patent_id, claim_number, element_label, reference_id)` - ensures unique prior art per element
+- `patent_id` is a FOREIGN KEY referencing `screened_patents(patent_id)` with `ON DELETE CASCADE`
+- `(patent_id, claim_number)` is a composite FOREIGN KEY referencing `claims(patent_id, claim_number)` with `ON DELETE CASCADE`
+- `(patent_id, claim_number, element_label)` is a composite FOREIGN KEY referencing `elements(patent_id, claim_number, element_label)` with `ON DELETE CASCADE`
+- `reference_id` is a FOREIGN KEY referencing `prior_arts(reference_id)` with `ON DELETE CASCADE`
+
 ## Views
 
 ### v_screening_progress
@@ -151,6 +194,30 @@ Automatically updates `updated_at` when a row in `target_patents` is modified.
 
 Automatically updates `updated_at` when a row in `screened_patents` is modified.
 
+### update_claims_timestamp
+
+Automatically updates `updated_at` when a row in `claims` is modified.
+
+### update_elements_timestamp
+
+Automatically updates `updated_at` when a row in `elements` is modified.
+
+### update_similarities_timestamp
+
+Automatically updates `updated_at` when a row in `similarities` is modified.
+
+### update_features_timestamp
+
+Automatically updates `updated_at` when a row in `features` is modified.
+
+### update_prior_arts_timestamp
+
+Automatically updates `updated_at` when a row in `prior_arts` is modified.
+
+### update_prior_art_elements_timestamp
+
+Automatically updates `updated_at` when a row in `prior_art_elements` is modified.
+
 ## Relationships
 
 ```
@@ -161,11 +228,32 @@ target_patents (1) -----> (1) screened_patents (1) -----> (*) claims (1) -----> 
      |-- country                   |-- reason                    |-- claim_type         |-- element_label (PK)     |-- element_label (PK, FK)
      |-- assignee                  |-- abstract_text             |-- claim_text         |-- element_description    |-- similarity_level
      |-- extra_fields              |-- screened_at               |-- created_at         |-- created_at             |-- analysis_notes
-     |-- publication_date          |-- updated_at                |-- updated_at         |-- updated_at             |-- overall_similarity
-     |-- filing_date               |                            |                    |                        |-- analyzed_at
-     |-- grant_date                |                            |                    |                        |-- updated_at
+     |-- publication_date          |-- updated_at                |-- updated_at         |-- updated_at             |-- analyzed_at
+     |-- filing_date               |                            |                    |                        |-- updated_at
+     |-- grant_date                |                            |                    |
      |-- created_at                |                            |                    |
      |-- updated_at                |                            |                    |
+
+elements (1) -----> (*) prior_art_elements
+                    |
+                    |-- patent_id (FK)
+                    |-- claim_number (FK)
+                    |-- element_label (FK)
+                    |-- reference_id (FK)
+                    |-- relevance_level
+                    |-- analysis_notes
+                    |-- claim_chart
+                    |-- researched_at
+                    |-- updated_at
+
+prior_arts (1) -----> (*) prior_art_elements
+                    |
+                    |-- reference_id (PK, FK)
+                    |-- reference_type
+                    |-- title
+                    |-- publication_date
+                    |-- created_at
+                    |-- updated_at
 ```
 
 **Legend**:
