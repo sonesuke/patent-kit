@@ -1,0 +1,21 @@
+# Test Case: Constitution Reminding - Triggering
+
+name = "triggering"
+description = "Verify constitution-reminding skill is triggered when asked about core principles"
+timeout = 60
+
+test_prompt = """
+Load the constitution skill to understand the core principles.
+"""
+
+[[checks]]
+name = "mcp_server_loaded"
+command = { command = "mcp-loaded", server = "google-patent-cli" }
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "constitution-reminding" }
+
+[[checks]]
+name = "constitution_reminding_invoked"
+command = { command = "skill-invoked", skill = "constitution-reminding" }

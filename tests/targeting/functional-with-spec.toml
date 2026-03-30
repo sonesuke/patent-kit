@@ -1,0 +1,78 @@
+# Test Case: Targeting Functional (with existing specification)
+
+name = "functional-with-spec"
+description = "Verify targeting process with existing specification"
+timeout = 600 # seconds
+
+test_prompt = """
+I have placed an invention specification in `0-specifications/specification.md`. Please create a target population and run the patent search for a 2025 product release.
+
+Before asking me any questions, please use the question-responder skill to check if the required information is already available. Then proceed with the targeting process.
+"""
+
+[answers]
+"modifying keywords" = "Looks good, proceed to search."
+"synonyms" = "Looks good, proceed to search."
+"adjust query" = "Looks good, proceed to search."
+"hit counts" = "The count is acceptable, proceed to merge."
+"acceptable" = "The count is acceptable, proceed to merge."
+"~1000 hits" = "The count is acceptable, proceed to merge."
+
+[[setup]]
+path = "0-specifications/specification.md"
+content = """
+# Specification Dummy
+
+**Product/Technology**:
+Solar-powered auto-cleaning cat litter box with IoT notifications.
+
+**Background**:
+Current cat litter boxes require manual scooping and frequent bag changes, which leads to odor and hygiene issues.
+
+**Key Technical Features**:
+
+1. A solar panel integrated into the top hood that charges an internal battery.
+2. A rotating internal drum that separates solid waste into a sealed compartment.
+3. An IoT module (Wi-Fi) that sends push notifications to a smartphone when the waste compartment is full.
+
+**Target Release Date**: 2025-12-31
+
+**Priority Date Cutoff**: 2015-01-01
+
+**Competitors**:
+
+- Litter-Robot (AutoPets, LLC)
+- CatGenie (PetNovations, Ltd.)
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "targeting" }
+
+[[checks]]
+name = "targeting_invoked"
+command = { command = "skill-invoked", skill = "targeting" }
+
+[[checks]]
+name = "constitution_loaded"
+command = { command = "skill-invoked", skill = "constitution-reminding" }
+
+[[checks]]
+name = "specification_read"
+command = { command = "tool-use", tool = "Read", param = "file_path", value = "0-specifications/specification.md" }
+
+[[checks]]
+name = "targeting_template_read"
+command = { command = "tool-use", tool = "Read", param = "file_path", value = "targeting-template.md" }
+
+[[checks]]
+name = "keywords_template_read"
+command = { command = "tool-use", tool = "Read", param = "file_path", value = "keywords-template.md" }
+
+[[checks]]
+name = "targeting_md_created"
+command = { command = "workspace-file", path = "1-targeting/targeting.md" }
+
+[[checks]]
+name = "keywords_md_created"
+command = { command = "workspace-file", path = "1-targeting/keywords.md" }

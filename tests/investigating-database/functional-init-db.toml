@@ -1,0 +1,21 @@
+# Test Case: Investigating Database - Initialize Database
+
+name = "functional-init-db"
+description = "Verify investigating-database can initialize the patent database"
+timeout = 60 # seconds
+
+test_prompt = """
+Initialize the patent investigation database.
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "investigating-database" }
+
+[[checks]]
+name = "investigating_database_invoked"
+command = { command = "skill-invoked", skill = "investigating-database" }
+
+[[checks]]
+name = "database_created"
+command = { command = "workspace-file", path = "patents.db" }

@@ -1,0 +1,17 @@
+# Test Case: Targeting - Triggering
+
+name = "triggering"
+description = "Verify targeting skill is triggered when asked to execute targeting"
+timeout = 60
+
+test_prompt = """
+I have a product concept. Now I need to create a target population for patent searching.
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "targeting" }
+
+[[checks]]
+name = "targeting_invoked"
+command = { command = "skill-invoked", skill = "targeting" }

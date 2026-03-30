@@ -1,0 +1,31 @@
+# Test Case: Legal Checking Functional
+
+name = "functional"
+description = "Verify legal-checking automatically triggers on legal compliance keywords"
+timeout = 60 # seconds
+
+test_prompt = """
+Review this patent analysis for legal compliance violations:
+
+The claim **does not infringe** the reference because it **clearly discloses** all elements.
+"""
+
+[[checks]]
+name = "mcp_server_loaded"
+command = { command = "mcp-loaded", server = "google-patent-cli" }
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "legal-checking" }
+
+[[checks]]
+name = "legal_checking_invoked"
+command = { command = "skill-invoked", skill = "legal-checking" }
+
+[[checks]]
+name = "violations_detected_1"
+command = { command = "message-contains", text = "does not infringe" }
+
+[[checks]]
+name = "violations_detected_2"
+command = { command = "message-contains", text = "clearly discloses" }
