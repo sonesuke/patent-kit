@@ -54,10 +54,6 @@ name = "targeting_invoked"
 command = { command = "skill-invoked", skill = "targeting" }
 
 [[checks]]
-name = "constitution_loaded"
-command = { command = "skill-invoked", skill = "constitution-reminding" }
-
-[[checks]]
 name = "specification_read"
 command = { command = "tool-use", tool = "Read", param = "file_path", value = "0-specifications/specification.md" }
 

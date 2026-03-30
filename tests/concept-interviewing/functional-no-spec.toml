@@ -39,10 +39,6 @@ name = "patent_assignee_check_invoked"
 command = { command = "skill-invoked", skill = "patent-assignee-check" }
 
 [[checks]]
-name = "constitution_loaded"
-command = { command = "skill-invoked", skill = "constitution-reminding" }
-
-[[checks]]
 name = "references_instructions_read"
 command = { command = "tool-use", tool = "Read", param = "file_path", value = "concept-interview.*references/instructions.md" }
 
