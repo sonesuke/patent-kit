@@ -1,0 +1,25 @@
+# Test Case: Concept Interview - Triggering
+
+name = "triggering"
+description = "Verify concept-interviewing skill is triggered when discussing patent search"
+timeout = 60
+
+test_prompt = """
+I want to start a patent search for a new voice recognition system in the US, releasing in 2025. Competitors are Google and Amazon. The system is for smart home devices with real-time transcription and noise-resistant recognition. Please proceed with the assignee verification and create the specification file.
+"""
+
+[[checks]]
+name = "mcp_server_loaded"
+command = { command = "mcp-loaded", server = "google-patent-cli" }
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "concept-interviewing" }
+
+[[checks]]
+name = "concept_interviewing_invoked"
+command = { command = "skill-invoked", skill = "concept-interviewing" }
+
+[[checks]]
+name = "patent_assignee_check_invoked"
+command = { command = "skill-invoked", skill = "patent-assignee-check" }

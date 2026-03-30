@@ -1,0 +1,59 @@
+# Test Case: Concept Interview Functional (no existing specification)
+
+name = "functional-no-spec"
+description = "Verify concept-interview uses question-responder when information is missing"
+timeout = 180 # seconds
+
+test_prompt = """
+I want to start a patent search for a new voice recognition system for smart home devices with real-time transcription and noise-resistant recognition.
+
+Before asking me any questions, please use the question-responder skill to check if the required information is already available. Then proceed with the concept interview and assignee verification.
+"""
+
+[answers]
+"competitors" = ["Google", "Amazon"]
+"target country" = "US"
+"country" = "US"
+"release date" = "2025-06-01"
+"date" = "2025-06-01"
+"target release date" = "2025-06-01"
+
+[[checks]]
+name = "mcp_server_loaded"
+command = { command = "mcp-loaded", server = "google-patent-cli" }
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "concept-interviewing" }
+
+[[checks]]
+name = "question_responder_invoked"
+command = { command = "skill-invoked", skill = "skill-bench-harness:question-responder" }
+
+[[checks]]
+name = "concept_interview_invoked"
+command = { command = "skill-invoked", skill = "concept-interviewing" }
+
+[[checks]]
+name = "patent_assignee_check_invoked"
+command = { command = "skill-invoked", skill = "patent-assignee-check" }
+
+[[checks]]
+name = "constitution_loaded"
+command = { command = "skill-invoked", skill = "constitution-reminding" }
+
+[[checks]]
+name = "references_instructions_read"
+command = { command = "tool-use", tool = "Read", param = "file_path", value = "concept-interview.*references/instructions.md" }
+
+[[checks]]
+name = "specification_template_read"
+command = { command = "tool-use", tool = "Read", param = "file_path", value = "specification-template.md" }
+
+[[checks]]
+name = "specification_md_created"
+command = { command = "workspace-file", path = "0-specifications/specification.md" }
+
+[[checks]]
+name = "google_patent_mcp_succeeded"
+command = { command = "mcp-success", tool = "search_patents" }

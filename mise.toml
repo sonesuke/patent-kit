@@ -1,8 +1,12 @@
 [tools]
-node = "20"
 
 [tasks]
 fmt = { description = "Format files with prettier", run = "npx prettier --write ." }
 pre-commit = { description = "Pre-commit hook to format files", depends = [
   "fmt",
 ] }
+
+[tasks.test]
+description = "Run skill-bench tests"
+run = "skill-bench run 'tests' --plugin-dir ./plugin --threads 4 --log ./logs"
+depends = ["fmt"]

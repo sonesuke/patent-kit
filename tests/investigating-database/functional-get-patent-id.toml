@@ -1,0 +1,55 @@
+# Test Case: Investigating Database - Get Patent ID
+
+name = "functional-get-patent-id"
+description = "Verify investigating-database can retrieve patent ID by row number"
+timeout = 120 # seconds
+
+test_prompt = """
+Get the patent ID at row 2 from the database.
+"""
+
+[[setup]]
+path = "patents.db"
+content = """
+#!/usr/bin/env bash
+# Setup script to create test database
+sqlite3 patents.db <<EOF
+PRAGMA foreign_keys = ON;
+CREATE TABLE target_patents (
+    id TEXT PRIMARY KEY NOT NULL,
+    family_id TEXT,
+    title TEXT,
+    abstract_text TEXT,
+    publication_date TEXT,
+    country TEXT,
+    assignee TEXT,
+    filing_date TEXT,
+    grant_date TEXT,
+    citation_count INTEGER,
+    claim_count INTEGER,
+    extra_fields TEXT,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
+);
+INSERT INTO target_patents (id, family_id, title, abstract_text, publication_date, country, assignee) VALUES
+('US1234567A', 'US1234567', 'First Patent', 'Abstract 1', '2023-01-15', 'US', 'Assignee1'),
+('US7654321A', 'US7654321', 'Second Patent', 'Abstract 2', '2023-03-20', 'US', 'Assignee2'),
+('US9999999A', 'US9999999', 'Third Patent', 'Abstract 3', '2023-06-10', 'US', 'Assignee3');
+EOF
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "investigating-database" }
+
+[[checks]]
+name = "investigating_database_invoked"
+command = { command = "skill-invoked", skill = "investigating-database" }
+
+[[checks]]
+name = "get_patent_id_script_executed"
+command = { command = "tool-use", tool = "Bash", param = "command", value = "get-patent-id.sh" }
+
+[[checks]]
+name = "correct_patent_id_retrieved"
+command = { command = "message-contains", text = "US7654321A" }
