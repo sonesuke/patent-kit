@@ -15,11 +15,7 @@ Define the product concept and identify competitors. This establishes the founda
 
 ## Process
 
-### Step 1: Load Constitution (MANDATORY)
-
-Use the Skill tool to load the `constitution` skill BEFORE starting any work. This is required to understand the core principles.
-
-### Step 2: Concept Interview
+### Step 1: Concept Interview
 
 1. **Check Existing Specification**: Use the Glob tool to check if `specification.md` exists.
 
@@ -52,14 +48,14 @@ Use the Skill tool to load the `constitution` skill BEFORE starting any work. Th
    > [!NOTE]
    > In automated test environments, ensure all required information is provided in the initial request to avoid interactive prompts.
 
-3. **Proceed to Assignee Verification**: Once all required information is collected, proceed directly to Step 3 to verify assignee names.
+3. **Proceed to Assignee Verification**: Once all required information is collected, proceed directly to Step 2 to verify assignee names.
 
-### Step 3: Assignee Identification
+### Step 2: Assignee Identification
 
 1. **Verify**: For each competitor named by the user, verify the correct "Assignee Name" used in patent databases.
    - **Action**: Use the Skill tool to invoke `google-patent-cli:patent-assignee-check` with:
      - company_name: "<Company Name>"
-     - country: "<Target Country from Step 2>"
+     - country: "<Target Country from Step 1>"
      - Note: Omit the limit parameter to get all assignee variations (default: 100)
    - **CRITICAL: Check skill response**:
      - Verify the response does NOT contain errors
