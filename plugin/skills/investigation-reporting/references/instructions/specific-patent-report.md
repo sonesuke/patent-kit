@@ -21,18 +21,21 @@ Parse user request to extract patent ID:
 Do NOT parse files from investigation directories.
 
 1. **Patent basic info**:
+
    ```
    Skill: investigation-fetching
    Request: "Execute SQL: SELECT tp.*, sp.judgment, sp.reason FROM target_patents tp LEFT JOIN screened_patents sp ON tp.patent_id = sp.patent_id WHERE tp.patent_id='<patent_id>'"
    ```
 
 2. **Claims and elements**:
+
    ```
    Skill: investigation-fetching
    Request: "Get elements for patent <patent_id>"
    ```
 
 3. **Similarities**:
+
    ```
    Skill: investigation-fetching
    Request: "Execute SQL: SELECT * FROM similarities WHERE patent_id='<patent_id>'"
@@ -48,12 +51,12 @@ Do NOT parse files from investigation directories.
 
 Based on the database query results, determine which phases are complete:
 
-| Phase | Complete When | Status |
-|-------|---------------|--------|
-| Screening | `screened_patents` has entry | Done / Pending |
-| Evaluation | `claims` and `elements` exist | Done / Pending |
-| Claim Analysis | `similarities` exist | Done / Pending |
-| Prior Art Research | `prior_art_elements` exist | Done / Pending |
+| Phase              | Complete When                 | Status         |
+| ------------------ | ----------------------------- | -------------- |
+| Screening          | `screened_patents` has entry  | Done / Pending |
+| Evaluation         | `claims` and `elements` exist | Done / Pending |
+| Claim Analysis     | `similarities` exist          | Done / Pending |
+| Prior Art Research | `prior_art_elements` exist    | Done / Pending |
 
 ### Step 4: Generate Report
 
