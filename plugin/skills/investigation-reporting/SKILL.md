@@ -16,7 +16,8 @@ Your task is to report the current status of the patent analysis workflow.
 ## For External Skills and Agents
 
 **WARNING**: DO NOT read files from `references/instructions/` directory. Those are
-internal reference files for this skill's internal use only.
+internal reference files for this skill's internal use only. You MAY read files
+from `assets/` directory — those are templates you must follow.
 
 **To use this skill**:
 
@@ -38,22 +39,17 @@ requests from external agents.
 
 ### Process
 
-#### Step 1: Get Screening Statistics
+#### Step 0: Read Template (MANDATORY)
 
-Use the investigation-fetching skill to get the current status:
+**Before doing anything else, read the template file.**
 
-- Invoke via Skill tool: `Skill: investigation-fetching`
-- Request: "Count screening progress"
+- For overall progress: Read `assets/investigation-report-template.md`
+- For specific patent: Read `assets/specific-patent-report-template.md`
 
-This returns JSON with:
+You MUST use the exact section names and metric names from the template. Do NOT
+invent your own structure.
 
-- `total_targets`: Total patents in targeting
-- `total_screened`: Total patents screened
-- `relevant`: Relevant patent count
-- `irrelevant`: Irrelevant patent count
-- `expired`: Expired patent count
-
-#### Step 2: Determine Report Mode
+#### Step 1: Determine Report Mode
 
 Based on the user's request, determine which mode to use:
 
@@ -76,21 +72,16 @@ Based on the user's request, determine which mode to use:
 
 **DO NOT just output the report as text** - you MUST use the Write tool to save it.
 
-### Quality Gates
-
-- [ ] Database statistics are correctly retrieved and mapped.
-- [ ] Used strictly standard sections from template.
-- [ ] No extra sections added (e.g., "Top Patents", "Current Status").
-- [ ] No duplicated information.
-- [ ] **NO Legal Assertions**: Ensure summary does not use terms like "Does not satisfy", "Does not infringe", "Is a core technology" or cite court cases.
-- [ ] **Write tool used** for overall progress reports (not just text output).
+**CRITICAL: Read and follow the template from `assets/investigation-report-template.md`
+or `assets/specific-patent-report-template.md` exactly. Use the exact section
+names and metric names. Do NOT invent your own section names or metric names.**
 
 ## Internal Workflows (For This Skill Only)
 
 ### Workflow 1: Overall Progress Report
 
 1. External: "What is the current progress?"
-2. Internal: Get screening statistics from DB → Query evaluation/claim/prior-art progress from DB → Generate report using template → Write to PROGRESS.md → Run legal-checking
+2. Internal: Read `references/instructions/overall-progress-report.md` → Follow the process steps → Read template from `assets/investigation-report-template.md` → Generate report using EXACT section/metric names from template → Write to PROGRESS.md → Run legal-checking
 
 ### Workflow 2: Specific Patent Report
 
@@ -121,19 +112,3 @@ agents should NOT read these:
 
 **IMPORTANT**: External agents should invoke this skill via the Skill tool, not
 access these internal files directly.
-
-# Examples
-
-Example 1: Checking Progress
-User says: "Tell me the progress of the current project"
-Actions:
-
-1. Parse the directories for statuses
-2. Tally the completed items in each phase and patents pending evaluation
-   Result: PROGRESS.md is generated in the project root.
-
-# Troubleshooting
-
-Error: "Failed to read directories"
-Cause: The directory structure is broken or missing.
-Solution: Ensure you are running within the initialized project root.

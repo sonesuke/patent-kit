@@ -2,8 +2,7 @@
 
 ## Purpose
 
-Generate a comprehensive progress report for the entire patent investigation
-workflow.
+Generate a progress report for the entire patent investigation workflow.
 
 ## Process
 
@@ -58,29 +57,57 @@ DO NOT just output the report as text - you MUST use the Write tool to save it
 to `PROGRESS.md`.
 
 1. Read template from `assets/investigation-report-template.md`
-2. Fill in counts following the template structure
-3. Write to `PROGRESS.md` using Write tool
-4. Run legal-checking on the generated report:
+2. **EXACTLY follow the template structure** — use the exact section names and
+   metric names from the template
+3. Replace placeholder values (X, Y, Z, A, B, C, W) with actual counts
+4. Write to `PROGRESS.md` using Write tool
+5. Run legal-checking on the generated report:
    ```
    Skill: legal-checking
    Request: "<path_to_PROGRESS.md>"
    ```
 
-**Template sections**:
+**CRITICAL RULES**:
 
-- Screening: Statistics table from `v_screening_progress`
-- Claim Analysis: Count table (All / Limited / Not Limited)
-- Prior Art: Count table (All / Resolved / Open / Pending)
-- Next Actions: Recommended next steps
+1. **Use EXACTLY these section names** (no other sections allowed):
+   - `## Screening`
+   - `## Claim Analysis`
+   - `## Prior Art`
+   - `## Next Actions`
+
+2. **Use EXACTLY these metric names** in the Screening table:
+   - `Targets` (not "Total Target Patents")
+   - `Screened` (not "Patents Screened")
+   - `Relevant`
+   - `Irrelevant`
+   - `Expired`
+
+3. **Use EXACTLY these metric names** in the Claim Analysis table:
+   - `All`
+   - `Limited`
+   - `Not Limited`
+
+4. **Use EXACTLY these metric names** in the Prior Art table:
+   - `All`
+   - `Resolved`
+   - `Open`
+   - `Pending`
+
+5. **DO NOT** add any prose text, explanations, or summaries between or after
+   tables. Only tables and section headers.
+6. **DO NOT** create an "Evaluation" section — Evaluation is part of the
+   Screening phase.
+7. **DO NOT** create an "Overview" section.
 
 ## Quality Checks
 
 - [ ] All data retrieved from investigation-fetching (no raw SQL, no file parsing)
 - [ ] Claim Analysis counts: All = Limited + Not Limited
 - [ ] Prior Art counts: All = Resolved + Open + Pending
-- [ ] Standard template sections used (Screening, Claim Analysis, Prior Art, Next Actions)
-- [ ] NO extra sections (Overview, Top Patents, Current Status, Risk Summary, etc.)
-- [ ] NO duplicated information between sections
+- [ ] Exactly 4 sections: Screening, Claim Analysis, Prior Art, Next Actions
+- [ ] Metric names match template exactly
+- [ ] NO extra sections (Evaluation, Overview, Top Patents, Current Status, etc.)
+- [ ] NO prose text between or after tables
 - [ ] NO legal assertions (Does not satisfy, Does not infringe, etc.)
 - [ ] Write tool used to create PROGRESS.md
 - [ ] Legal-checking skill invoked on the generated report
