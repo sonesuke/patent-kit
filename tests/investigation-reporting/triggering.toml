@@ -1,0 +1,17 @@
+# Test Case: Investigation Reporting - Triggering
+
+name = "triggering"
+description = "Verify investigation-reporting skill is triggered when asked for progress"
+timeout = 60
+
+test_prompt = """
+Load the investigation-reporting skill to understand the patent investigation reporting process.
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "investigation-reporting" }
+
+[[checks]]
+name = "investigation_reporting_invoked"
+command = { command = "skill-invoked", skill = "investigation-reporting" }

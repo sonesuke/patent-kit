@@ -16,7 +16,7 @@
 
 ## Element Analysis
 
-| Element           | Target Specification | Patent Disclosure   | Verdict                |
+| Element           | Target Specification | Patent Disclosure   | Similarity             |
 | ----------------- | -------------------- | ------------------- | ---------------------- |
 | A. {element_name} | {target_spec}        | {patent_disclosure} | Present/Partial/Absent |
 | B. {element_name} | {target_spec}        | {patent_disclosure} | Present/Partial/Absent |
@@ -38,7 +38,7 @@
 - Element 2: {Present/Partial/Absent} - {analysis_notes}
 - Element 3: {Present/Partial/Absent} - {analysis_notes}
 
-**Verdict**: {Overall assessment}
+**Summary**: {Overall assessment}
 
 ## Prior Art Research
 
@@ -96,7 +96,7 @@ Compare the Spec (Elements) with the Primary Reference (D1).
 
 ### 5. Conclusion
 
-- **Verdict**: [Relevant prior art identified / Alternative implementation selected / Aligned with existing techniques / Escalated for legal review]
+- **Result**: [Relevant prior art identified / Alternative implementation selected / Aligned with existing techniques / Escalated for legal review]
 - **Reasoning**: {summary_of_findings}
 
 ---

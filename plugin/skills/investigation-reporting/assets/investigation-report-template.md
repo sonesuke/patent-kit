@@ -1,44 +1,32 @@
-# Patent Analysis Progress Report
+# Patent Investigation Progress
 
-## Overview
+## Screening
 
-| Phase                       | Status                   | Details           |
-| --------------------------- | ------------------------ | ----------------- |
-| Concept Interview           | Done/Pending             | specification.md  |
-| Targeting                   | Done/In Progress/Pending | X target patents  |
-| Screening                   | Done/In Progress/Pending | X/Y screened (Z%) |
-| Evaluation & Investigations | In Progress              | See below         |
+| Metric     | Count |
+| ---------- | ----- |
+| Targets    | X     |
+| Screened   | Y     |
+| Relevant   | A     |
+| Irrelevant | B     |
+| Expired    | C     |
 
-## Screening Summary
+## Claim Analysis
 
-- **Total Targets**: X
-- **Screened**: Y (Z%)
-- **Relevant**: A
-- **Irrelevant**: B
-- **Expired**: C
+| Metric      | Count |
+| ----------- | ----- |
+| All         | X     |
+| Limited     | Y     |
+| Not Limited | Z     |
 
-## Investigation Progress
+## Prior Art
 
-- **Claim Analysis Progress**: I/R (Relevant Patents)
-- **Prior Art Progress**: P/I (Claim Analysis Done)
-
-| Patent ID    | Evaluation | Similarity (Inv.) | Verdict  |
-| ------------ | ---------- | ----------------- | -------- |
-| US12345678   | Done       | Significant       | Relevant |
-| JP2024001234 | Done       | Pending           | Pending  |
-
-> **Note**: Similarity levels: Significant, Moderate, Limited. Verdict: Relevant, Alternative, Aligned, Escalated.
-> **Note**: Cases with 'Limited' similarity (Low Risk) are excluded from this list.
+| Metric   | Count |
+| -------- | ----- |
+| All      | X     |
+| Resolved | Y     |
+| Open     | Z     |
+| Pending  | W     |
 
 ## Next Actions
 
 1. (Suggested next action based on current progress)
-
----
-
-## Quality Gates
-
-- [ ] Used strictly standard sections (Overview, Screening Summary, Investigation Progress, Next Actions).
-- [ ] No extra sections (e.g., "Top Patents", "Current Status") added.
-- [ ] **NO Legal Assertions**:
-  - [ ] Avoid terms: "Does not satisfy", "Does not infringe", "Is a core technology" or cite court cases.

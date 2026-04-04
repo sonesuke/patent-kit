@@ -1,0 +1,72 @@
+# Test Case: Investigation Reporting - Pending Phases
+
+name = "functional-pending-phases"
+description = "Verify specific patent report shows Pending for incomplete phases (screening only, no evaluation/claim/prior-art)"
+timeout = 300
+
+test_prompt = """
+I have a patent database with screening results ready for patent US12231380B1, but no evaluation or claim analysis has been performed yet. Please generate a specific patent report for this patent.
+"""
+
+[[setup]]
+command = """
+sqlite3 patents.db < /workspaces/patent-kit/plugin/skills/investigation-preparing/references/sql/initialize-database.sql
+sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US12231380B1', 'Trigger-based transfer of conversations from a chatbot to a human agent', 'US', '2023-10-11');"
+sqlite3 patents.db "INSERT INTO screened_patents (patent_id, judgment, reason, abstract_text) VALUES ('US12231380B1', 'relevant', 'Related to chatbot-to-human transfer mechanism', 'A system for triggering transfer of conversations from a chatbot to a human agent based on conversation context.');"
+"""
+
+[[setup]]
+path = "specification.md"
+content = """
+# Product Specification
+
+## 1. Product Concept
+
+AI-powered customer support chatbot with real-time sentiment analysis.
+
+## 2. Target Market
+
+- **Country**: US
+- **Release Date**: 2025-12-31
+- **Priority Date Cutoff**: 2005-12-31
+
+## 3. Competitors
+
+| Canonical Name       | Variations Found in DB     | Verified? | Notes         |
+| -------------------- | -------------------------- | --------- | ------------- |
+| Salesforce.Com, Inc. | salesforce.com, inc        | Yes       | Main assignee |
+
+## 4. Technical Elements (Constituent Features)
+
+- **LLM Dialogue Engine**: Multi-turn conversation management with context retention
+- **Real-Time Sentiment Analysis**: Detects customer frustration and escalates to human agents
+- **CRM Integration API**: Connects to Salesforce for ticket creation and customer history retrieval
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "investigation-reporting" }
+
+[[checks]]
+name = "investigation_reporting_invoked"
+command = { command = "skill-invoked", skill = "investigation-reporting" }
+
+[[checks]]
+name = "legal_checking_invoked"
+command = { command = "skill-invoked", skill = "legal-checking" }
+
+[[checks]]
+name = "report_file_created"
+command = { command = "workspace-file", path = "US12231380B1.md", copy_to_output = true }
+
+[[checks]]
+name = "report_has_patent_id"
+command = { command = "log-contains", pattern = "US12231380B1" }
+
+[[checks]]
+name = "report_has_pending_evaluation"
+command = { command = "log-contains", pattern = "[Pp]ending" }
+
+[[checks]]
+name = "report_has_screening_done"
+command = { command = "log-contains", pattern = "[Rr]elevant" }

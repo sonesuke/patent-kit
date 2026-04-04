@@ -2,17 +2,15 @@
 
 ## Purpose
 
-Generate a comprehensive progress report for the entire patent investigation workflow.
+Generate a progress report for the entire patent investigation workflow.
 
 ## Process
 
-### Step 1: Get Database Statistics
-
-Use the investigation-preparing skill to get current screening statistics:
+### Step 1: Get Screening Statistics
 
 ```
-Skill: investigation-preparing
-Request: "Get screening progress statistics"
+Skill: investigation-fetching
+Request: "Count screening progress"
 ```
 
 Expected JSON output:
@@ -23,68 +21,93 @@ Expected JSON output:
 - `irrelevant`: Irrelevant patent count
 - `expired`: Expired patent count
 
-### Step 2: Analyze Workflow Phases
+### Step 2: Get Claim Analysis Statistics
 
-Check each phase status:
+```
+Skill: investigation-fetching
+Request: "Count claim analysis progress"
+```
 
-1. **Concept Interviewing**: Verify `specification.md` exists.
-2. **Targeting**: Verify `targeting.md` and `keywords.md` exist and database has patents.
-3. **Screening**: Use database statistics (total_screened vs total_targets).
-4. **Evaluation**: Parse investigation directories for evaluation.md files.
-5. **Claim Analysis**: Parse claim-analysis.md files and calculate progress.
-6. **Prior Art**: Parse prior-art.md files and calculate progress.
+Expected JSON output:
 
-### Step 3: Filter Patents for Report
+- `all_count`: Total patents with similarity results
+- `limited_count`: Patents where all similarities are Limited
+- `not_limited_count`: Patents with at least one Significant or Moderate similarity
 
-**CRITICAL: Filter based on claim-analysis.md element similarity levels.**
+### Step 3: Get Prior Art Statistics
 
-- **Include** patents in report where:
-  - Claim Analysis shows: `Significant`, `Moderate`, or `Pending`
-  - At least ONE element is NOT `Limited`
+```
+Skill: investigation-fetching
+Request: "Count prior art progress"
+```
 
-- **Exclude** patents from report where:
-  - Claim Analysis shows: `Limited` (all elements are Limited)
-  - Safe/Low Risk patents should NOT appear in Investigation Progress table
+Expected JSON output (scoped to Not Limited patents only):
 
-**For each included patent**, format status as:
-
-- **Claim Analysis**: `Significant`, `Moderate`, or `Pending`
-- **Prior Art**:
-  - If done: `Relevant`, `Alternative`, `Aligned`, or `Escalated`
-  - Otherwise: `Pending`
+- `all_count`: Total Not Limited patents
+- `resolved_count`: Patents with prior art elements having Significant relevance
+- `open_count`: Patents with prior art elements but none with Significant relevance
+- `pending_count`: Not Limited patents with no prior art elements at all
 
 ### Step 4: Generate Report
 
-**CRITICAL: Use the Write tool to create `PROGRESS.md` in the project root directory.**
+**CRITICAL: Use the Write tool to create `PROGRESS.md` in the project root
+directory.**
 
-DO NOT just output the report as text - you MUST use the Write tool to save it to `PROGRESS.md`.
+DO NOT just output the report as text - you MUST use the Write tool to save it
+to `PROGRESS.md`.
 
 1. Read template from `assets/investigation-report-template.md`
-2. Fill in statistics and patent table following the template structure
-3. Write to `PROGRESS.md` using Write tool
+2. **EXACTLY follow the template structure** — use the exact section names and
+   metric names from the template
+3. Replace placeholder values (X, Y, Z, A, B, C, W) with actual counts
+4. Write to `PROGRESS.md` using Write tool
+5. Run legal-checking on the generated report:
+   ```
+   Skill: legal-checking
+   Request: "<path_to_PROGRESS.md>"
+   ```
 
-**Template sections**:
+**CRITICAL RULES**:
 
-- Overview: Workflow phase status summary
-- Screening Summary: Database statistics table
-- Investigation Progress: Filtered patent table (exclude Limited/low-risk)
-- Next Actions: Recommended next steps
+1. **Use EXACTLY these section names** (no other sections allowed):
+   - `## Screening`
+   - `## Claim Analysis`
+   - `## Prior Art`
+   - `## Next Actions`
 
-## Template Sections
+2. **Use EXACTLY these metric names** in the Screening table:
+   - `Targets` (not "Total Target Patents")
+   - `Screened` (not "Patents Screened")
+   - `Relevant`
+   - `Irrelevant`
+   - `Expired`
 
-Follow the template structure strictly:
+3. **Use EXACTLY these metric names** in the Claim Analysis table:
+   - `All`
+   - `Limited`
+   - `Not Limited`
 
-1. **Overview**: Quick summary of workflow status
-2. **Screening Summary**: Database statistics table
-3. **Investigation Progress**: Filtered patent table (exclude Limited/low-risk)
-4. **Next Actions**: Recommended next steps
+4. **Use EXACTLY these metric names** in the Prior Art table:
+   - `All`
+   - `Resolved`
+   - `Open`
+   - `Pending`
+
+5. **DO NOT** add any prose text, explanations, or summaries between or after
+   tables. Only tables and section headers.
+6. **DO NOT** create an "Evaluation" section — Evaluation is part of the
+   Screening phase.
+7. **DO NOT** create an "Overview" section.
 
 ## Quality Checks
 
-- [ ] Database statistics correctly retrieved
-- [ ] Standard template sections used
-- [ ] NO extra sections (Top Patents, Current Status, Risk Summary, Recommendations)
-- [ ] NO duplicated information
+- [ ] All data retrieved from investigation-fetching (no raw SQL, no file parsing)
+- [ ] Claim Analysis counts: All = Limited + Not Limited
+- [ ] Prior Art counts: All = Resolved + Open + Pending
+- [ ] Exactly 4 sections: Screening, Claim Analysis, Prior Art, Next Actions
+- [ ] Metric names match template exactly
+- [ ] NO extra sections (Evaluation, Overview, Top Patents, Current Status, etc.)
+- [ ] NO prose text between or after tables
 - [ ] NO legal assertions (Does not satisfy, Does not infringe, etc.)
-- [ ] Limited/low-risk patents EXCLUDED from Investigation Progress table
 - [ ] Write tool used to create PROGRESS.md
+- [ ] Legal-checking skill invoked on the generated report

@@ -37,10 +37,17 @@ internal reference files for this skill's internal use only.
 - "Get next relevant patent for evaluation"
 - "Get list of all relevant patents"
 - "Get list of relevant patents without evaluation"
+- "Count relevant patents"
+- "Count relevant patents without evaluation"
 - "Get list of unscreened patent IDs"
 - "Get next patent for claim analysis"
 - "Get elements for patent <patent-id>"
 - "Get list of patents with elements but no similarities"
+- "Count patents without similarities"
+- "Count screening progress"
+- "Count claim analysis progress"
+- "Count patents without prior arts"
+- "Count prior art progress"
 - "Search features"
 - "Search feature: <feature_name>"
 - "Execute SQL: SELECT COUNT(\*) FROM screened_patents WHERE judgment = 'relevant'"
@@ -69,10 +76,17 @@ When processing external requests, map them to internal instruction files:
 | "Get next relevant patent for evaluation"  | references/instructions/get-next-patent.md                  |
 | "Get list of relevant patents without..."  | references/instructions/get-relevant-patents.md             |
 | "Get all relevant patents"                 | references/instructions/get-relevant-patents.md             |
+| "Count relevant patents"                   | references/instructions/get-relevant-patents.md             |
+| "Count relevant patents without..."        | references/instructions/get-relevant-patents.md             |
 | "Get list of unscreened patent IDs"        | references/instructions/get-unscreened-patents.md           |
 | "Get next patent for claim analysis"       | references/instructions/get-next-claim-analysis-patent.md   |
 | "Get elements for patent..."               | references/instructions/get-elements.md                     |
 | "Get list of patents with elements but..." | references/instructions/get-patents-without-similarities.md |
+| "Count patents without similarities"       | references/instructions/get-patents-without-similarities.md |
+| "Count screening progress"                 | references/instructions/get-screening-statistics.md         |
+| "Count claim analysis progress"            | references/instructions/get-claim-analysis-statistics.md    |
+| "Count patents without prior arts"         | references/instructions/get-patents-without-prior-arts.md   |
+| "Count prior art progress"                 | references/instructions/get-prior-art-statistics.md         |
 | "Search features"                          | references/instructions/get-features.md                     |
 | "Search feature: <feature_name>"           | references/instructions/search-feature.md                   |
 
@@ -229,6 +243,9 @@ agents should NOT read these:
   - `get-elements.md`: Get elements for a specific patent
   - `get-patents-without-similarities.md`: Get list of patents with elements but no similarities
   - `get-features.md`: Get all product features
+  - `get-screening-statistics.md`: Get screening progress counts
+  - `get-claim-analysis-statistics.md`: Get claim analysis progress counts
+  - `get-prior-art-statistics.md`: Get prior art research progress counts
   - `search-feature.md`: Search for a specific feature by name
 - \*\*references/schema.md`: Database schema documentation
 
