@@ -53,10 +53,12 @@ Define the product concept and identify competitors. This establishes the founda
 ### Step 2: Assignee Identification
 
 1. **Verify**: For each competitor named by the user, verify the correct "Assignee Name" used in patent databases.
-   - **Action**: Use the Skill tool to invoke `google-patent-cli:patent-assignee-check` with:
-     - company_name: "<Company Name>"
-     - country: "<Target Country from Step 1>"
-     - Note: Omit the limit parameter to get all assignee variations (default: 100)
+   - **Action**: Invoke the Skill tool directly for each competitor. Do NOT delegate to subagents (Agent tool).
+     Invoke multiple Skills in parallel for efficiency:
+     ```
+     Skill: skill="google-patent-cli:patent-assignee-check" args="<Company Name> --country <Target Country>"
+     ```
+   - Note: Omit the limit parameter to get all assignee variations (default: 100)
    - **CRITICAL: Check skill response**:
      - Verify the response does NOT contain errors
      - **If skill fails**: Refer to `references/troubleshooting.md` for error handling
