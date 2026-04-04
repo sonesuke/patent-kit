@@ -64,3 +64,7 @@ command = { command = "file-contains", file = "PROGRESS.md", contains = "Screeni
 [[checks]]
 name = "progress_has_overview"
 command = { command = "file-contains", file = "PROGRESS.md", contains = "Overview" }
+
+[[checks]]
+name = "legal_checking_loaded"
+command = { command = "skill-loaded", skill = "legal-checking" }
