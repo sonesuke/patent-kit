@@ -83,12 +83,11 @@ Search for prior art references (both patent and non-patent literature) for pate
 
    Execute three search layers per element:
 
-   | Layer | Purpose | Keywords | Limit |
-   |-------|---------|----------|-------|
-   | 1 | General terminology | High-level terms from element description | 10–20 |
-   | 2 | Specific nomenclature | Model names, algorithms, parameter names | 30–50 |
-   | 3 | Functional/role-based | "configured to", "means for" | 10–20 |
-
+   | Layer | Purpose               | Keywords                                  | Limit |
+   | ----- | --------------------- | ----------------------------------------- | ----- |
+   | 1     | General terminology   | High-level terms from element description | 10–20 |
+   | 2     | Specific nomenclature | Model names, algorithms, parameter names  | 30–50 |
+   | 3     | Functional/role-based | "configured to", "means for"              | 10–20 |
    - Include `publication_before: "<priority date>"` in all searches
 
    **2c. Screen and Analyze Results**:
@@ -119,4 +118,3 @@ Search for prior art references (both patent and non-patent literature) for pate
 ### Final State
 
 - No patents in `similarities` table with Moderate/Significant levels without corresponding `prior_arts` entries (all searched)
-

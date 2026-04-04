@@ -74,7 +74,6 @@ Filter collected patents by legal status and relevance to prepare for evaluation
    **2c. Evaluate and Judge**:
 
    Judgment criteria:
-
    - **Expired or Withdrawn** → `expired`
    - **Irrelevant**: Completely different industry from Theme/Domain
    - **Relevant**: Matches Theme/Domain, Direct Competitors, Core Tech
