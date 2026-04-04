@@ -162,11 +162,11 @@ When mapping claim elements to prior art features:
 For Freedom to Operate analysis:
 
 1. **Identify Risks, Not Infringements**: Use terms like "potential risk,"
-  "requires further review," "may overlap."
+   "requires further review," "may overlap."
 2. **Scope Assessment**: Describe claim breadth in technical terms, not legal
-  terms.
+   terms.
 3. **Design Around Options**: Suggest technical alternatives without
-  guaranteeing non-infringement.
+   guaranteeing non-infringement.
 
 ### Acceptable FTO Language:
 
@@ -181,11 +181,11 @@ For Freedom to Operate analysis:
 For invalidity or novelty analysis:
 
 1. **Anticipation**: Describe what the reference discloses; avoid "anticipates"
-  or "renders obvious."
+   or "renders obvious."
 2. **Obviousness**: Present technical differences; avoid "would have been
-  obvious."
+   obvious."
 3. **Claim Construction**: Describe claim meaning in technical terms; avoid
-  legal claim construction.
+   legal claim construction.
 
 ### Acceptable Invalidity Language:
 
