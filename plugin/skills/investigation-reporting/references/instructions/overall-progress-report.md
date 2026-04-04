@@ -7,13 +7,11 @@ workflow.
 
 ## Process
 
-### Step 1: Get Database Statistics
-
-Use the investigation-preparing skill to get current screening statistics:
+### Step 1: Get Screening Statistics
 
 ```
-Skill: investigation-preparing
-Request: "Get screening progress statistics"
+Skill: investigation-fetching
+Request: "Count screening progress"
 ```
 
 Expected JSON output:
@@ -24,63 +22,32 @@ Expected JSON output:
 - `irrelevant`: Irrelevant patent count
 - `expired`: Expired patent count
 
-### Step 2: Get Investigation Progress from Database
-
-**CRITICAL: Use `investigation-fetching` skill for all data retrieval.**
-Do NOT parse files from investigation directories.
-
-#### 2a. Evaluation Progress
+### Step 2: Get Claim Analysis Statistics
 
 ```
 Skill: investigation-fetching
-Request: "Get list of relevant patents without evaluation"
+Request: "Count claim analysis progress"
 ```
 
-Returns patents that have been screened as relevant but have no claims
-recorded yet.
+Expected JSON output:
 
-#### 2b. Claim Analysis Progress
+- `all_count`: Total patents with similarity results
+- `limited_count`: Patents where all similarities are Limited
+- `not_limited_count`: Patents with at least one Significant or Moderate similarity
 
-```
-Skill: investigation-fetching
-Request: "Get list of patents with elements but no similarities"
-```
-
-Returns patents that have elements decomposed but no similarity analysis
-completed.
-
-#### 2c. Prior Art Progress
+### Step 3: Get Prior Art Statistics
 
 ```
 Skill: investigation-fetching
-Request: "Get list of patents without prior arts"
+Request: "Count prior art progress"
 ```
 
-Returns patents with Moderate/Significant similarities that have no prior art
-research yet.
+Expected JSON output (scoped to Not Limited patents only):
 
-### Step 3: Build Patent Summary Table
-
-For each relevant patent, determine its investigation status by querying the
-database:
-
-| Patent ID | Evaluation | Similarity (Inv.) | Prior Art | Verdict |
-| --------- | ---------- | ----------------- | --------- | ------- |
-
-- **Evaluation**: `Done` if claims exist in DB, `Pending` otherwise
-- **Similarity**: Max similarity level from DB (`Significant` > `Moderate` > `Pending`)
-- **Prior Art**: `Done` if prior_art_elements exist, `Pending` otherwise
-- **Verdict**: Based on similarity and prior art results
-
-**CRITICAL: Filter based on claim-analysis similarity levels.**
-
-- **Include** patents where:
-  - Similarity shows: `Significant`, `Moderate`, or `Pending`
-  - At least ONE element is NOT `Limited`
-
-- **Exclude** patents where:
-  - All similarities are `Limited`
-  - Safe/Low Risk patents should NOT appear in the table
+- `all_count`: Total Not Limited patents
+- `resolved_count`: Patents with prior art elements having Significant relevance
+- `open_count`: Patents with prior art elements but none with Significant relevance
+- `pending_count`: Not Limited patents with no prior art elements at all
 
 ### Step 4: Generate Report
 
@@ -91,7 +58,7 @@ DO NOT just output the report as text - you MUST use the Write tool to save it
 to `PROGRESS.md`.
 
 1. Read template from `assets/investigation-report-template.md`
-2. Fill in statistics and patent table following the template structure
+2. Fill in counts following the template structure
 3. Write to `PROGRESS.md` using Write tool
 4. Run legal-checking on the generated report:
    ```
@@ -101,19 +68,19 @@ to `PROGRESS.md`.
 
 **Template sections**:
 
-- Overview: Workflow phase status summary
-- Screening Summary: Database statistics table
-- Investigation Progress: Filtered patent table (exclude Limited/low-risk)
+- Screening: Statistics table from `v_screening_progress`
+- Claim Analysis: Count table (All / Limited / Not Limited)
+- Prior Art: Count table (All / Resolved / Open / Pending)
 - Next Actions: Recommended next steps
 
 ## Quality Checks
 
-- [ ] Database statistics correctly retrieved
-- [ ] Investigation progress derived from DB queries, not file parsing
-- [ ] Standard template sections used
-- [ ] NO extra sections (Top Patents, Current Status, Risk Summary, Recommendations)
-- [ ] NO duplicated information
+- [ ] All data retrieved from investigation-fetching (no raw SQL, no file parsing)
+- [ ] Claim Analysis counts: All = Limited + Not Limited
+- [ ] Prior Art counts: All = Resolved + Open + Pending
+- [ ] Standard template sections used (Screening, Claim Analysis, Prior Art, Next Actions)
+- [ ] NO extra sections (Overview, Top Patents, Current Status, Risk Summary, etc.)
+- [ ] NO duplicated information between sections
 - [ ] NO legal assertions (Does not satisfy, Does not infringe, etc.)
-- [ ] Limited/low-risk patents EXCLUDED from Investigation Progress table
 - [ ] Write tool used to create PROGRESS.md
 - [ ] Legal-checking skill invoked on the generated report

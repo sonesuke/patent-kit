@@ -58,8 +58,8 @@ name = "progress_file_created"
 command = { command = "workspace-file", path = "PROGRESS.md", copy_to_output = true }
 
 [[checks]]
-name = "progress_has_screening_data"
-command = { command = "file-contains", file = "PROGRESS.md", contains = "screened" }
+name = "progress_has_screening_section"
+command = { command = "file-contains", file = "PROGRESS.md", contains = "Screening" }
 
 [[checks]]
 name = "progress_has_patent_data"

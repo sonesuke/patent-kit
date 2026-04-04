@@ -38,12 +38,12 @@ requests from external agents.
 
 ### Process
 
-#### Step 1: Get Database Statistics
+#### Step 1: Get Screening Statistics
 
-Use the investigation-preparing skill to get the current status:
+Use the investigation-fetching skill to get the current status:
 
-- Invoke via Skill tool: `Skill: investigation-preparing`
-- Request: "Get screening progress statistics"
+- Invoke via Skill tool: `Skill: investigation-fetching`
+- Request: "Count screening progress"
 
 This returns JSON with:
 
