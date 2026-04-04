@@ -45,6 +45,7 @@ Use the Glob tool to check if `specification.md` exists:
 Extract the following information from the user's input:
 
 **Required Information**:
+
 - **Product Concept**: Detailed description of what they want to realize
 - **Competitors**: List of key competitor companies (Mandatory)
 - **Target Country**: Where the product will be released (e.g., US, JP)
@@ -52,11 +53,13 @@ Extract the following information from the user's input:
 - **Cutoff Date**: Calculate `Target Release Date - 20 years`. Patents filed before this date are likely expired
 
 **Extraction Logic**:
+
 - If the user provides a country (e.g., "in the US", "US market"), extract and use that
 - If the user provides a release date (e.g., "2025", "June 2025"), extract and use that
 - Extract competitors from mentions of company names
 
 **If any required information is missing**:
+
 - Ask the user to provide the missing information
 - Do not make assumptions or use default values
 
@@ -69,9 +72,11 @@ Extract the following information from the user's input:
 For each competitor, verify the correct "Assignee Name" used in patent databases.
 
 1. **Verify**: Invoke Skills in parallel for efficiency:
+
    ```
    Skill: skill="google-patent-cli:patent-assignee-check" args="<Company Name> --country <Target Country>"
    ```
+
    - Omit the limit parameter to get all assignee variations (default: 100)
    - **CRITICAL: Check skill response**:
      - Verify the response does NOT contain errors
