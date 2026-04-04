@@ -7,7 +7,7 @@ description: |
   - The user asks to:
     * "screen the patents"
     * "remove noise"
-  - `patents.db` exists with `target_patents` table populated
+  - `patents.db` exists with `target_patents` table populated (will be prepared by this skill if missing)
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -21,7 +21,7 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
 ## Prerequisites
 
-- `patents.db` must exist (generated in targeting skill, `target_patents` table)
+- `patents.db` will be initialized by this skill via `investigation-preparing` if it does not exist
 - `specification.md` must exist (Product/Theme definition)
 - Load `investigation-fetching` skill for data retrieval operations
 - Load `investigation-recording` skill for data recording operations
@@ -38,7 +38,17 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
 ## Skill Orchestration
 
-### Execute Screening
+### 1. Ensure Database is Ready
+
+**CRITICAL**: Before attempting any screening, ensure the database exists and is populated.
+
+1. **Use the Glob tool to check if `csv/*.csv` files exist**
+2. **Use the Skill tool to load `investigation-preparing`**:
+   - If CSV files exist: Request "Initialize the patent database and import CSV files from csv/"
+   - If no CSV files exist: Request "Initialize the patent database"
+3. **Verify**: Use `investigation-fetching` skill to confirm patents are available in the database
+
+### 2. Execute Screening
 
 **CRITICAL**: Always use subagents for patent screening, regardless of patent count.
 

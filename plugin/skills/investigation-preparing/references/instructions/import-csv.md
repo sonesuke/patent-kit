@@ -24,6 +24,9 @@ This instruction provides a **step-by-step procedure** that must be followed exa
 
 ## Import Procedure
 
+**IMPORTANT**: All commands below use `$WORKSPACE` for absolute paths. Capture it
+before starting: `WORKSPACE="$(pwd)"`.
+
 ### Step 1: Inspect CSV Structure
 
 **Purpose**: Identify column mapping and ETL requirements.
@@ -62,7 +65,7 @@ head -n 1 test-patents.csv | awk -F',' '{print NF}'
 **Based on column mapping from Step 1**, create an import table to store raw CSV data:
 
 ```bash
-sqlite3 patents.db <<'EOF'
+sqlite3 "$WORKSPACE/patents.db" <<'EOF'
 DROP TABLE IF EXISTS raw_import;
 CREATE TABLE raw_import (
     col1 TEXT,  -- id (patent_id with hyphens) → needs ETL in Step 4
@@ -86,9 +89,9 @@ EOF
 **Based on Step 1 findings** (data starts at Row 3), skip first 2 rows (search URL + header):
 
 ```bash
-sqlite3 patents.db <<'EOF'
+sqlite3 "$WORKSPACE/patents.db" <<'EOF'
 .mode csv
-.import --skip 2 ./test-patents.csv raw_import
+.import --skip 2 "$WORKSPACE/csv/test-patents.csv" raw_import
 EOF
 ```
 
@@ -97,13 +100,13 @@ EOF
 **Verification**: Confirm import succeeded:
 
 ```bash
-sqlite3 patents.db "SELECT COUNT(*) FROM raw_import;"
+sqlite3 "$WORKSPACE/patents.db" "SELECT COUNT(*) FROM raw_import;"
 ```
 
 ### Step 4: Transform and Insert (ETL)
 
 ```bash
-sqlite3 patents.db <<'EOF'
+sqlite3 "$WORKSPACE/patents.db" <<'EOF'
 INSERT OR IGNORE INTO target_patents (
     patent_id,
     title,
@@ -177,7 +180,7 @@ EOF
 ### Step 5: Drop Import Table
 
 ```bash
-sqlite3 patents.db "DROP TABLE raw_import;"
+sqlite3 "$WORKSPACE/patents.db" "DROP TABLE raw_import;"
 ```
 
 **This ETL script handles:**

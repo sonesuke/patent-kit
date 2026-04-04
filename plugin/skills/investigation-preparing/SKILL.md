@@ -1,18 +1,14 @@
 ---
 name: investigation-preparing
 description: |
-  Manages patent investigation database preparation operations using SQLite.
+  Initializes the patent investigation database and imports CSV files.
 
-  IMPORTANT: This skill should be invoked via the Skill tool for database operations.
-  DO NOT read internal instruction files (references/instructions/*.md) directly.
+  Use this skill to set up the SQLite database (patents.db) before running
+  screening. Supports database initialization, CSV import, and progress queries.
 
-  Supported operations:
-  - "Initialize the database"
-  - "Import CSV files from <directory>"
-
-  This skill handles all database preparation operations. Just provide the request
-  and let the skill manage the database.
-user_invocable: false
+  Example usage:
+  - "Initialize the patent database and import CSV files from csv/"
+  - "Get screening progress statistics"
 metadata:
   author: sonesuke
   version: 1.0.0
@@ -35,7 +31,7 @@ internal reference files for this skill's internal use only.
 **Example requests**:
 
 - "Initialize the database"
-- "Import CSV files from 1-targeting/csv/ directory"
+- "Import CSV files from csv/ directory"
 - "Execute SQL query: SELECT COUNT(\*) FROM screened_patents"
 
 ## Purpose
@@ -53,6 +49,19 @@ requests from external agents.
 - SQLite3 command must be available
 - Workspace root must be writable for database creation
 
+### Workspace Path Resolution
+
+**CRITICAL**: All `sqlite3` commands MUST use absolute paths. Before executing any
+database operation, capture the workspace directory:
+
+```bash
+WORKSPACE="$(pwd)"
+```
+
+Then use `$WORKSPACE/patents.db` in all subsequent commands. Never use bare
+relative paths like `sqlite3 patents.db` — the working directory may differ
+from the workspace in forked or containerized environments.
+
 ### Database Initialization
 
 **IMPORTANT**: Before executing any database operation, verify that `patents.db`
@@ -61,13 +70,12 @@ exists and is properly initialized.
 #### Check Database Status
 
 ```bash
-# Check if database exists and has the required tables
-if [ ! -f patents.db ]; then
+WORKSPACE="$(pwd)"
+if [ ! -f "$WORKSPACE/patents.db" ]; then
     echo "Database not found. Initializing..."
-    sqlite3 patents.db < references/sql/initialize-database.sql
+    sqlite3 "$WORKSPACE/patents.db" < "$WORKSPACE/references/sql/initialize-database.sql"
 else
-    # Verify schema
-    sqlite3 patents.db ".tables"
+    sqlite3 "$WORKSPACE/patents.db" ".tables"
 fi
 ```
 
@@ -76,7 +84,8 @@ fi
 If `patents.db` does not exist or has an invalid schema:
 
 ```bash
-sqlite3 patents.db < references/sql/initialize-database.sql
+WORKSPACE="$(pwd)"
+sqlite3 "$WORKSPACE/patents.db" < "$WORKSPACE/references/sql/initialize-database.sql"
 ```
 
 This command creates all necessary tables (`target_patents`, `screened_patents`,
@@ -99,13 +108,13 @@ should invoke via Skill tool, not read these files.
 When executing SQL operations based on internal reference files:
 
 ```bash
-sqlite3 patents.db "<SQL_QUERY>"
+sqlite3 "$WORKSPACE/patents.db" "<SQL_QUERY>"
 ```
 
 For multi-line SQL:
 
 ```bash
-sqlite3 patents.db <<EOF
+sqlite3 "$WORKSPACE/patents.db" <<EOF
 <SQL_QUERY_1>;
 <SQL_QUERY_2>;
 ...
@@ -122,7 +131,7 @@ EOF
 
 ### Workflow 1: Initialize and Import
 
-1. External: "Initialize the database and import CSV files from 1-targeting/csv/"
+1. External: "Initialize the database and import CSV files from csv/"
 2. Internal: Check database status → Execute import-csv.md instructions
 
 ## State Management
