@@ -13,9 +13,6 @@ description: |
     * "prior art" with "database" or "similarities"
     * "Moderate/Significant" with "prior art"
   - `patents.db` exists with `similarities` table containing Moderate/Significant entries
-metadata:
-  author: sonesuke
-  version: 1.0.0
 ---
 
 # Prior Art Researching
@@ -27,8 +24,6 @@ Search for prior art references (both patent and non-patent literature) for pate
 ## Prerequisites
 
 - `patents.db` must exist with `similarities` table containing Moderate/Significant entries (from claim-analyzing skill)
-- Load `investigation-fetching` skill for data retrieval operations
-- Load `investigation-recording` skill for data recording operations
 
 ## Constitution
 
@@ -36,7 +31,7 @@ Search for prior art references (both patent and non-patent literature) for pate
 
 **Element-by-Element Analysis (The Golden Rule)**:
 
-- Every claim analysis MUST test the target invention against the reference patent element by element
+- Every analysis MUST test the target invention against prior art element by element
 - Break down inventions into Elements A, B, C
 - Find references disclosing A AND B AND C for anticipation (Novelty)
 - Do not rely on "general similarity"
@@ -62,22 +57,54 @@ Search for prior art references (both patent and non-patent literature) for pate
 
 ### Execute Prior Art Search
 
-**CRITICAL**: Always use subagents for prior art search. **EVEN FOR A SINGLE PATENT - always launch a subagent.**
-
 **Process**:
 
 1. **Get Patents to Search**:
    - Use `investigation-fetching` skill
    - Request: "Get list of patents with Moderate/Significant similarities without prior art"
 
-2. **Search Prior Art**: Launch `prior-art-searcher` subagents
+2. **For each patent**, execute Steps 2a–2e in order:
 
-   For each patent:
-   - Start a `prior-art-searcher` subagent
-   - **Each subagent handles exactly one patent**
-   - **CRITICAL: Even if there is only ONE patent, you MUST still use a subagent**
+   **2a. Get Patent Data**:
+   - Invoke `Skill: google-patent-cli:patent-fetch` with patent ID
+   - Invoke `Skill: investigation-fetching` with request "Get elements for patent <patent-id>"
+   - Extract: title, abstract, claims, priority date, elements
 
-3. **Verify Results**: Query database to confirm data recorded
+   **2b. Execute Multi-Layer Search**:
+   - For each element, invoke search Skills in parallel:
+     ```
+     Skill: skill="google-patent-cli:patent-search" args="<query>"
+     Skill: skill="arxiv-cli:arxiv-search" args="<query>"
+     ```
+   - **Do NOT delegate to subagents (Agent tool)** — invoke Skills directly from this session
+
+   Execute three search layers per element:
+
+   | Layer | Purpose               | Keywords                                  | Limit |
+   | ----- | --------------------- | ----------------------------------------- | ----- |
+   | 1     | General terminology   | High-level terms from element description | 10–20 |
+   | 2     | Specific nomenclature | Model names, algorithms, parameter names  | 30–50 |
+   | 3     | Functional/role-based | "configured to", "means for"              | 10–20 |
+   - Include `publication_before: "<priority date>"` in all searches
+
+   **2c. Screen and Analyze Results**:
+   - Identify Grade A candidates (highly relevant), verify publication dates
+   - For patent references: invoke `Skill: google-patent-cli:patent-fetch` with patent ID to get full details
+   - For NPL: invoke `Skill: arxiv-cli:arxiv-fetch` for full text
+   - **Do NOT delegate to subagents (Agent tool)** — invoke Skills directly from this session
+   - Create claim charts with paragraph-level citations
+
+   **2d. Record Results**:
+   - Invoke `Skill: investigation-recording` with prior art data for each reference:
+     - patent_id, claim_number, element_label, reference_id, reference_type, title, relevance_level (Significant/Moderate/Limited), analysis_notes, publication_date, claim_chart
+   - **CRITICAL**: Record at ELEMENT LEVEL (each reference linked to claim_number and element_label)
+
+3. **Verify Results**: Confirm all prior arts recorded to database. Provide summary with:
+   - Patent ID and title
+   - Number of prior art references found
+   - Relevance levels for each reference
+   - Key findings summary
+   - Overall similarity assessment
 
 ## State Management
 

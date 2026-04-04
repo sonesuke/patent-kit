@@ -1,0 +1,17 @@
+# Test Case: Claim Analyzing - Triggering
+
+name = "triggering"
+description = "Verify claim-analyzing skill is triggered when asked to analyze claims"
+timeout = 60
+
+test_prompt = """
+Load the claim-analyzing skill to understand the claim analysis process.
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "claim-analyzing" }
+
+[[checks]]
+name = "claim_analyzing_invoked"
+command = { command = "skill-invoked", skill = "claim-analyzing" }

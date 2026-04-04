@@ -1,7 +1,7 @@
 [tools]
 
 [tasks]
-fmt = { description = "Format files with prettier", run = "npx prettier --write ." }
+fmt = { description = "Format files with prettier", run = "npx --yes prettier@latest --write ." }
 pre-commit = { description = "Pre-commit hook to format files", depends = [
   "fmt",
 ] }

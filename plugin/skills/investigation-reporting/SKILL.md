@@ -6,9 +6,6 @@ description: |
   Triggered when the user asks for:
   - Progress summary: "What is the current progress?", "Give me a summary", "How is the investigation going?", "Show me the status"
   - Specific patent report: "Tell me about US1234567A", "Report on patent US1234567A", "What's the status of US1234567A?"
-metadata:
-  author: sonesuke
-  version: 1.0.0
 context: fork
 ---
 
@@ -121,6 +118,7 @@ agents should NOT read these:
   - `specific-patent-report.md`: Single patent detailed report
 - **assets/**: Templates and reference materials
   - `investigation-report-template.md`: Standard report template
+  - `prior-art-template.md`: Prior art investigation report template
 
 **IMPORTANT**: External agents should invoke this skill via the Skill tool, not
 access these internal files directly.
