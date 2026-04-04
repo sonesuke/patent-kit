@@ -36,6 +36,11 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 - If a reference is "borderline", mark it as 'relevant' rather than 'irrelevant'
 - Missing a risk is worse than reviewing an extra document
 
+**Skill-Only Database Access**:
+
+- ALWAYS use the Skill tool to load `investigation-recording` for ALL database operations
+- NEVER write raw SQL commands or read instruction files from investigation-recording
+
 ## Skill Orchestration
 
 ### 1. Ensure Database is Ready
@@ -50,19 +55,37 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
 ### 2. Execute Screening
 
-**CRITICAL**: Always use subagents for patent screening, regardless of patent count.
+**Do NOT delegate to subagents (Agent tool)** — invoke Skills directly from this session.
 
 **Process**:
 
 1. **Get Patents to Screen**:
-   - Use `investigation-fetching` skill
-   - Request: "Get list of unscreened patent IDs"
+   - Invoke `Skill: investigation-fetching` with request "Get list of unscreened patent IDs"
 
-2. **Screen Patents**: Launch `patent-screener` subagents
+2. **For each patent**, execute Steps 2a–2d:
 
-   For each patent:
-   - Start a `patent-screener` subagent
-   - **Each subagent handles exactly one patent**
+   **2a. Read Specification**:
+   - Read `specification.md` to understand Theme, Domain, and Target Product
+
+   **2b. Fetch Patent Data**:
+   - Invoke `Skill: google-patent-cli:patent-fetch` with patent ID
+   - Extract: title, abstract, legal status
+
+   **2c. Evaluate and Judge**:
+
+   Judgment criteria:
+
+   - **Expired or Withdrawn** → `expired`
+   - **Irrelevant**: Completely different industry from Theme/Domain
+   - **Relevant**: Matches Theme/Domain, Direct Competitors, Core Tech
+   - **Exception**: Even if domain differs, KEEP if technology could serve as infrastructure or common platform
+
+   Judgment values: `relevant`, `irrelevant`, `expired` (lowercase)
+
+   **2d. Record Result**:
+   - Invoke `Skill: investigation-recording` with request "Record screening result for patent <patent-id>: <judgment_data>"
+
+3. **Verify Results**: Confirm all patents have corresponding `screened_patents` entries
 
 ## State Management
 
