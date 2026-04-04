@@ -68,3 +68,7 @@ command = { command = "log-contains", pattern = "Overview" }
 [[checks]]
 name = "legal_checking_loaded"
 command = { command = "skill-loaded", skill = "legal-checking" }
+
+[[checks]]
+name = "legal_checking_invoked"
+command = { command = "skill-invoked", skill = "legal-checking" }
