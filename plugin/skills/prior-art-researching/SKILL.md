@@ -13,7 +13,6 @@ description: |
     * "prior art" with "database" or "similarities"
     * "Moderate/Significant" with "prior art"
   - `patents.db` exists with `similarities` table containing Moderate/Significant entries
-metadata:
   author: sonesuke
   version: 1.0.0
 ---

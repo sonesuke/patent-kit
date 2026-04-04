@@ -14,7 +14,6 @@ description: |
     * "claim analysis" with "patent" or "elements"
     * "similarity" with "elements" or "claims"
   - `patents.db` exists with `elements` table populated and `features` table populated
-metadata:
   author: sonesuke
   version: 1.0.0
 ---

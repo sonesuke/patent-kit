@@ -10,7 +10,6 @@ description: |
     * "conduct concept interview"
     * "define product concept"
     * "define search requirements"
-metadata:
   author: sonesuke
   version: 1.0.0
 ---

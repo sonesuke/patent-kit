@@ -8,7 +8,6 @@ description: |
     * "create a target population"
     * "determine the target population"
     * "run the patent search"
-metadata:
   author: sonesuke
   version: 1.0.0
 ---
