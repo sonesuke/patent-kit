@@ -36,26 +36,40 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 - Find references disclosing A AND B AND C for anticipation (Novelty)
 - Do not rely on "general similarity"
 
+**Skill-Only Database Access**:
+
+- ALWAYS use the Skill tool to load `investigation-recording` for ALL database operations
+- NEVER write raw SQL commands or read instruction files from investigation-recording
+- The investigation-recording skill handles SQL operations internally when invoked via Skill tool
+
 ## Skill Orchestration
 
 ### Execute Evaluation
 
-**CRITICAL**: Always use subagents for patent evaluation. **EVEN FOR A SINGLE PATENT - always launch a subagent.**
+**Do NOT delegate to subagents (Agent tool)** — invoke Skills directly from this session.
 
 **Process**:
 
 1. **Get Patents to Analyze**:
-   - Use `investigation-fetching` skill
-   - Request: "Get list of relevant patents without evaluation"
+   - Invoke `Skill: investigation-fetching` with request "Get list of relevant patents without evaluation"
 
-2. **Analyze Patents**: Launch `patent-evaluator` subagents
+2. **For each patent**, execute Steps 2a–2d in order:
 
-   For each patent:
-   - Start a `patent-evaluator` subagent
-   - **Each subagent handles exactly one patent**
-   - **CRITICAL: Even if there is only ONE patent, you MUST still use a subagent**
+   **2a. Fetch Patent Data**:
+   - Invoke `Skill: google-patent-cli:patent-fetch` with patent ID
+   - Extract: title, abstract, all claims
 
-3. **Verify Results**: Query database to confirm data recorded
+   **2b. Analyze Claims**:
+   - Extract ALL claims from the patent (both independent and dependent)
+   - For EACH claim, decompose into constituent elements (A, B, C...)
+
+   **2c. Record Claims**:
+   - Invoke `Skill: investigation-recording` with request "Record claims for patent <patent-id>: <claims_data>"
+
+   **2d. Record Elements**:
+   - Invoke `Skill: investigation-recording` with request "Record elements for patent <patent-id>: <elements_data>"
+
+3. **Verify Results**: Query database to confirm all claims and elements recorded
 
 ## State Management
 
