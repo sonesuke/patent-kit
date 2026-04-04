@@ -59,11 +59,11 @@ command = { command = "workspace-file", path = "PROGRESS.md", copy_to_output = t
 
 [[checks]]
 name = "progress_has_screening_summary"
-command = { command = "file-contains", file = "PROGRESS.md", contains = "Screening Summary" }
+command = { command = "log-contains", pattern = "Screening Summary" }
 
 [[checks]]
 name = "progress_has_overview"
-command = { command = "file-contains", file = "PROGRESS.md", contains = "Overview" }
+command = { command = "log-contains", pattern = "Overview" }
 
 [[checks]]
 name = "legal_checking_loaded"

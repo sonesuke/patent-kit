@@ -89,12 +89,12 @@ command = { command = "skill-loaded", skill = "legal-checking" }
 
 [[checks]]
 name = "report_contains_patent_id"
-command = { command = "message-contains", contains = "US12231380B1" }
+command = { command = "log-contains", pattern = "US12231380B1" }
 
 [[checks]]
 name = "report_contains_similarity"
-command = { command = "message-contains", contains = "Moderate" }
+command = { command = "log-contains", pattern = "Moderate" }
 
 [[checks]]
 name = "report_contains_element_analysis"
-command = { command = "message-contains", contains = "Element" }
+command = { command = "log-contains", pattern = "Element" }
