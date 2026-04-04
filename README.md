@@ -11,11 +11,14 @@ A complete toolkit that empowers AI agents to autonomously search, analyze, and 
 
 This kit provides structured commands to automate:
 
-- **Targeting & Screening**: Identify critical patents from the noise.
-- **Patent Evaluation**: Validate novelty and inventive step logic.
-- **Claim Analysis**: Detailed clearance and infringement reporting.
+- **Concept Interview**: Define product concept and identify competitors.
+- **Targeting**: Create a target population from patent databases.
+- **Screening & Evaluation**: Filter and analyze patents for relevance.
+- **Claim Analysis**: Compare product features against patent elements.
+- **Prior Art Research**: Search for prior art references for high-risk patents.
+- **Investigation Reporting**: Track progress across all phases.
 
-1. **Install the Plugin**
+## Install
 
 Add this repository as a marketplace and install the plugin to your Claude Code environment:
 
@@ -27,7 +30,14 @@ claude plugin marketplace add sonesuke/patent-kit
 claude plugin install patent-kit@patent-kit-marketplace
 ```
 
-2. **Initialize Workspace**
+### Prerequisites
+
+You must have the following CLI tools installed and accessible in your system PATH to execute patent and paper searches. **When this plugin is loaded, it will automatically connect to these tools as built-in MCP servers.**
+
+- [Google Patent CLI (google-patent-cli)](https://github.com/sonesuke/google-patent-cli)
+- [arXiv CLI (arxiv-cli)](https://github.com/sonesuke/arxiv-cli)
+
+## Quick Start
 
 Navigate to your working directory and start Claude:
 
@@ -36,90 +46,110 @@ mkdir my-patent-project && cd my-patent-project
 claude
 ```
 
-Run the setup skill to generate the required directory structure:
+Then run the skills in order:
 
 ```bash
-/patent-kit:setup
+/patent-kit:concept-interview
+# Output: specification.md
 ```
 
-### Prerequisites (Install the CLIs)
+## Workflow
 
-You must have the following CLI tools installed and accessible in your system PATH to execute patent and paper searches.
-**When this plugin is loaded, it will automatically connect to these tools as built-in MCP servers.**
+### Phase 0: Concept Interview
 
-- [Google Patent CLI (google-patent-cli)](https://github.com/sonesuke/google-patent-cli)
-- [arXiv CLI (arxiv-cli)](https://github.com/sonesuke/arxiv-cli)
+Define product concept and identify competitors.
 
-### Workflow
+```bash
+/patent-kit:concept-interview
+# Output: specification.md
+```
 
-1. **Phase 0: Concept Interview**: Define product concept.
+### Phase 1: Targeting
 
-   ```bash
-   /patent-kit.concept-interview
-   # Output: specification.md
-   ```
+Generate search queries and create a target population.
 
-2. **Phase 1: Targeting**: Generate search queries and targets.
+```bash
+/patent-kit:targeting
+# Output: targeting.md, keywords.md, csv/
+```
 
-   ```bash
-   /patent-kit:targeting
-   # Output: 1-targeting/targeting.md
-   ```
+### Phase 2: Screening & Evaluation
 
-3. **Phase 2: Screening**: Screen patents for relevance.
+Screen patents for relevance and evaluate claims.
 
-   ```bash
-   /patent-kit.screening
-   # Output: 2-screening/screening.md
-   ```
+```bash
+/patent-kit:screening
+# Output: patents.db (screening results)
 
-4. **Phase 3: Evaluation**: Analyze the patent.
+/patent-kit:evaluating
+# Output: patents.db (claims and elements)
+```
 
-   ```bash
-   /patent-kit:evaluation JP2023-123456
-   # Output: 3-investigations/JP2023-123456/evaluation.md
-   ```
+### Phase 3: Claim Analysis
 
-5. **Phase 4: Claim Analysis**: Define search strategy.
+Compare product features against patent elements.
 
-   ```bash
-   /patent-kit:claim-analysis JP2023-123456
-   # Output: 3-investigations/JP2023-123456/claim-analysis.md
-   ```
+```bash
+/patent-kit:claim-analyzing
+# Output: patents.db (similarity results)
+```
 
-6. **Phase 5: Prior Art**: Run search and report.
+### Phase 4: Prior Art Research
 
-   ```bash
-   /patent-kit:prior-art JP2023-123456
-   # Output: 3-investigations/JP2023-123456/prior-art.md
-   ```
+Search for prior art references for patents with Moderate/Significant similarities.
 
-7. **Track Progress**: Summarize the current status of all investigations.
+```bash
+/patent-kit:prior-art-researching
+# Output: patents.db (prior art references)
+```
 
-   ```bash
-   /patent-kit:progress
-   # Output: PROGRESS.md
-   ```
+### Progress Report
+
+Track progress across all phases at any time.
+
+```bash
+/patent-kit:investigation-reporting
+# Output: PROGRESS.md (overall progress)
+# Output: <patent_id>.md (specific patent report)
+```
 
 ## Output Structure
 
-The project is organized into numbered phases:
-
 ```text
 .
-├── 0-specifications/         # Phase 0: Product definition
-│   └── specification.md
-├── 1-targeting/              # Phase 1: Search strategy & data
-│   ├── targeting.md
-│   ├── keywords.md
-│   ├── target.jsonl
-│   └── csv/
-├── 2-screening/              # Phase 2: Screening results
-│   └── (Screening data)
-├── 3-investigations/         # Phase 3-5: Detailed analysis
-│   └── JP2023-123456/
-│       ├── evaluation.md
-│       ├── claim-analysis.md
-│       └── prior-art.md
-└── PROGRESS.md               # Overall status report
+├── specification.md          # Phase 0: Product definition
+├── targeting.md               # Phase 1: Search strategy
+├── keywords.md                # Phase 1: Search keywords
+├── csv/                       # Phase 1: Target patent data
+│   └── *.csv
+└── patents.db                 # SQLite database for all investigation data
 ```
+
+## Skills
+
+### User-Invocable Skills
+
+| Skill                     | Purpose                                            |
+| ------------------------- | -------------------------------------------------- |
+| `concept-interviewing`    | Define product concept and identify competitors    |
+| `targeting`               | Create target population from patent databases     |
+| `screening`               | Filter patents by legal status and relevance       |
+| `evaluating`              | Decompose claims and elements for relevant patents |
+| `claim-analyzing`         | Compare product features against patent elements   |
+| `prior-art-researching`   | Search for prior art references                    |
+| `investigation-reporting` | Generate progress reports                          |
+
+### Internal Skills
+
+These skills are automatically invoked by other skills and should not be used directly.
+
+| Skill                     | Purpose                                          |
+| ------------------------- | ------------------------------------------------ |
+| `investigation-preparing` | Initialize SQLite database and import CSV files  |
+| `investigation-fetching`  | Retrieve data from SQLite database               |
+| `investigation-recording` | Record data to SQLite database                   |
+| `legal-checking`          | Review documents for legal compliance violations |
+
+## License
+
+MIT
