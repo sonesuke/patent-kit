@@ -69,6 +69,9 @@ if [ -z "$CI" ] && [ -z "$GITHUB_ACTIONS" ]; then
 EOF
     fi
 
+    echo "[Devcontainer Setup] Installing skill-bench..."
+    curl -fsSL https://raw.githubusercontent.com/sonesuke/skill-bench/main/scripts/setup.sh | sh
+
     echo "[Devcontainer Setup] Installing MCP tools..."
     curl -fsSL https://raw.githubusercontent.com/sonesuke/google-patent-cli/main/install.sh | bash
     curl -fsSL https://raw.githubusercontent.com/sonesuke/arxiv-cli/main/install.sh | bash
