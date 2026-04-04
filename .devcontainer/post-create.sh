@@ -17,25 +17,6 @@ if [ -z "$CI" ] && [ -z "$GITHUB_ACTIONS" ]; then
         echo "[Devcontainer Setup] Claude CLI already installed: $(claude --version)"
     fi
 
-    # Install yq (YAML/TOML processor) for skill-bench
-    if ! command -v yq >/dev/null 2>&1; then
-        echo "[Devcontainer Setup] Installing yq..."
-        YQ_VERSION=v4.52.4
-        wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -O /tmp/yq
-        chmod +x /tmp/yq
-        sudo mv /tmp/yq /usr/local/bin/yq
-        echo "[Devcontainer Setup] yq installed: $(yq --version)"
-    else
-        echo "[Devcontainer Setup] yq already installed: $(yq --version)"
-    fi
-
-    echo "[Devcontainer Setup] Configuring tmux..."
-    cat > $HOME/.tmux.conf << 'EOF'
-# Display pane number
-bind-key p display-panes
-set display-panes-time 10000
-EOF
-
     echo "[Devcontainer Setup] Configuring claude alias..."
     echo 'alias claude="claude --allow-dangerously-skip-permissions"' >> $HOME/.bashrc
     echo 'alias claude="claude --allow-dangerously-skip-permissions"' >> $HOME/.zshrc
@@ -80,13 +61,16 @@ EOF
         "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
         "API_TIMEOUT_MS": "3000000",
         "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
-        "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5",
-        "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
+        "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5.1",
+        "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-5-turbo",
         "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air"
     }
 }
 EOF
     fi
+
+    echo "[Devcontainer Setup] Installing skill-bench..."
+    curl -fsSL https://raw.githubusercontent.com/sonesuke/skill-bench/main/scripts/setup.sh | sh
 
     echo "[Devcontainer Setup] Installing MCP tools..."
     curl -fsSL https://raw.githubusercontent.com/sonesuke/google-patent-cli/main/install.sh | bash

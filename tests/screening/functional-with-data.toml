@@ -1,0 +1,66 @@
+# Test Case: Screening Functional (with pre-seeded database)
+
+name = "functional-with-data"
+description = "Verify screening process with pre-populated target_patents in database"
+timeout = 300 # seconds
+
+test_prompt = """
+I have a patent database with target patents and a specification ready. Please screen the patents for relevance.
+"""
+
+[[setup]]
+command = """
+sqlite3 patents.db < /workspaces/patent-kit/plugin/skills/investigation-preparing/references/sql/initialize-database.sql
+sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US12231380B1', 'Trigger-based transfer of conversations from a chatbot to a human agent', 'US', '2023-10-11');"
+sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US20230245651A1', 'Enabling user-centered and contextually relevant interaction', 'US', '2023-04-03');"
+sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US11354173B2', 'Artificial intelligence-powered cloud for the financial services industry', 'US', '2021-02-11');"
+"""
+
+[[setup]]
+path = "specification.md"
+content = """
+# Product Specification
+
+## 1. Product Concept
+
+AI-powered customer support chatbot with real-time sentiment analysis.
+
+## 2. Target Market
+
+- **Country**: US
+- **Release Date**: 2025-12-31
+- **Priority Date Cutoff**: 2005-12-31
+
+## 3. Competitors
+
+| Canonical Name       | Variations Found in DB     | Verified? | Notes         |
+| -------------------- | -------------------------- | --------- | ------------- |
+| Salesforce.Com, Inc. | salesforce.com, inc        | Yes       | Main assignee |
+
+## 4. Technical Elements (Constituent Features)
+
+- **LLM Dialogue Engine**: Multi-turn conversation management with context retention
+- **Real-Time Sentiment Analysis**: Detects customer frustration and escalates to human agents
+- **CRM Integration API**: Connects to Salesforce for ticket creation and customer history retrieval
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "screening" }
+
+[[checks]]
+name = "screening_invoked"
+command = { command = "skill-invoked", skill = "screening" }
+
+[[checks]]
+name = "database_exists"
+command = { command = "workspace-file", path = "patents.db" }
+
+[[checks]]
+name = "target_patents_populated"
+command = {
+  command = "db-query",
+  db = "",
+  query = "SELECT COUNT(*) FROM target_patents;",
+  expected = "3",
+}

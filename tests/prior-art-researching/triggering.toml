@@ -1,0 +1,17 @@
+# Test Case: Prior Art Researching - Triggering
+
+name = "triggering"
+description = "Verify prior-art-researching skill is triggered when asked to search for prior art"
+timeout = 60
+
+test_prompt = """
+Load the prior-art-researching skill to understand the prior art search process.
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "prior-art-researching" }
+
+[[checks]]
+name = "prior_art_researching_invoked"
+command = { command = "skill-invoked", skill = "prior-art-researching" }

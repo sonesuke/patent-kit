@@ -1,0 +1,83 @@
+# Test Case: Targeting Functional (with existing specification)
+
+name = "functional-with-spec"
+description = "Verify targeting process with existing specification"
+timeout = 600 # seconds
+
+test_prompt = """
+I have placed an invention specification in `specification.md`. Please create a target population and run the patent search for a 2025 product release.
+
+Before asking me any questions, please use the question-responder skill to check if the required information is already available. Then proceed with the targeting process.
+"""
+
+[answers]
+"modifying keywords" = "Looks good, proceed to search."
+"synonyms" = "Looks good, proceed to search."
+"adjust query" = "Looks good, proceed to search."
+"hit counts" = "The count is acceptable, proceed to merge."
+"acceptable" = "The count is acceptable, proceed to merge."
+"~1000 hits" = "The count is acceptable, proceed to merge."
+
+[[setup]]
+path = "specification.md"
+content = """
+# Product Specification
+
+## 1. Product Concept
+
+AI-powered customer support chatbot with real-time sentiment analysis.
+
+Current customer support systems rely on rule-based chatbots that fail to understand complex queries and cannot detect customer frustration in real time.
+
+## 2. Target Market
+
+- **Country**: US
+- **Release Date**: 2025-12-31
+- **Priority Date Cutoff**: 2005-12-31
+
+## 3. Competitors
+
+### Verified Assignee Names (Canonicalized)
+
+| Canonical Name       | Variations Found in DB           | Verified? | Notes         |
+| -------------------- | -------------------------------- | --------- | ------------- |
+| Salesforce.Com, Inc. | salesforce.com, inc, Salesforce  | Yes       | Main assignee |
+| HubSpot, Inc.        | hubspot, inc, HubSpot            | Yes       | Main assignee |
+
+> [!NOTE]
+> All identified variations must be included in the assignee filter during patent search to ensure comprehensive coverage.
+
+## 4. Technical Elements (Constituent Features)
+
+- **LLM Dialogue Engine**: Multi-turn conversation management with context retention
+- **Real-Time Sentiment Analysis**: Detects customer frustration and escalates to human agents
+- **CRM Integration API**: Connects to Salesforce and HubSpot for ticket creation and customer history retrieval
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "targeting" }
+
+[[checks]]
+name = "targeting_invoked"
+command = { command = "skill-invoked", skill = "targeting" }
+
+[[checks]]
+name = "specification_read"
+command = { command = "tool-use", tool = "Read", param = "file_path", value = "specification.md" }
+
+[[checks]]
+name = "targeting_template_read"
+command = { command = "tool-use", tool = "Read", param = "file_path", value = "targeting-template.md" }
+
+[[checks]]
+name = "keywords_template_read"
+command = { command = "tool-use", tool = "Read", param = "file_path", value = "keywords-template.md" }
+
+[[checks]]
+name = "targeting_md_created"
+command = { command = "workspace-file", path = "targeting.md" }
+
+[[checks]]
+name = "keywords_md_created"
+command = { command = "workspace-file", path = "keywords.md" }

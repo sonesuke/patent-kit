@@ -1,9 +1,0 @@
-{
-  "name": "skill-bench-harness",
-  "version": "0.1.0",
-  "description": "Test harness utilities for skill-bench testing framework",
-  "author": {
-    "name": "sonesuke"
-  },
-  "mcpServers": {}
-}

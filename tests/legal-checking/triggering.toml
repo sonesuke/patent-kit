@@ -1,0 +1,21 @@
+# Test Case: Legal Checking - Triggering
+
+name = "triggering"
+description = "Verify legal-checking skill is triggered when asked about legal compliance"
+timeout = 60
+
+test_prompt = """
+Load the legal-checking skill to understand the legal compliance guidelines.
+"""
+
+[[checks]]
+name = "mcp_server_loaded"
+command = { command = "mcp-loaded", server = "google-patent-cli" }
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "legal-checking" }
+
+[[checks]]
+name = "legal_checking_invoked"
+command = { command = "skill-invoked", skill = "legal-checking" }

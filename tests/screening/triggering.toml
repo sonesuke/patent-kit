@@ -1,0 +1,17 @@
+# Test Case: Screening - Triggering
+
+name = "triggering"
+description = "Verify screening skill is triggered when asked to screen patents"
+timeout = 60
+
+test_prompt = """
+Load the screening skill to understand the patent screening process.
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "screening" }
+
+[[checks]]
+name = "screening_invoked"
+command = { command = "skill-invoked", skill = "screening" }

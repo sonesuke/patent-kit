@@ -9,3 +9,10 @@ Cargo.lock
 .claude/worktrees/
 .claude/settings.local.json
 node_modules
+
+# Test logs
+/logs/*
+!/logs/.gitkeep
+
+# skill-bench test history
+.skill-bench/

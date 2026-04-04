@@ -1,0 +1,53 @@
+# Test Case: Concept Interview Functional (with existing specification)
+
+name = "functional-with-spec"
+description = "Verify concept-interview verifies existing specification without re-interviewing"
+timeout = 120 # seconds
+
+test_prompt = """
+Use concept-interview to verify our existing product specification is complete and ready for the targeting phase. Do not perform any additional assignee checks - just verify the existing specification.
+"""
+
+[[setup]]
+path = "0-specifications/specification.md"
+content = """
+# Product Specification
+
+## 1. Product Concept
+
+Voice recognition system for smart home devices
+
+## 2. Target Market
+
+- **Country**: US
+- **Release Date**: 2025-06-01
+- **Cutoff Date**: 2005-06-01
+
+## 3. Competitors
+
+- **Google LLC**
+- **Amazon.com Inc.**
+
+## 4. Verified Assignee Names (Canonicalized)
+
+| Original Name | Verified Assignee Names                    | Status   | Notes                    |
+| ------------- | ------------------------------------------ | -------- | ------------------------ |
+| Google        | Google LLC, Google Inc., GOOGLE LLC        | Verified | Multiple name variations |
+| Amazon        | Amazon.com Inc., Amazon Technologies, Inc. | Verified | Multiple name variations |
+"""
+
+[[checks]]
+name = "mcp_server_loaded"
+command = { command = "mcp-loaded", server = "google-patent-cli" }
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "concept-interviewing" }
+
+[[checks]]
+name = "concept_interview_invoked"
+command = { command = "skill-invoked", skill = "concept-interviewing" }
+
+[[checks]]
+name = "patent_assignee_check_not_invoked"
+command = { command = "skill-invoked", skill = "patent-assignee-check", deny = true }
