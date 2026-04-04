@@ -55,7 +55,7 @@ command = { command = "skill-invoked", skill = "investigation-reporting" }
 
 [[checks]]
 name = "progress_file_created"
-command = { command = "workspace-file", path = "PROGRESS.md" }
+command = { command = "workspace-file", path = "PROGRESS.md", copy_to_output = true }
 
 [[checks]]
 name = "progress_has_screening_summary"
