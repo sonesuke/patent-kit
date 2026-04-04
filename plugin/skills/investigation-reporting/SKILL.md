@@ -90,12 +90,12 @@ Based on the user's request, determine which mode to use:
 ### Workflow 1: Overall Progress Report
 
 1. External: "What is the current progress?"
-2. Internal: Get database statistics → Analyze investigation directories → Generate report using template → Write to PROGRESS.md
+2. Internal: Get screening statistics from DB → Query evaluation/claim/prior-art progress from DB → Generate report using template → Write to PROGRESS.md → Run legal-checking
 
 ### Workflow 2: Specific Patent Report
 
 1. External: "Tell me about US20240292070A1"
-2. Internal: Extract patent ID from request → Parse investigation directory → Format element-by-element table → Output as text
+2. Internal: Extract patent ID → Query all data from DB via investigation-fetching → Format report using template → Write to `<patent_id>.md` → Run legal-checking
 
 ## State Management
 
