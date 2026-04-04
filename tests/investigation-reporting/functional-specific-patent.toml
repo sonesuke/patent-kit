@@ -88,6 +88,14 @@ name = "legal_checking_loaded"
 command = { command = "skill-loaded", skill = "legal-checking" }
 
 [[checks]]
+name = "legal_checking_invoked"
+command = { command = "skill-invoked", skill = "legal-checking" }
+
+[[checks]]
+name = "report_file_created"
+command = { command = "workspace-file", path = "US12231380B1.md", copy_to_output = true }
+
+[[checks]]
 name = "report_contains_patent_id"
 command = { command = "log-contains", pattern = "US12231380B1" }
 

@@ -72,9 +72,9 @@ Based on the user's request, determine which mode to use:
 **CRITICAL: Use the Write tool to create the report file.**
 
 - For overall progress: Create `PROGRESS.md` in the project root directory.
-- For specific patent: Output directly as text (no file creation).
+- For specific patent: Create `<patent_id>.md` in the project root directory.
 
-**DO NOT just output the report as text** - you MUST use the Write tool to save it for overall progress reports.
+**DO NOT just output the report as text** - you MUST use the Write tool to save it.
 
 ### Quality Gates
 
@@ -106,7 +106,7 @@ Based on the user's request, determine which mode to use:
 ### Final State
 
 - `PROGRESS.md` created in project root with current investigation status (for overall progress)
-- Or formatted patent report displayed to user (for specific patent)
+- `<patent_id>.md` created in project root with patent report (for specific patent)
 
 ## Internal References (For This Skill Only)
 

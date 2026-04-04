@@ -43,13 +43,13 @@ Read and parse:
 
 ### Step 5: Output Report
 
-**For specific patent reports, output directly as text. DO NOT create a file.**
+**CRITICAL: Use the Write tool to create the report file.**
 
 Use the template from `assets/specific-patent-report-template.md`:
 
 1. Read template
 2. Fill in patent-specific information
-3. Output as formatted text (no file creation)
+3. Write to `<patent_id>.md` using Write tool
 
 Template includes:
 
@@ -65,4 +65,4 @@ Template includes:
 - [ ] Investigation files parsed successfully
 - [ ] Element table includes all elements from claim-analysis.md
 - [ ] NO legal assertions (infringement, validity conclusions)
-- [ ] Output as text (no file creation for specific patents)
+- [ ] Write tool used to create `<patent_id>.md`
