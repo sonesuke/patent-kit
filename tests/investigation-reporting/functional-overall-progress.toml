@@ -58,12 +58,16 @@ name = "progress_file_created"
 command = { command = "workspace-file", path = "PROGRESS.md", copy_to_output = true }
 
 [[checks]]
-name = "progress_has_screening_summary"
-command = { command = "log-contains", pattern = "Screening Summary" }
+name = "progress_has_screening_data"
+command = { command = "log-contains", pattern = "Screened patents" }
 
 [[checks]]
-name = "progress_has_overview"
-command = { command = "log-contains", pattern = "Overview" }
+name = "progress_has_patent_data"
+command = { command = "log-contains", pattern = "US12231380B1" }
+
+[[checks]]
+name = "progress_has_next_actions"
+command = { command = "log-contains", pattern = "Next Steps" }
 
 [[checks]]
 name = "legal_checking_loaded"

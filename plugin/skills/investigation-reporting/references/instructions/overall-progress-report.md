@@ -65,7 +65,7 @@ For each relevant patent, determine its investigation status by querying the
 database:
 
 | Patent ID | Evaluation | Similarity (Inv.) | Prior Art | Verdict |
-|-----------|-----------|-------------------|-----------|---------|
+| --------- | ---------- | ----------------- | --------- | ------- |
 
 - **Evaluation**: `Done` if claims exist in DB, `Pending` otherwise
 - **Similarity**: Max similarity level from DB (`Significant` > `Moderate` > `Pending`)
