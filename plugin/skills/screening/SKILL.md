@@ -8,8 +8,6 @@ description: |
     * "screen the patents"
     * "remove noise"
   - `patents.db` exists with `target_patents` table populated (will be prepared by this skill if missing)
-  author: sonesuke
-  version: 1.0.0
 ---
 
 # Screening

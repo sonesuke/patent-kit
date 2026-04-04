@@ -6,8 +6,6 @@ description: |
   Triggered when the user asks for:
   - Progress summary: "What is the current progress?", "Give me a summary", "How is the investigation going?", "Show me the status"
   - Specific patent report: "Tell me about US1234567A", "Report on patent US1234567A", "What's the status of US1234567A?"
-  author: sonesuke
-  version: 1.0.0
 context: fork
 ---
 

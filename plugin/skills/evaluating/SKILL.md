@@ -8,8 +8,6 @@ description: |
     * "evaluate the patent"
     * "analyze claim elements"
   - `patents.db` exists with `screened_patents` table populated
-  author: sonesuke
-  version: 1.0.0
 ---
 
 # Evaluation

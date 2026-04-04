@@ -9,8 +9,6 @@ description: |
   Example usage:
   - "Initialize the patent database and import CSV files from csv/"
   - "Get screening progress statistics"
-  author: sonesuke
-  version: 1.0.0
 context: fork
 ---
 

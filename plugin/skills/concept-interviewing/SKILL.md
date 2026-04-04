@@ -10,8 +10,6 @@ description: |
     * "conduct concept interview"
     * "define product concept"
     * "define search requirements"
-  author: sonesuke
-  version: 1.0.0
 ---
 
 # Concept Interview

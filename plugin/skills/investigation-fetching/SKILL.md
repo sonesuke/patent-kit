@@ -8,8 +8,6 @@ description: |
   This skill is designed to be called by other skills (e.g., evaluating, screening) and
   should NOT be triggered by direct user requests.
 user_invocable: false
-  author: sonesuke
-  version: 1.0.0
 context: fork
 ---
 
