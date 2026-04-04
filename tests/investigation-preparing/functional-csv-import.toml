@@ -1,0 +1,39 @@
+# Test Case: Investigation Preparing - CSV Import
+
+name = "functional-csv-import"
+description = "Verify investigation-preparing initializes database and imports CSV files"
+timeout = 90 # seconds
+
+test_prompt = """
+Initialize the patent database and import CSV files from csv/
+"""
+
+[[setup]]
+path = "csv/patents.csv"
+content = """
+id,family_id,title,abstract_text,publication_date,country
+US-1234567-A,US-1234567,Example Patent 1,Example abstract text for patent 1,2023-01-15,US
+US-7654321-A,US-7654321,Example Patent 2,Example abstract text for patent 2,2023-03-20,US
+US-9999999-A,US-9999999,Example Patent 3,Example abstract text for patent 3,2023-06-10,US
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "investigation-preparing" }
+
+[[checks]]
+name = "preparing_invoked"
+command = { command = "skill-invoked", skill = "investigation-preparing" }
+
+[[checks]]
+name = "database_created"
+command = { command = "workspace-file", path = "patents.db" }
+
+[[checks]]
+name = "csv_imported"
+command = {
+  command = "db-query",
+  db = "",
+  query = "SELECT COUNT(*) FROM target_patents;",
+  expected = "3",
+}

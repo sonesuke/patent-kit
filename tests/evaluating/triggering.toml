@@ -1,0 +1,17 @@
+# Test Case: Evaluating - Triggering
+
+name = "triggering"
+description = "Verify evaluating skill is triggered when asked to evaluate patents"
+timeout = 60
+
+test_prompt = """
+Load the evaluating skill to understand the patent evaluation process.
+"""
+
+[[checks]]
+name = "skill_loaded"
+command = { command = "skill-loaded", skill = "evaluating" }
+
+[[checks]]
+name = "evaluating_invoked"
+command = { command = "skill-invoked", skill = "evaluating" }
