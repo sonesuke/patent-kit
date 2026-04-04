@@ -198,7 +198,7 @@ When formatting queries for direct use in
    `assignee:"Google LLC" assignee:"Microsoft Corp"`).
 4. **Country/Language**: If a country is specified, the language MUST also be
    specified (e.g., `country:JP language:JAPANESE`, `country:CN
-   language:CHINESE`).
+language:CHINESE`).
 
 #### Step 3: Create Output Files
 
@@ -229,13 +229,13 @@ Upon successful completion:
 ## Quality Gates
 
 - [ ] **Ambiguity Check**: Did you check for and handle ambiguous
-  keywords/abbreviations?
+      keywords/abbreviations?
 - [ ] **Over-Filtering Check**: If count < 200, did you confirm with the user
-  that this is intended?
+      that this is intended?
 - [ ] **Volume Control**: Is the final General Search count under 2000 (or
-  reasonably low)?
+      reasonably low)?
 - [ ] **Output**: Is `targeting.md` created with both query patterns and the
-  validation log?
+      validation log?
 - [ ] **Keywords Registry**: Is `keywords.md` created with golden keywords?
 
 ## State Management
