@@ -4,11 +4,10 @@ description: |
   Initializes the patent investigation database and imports CSV files.
 
   Use this skill to set up the SQLite database (patents.db) before running
-  screening. Supports database initialization, CSV import, and progress queries.
+  screening. Supports database initialization and CSV import.
 
   Example usage:
   - "Initialize the patent database and import CSV files from csv/"
-  - "Get screening progress statistics"
 context: fork
 ---
 

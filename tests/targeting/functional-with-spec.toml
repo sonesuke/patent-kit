@@ -63,21 +63,13 @@ name = "targeting_invoked"
 command = { command = "skill-invoked", skill = "targeting" }
 
 [[checks]]
-name = "specification_read"
-command = { command = "tool-use", tool = "Read", param = "file_path", value = "specification.md" }
-
-[[checks]]
-name = "targeting_template_read"
-command = { command = "tool-use", tool = "Read", param = "file_path", value = "targeting-template.md" }
-
-[[checks]]
-name = "keywords_template_read"
-command = { command = "tool-use", tool = "Read", param = "file_path", value = "keywords-template.md" }
+name = "patent_search_invoked"
+command = { command = "skill-invoked", skill = "patent-search" }
 
 [[checks]]
 name = "targeting_md_created"
-command = { command = "workspace-file", path = "targeting.md" }
+command = { command = "workspace-file", path = "targeting.md", copy_to_output = true }
 
 [[checks]]
 name = "keywords_md_created"
-command = { command = "workspace-file", path = "keywords.md" }
+command = { command = "workspace-file", path = "keywords.md", copy_to_output = true }

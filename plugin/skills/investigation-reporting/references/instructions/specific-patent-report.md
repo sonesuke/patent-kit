@@ -2,7 +2,9 @@
 
 ## Purpose
 
-Generate a detailed report for a single specified patent.
+Generate a detailed report for a single specified patent, reflecting the
+current investigation progress. Only completed phases are shown with data;
+incomplete phases display "Pending".
 
 ## Process
 
@@ -13,56 +15,97 @@ Parse user request to extract patent ID:
 - "Tell me about US20240292070A1" → Extract: `US20240292070A1`
 - "Report on patent US9876543B2" → Extract: `US9876543B2`
 
-### Step 2: Locate Investigation Directory
+### Step 2: Get Patent Data from Database
 
-Find investigation directory: `investigation/{patent_id}/`
+**CRITICAL: Use `investigation-fetching` skill for all data retrieval.**
+Do NOT parse files from investigation directories.
 
-If not found, report: "No investigation found for {patent_id}"
+1. **Patent basic info**:
 
-### Step 3: Parse Investigation Files
+   ```
+   Skill: investigation-fetching
+   Request: "Execute SQL: SELECT tp.*, sp.judgment, sp.reason FROM target_patents tp LEFT JOIN screened_patents sp ON tp.patent_id = sp.patent_id WHERE tp.patent_id='<patent_id>'"
+   ```
 
-Read and parse:
+2. **Claims and elements**:
 
-1. `evaluation.md`: Overall similarity assessment
-2. `claim-analysis.md`: Detailed claim-by-claim analysis
-3. `prior-art.md`: Prior art research results (if exists)
+   ```
+   Skill: investigation-fetching
+   Request: "Get elements for patent <patent_id>"
+   ```
 
-### Step 4: Format Element-by-Element Table
+3. **Similarities**:
 
-**For claim-analysis.md**, create table:
+   ```
+   Skill: investigation-fetching
+   Request: "Execute SQL: SELECT * FROM similarities WHERE patent_id='<patent_id>'"
+   ```
 
-| Element           | Target        | Disclosure          | Verdict                |
-| ----------------- | ------------- | ------------------- | ---------------------- |
-| A. [element name] | [target spec] | [patent disclosure] | Present/Partial/Absent |
-| B. [element name] | [target spec] | [patent disclosure] | Present/Partial/Absent |
+4. **Prior art** (if exists):
+   ```
+   Skill: investigation-fetching
+   Request: "Execute SQL: SELECT * FROM prior_art_elements WHERE patent_id='<patent_id>'"
+   ```
 
-**For prior-art.md** (if exists):
+### Step 3: Determine Phase Status
 
-- List prior art patents found
-- Summarize relevance level
+Based on the database query results, determine which phases are complete:
+
+| Phase              | Complete When                 | Status         |
+| ------------------ | ----------------------------- | -------------- |
+| Screening          | `screened_patents` has entry  | Done / Pending |
+| Evaluation         | `claims` and `elements` exist | Done / Pending |
+| Claim Analysis     | `similarities` exist          | Done / Pending |
+| Prior Art Research | `prior_art_elements` exist    | Done / Pending |
+
+### Step 4: Generate Report
+
+Use the template from `assets/specific-patent-report-template.md`.
+Fill in sections based on phase status:
+
+#### Sections to Always Include
+
+- **Basic Information**: Patent ID, title, assignee, dates, screening judgment
+
+#### Sections Based on Phase Status
+
+- **Similarity Assessment** (if claim analysis is done):
+  - Overall similarity from `similarities` (max of Significant > Moderate > Limited)
+  - Per-element similarity breakdown
+
+- **Element Analysis** (if claim analysis is done):
+  - Element-by-element table from `similarities` and `elements`
+
+- **Claim Analysis** (if evaluation is done):
+  - Claim text and decomposition from `claims` and `elements`
+
+- **Prior Art Research** (if prior art research is done):
+  - Prior art references from `prior_art_elements`
+  - Claim chart comparison
+
+- **Pending Sections**:
+  - Mark incomplete phases as "Pending" with brief description of what
+    remains to be done
 
 ### Step 5: Output Report
 
-**For specific patent reports, output directly as text. DO NOT create a file.**
+**CRITICAL: Use the Write tool to create the report file.**
 
-Use the template from `assets/specific-patent-report-template.md`:
-
-1. Read template
-2. Fill in patent-specific information
-3. Output as formatted text (no file creation)
-
-Template includes:
-
-- Basic Information
-- Similarity Assessment
-- Element Analysis
-- Claim Analysis
-- Prior Art Research (with prior-art-researching template structure)
+1. Read template from `assets/specific-patent-report-template.md`
+2. Fill in patent-specific information from database queries
+3. Write to `<patent_id>.md` using Write tool
+4. Run legal-checking on the generated report:
+   ```
+   Skill: legal-checking
+   Request: "<patent_id>.md"
+   ```
 
 ## Quality Checks
 
 - [ ] Patent ID correctly extracted
-- [ ] Investigation files parsed successfully
-- [ ] Element table includes all elements from claim-analysis.md
+- [ ] All data retrieved from database via investigation-fetching skill
+- [ ] Phase status correctly determined from DB (not hardcoded)
+- [ ] Only completed phases show data; incomplete phases show "Pending"
 - [ ] NO legal assertions (infringement, validity conclusions)
-- [ ] Output as text (no file creation for specific patents)
+- [ ] Write tool used to create `<patent_id>.md`
+- [ ] Legal-checking skill invoked on the generated report

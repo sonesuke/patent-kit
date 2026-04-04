@@ -33,12 +33,12 @@ An autonomous daemon that runs inside the devcontainer and checks for failing Gi
 - **Workflow**: Finds failing PRs → Runs `claude` with `--worktree` → Analyzes the failure (typically using `npm run lint`) → Commits the fix and replies to the PR.
 - **Requirements**: Requires GitHub CLI (`gh`) authenticated inside the devcontainer.
 
-### Skill-Bench (`agents/skill-bench/runner.sh`)
+### Skill-Bench (`skill-bench`)
 
-An autonomous test runner that executes E2E tests for the `patent-kit` skills using **TOML-based test cases**.
+A TOML-based E2E test runner for `patent-kit` skills, installed via `mise`.
 
-- **Architecture**: All execution happens inside the devcontainer. Test cases are defined in TOML format under `cases/<skill>/<test>.toml`.
-- **Workflow**: Reads test cases from `cases/*/*.toml` → Sets up isolated workspaces → Runs `claude -p` with test prompts → Evaluates results using check scripts → Generates summary in `logs/`.
-- **Usage**: `bash agents/skill-bench/runner.sh [pattern]` (default: `cases/*/*.toml`).
-- **Test Case Format**: TOML files with `test_prompt`, `timeout`, `[[setup]]`, and `[[checks]]` sections.
-- **Requirements**: Requires `yq` and `jq` commands inside the devcontainer.
+- **Architecture**: All execution happens inside the devcontainer. Test cases are defined in TOML format under `tests/<skill>/<test>.toml`.
+- **Workflow**: Reads test cases → Sets up isolated workspaces → Runs `claude -p` with test prompts → Evaluates results using built-in check types → Generates summary in `logs/`.
+- **Usage**: `mise run test` (runs all tests under `tests/`).
+- **Test Case Format**: TOML files with `test_prompt`, `timeout`, `[[setup]]`, and `[[checks]]` sections. See `skill-bench help` for available check types.
+- **Check Types**: `skill-loaded`, `skill-invoked`, `mcp-loaded`, `mcp-tool-invoked`, `mcp-success`, `tool-use`, `tool-param`, `workspace-file`, `workspace-dir`, `file-contains`, `log-contains`, `message-contains`, `db-query`.
