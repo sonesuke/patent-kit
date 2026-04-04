@@ -121,6 +121,7 @@ agents should NOT read these:
   - `specific-patent-report.md`: Single patent detailed report
 - **assets/**: Templates and reference materials
   - `investigation-report-template.md`: Standard report template
+  - `prior-art-template.md`: Prior art investigation report template
 
 **IMPORTANT**: External agents should invoke this skill via the Skill tool, not
 access these internal files directly.

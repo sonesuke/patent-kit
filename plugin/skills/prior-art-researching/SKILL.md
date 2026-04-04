@@ -79,20 +79,36 @@ Search for prior art references (both patent and non-patent literature) for pate
      Skill: skill="google-patent-cli:patent-search" args="<query>"
      Skill: skill="arxiv-cli:arxiv-search" args="<query>"
      ```
-   - See `references/instructions.md` for the multi-layer search strategy (Layer 1/2/3)
+   - **Do NOT delegate to subagents (Agent tool)** — invoke Skills directly from this session
+
+   Execute three search layers per element:
+
+   | Layer | Purpose | Keywords | Limit |
+   |-------|---------|----------|-------|
+   | 1 | General terminology | High-level terms from element description | 10–20 |
+   | 2 | Specific nomenclature | Model names, algorithms, parameter names | 30–50 |
+   | 3 | Functional/role-based | "configured to", "means for" | 10–20 |
+
+   - Include `publication_before: "<priority date>"` in all searches
 
    **2c. Screen and Analyze Results**:
-   - Identify Grade A candidates, verify publication dates
+   - Identify Grade A candidates (highly relevant), verify publication dates
    - For patent references: invoke `Skill: google-patent-cli:patent-fetch` with patent ID to get full details
    - For NPL: invoke `Skill: arxiv-cli:arxiv-fetch` for full text
    - **Do NOT delegate to subagents (Agent tool)** — invoke Skills directly from this session
    - Create claim charts with paragraph-level citations
 
    **2d. Record Results**:
-   - Invoke `Skill: investigation-recording` with prior art data
+   - Invoke `Skill: investigation-recording` with prior art data for each reference:
+     - patent_id, claim_number, element_label, reference_id, reference_type, title, relevance_level (Significant/Moderate/Limited), analysis_notes, publication_date, claim_chart
    - **CRITICAL**: Record at ELEMENT LEVEL (each reference linked to claim_number and element_label)
 
-3. **Verify Results**: Confirm all prior arts recorded to database
+3. **Verify Results**: Confirm all prior arts recorded to database. Provide summary with:
+   - Patent ID and title
+   - Number of prior art references found
+   - Relevance levels for each reference
+   - Key findings summary
+   - Overall similarity assessment
 
 ## State Management
 
@@ -104,7 +120,3 @@ Search for prior art references (both patent and non-patent literature) for pate
 
 - No patents in `similarities` table with Moderate/Significant levels without corresponding `prior_arts` entries (all searched)
 
-## References
-
-- `references/instructions.md` - Detailed multi-layer search strategy and recording format
-- `templates/prior-art-template.md` - Output template for investigation report
