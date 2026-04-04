@@ -97,12 +97,12 @@ command = { command = "workspace-file", path = "US12231380B1.md", copy_to_output
 
 [[checks]]
 name = "report_contains_patent_id"
-command = { command = "log-contains", pattern = "US12231380B1" }
+command = { command = "file-contains", file = "US12231380B1.md", contains = "US12231380B1" }
 
 [[checks]]
 name = "report_contains_similarity"
-command = { command = "log-contains", pattern = "Moderate" }
+command = { command = "file-contains", file = "US12231380B1.md", contains = "Moderate" }
 
 [[checks]]
 name = "report_contains_element_analysis"
-command = { command = "log-contains", pattern = "Element" }
+command = { command = "file-contains", file = "US12231380B1.md", contains = "Element" }
