@@ -24,7 +24,7 @@ Add this repository as a marketplace and install the plugin to your Claude Code 
 claude plugin marketplace add sonesuke/patent-kit
 
 # 2. Install the plugin (automatically loads required MCPs)
-claude plugin i patent-kit@patent-kit-marketplace
+claude plugin install patent-kit@patent-kit-marketplace
 ```
 
 2. **Initialize Workspace**
