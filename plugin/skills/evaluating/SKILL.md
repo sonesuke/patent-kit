@@ -50,23 +50,24 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 1. **Get Patents to Analyze**:
    - Invoke `Skill: investigation-fetching` with request "Get list of relevant patents without evaluation"
 
-2. **For each patent**, execute Steps 2a–2d in order:
+2. **Batch Fetch Patent Data** (up to 10 patents in parallel):
+   - Split patents into batches of 10
+   - For each batch, invoke `Skill: google-patent-cli:patent-fetch` for all patents **in parallel**
+   - After `fetch_patent` returns each dataset, use `execute_cypher` to get claims.
+     **You MUST use this EXACT query — do NOT modify the node label or property names:**
+     ```cypher
+     MATCH (c:claims) RETURN c.number, c.text
+     ```
+   - **CRITICAL**: Do NOT add `ORDER BY toInteger(c.number)` — it causes `c.text` to return `expression: null` due to a Cypher parser bug.
+     Also do NOT use `MATCH (p:Patent)-[:claims]->(c:claims)` (relationship pattern), `[:HAS_CHILD]->(c:claim)`, `[:claim]->(c:claim)`, `p.claims`, or `[:claims]->(c:claim)`.
 
-   **2a. Fetch Patent Data**:
-   - Invoke `Skill: google-patent-cli:patent-fetch` with patent ID
-   - Extract: title, abstract, all claims
-
-   **2b. Analyze Claims**:
-   - Extract ALL claims from the patent (both independent and dependent)
+3. **Analyze and Record** (for each patent):
+   - Extract ALL claims (both independent and dependent)
    - For EACH claim, decompose into constituent elements (A, B, C...)
-
-   **2c. Record Claims**:
    - Invoke `Skill: investigation-recording` with request "Record claims for patent <patent-id>: <claims_data>"
-
-   **2d. Record Elements**:
    - Invoke `Skill: investigation-recording` with request "Record elements for patent <patent-id>: <elements_data>"
 
-3. **Verify Results**: Query database to confirm all claims and elements recorded
+4. **Verify Results**: Confirm all claims and elements are recorded in the database
 
 ## State Management
 
