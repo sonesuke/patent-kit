@@ -30,19 +30,21 @@ Stores patent master data imported from CSV files.
 
 Stores latest screening results only (no history tracking).
 
-| Column        | Type          | Description                                      |
-| ------------- | ------------- | ------------------------------------------------ |
-| patent_id     | TEXT PK       | Patent number (FK to target_patents.patent_id)   |
-| judgment      | TEXT NOT NULL | Judgment: `relevant`, `irrelevant`, or `expired` |
-| reason        | TEXT NOT NULL | Screening rationale                              |
-| abstract_text | TEXT NOT NULL | Abstract content (fetched during screening)      |
-| screened_at   | TEXT          | Screening timestamp                              |
-| updated_at    | TEXT          | Last update timestamp                            |
+| Column        | Type          | Description                                                                |
+| ------------- | ------------- | -------------------------------------------------------------------------- |
+| patent_id     | TEXT PK       | Patent number (FK to target_patents.patent_id)                             |
+| judgment      | TEXT NOT NULL | Relevance: `relevant` or `irrelevant`                                      |
+| legal_status  | TEXT          | Legal status from `fetch_patent` (e.g., `Pending`, `Expired`, `Withdrawn`) |
+| reason        | TEXT NOT NULL | Screening rationale                                                        |
+| abstract_text | TEXT NOT NULL | Abstract from `fetch_patent.abstract_text`                                 |
+| screened_at   | TEXT          | Screening timestamp                                                        |
+| updated_at    | TEXT          | Last update timestamp                                                      |
 
 **Constraints**:
 
 - `patent_id` is a FOREIGN KEY referencing `target_patents(patent_id)` with `ON DELETE CASCADE`
-- `judgment` only allows: `relevant`, `irrelevant`, `expired`
+- `judgment` only allows: `relevant`, `irrelevant`
+- `legal_status` reflects the patent's legal status from `fetch_patent`
 - `reason` and `abstract_text` must NOT be NULL
 
 ### claims
@@ -176,13 +178,13 @@ Stores element-level mappings between patent elements and prior art references.
 
 Aggregates screening statistics.
 
-| Column         | Type    | Description                                 |
-| -------------- | ------- | ------------------------------------------- |
-| total_targets  | INTEGER | Count of all patents in target_patents      |
-| total_screened | INTEGER | Count of all patents in screened_patents    |
-| relevant       | INTEGER | Count of patents with judgment='relevant'   |
-| irrelevant     | INTEGER | Count of patents with judgment='irrelevant' |
-| expired        | INTEGER | Count of patents with judgment='expired'    |
+| Column         | Type    | Description                                                 |
+| -------------- | ------- | ----------------------------------------------------------- |
+| total_targets  | INTEGER | Count of all patents in target_patents                      |
+| total_screened | INTEGER | Count of all patents in screened_patents                    |
+| relevant       | INTEGER | Count of patents with judgment='relevant'                   |
+| irrelevant     | INTEGER | Count of patents with judgment='irrelevant'                 |
+| expired        | INTEGER | Count of patents with legal_status='Expired' or 'Withdrawn' |
 
 ## Triggers
 
@@ -225,9 +227,9 @@ target_patents (1) -----> (1) screened_patents (1) -----> (*) claims (1) -----> 
      |                            |                            |                    |                        |
      |-- patent_id (PK)            |-- patent_id (PK, FK)        |-- patent_id (FK)     |-- patent_id (PK, FK)     |-- patent_id (PK, FK)
      |-- title                     |-- judgment                  |-- claim_number (FK)  |-- claim_number (PK, FK)  |-- claim_number (PK, FK)
-     |-- country                   |-- reason                    |-- claim_type         |-- element_label (PK)     |-- element_label (PK, FK)
-     |-- assignee                  |-- abstract_text             |-- claim_text         |-- element_description    |-- similarity_level
-     |-- extra_fields              |-- screened_at               |-- created_at         |-- created_at             |-- analysis_notes
+     |-- country                   |-- legal_status              |-- claim_type         |-- element_label (PK)     |-- element_label (PK, FK)
+     |-- assignee                  |-- reason                    |-- claim_text         |-- element_description    |-- similarity_level
+     |-- extra_fields              |-- abstract_text             |-- created_at         |-- created_at             |-- analysis_notes
      |-- publication_date          |-- updated_at                |-- updated_at         |-- updated_at             |-- analyzed_at
      |-- filing_date               |                            |                    |                        |-- updated_at
      |-- grant_date                |                            |                    |

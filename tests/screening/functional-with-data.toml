@@ -57,10 +57,40 @@ name = "database_exists"
 command = { command = "workspace-file", path = "patents.db" }
 
 [[checks]]
+name = "fetching_loaded"
+command = { command = "skill-loaded", skill = "investigation-fetching" }
+
+[[checks]]
+name = "recording_loaded"
+command = { command = "skill-loaded", skill = "investigation-recording" }
+
+[[checks]]
+name = "patent_fetch_invoked"
+command = { command = "mcp-tool-invoked", tool = "fetch_patent" }
+
+[[checks]]
 name = "target_patents_populated"
 command = {
   command = "db-query",
   db = "",
   query = "SELECT COUNT(*) FROM target_patents;",
+  expected = "3",
+}
+
+[[checks]]
+name = "all_patents_screened"
+command = {
+  command = "db-query",
+  db = "",
+  query = "SELECT COUNT(*) FROM screened_patents;",
+  expected = "3",
+}
+
+[[checks]]
+name = "legal_status_recorded"
+command = {
+  command = "db-query",
+  db = "",
+  query = "SELECT COUNT(*) FROM screened_patents WHERE legal_status IS NOT NULL;",
   expected = "3",
 }

@@ -41,7 +41,7 @@ internal reference files for this skill's internal use only.
 
 **Example requests**:
 
-- "Record screening result: id=US1234567A1, judgment=relevant, reason=..."
+- "Record screening result: id=US1234567A1, judgment=relevant, legal_status=Pending, reason=..."
 - "Record claims for patent US1234567A1: claim_1=..., claim_2=..."
 - "Record elements for patent US1234567A1: element_a=..., element_b=..."
 - "Record similarities for patent US1234567A1: element_a=Significant, element_b=Moderate..."

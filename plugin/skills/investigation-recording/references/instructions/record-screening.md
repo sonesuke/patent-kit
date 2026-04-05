@@ -9,10 +9,11 @@ Save or update a screening judgment in the `screened_patents` table.
 ### Main Query (UPSERT)
 
 ```sql
-INSERT OR REPLACE INTO screened_patents (patent_id, judgment, reason, abstract_text, updated_at)
+INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text, updated_at)
 VALUES (
     '<patent_id>',
     '<judgment>',
+    '<legal_status>',
     '<reason>',
     '<abstract_text>',
     datetime('now')
@@ -23,6 +24,9 @@ VALUES (
 
 - `INSERT OR REPLACE` provides UPSERT semantics
 - `patent_id` is a FOREIGN KEY referencing `target_patents(patent_id)`
+- `judgment` must be `relevant` or `irrelevant`
+- `legal_status` is the value from `fetch_patent` (e.g., `Pending`, `Expired`, `Withdrawn`)
+- `abstract_text` must be from `fetch_patent.abstract_text` (NOT from `search_patents.snippet`)
 - `reason` and `abstract_text` are required (NOT NULL)
 - `updated_at` automatically set to current timestamp
 
@@ -32,8 +36,8 @@ VALUES (
 
 ```bash
 # Record screening result
-sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, reason, abstract_text, updated_at)
-VALUES ('US1234567A', 'relevant', 'Core technology for LLM systems', 'Abstract content fetched during screening', datetime('now'));"
+sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text, updated_at)
+VALUES ('US1234567A', 'relevant', 'Pending', 'Core technology for LLM systems', 'Abstract content fetched during screening', datetime('now'));"
 ```
 
 ### Using Variables
@@ -41,21 +45,23 @@ VALUES ('US1234567A', 'relevant', 'Core technology for LLM systems', 'Abstract c
 ```bash
 PATENT_ID="US1234567A"
 JUDGMENT="relevant"
+LEGAL_STATUS="Pending"
 REASON="Core technology for LLM systems"
 ABSTRACT_TEXT="Abstract content here"
 
-sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, reason, abstract_text, updated_at)
-VALUES ('$PATENT_ID', '$JUDGMENT', '$REASON', '$ABSTRACT_TEXT', datetime('now'));"
+sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text, updated_at)
+VALUES ('$PATENT_ID', '$JUDGMENT', '$LEGAL_STATUS', '$REASON', '$ABSTRACT_TEXT', datetime('now'));"
 ```
 
 ### Multi-Line SQL
 
 ```bash
 sqlite3 patents.db <<EOF
-INSERT OR REPLACE INTO screened_patents (patent_id, judgment, reason, abstract_text, updated_at)
+INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text, updated_at)
 VALUES (
     'US1234567A',
     'relevant',
+    'Pending',
     'Core technology for LLM systems',
     'Abstract content here',
     datetime('now')
@@ -65,12 +71,13 @@ EOF
 
 ## Parameters
 
-| Parameter     | Type   | Required | Default | Description                                                   |
-| ------------- | ------ | -------- | ------- | ------------------------------------------------------------- |
-| patent_id     | string | Yes      | -       | Patent ID (must exist in target_patents)                      |
-| judgment      | string | Yes      | -       | One of: `relevant`, `irrelevant`, `expired`                   |
-| reason        | string | Yes      | -       | Screening rationale (must NOT be NULL)                        |
-| abstract_text | string | Yes      | -       | Abstract content (must NOT be NULL, fetched during screening) |
+| Parameter     | Type   | Required | Default | Description                                                      |
+| ------------- | ------ | -------- | ------- | ---------------------------------------------------------------- |
+| patent_id     | string | Yes      | -       | Patent ID (must exist in target_patents)                         |
+| judgment      | string | Yes      | -       | One of: `relevant`, `irrelevant`                                 |
+| legal_status  | string | No       | NULL    | Legal status from `fetch_patent` (e.g., `Pending`, `Expired`)    |
+| reason        | string | Yes      | -       | Screening rationale (must NOT be NULL)                           |
+| abstract_text | string | Yes      | -       | Abstract from `fetch_patent.abstract_text` (must NOT be snippet) |
 
 ## Output
 
@@ -122,7 +129,7 @@ fi
 ### Invalid Judgment
 
 ```bash
-# Solution: Use only: relevant, irrelevant, expired
+# Solution: Use only: relevant, irrelevant
 JUDGMENT="relevant"  # Valid
 ```
 
@@ -132,8 +139,8 @@ JUDGMENT="relevant"  # Valid
 # Escape single quotes by doubling
 REASON="It''s a core technology"
 
-sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, reason, updated_at)
-VALUES ('US1234567A', 'relevant', 'It''s a core technology', datetime('now'));"
+sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, updated_at)
+VALUES ('US1234567A', 'relevant', 'Pending', 'It''s a core technology', datetime('now'));"
 ```
 
 ## Data Integrity
@@ -196,16 +203,17 @@ OFFSET=0
 PATENT_ID=$(sqlite3 patents.db "SELECT patent_id FROM target_patents ORDER BY patent_id LIMIT 1 OFFSET $OFFSET;")
 
 # Fetch and analyze (using MCP tool)
-# fetch-patent "$PATENT_ID"
+# fetch-patent "$PATENT_ID" → get abstract_text and legal_status
 
 # Record result
 sqlite3 patents.db <<EOF
-INSERT OR REPLACE INTO screened_patents (patent_id, judgment, reason, abstract_text, updated_at)
+INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text, updated_at)
 VALUES (
     '$PATENT_ID',
     'relevant',
+    'Pending',
     'Core technology for multi-turn LLM systems',
-    'Abstract content fetched during screening',
+    'Abstract content from fetch_patent.abstract_text',
     datetime('now')
 );
 EOF
@@ -214,10 +222,10 @@ EOF
 ### Bulk Screening from File
 
 ```bash
-# Assume results.csv has: patent_id,judgment,reason
-while IFS=',' read -r PATENT_ID JUDGMENT REASON; do
-    sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, reason, updated_at)
-    VALUES ('$PATENT_ID', '$JUDGMENT', '$REASON', datetime('now'));"
+# Assume results.csv has: patent_id,judgment,legal_status,reason
+while IFS=',' read -r PATENT_ID JUDGMENT LEGAL_STATUS REASON; do
+    sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, updated_at)
+    VALUES ('$PATENT_ID', '$JUDGMENT', '$LEGAL_STATUS', '$REASON', datetime('now'));"
 done < results.csv
 ```
 
@@ -226,10 +234,11 @@ done < results.csv
 ```bash
 # Change judgment from irrelevant to relevant
 sqlite3 patents.db <<EOF
-INSERT OR REPLACE INTO screened_patents (patent_id, judgment, reason, updated_at)
+INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, updated_at)
 VALUES (
     'US1234567A',
     'relevant',
+    'Pending',
     'Re-evaluated: Actually core technology after review',
     datetime('now')
 );

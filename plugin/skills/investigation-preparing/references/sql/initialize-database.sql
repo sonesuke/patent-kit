@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS target_patents (
 -- Create screened_patents table (with CHECK constraint for judgment)
 CREATE TABLE IF NOT EXISTS screened_patents (
     patent_id TEXT PRIMARY KEY NOT NULL,
-    judgment TEXT NOT NULL CHECK(judgment IN ('relevant', 'irrelevant', 'expired')),
+    judgment TEXT NOT NULL CHECK(judgment IN ('relevant', 'irrelevant')),
+    legal_status TEXT,
     reason TEXT NOT NULL,
     abstract_text TEXT NOT NULL,
     screened_at TEXT DEFAULT (datetime('now')),
@@ -52,7 +53,7 @@ SELECT
     (SELECT COUNT(*) FROM screened_patents) as total_screened,
     (SELECT COUNT(*) FROM screened_patents WHERE judgment = 'relevant') as relevant,
     (SELECT COUNT(*) FROM screened_patents WHERE judgment = 'irrelevant') as irrelevant,
-    (SELECT COUNT(*) FROM screened_patents WHERE judgment = 'expired') as expired;
+    (SELECT COUNT(*) FROM screened_patents WHERE legal_status IN ('Expired', 'Withdrawn')) as expired;
 
 -- Create timestamp triggers
 CREATE TRIGGER IF NOT EXISTS update_target_patents_timestamp
