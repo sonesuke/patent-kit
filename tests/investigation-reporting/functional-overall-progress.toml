@@ -13,8 +13,8 @@ command = """
 sqlite3 patents.db < /workspaces/patent-kit/plugin/skills/investigation-preparing/references/sql/initialize-database.sql
 sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US12231380B1', 'Trigger-based transfer of conversations from a chatbot to a human agent', 'US', '2023-10-11');"
 sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US20230245651A1', 'Enabling user-centered and contextually relevant interaction', 'US', '2023-04-03');"
-sqlite3 patents.db "INSERT INTO screened_patents (patent_id, judgment, reason, abstract_text) VALUES ('US12231380B1', 'relevant', 'Related to chatbot-to-human transfer mechanism', 'A system for triggering transfer of conversations from a chatbot to a human agent based on conversation context.');"
-sqlite3 patents.db "INSERT INTO screened_patents (patent_id, judgment, reason, abstract_text) VALUES ('US20230245651A1', 'irrelevant', 'Not related to core product features', 'A method for enabling user-centered and contextually relevant interaction in conversational systems.');"
+sqlite3 patents.db "INSERT INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text) VALUES ('US12231380B1', 'relevant', 'Pending', 'Related to chatbot-to-human transfer mechanism', 'A system for triggering transfer of conversations from a chatbot to a human agent based on conversation context.');"
+sqlite3 patents.db "INSERT INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text) VALUES ('US20230245651A1', 'irrelevant', 'Pending', 'Not related to core product features', 'A method for enabling user-centered and contextually relevant interaction in conversational systems.');"
 """
 
 [[setup]]

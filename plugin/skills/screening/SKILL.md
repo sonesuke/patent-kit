@@ -59,29 +59,35 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 1. **Get Patents to Screen**:
    - Invoke `Skill: investigation-fetching` with request "Get list of unscreened patent IDs"
 
-2. **For each patent**, execute Steps 2a–2d:
-
-   **2a. Read Specification**:
+2. **Read Specification** (once):
    - Read `specification.md` to understand Theme, Domain, and Target Product
 
-   **2b. Fetch Patent Data**:
-   - Invoke `Skill: google-patent-cli:patent-fetch` with patent ID
-   - Extract: title, abstract, legal status
+3. **Batch Fetch Patent Data** (up to 10 patents in parallel):
+   - Split unscreened patents into batches of 10
+   - For each batch, invoke `Skill: google-patent-cli:patent-fetch` for all patents **in parallel**
+   - From each result, extract:
+     - `abstract_text` property — the official patent abstract (with 【課題】【解決手段】 format for JP patents)
+     - `legal_status` property — the patent's current legal status (e.g., `Pending`, `Expired`, `Withdrawn`)
+     - `title` property
+   - **CRITICAL**: Do NOT use `snippet` — `snippet` is a search result summary, NOT the official abstract. Always use `abstract_text`.
 
-   **2c. Evaluate and Judge**:
+4. **Evaluate and Record** (for each patent):
 
-   Judgment criteria:
-   - **Expired or Withdrawn** → `expired`
+   Judgment criteria (relevance only):
    - **Irrelevant**: Completely different industry from Theme/Domain
    - **Relevant**: Matches Theme/Domain, Direct Competitors, Core Tech
    - **Exception**: Even if domain differs, KEEP if technology could serve as infrastructure or common platform
 
-   Judgment values: `relevant`, `irrelevant`, `expired` (lowercase)
+   Legal status handling:
+   - Record `legal_status` from `fetch_patent` as-is in the database
+   - Note expired/withdrawn patents in the reason field, but judgment remains based on relevance
 
-   **2d. Record Result**:
-   - Invoke `Skill: investigation-recording` with request "Record screening result for patent <patent-id>: <judgment_data>"
+   Judgment values: `relevant`, `irrelevant` (lowercase)
 
-3. **Verify Results**: Confirm all patents have corresponding `screened_patents` entries
+   For each patent, invoke `Skill: investigation-recording` with request "Record screening result for patent <patent-id>: judgment=<judgment>, legal_status=<legal_status>, reason=<reason>, abstract_text=<abstract_text from fetch_patent>"
+   - **CRITICAL**: The `abstract_text` passed to recording MUST be the `abstract_text` from `fetch_patent`, NOT the `snippet` from `search_patents`.
+
+5. **Verify Results**: Confirm all patents have corresponding `screened_patents` entries
 
 ## State Management
 
