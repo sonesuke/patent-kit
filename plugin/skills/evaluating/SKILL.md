@@ -58,7 +58,7 @@ Analyze screened patents by decomposing claims into elements and storing analysi
      ```cypher
      MATCH (c:claims) RETURN c.number, c.text
      ```
-   - **CRITICAL**: Do NOT add `ORDER BY toInteger(c.number)` — it causes `c.text` to return `expression: null` due to a Cypher parser bug.
+   - **CRITICAL**: Do NOT add `ORDER BY` or `WHERE` clauses — they cause parse errors or return null due to Cypher parser bugs.
      Also do NOT use `MATCH (p:Patent)-[:claims]->(c:claims)` (relationship pattern), `[:HAS_CHILD]->(c:claim)`, `[:claim]->(c:claim)`, `p.claims`, or `[:claims]->(c:claim)`.
 
 3. **Analyze and Record** (for each patent):
