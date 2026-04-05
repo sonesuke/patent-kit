@@ -20,7 +20,7 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 - `patents.db` must exist with `screened_patents` table populated (from screening skill)
 - Load `investigation-fetching` skill for data retrieval operations
-- Load `investigation-recording` skill for data recording operations
+- Load `investigation-recording` skill for elements recording
 
 ## Constitution
 
@@ -35,9 +35,8 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 **Skill-Only Database Access**:
 
-- ALWAYS use the Skill tool to load `investigation-recording` for ALL database operations
-- NEVER write raw SQL commands or read instruction files from investigation-recording
-- The investigation-recording skill handles SQL operations internally when invoked via Skill tool
+- Use `investigation-recording` skill for elements recording (LLM interpretation task)
+- For claims recording, use sqlite3 JSON functions directly with `output_file` — do NOT pass claim text through LLM generation (see Step 3)
 
 ## Skill Orchestration
 
@@ -53,21 +52,42 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 2. **Batch Fetch Patent Data** (up to 10 patents in parallel):
    - Split patents into batches of 10
    - For each batch, invoke `Skill: google-patent-cli:patent-fetch` for all patents **in parallel**
-   - After `fetch_patent` returns each dataset, use `execute_cypher` to get claims.
-     **You MUST use this EXACT query — do NOT modify the node label or property names:**
-     ```cypher
-     MATCH (c:claims) RETURN c.number, c.text
-     ```
-   - **CRITICAL**: Do NOT add `ORDER BY` or `WHERE` clauses — they cause parse errors or return null due to Cypher parser bugs.
-     Also do NOT use `MATCH (p:Patent)-[:claims]->(c:claims)` (relationship pattern), `[:HAS_CHILD]->(c:claim)`, `[:claim]->(c:claim)`, `p.claims`, or `[:claims]->(c:claim)`.
 
-3. **Analyze and Record** (for each patent):
-   - Extract ALL claims (both independent and dependent)
+3. **Record Claims** (for each patent — mechanical, no LLM text generation):
+   - After `fetch_patent` returns the `output_file`, use sqlite3 JSON functions to INSERT directly.
+     **Do NOT read claim text and regenerate it — LLM will summarize/compress long repetitive structures.**
+     ```bash
+     sqlite3 patents.db "
+     INSERT OR REPLACE INTO claims (patent_id, claim_number, claim_type, claim_text, created_at, updated_at)
+     SELECT
+       '<patent_id>',
+       CAST(json_extract(value, '$.number') AS INTEGER),
+       CASE
+         WHEN CAST(json_extract(value, '$.number') AS INTEGER) = 1 THEN 'independent'
+         ELSE 'dependent'
+       END,
+       json_extract(value, '$.text'),
+       datetime('now'),
+       datetime('now')
+     FROM json_each(json_extract(CAST(readfile('<output_file>') AS TEXT), '$.claims'));
+     "
+     ```
+   - After INSERT, verify with: `sqlite3 patents.db "SELECT COUNT(*) FROM claims WHERE patent_id = '<patent_id>'"`
+   - Then UPDATE `claim_type` for each independent claim identified by reading claims from the DB:
+     ```bash
+     sqlite3 patents.db "SELECT claim_number, substr(claim_text, 1, 80) FROM claims WHERE patent_id = '<patent_id>'"
+     ```
+     Identify independent claims (those NOT starting with "前記", "The ... of claim", "請求項", etc.) and UPDATE:
+     ```bash
+     sqlite3 patents.db "UPDATE claims SET claim_type = 'independent', updated_at = datetime('now') WHERE patent_id = '<patent_id>' AND claim_number IN (<independent_numbers>)"
+     ```
+
+4. **Analyze and Record Elements** (for each patent — LLM interpretation task):
+   - Read claims from the DB: `sqlite3 patents.db "SELECT claim_number, claim_text FROM claims WHERE patent_id = '<patent_id>'"`
    - For EACH claim, decompose into constituent elements (A, B, C...)
-   - Invoke `Skill: investigation-recording` with request "Record claims for patent <patent-id>: <claims_data>"
    - Invoke `Skill: investigation-recording` with request "Record elements for patent <patent-id>: <elements_data>"
 
-4. **Verify Results**: Confirm all claims and elements are recorded in the database
+5. **Verify Results**: Confirm all claims and elements are recorded in the database
 
 ## State Management
 
