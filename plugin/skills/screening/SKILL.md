@@ -21,7 +21,6 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 - `patents.db` will be initialized by this skill via `investigation-preparing` if it does not exist
 - `specification.md` must exist (Product/Theme definition)
 - Load `investigation-fetching` skill for data retrieval operations
-- Load `investigation-recording` skill for data recording operations
 
 ## Constitution
 
@@ -35,8 +34,8 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
 **Skill-Only Database Access**:
 
-- ALWAYS use the Skill tool to load `investigation-recording` for ALL database operations
-- NEVER write raw SQL commands or read instruction files from investigation-recording
+- Use `investigation-recording` skill for elements recording (LLM interpretation task)
+- For claims and screening recording, use sqlite3 JSON functions directly with `output_file` — do NOT pass text through LLM generation
 
 ## Skill Orchestration
 
@@ -65,11 +64,9 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 3. **Batch Fetch Patent Data** (up to 10 patents in parallel):
    - Split unscreened patents into batches of 10
    - For each batch, invoke `Skill: google-patent-cli:patent-fetch` for all patents **in parallel**
-   - From each result, extract:
-     - `abstract_text` property — the official patent abstract (with 【課題】【解決手段】 format for JP patents)
-     - `legal_status` property — the patent's current legal status (e.g., `Pending`, `Expired`, `Withdrawn`)
-     - `title` property
-   - **CRITICAL**: Do NOT use `snippet` — `snippet` is a search result summary, NOT the official abstract. Always use `abstract_text`.
+   - From each result, note the `output_file` path — this contains `abstract_text`, `legal_status`, and `title` as JSON fields
+   - **Do NOT use `execute_cypher`** — all needed data is in the `output_file`, extract with `json_extract()`
+   - **CRITICAL**: Do NOT use `snippet` — `snippet` is a search result summary, NOT the official abstract.
 
 4. **Evaluate and Record** (for each patent):
 
@@ -78,14 +75,24 @@ Filter collected patents by legal status and relevance to prepare for evaluation
    - **Relevant**: Matches Theme/Domain, Direct Competitors, Core Tech
    - **Exception**: Even if domain differs, KEEP if technology could serve as infrastructure or common platform
 
-   Legal status handling:
-   - Record `legal_status` from `fetch_patent` as-is in the database
-   - Note expired/withdrawn patents in the reason field, but judgment remains based on relevance
-
    Judgment values: `relevant`, `irrelevant` (lowercase)
 
-   For each patent, invoke `Skill: investigation-recording` with request "Record screening result for patent <patent-id>: judgment=<judgment>, legal_status=<legal_status>, reason=<reason>, abstract_text=<abstract_text from fetch_patent>"
-   - **CRITICAL**: The `abstract_text` passed to recording MUST be the `abstract_text` from `fetch_patent`, NOT the `snippet` from `search_patents`.
+   After determining judgment and reason, record using sqlite3 JSON functions directly.
+   **Do NOT pass `abstract_text` through LLM generation — use `readfile()` to extract from `output_file` mechanically:**
+
+   ```bash
+   sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text, updated_at)
+   VALUES (
+     '<patent_id>',
+     '<judgment>',
+     json_extract(CAST(readfile('<output_file>') AS TEXT), '$.legal_status'),
+     '<reason>',
+     json_extract(CAST(readfile('<output_file>') AS TEXT), '$.abstract_text'),
+     datetime('now')
+   );"
+   ```
+
+   Note: Only `judgment` and `reason` come from LLM analysis. `abstract_text` and `legal_status` are extracted mechanically from the `output_file`.
 
 5. **Verify Results**: Confirm all patents have corresponding `screened_patents` entries
 
