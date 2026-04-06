@@ -65,6 +65,7 @@ Filter collected patents by legal status and relevance to prepare for evaluation
    - Split unscreened patents into batches of 10
    - For each batch, invoke `Skill: google-patent-cli:patent-fetch` for all patents **in parallel**
    - From each result, note the `output_file` path — this contains `abstract_text`, `legal_status`, and `title` as JSON fields
+   - **Do NOT use `execute_cypher`** — all needed data is in the `output_file`, extract with `json_extract()`
    - **CRITICAL**: Do NOT use `snippet` — `snippet` is a search result summary, NOT the official abstract.
 
 4. **Evaluate and Record** (for each patent):
@@ -78,6 +79,7 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
    After determining judgment and reason, record using sqlite3 JSON functions directly.
    **Do NOT pass `abstract_text` through LLM generation — use `readfile()` to extract from `output_file` mechanically:**
+
    ```bash
    sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text, updated_at)
    VALUES (
