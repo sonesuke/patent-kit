@@ -2,8 +2,7 @@
 
 AI-Native Patent Analysis Kit, designed for Claude Code.
 
-> [!IMPORTANT]
-> **Disclaimer**: This tool is provided for informational purposes only. The outputs do not constitute legal advice or professional patent opinions.
+> [!IMPORTANT] > **Disclaimer**: This tool is provided for informational purposes only. The outputs do not constitute legal advice or professional patent opinions.
 
 ## Overview
 
@@ -32,10 +31,11 @@ claude plugin install patent-kit@patent-kit-marketplace
 
 ### Prerequisites
 
-You must have the following CLI tools installed and accessible in your system PATH to execute patent and paper searches. **When this plugin is loaded, it will automatically connect to these tools as built-in MCP servers.**
+You must have the following CLI tools installed and accessible in your system PATH. **When this plugin is loaded, it will automatically connect to these tools as built-in MCP servers.**
 
 - [Google Patent CLI (google-patent-cli)](https://github.com/sonesuke/google-patent-cli)
 - [arXiv CLI (arxiv-cli)](https://github.com/sonesuke/arxiv-cli)
+- [sqlite3](https://www.sqlite.org/) — Required for database operations (screening, evaluating, etc.)
 
 ## Quick Start
 
