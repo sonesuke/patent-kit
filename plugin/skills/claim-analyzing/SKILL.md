@@ -62,13 +62,12 @@ Perform detailed claim analysis by comparing product specification against paten
    - Invoke `Skill: investigation-fetching` with request "Get elements for patent <patent-id>"
 
    **2b. Check Feature Coverage for Each Element**:
-   - For each patent element, invoke `Skill: investigation-fetching` with request "Search feature: <element_label>"
-   - **If feature NOT found**: Do NOT record as 'absent' automatically
+   - For each patent element, invoke `Skill: investigation-fetching` with request "Search feature: <element_description>"
+   - **If feature NOT found**: Do NOT record as 'absent' automatically — collect it
+   - After checking ALL elements, if any unmatched elements remain, present them to the user in a single batch using `AskUserQuestion` (max 4 questions per call, group by unique functionality — do NOT ask about duplicate capabilities across patents)
      - Check test environment: `echo $SKILL_BENCH_TEST_CASE`
-     - **If SKILL_BENCH_TEST_CASE is set** (testing mode): Use `Skill: skill-bench-harness:question-responder` with "Does the product have this feature: <element_description>?"
+     - **If SKILL_BENCH_TEST_CASE is set** (testing mode): Use `Skill: skill-bench-harness:question-responder` for each unmatched element
      - **If SKILL_BENCH_TEST_CASE is NOT set** (normal mode): Use `AskUserQuestion` tool
-     - If positive: Invoke `Skill: investigation-recording` to record feature with `presence='present'`
-     - If negative: Invoke `Skill: investigation-recording` to record feature with `presence='absent'`
      - If positive: Invoke `Skill: investigation-recording` to record feature with `presence='present'`
      - If negative: Invoke `Skill: investigation-recording` to record feature with `presence='absent'`
 

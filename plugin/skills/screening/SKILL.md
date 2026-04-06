@@ -32,6 +32,13 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 - If a reference is "borderline", mark it as 'relevant' rather than 'irrelevant'
 - Missing a risk is worse than reviewing an extra document
 
+**No Shortcut Judgment**:
+
+- You MUST fetch each patent and read the `abstract_text` before making a judgment
+- Do NOT judge relevance based on title alone — titles can be misleading or too generic
+- Do NOT skip fetching patents to speed up processing
+- Every patent must go through the full fetch → read abstract → judge → record flow
+
 **Skill-Only Database Access**:
 
 - Use `investigation-recording` skill for elements recording (LLM interpretation task)
