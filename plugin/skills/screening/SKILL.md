@@ -79,7 +79,6 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
    After determining judgment and reason, record using sqlite3 JSON functions directly.
    **Do NOT pass `abstract_text` through LLM generation — use `readfile()` to extract from `output_file` mechanically:**
-
    ```bash
    sqlite3 patents.db "INSERT OR REPLACE INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text, updated_at)
    VALUES (
