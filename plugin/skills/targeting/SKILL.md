@@ -224,9 +224,11 @@ language:CHINESE`).
 Upon successful targeting, the user must download search results as CSV from Google Patents.
 
 1. **Output Google Patents URL**: Present the final search query as a Google Patents URL the user can paste into their browser:
+
    ```
    https://patents.google.com/?q=<encoded_query>&after=filing:<priority_date_cutoff>&assignee=<assignee>&country=<country>
    ```
+
    - The `q` parameter uses the quoted keywords joined with `AND`
    - Date filter uses `after:filing:` (NOT `filing_after:`)
    - Include assignee filter if Phase 1 was used
