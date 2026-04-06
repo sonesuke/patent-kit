@@ -56,15 +56,12 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 **Process**:
 
 1. **Get Patents to Screen**:
-
    - Invoke `Skill: investigation-fetching` with request "Get list of unscreened patent IDs"
 
 2. **Read Specification** (once):
-
    - Read `specification.md` to understand Theme, Domain, and Target Product
 
 3. **Batch Fetch Patent Data** (up to 10 patents in parallel):
-
    - Split unscreened patents into batches of 10
    - For each batch, invoke `Skill: google-patent-cli:patent-fetch` for all patents **in parallel**
    - From each result, note the `output_file` path — this contains `abstract_text`, `legal_status`, and `title` as JSON fields
@@ -74,7 +71,6 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 4. **Evaluate and Record** (for each patent):
 
    Judgment criteria (relevance only):
-
    - **Irrelevant**: Completely different industry from Theme/Domain
    - **Relevant**: Matches Theme/Domain, Direct Competitors, Core Tech
    - **Exception**: Even if domain differs, KEEP if technology could serve as infrastructure or common platform
