@@ -219,12 +219,28 @@ language:CHINESE`).
 - Create a file `keywords.md` using the template
   `assets/keywords-template.md`. This is the **Golden Keywords Registry**.
 
-#### Step 4: Transition to Screening
+#### Step 4: CSV Download and Import
 
-Upon successful completion:
+Upon successful targeting, the user must download search results as CSV from Google Patents.
 
-- Deliverables: `targeting.md`, `keywords.md`
-- Next skill: `/patent-kit:screening`
+1. **Output Google Patents URL**: Present the final search query as a Google Patents URL the user can paste into their browser:
+   ```
+   https://patents.google.com/?q=<encoded_query>&after=filing:<priority_date_cutoff>&assignee=<assignee>&country=<country>
+   ```
+   - The `q` parameter uses the quoted keywords joined with `AND`
+   - Date filter uses `after:filing:` (NOT `filing_after:`)
+   - Include assignee filter if Phase 1 was used
+   - **Action**: Tell the user to open this URL, then click "Download CSV" from Google Patents
+
+2. **Wait for CSV**: Do NOT proceed until the user has placed the CSV file in the `csv/` directory.
+
+3. **Import CSV**: Once the CSV file is in `csv/`, invoke `Skill: investigation-preparing` with request "Initialize the patent database and import CSV files from csv/"
+
+4. After import is complete, proceed to screening.
+
+#### Step 5: Transition to Screening
+
+- Invoke `/patent-kit:screening`
 
 ## Quality Gates
 
@@ -249,4 +265,5 @@ Upon successful completion:
 
 - `targeting.md` created with validated search commands
 - `keywords.md` created with golden keywords registry
+- CSV downloaded from Google Patents and imported into `patents.db`
 - Ready to proceed to screening skill
