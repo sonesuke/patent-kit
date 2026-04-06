@@ -83,9 +83,16 @@ Analyze screened patents by decomposing claims into elements and storing analysi
      ```
 
 4. **Analyze and Record Elements** (for each patent — LLM interpretation task):
-   - Read claims from the DB: `sqlite3 patents.db "SELECT claim_number, claim_text FROM claims WHERE patent_id = '<patent_id>'"`
-   - For EACH claim, decompose into constituent elements (A, B, C...)
-   - Invoke `Skill: investigation-recording` with request "Record elements for patent <patent-id>: <elements_data>"
+   - For EACH claim (independent AND dependent), execute the following:
+     1. Read ONLY that claim: `sqlite3 patents.db "SELECT claim_number, claim_text FROM claims WHERE patent_id = '<patent_id>' AND claim_number = <number>"`
+     2. Decompose into constituent elements based on the means/steps described in the claim text
+     3. Invoke `Skill: investigation-recording` with request "Record elements for patent <patent-id>: <elements_data>"
+
+   **CRITICAL Rules for Element Decomposition**:
+   - Read claims ONE AT A TIME — do NOT read all claims with `SELECT ... WHERE patent_id = ...`
+   - Do NOT reference `specification.md` during decomposition — decompose based on claim text alone
+   - Cut elements by the number of means/steps in the claim — do NOT force a specific number of elements
+   - Decompose ALL claims including dependent claims — do not skip dependent claims
 
 5. **Verify Results**: Confirm all claims and elements are recorded in the database
 

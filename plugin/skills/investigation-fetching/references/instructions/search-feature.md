@@ -1,6 +1,6 @@
 # Search Feature
 
-Searches for a specific feature by name in the database.
+Searches for a matching feature by keyword against both feature name and description.
 
 ## SQL Query
 
@@ -12,13 +12,19 @@ SELECT
   category,
   presence
 FROM features
-WHERE feature_name = '<feature_name>';
+WHERE feature_name LIKE '%<search_term>%' OR description LIKE '%<search_term>%';
 "
 ```
 
+## Parameters
+
+| Parameter   | Type | Description                                          |
+| ----------- | ---- | ---------------------------------------------------- |
+| search_term | TEXT | Keyword to match against feature_name or description |
+
 ## Output Format
 
-Single feature record if found:
+Matching feature records:
 
 ```json
 [
