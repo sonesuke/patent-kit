@@ -59,6 +59,8 @@
               echo "user:x:1000:" >> ./etc/group
               chown -R 1000:1000 ./home/user
               chmod 755 ./home/user
+              mkdir -p ./usr/bin
+              ln -sf /bin/env ./usr/bin/env
               for f in ${pkgs.glibc}/lib/ld-linux*.so*; do
                 ln -sf "$f" ./lib/$(basename "$f")
               done
