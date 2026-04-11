@@ -24,6 +24,7 @@
             zsh-autosuggestions
             zsh-syntax-highlighting
             coreutils
+            findutils
             gnugrep
             gnutar
             gzip
