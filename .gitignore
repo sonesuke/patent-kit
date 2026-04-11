@@ -16,3 +16,6 @@ node_modules
 
 # skill-bench test history
 .skill-bench/
+
+# Nix build artifacts
+result
