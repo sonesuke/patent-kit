@@ -50,6 +50,9 @@ pub struct ScreenPatentRequest {
 pub struct IndexPatentsRequest {}
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct StopIndexingRequest {}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct GetUnevaluatedRequest {
     pub limit: Option<usize>,
 }
@@ -164,6 +167,12 @@ pub struct GetProgressRequest {}
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct IndexPatentsResult {
     pub count: usize,
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct UnscreenedResult {
+    pub patents: Vec<UnscreenedPatent>,
+    pub unindexed_count: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]

@@ -192,13 +192,18 @@ pub async fn run() -> anyhow::Result<()> {
         Commands::GetUnscreened { limit } => {
             let config = Config::load()?;
             let db = Database::open(&config.resolve_db_path())?;
-            let patents = db.get_unscreened(limit)?;
-            if patents.is_empty() {
+            let result = db.get_unscreened(limit)?;
+            if result.patents.is_empty() {
                 println!("No unscreened patents");
             } else {
-                println!("Unscreened patents ({}):", patents.len());
-                for p in &patents {
-                    println!("- {} ({}) [{}]", p.title, p.patent_id, p.assignee.as_deref().unwrap_or("N/A"));
+                println!("Unscreened patents ({}):", result.patents.len());
+                for p in &result.patents {
+                    println!(
+                        "- {} ({}) [{}]",
+                        p.title,
+                        p.patent_id,
+                        p.assignee.as_deref().unwrap_or("N/A")
+                    );
                 }
             }
         }

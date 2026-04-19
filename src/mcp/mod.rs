@@ -19,6 +19,7 @@ pub struct PatentKitHandler {
     pub arxiv: Arc<arxiv_cli::core::ArxivClient>,
     pub db: std::sync::Mutex<Option<Database>>,
     pub db_path: PathBuf,
+    pub indexing_in_progress: std::sync::Arc<std::sync::atomic::AtomicBool>,
 }
 
 impl PatentKitHandler {
@@ -32,6 +33,7 @@ impl PatentKitHandler {
             arxiv,
             db: std::sync::Mutex::new(None),
             db_path,
+            indexing_in_progress: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false)),
         }
     }
 
@@ -103,6 +105,11 @@ fn tools() -> Vec<Tool> {
             "index_patents",
             "Fetch patent details (abstract, legal status, claims) from Google Patents for all unindexed patents and store in database",
             schema_for::<IndexPatentsRequest>(),
+        ),
+        Tool::new(
+            "stop_indexing",
+            "Stop the background indexing process if it is running",
+            schema_for::<StopIndexingRequest>(),
         ),
         Tool::new(
             "screen_patent",
@@ -306,27 +313,38 @@ async fn handle_tool_call(
         }
         "get_unscreened" => {
             let req: GetUnscreenedRequest = parse_args(&args)?;
-            let unindexed = {
-                service.ensure_db()?;
-                let guard = service.db.lock().unwrap();
-                let db = guard.as_ref().unwrap();
-                db.count_unindexed().map_err(internal_error)?
-            };
-            if unindexed > 0 {
-                Ok(format!(
-                    "{} patents need indexing. Call index_patents first.",
-                    unindexed
-                ))
-            } else {
-                with_db!(service, db, {
-                    let patents = db.get_unscreened(req.limit.or(Some(10))).map_err(internal_error)?;
-                    if patents.is_empty() {
-                        Ok("All patents have been screened.".to_string())
+            let indexing = service
+                .indexing_in_progress
+                .load(std::sync::atomic::Ordering::Relaxed);
+            with_db!(service, db, {
+                let r = db
+                    .get_unscreened(req.limit.or(Some(10)))
+                    .map_err(internal_error)?;
+                let mut lines = Vec::new();
+                if indexing {
+                    lines.push(format!(
+                        "Indexing in progress... ({} patent(s) remaining)",
+                        r.unindexed_count
+                    ));
+                }
+                if !lines.is_empty() && !r.patents.is_empty() {
+                    lines.push(String::new());
+                }
+                if r.patents.is_empty() && !indexing {
+                    if r.unindexed_count > 0 {
+                        lines.push(format!(
+                            "{} patents need indexing. Call index_patents first.",
+                            r.unindexed_count
+                        ));
                     } else {
-                        Ok(format_unscreened(&patents))
+                        lines.push("All patents have been screened.".to_string());
                     }
-                })
-            }
+                }
+                if !r.patents.is_empty() {
+                    lines.push(format_unscreened(&r.patents));
+                }
+                Ok::<String, rmcp::model::ErrorData>(lines.join("\n"))
+            })
         }
         "index_patents" => {
             let patent_ids = {
@@ -339,56 +357,88 @@ async fn handle_tool_call(
             if total == 0 {
                 Ok("All patents are already indexed.".to_string())
             } else {
-            let searcher = service.searcher.clone();
-            let db_path = service.db_path.clone();
-            std::thread::spawn(move || {
-                let rt = tokio::runtime::Builder::new_current_thread()
-                    .enable_all()
-                    .build();
-                let rt = match rt {
-                    Ok(rt) => rt,
-                    Err(_) => return,
-                };
-                let db = match Database::open(&db_path) {
-                    Ok(db) => db,
-                    Err(_) => return,
-                };
-                for patent_id in &patent_ids {
-                    let opts = SearchOptions {
-                        patent_number: Some(patent_id.clone()),
-                        ..Default::default()
-                    };
-                    match rt.block_on(searcher.as_ref().search(&opts)) {
-                        Ok(results) => {
-                            let patent = results.patents.first();
-                            let abstract_text = patent.and_then(|p| p.abstract_text.clone());
-                            let legal_status = patent.and_then(|p| p.legal_status.clone());
-                            let claims: Vec<_> = patent
-                                .and_then(|p| p.claims.as_ref())
-                                .map(|c| {
-                                    c.iter().enumerate().map(|(i, cl)| ClaimInput {
-                                        claim_number: i as i64 + 1,
-                                        claim_type: if cl.id.contains("-ind") || cl.id.contains("independent") {
-                                            "independent"
-                                        } else {
-                                            "dependent"
-                                        }.to_string(),
-                                        claim_text: cl.text.clone(),
-                                    }).collect()
-                                })
-                                .unwrap_or_default();
-                            let _ = db.update_patent_index(
-                                patent_id, abstract_text.as_deref(), legal_status.as_deref(),
-                            );
-                            if !claims.is_empty() {
-                                let _ = db.record_claims(patent_id, &claims);
-                            }
+                service
+                    .indexing_in_progress
+                    .store(true, std::sync::atomic::Ordering::Relaxed);
+                let searcher = service.searcher.clone();
+                let db_path = service.db_path.clone();
+                let flag = service.indexing_in_progress.clone();
+                std::thread::spawn(move || {
+                    let rt = tokio::runtime::Builder::new_current_thread()
+                        .enable_all()
+                        .build();
+                    let rt = match rt {
+                        Ok(rt) => rt,
+                        Err(_) => {
+                            flag.store(false, std::sync::atomic::Ordering::Relaxed);
+                            return;
                         }
-                        Err(_) => continue,
+                    };
+                    let db = match Database::open(&db_path) {
+                        Ok(db) => db,
+                        Err(_) => return,
+                    };
+                    for patent_id in &patent_ids {
+                        if !flag.load(std::sync::atomic::Ordering::Relaxed) {
+                            break;
+                        }
+                        let opts = SearchOptions {
+                            patent_number: Some(patent_id.clone()),
+                            ..Default::default()
+                        };
+                        match rt.block_on(searcher.as_ref().search(&opts)) {
+                            Ok(results) => {
+                                let patent = results.patents.first();
+                                let abstract_text = patent.and_then(|p| p.abstract_text.clone());
+                                let legal_status = patent.and_then(|p| p.legal_status.clone());
+                                let claims: Vec<_> = patent
+                                    .and_then(|p| p.claims.as_ref())
+                                    .map(|c| {
+                                        c.iter()
+                                            .enumerate()
+                                            .map(|(i, cl)| ClaimInput {
+                                                claim_number: i as i64 + 1,
+                                                claim_type: if cl.id.contains("-ind")
+                                                    || cl.id.contains("independent")
+                                                {
+                                                    "independent"
+                                                } else {
+                                                    "dependent"
+                                                }
+                                                .to_string(),
+                                                claim_text: cl.text.clone(),
+                                            })
+                                            .collect()
+                                    })
+                                    .unwrap_or_default();
+                                let _ = db.update_patent_index(
+                                    patent_id,
+                                    abstract_text.as_deref(),
+                                    legal_status.as_deref(),
+                                );
+                                if !claims.is_empty() {
+                                    let _ = db.record_claims(patent_id, &claims);
+                                }
+                            }
+                            Err(_) => continue,
+                        }
                     }
-                }
-            });
-            Ok(format!("Indexing {} patents started in background.", total))
+                    flag.store(false, std::sync::atomic::Ordering::Relaxed);
+                });
+                Ok(format!("Indexing {} patents started in background.", total))
+            }
+        }
+        "stop_indexing" => {
+            let was_indexing = service
+                .indexing_in_progress
+                .swap(false, std::sync::atomic::Ordering::Relaxed);
+            if was_indexing {
+                Ok(
+                    "Indexing stop requested. The current patent will finish before stopping."
+                        .to_string(),
+                )
+            } else {
+                Ok("No indexing in progress.".to_string())
             }
         }
         "screen_patent" => {

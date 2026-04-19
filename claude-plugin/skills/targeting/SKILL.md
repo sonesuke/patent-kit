@@ -14,8 +14,7 @@ description: |
 
 ## Purpose
 
-Generate high-precision search queries and create a consolidated patent
-population for screening.
+Generate high-precision search queries and create a consolidated patent population for screening.
 
 ## Prerequisites
 
@@ -56,10 +55,8 @@ Call the following MCP tools directly. Do NOT use the Skill tool or Bash to call
 Target patent research MUST be scoped to the **Target Market** specified in
 `specification.md`.
 
-- **Rule**: Use the country code from the Target Market field (e.g., `US`,
-  `JP`, `EP`, `CN`).
-- **Mechanism**: If the target market uses a non-English language, use machine
-  translation for keyword queries.
+- **Rule**: Use the country code from the Target Market field (e.g., `US`, `JP`, `EP`, `CN`).
+- **Mechanism**: If the target market uses a non-English language, use machine translation for keyword queries.
 
 ## Skill Orchestration
 

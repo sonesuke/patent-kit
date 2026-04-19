@@ -389,8 +389,13 @@ impl Database {
     // Screening
     // -----------------------------------------------------------------------
 
-    pub fn get_unscreened(&self, limit: Option<usize>) -> Result<Vec<UnscreenedPatent>> {
+    pub fn get_unscreened(&self, limit: Option<usize>) -> Result<UnscreenedResult> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
+        let unindexed_count: i64 = conn.query_row(
+            "SELECT COUNT(*) FROM patents WHERE abstract_text IS NULL",
+            [],
+            |row| row.get(0),
+        )?;
         let mut sql = String::from(
             "SELECT p.patent_id, p.title, p.assignee, p.abstract_text
              FROM patents p
@@ -410,21 +415,14 @@ impl Database {
                 abstract_text: row.get(3)?,
             })
         })?;
-        let mut result = Vec::new();
+        let mut patents = Vec::new();
         for row in rows {
-            result.push(row?);
+            patents.push(row?);
         }
-        Ok(result)
-    }
-
-    pub fn count_unindexed(&self) -> Result<i64> {
-        let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
-        let count: i64 = conn.query_row(
-            "SELECT COUNT(*) FROM patents WHERE abstract_text IS NULL",
-            [],
-            |row| row.get(0),
-        )?;
-        Ok(count)
+        Ok(UnscreenedResult {
+            patents,
+            unindexed_count,
+        })
     }
 
     pub fn get_unindexed(&self) -> Result<Vec<String>> {

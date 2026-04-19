@@ -42,26 +42,19 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 > [!IMPORTANT]
 > When instructed to call an MCP tool, call it directly using the tool name. **NEVER** use Bash to invoke MCP tools — the MCP server is already connected and tools are available directly. Do NOT construct JSON-RPC messages or use `echo | patent-kit mcp`.
 
-### 1. Ensure Database is Ready
-
-**CRITICAL**: Before attempting any screening, ensure the database exists and is populated.
-
-1. **Use the Glob tool to check if `csv/*.csv` files exist**
-2. **If CSV files exist**: Call the `import_csv` MCP tool directly (do NOT use Bash or Skill):
-   - `file_path`: "csv/<filename>.csv"
-
-### 2. Read Specification
+### 1. Read Specification
 
 Read `specification.md` to understand Theme, Domain, and Target Product.
 
-### 3. Screen Patents
+### 2. Screen Patents
 
 **Do NOT delegate to subagents (Agent tool)** — invoke MCP tools directly from this session.
 
 **Loop**:
 
 1. **Call `get_unscreened`**:
-   - If it says "N patents need indexing. Call index_patents first." → Call `index_patents`, then call `get_unscreened` again
+   - If it says "Indexing in progress" → Wait briefly, then call `get_unscreened` again
+   - If it says "N patents need indexing" → Call `index_patents`, then call `get_unscreened` again
    - If it says "All patents have been screened." → Screening is complete
    - Otherwise → Returns a batch of patents with ID, title, assignee, and abstract
 
@@ -80,10 +73,6 @@ Read `specification.md` to understand Theme, Domain, and Target Product.
    - `reason`: "<LLM-generated reason>"
 
 3. **Repeat** from step 1 until `get_unscreened` says "All patents have been screened."
-
-### 4. Verify Results
-
-Call the `get_progress` MCP tool to confirm all patents have been screened.
 
 ## State Management
 
