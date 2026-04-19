@@ -24,7 +24,7 @@ Do NOT parse files from investigation directories.
 
    ```
    Skill: investigation-fetching
-   Request: "Execute SQL: SELECT tp.*, sp.judgment, sp.reason FROM target_patents tp LEFT JOIN screened_patents sp ON tp.patent_id = sp.patent_id WHERE tp.patent_id='<patent_id>'"
+   Request: "Execute SQL: SELECT tp.*, sp.judgment, sp.reason FROM patents tp LEFT JOIN screened_patents sp ON tp.patent_id = sp.patent_id WHERE tp.patent_id='<patent_id>'"
    ```
 
 2. **Claims and elements**:

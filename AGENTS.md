@@ -37,8 +37,9 @@ patent-kit mcp               # Start MCP server over stdio
 patent-kit check-assignee "Apple" --verbose
 patent-kit search-patents "query" --assignee "Apple" --limit 5 --verbose
 patent-kit import-csv <file>
+patent-kit index-patents
 patent-kit get-unscreened --limit 5
-patent-kit screen-patent <id> --judgment relevant --reason "..." --abstract-text "..."
+patent-kit screen-patent <id> --judgment relevant --reason "..."
 patent-kit get-unevaluated --limit 5
 patent-kit record-claims <id> <json>
 patent-kit get-claims <id>
@@ -97,6 +98,7 @@ skill-bench list      # List discovered tests (from `cases/` dir)
 ```
 
 Key points:
+
 - `--plugin-dir ./claude-plugin` is required for MCP server and skill loading
 - Test cases are in `tests/<skill>/<test>.toml`
 - Session logs are written to `./logs/` when `--log` is provided

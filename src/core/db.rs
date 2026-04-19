@@ -35,8 +35,8 @@ impl Database {
             PRAGMA journal_mode = WAL;
             PRAGMA foreign_keys = ON;
 
-            -- target_patents
-            CREATE TABLE IF NOT EXISTS target_patents (
+            -- patents
+            CREATE TABLE IF NOT EXISTS patents (
                 patent_id TEXT PRIMARY KEY NOT NULL CHECK(
                     length(patent_id) >= 5 AND
                     instr(patent_id, '-') = 0 AND
@@ -46,6 +46,8 @@ impl Database {
                 title TEXT,
                 country TEXT,
                 assignee TEXT,
+                abstract_text TEXT,
+                legal_status TEXT,
                 extra_fields TEXT,
                 publication_date TEXT CHECK(
                     publication_date IS NULL OR
@@ -63,33 +65,31 @@ impl Database {
                 updated_at TEXT DEFAULT (datetime('now'))
             );
 
-            -- screened_patents
+            -- screened_patents (screening decision only)
             CREATE TABLE IF NOT EXISTS screened_patents (
                 patent_id TEXT PRIMARY KEY NOT NULL,
                 judgment TEXT NOT NULL CHECK(judgment IN ('relevant', 'irrelevant')),
-                legal_status TEXT,
                 reason TEXT NOT NULL,
-                abstract_text TEXT NOT NULL,
                 screened_at TEXT DEFAULT (datetime('now')),
                 updated_at TEXT DEFAULT (datetime('now')),
-                FOREIGN KEY (patent_id) REFERENCES target_patents(patent_id) ON DELETE CASCADE
+                FOREIGN KEY (patent_id) REFERENCES patents(patent_id) ON DELETE CASCADE
             );
 
             -- progress view
             CREATE VIEW IF NOT EXISTS v_screening_progress AS
             SELECT
-                (SELECT COUNT(*) FROM target_patents) as total_targets,
+                (SELECT COUNT(*) FROM patents) as total_targets,
                 (SELECT COUNT(*) FROM screened_patents) as total_screened,
                 (SELECT COUNT(*) FROM screened_patents WHERE judgment = 'relevant') as relevant,
                 (SELECT COUNT(*) FROM screened_patents WHERE judgment = 'irrelevant') as irrelevant,
-                (SELECT COUNT(*) FROM screened_patents WHERE legal_status IN ('Expired', 'Withdrawn')) as expired;
+                (SELECT COUNT(*) FROM patents WHERE legal_status IN ('Expired', 'Withdrawn')) as expired;
 
-            -- timestamp triggers: target_patents
-            CREATE TRIGGER IF NOT EXISTS update_target_patents_timestamp
-            AFTER UPDATE ON target_patents
+            -- timestamp triggers: patents
+            CREATE TRIGGER IF NOT EXISTS update_patents_timestamp
+            AFTER UPDATE ON patents
             FOR EACH ROW
             BEGIN
-                UPDATE target_patents SET updated_at = datetime('now') WHERE patent_id = NEW.patent_id;
+                UPDATE patents SET updated_at = datetime('now') WHERE patent_id = NEW.patent_id;
             END;
 
             -- timestamp triggers: screened_patents
@@ -109,7 +109,7 @@ impl Database {
                 created_at TEXT DEFAULT (datetime('now')),
                 updated_at TEXT DEFAULT (datetime('now')),
                 PRIMARY KEY (patent_id, claim_number),
-                FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE
+                FOREIGN KEY (patent_id) REFERENCES patents(patent_id) ON DELETE CASCADE
             );
 
             -- elements
@@ -121,7 +121,7 @@ impl Database {
                 created_at TEXT DEFAULT (datetime('now')),
                 updated_at TEXT DEFAULT (datetime('now')),
                 PRIMARY KEY (patent_id, claim_number, element_label),
-                FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
+                FOREIGN KEY (patent_id) REFERENCES patents(patent_id) ON DELETE CASCADE,
                 FOREIGN KEY (patent_id, claim_number) REFERENCES claims(patent_id, claim_number) ON DELETE CASCADE
             );
 
@@ -135,7 +135,7 @@ impl Database {
                 analyzed_at TEXT DEFAULT (datetime('now')),
                 updated_at TEXT DEFAULT (datetime('now')),
                 PRIMARY KEY (patent_id, claim_number, element_label),
-                FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
+                FOREIGN KEY (patent_id) REFERENCES patents(patent_id) ON DELETE CASCADE,
                 FOREIGN KEY (patent_id, claim_number) REFERENCES claims(patent_id, claim_number) ON DELETE CASCADE,
                 FOREIGN KEY (patent_id, claim_number, element_label) REFERENCES elements(patent_id, claim_number, element_label) ON DELETE CASCADE
             );
@@ -215,7 +215,7 @@ impl Database {
                 researched_at TEXT DEFAULT (datetime('now')),
                 updated_at TEXT DEFAULT (datetime('now')),
                 PRIMARY KEY (patent_id, claim_number, element_label, reference_id),
-                FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
+                FOREIGN KEY (patent_id) REFERENCES patents(patent_id) ON DELETE CASCADE,
                 FOREIGN KEY (patent_id, claim_number) REFERENCES claims(patent_id, claim_number) ON DELETE CASCADE,
                 FOREIGN KEY (patent_id, claim_number, element_label) REFERENCES elements(patent_id, claim_number, element_label) ON DELETE CASCADE,
                 FOREIGN KEY (reference_id) REFERENCES prior_arts(reference_id) ON DELETE CASCADE
@@ -355,7 +355,7 @@ impl Database {
                 .map(|s| s.trim().to_string());
 
             conn.execute(
-                "INSERT INTO target_patents (patent_id, title, assignee, country, publication_date, filing_date)
+                "INSERT INTO patents (patent_id, title, assignee, country, publication_date, filing_date)
                  VALUES (?1, ?2, ?3, ?4, ?5, ?6)
                  ON CONFLICT(patent_id) DO UPDATE SET title = ?2, assignee = ?3, country = ?4, publication_date = ?5, filing_date = ?6",
                 params![patent_id, title, assignee, country, publication_date, filing_date],
@@ -392,11 +392,11 @@ impl Database {
     pub fn get_unscreened(&self, limit: Option<usize>) -> Result<Vec<UnscreenedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         let mut sql = String::from(
-            "SELECT t.patent_id, t.title, t.assignee, t.country, t.filing_date, t.publication_date
-             FROM target_patents t
-             LEFT JOIN screened_patents s ON t.patent_id = s.patent_id
+            "SELECT p.patent_id, p.title, p.assignee, p.country, p.filing_date, p.publication_date
+             FROM patents p
+             LEFT JOIN screened_patents s ON p.patent_id = s.patent_id
              WHERE s.patent_id IS NULL
-             ORDER BY t.patent_id",
+             ORDER BY p.patent_id",
         );
         if let Some(n) = limit {
             sql.push_str(&format!(" LIMIT {n}"));
@@ -419,20 +419,45 @@ impl Database {
         Ok(result)
     }
 
+    pub fn get_unindexed(&self) -> Result<Vec<String>> {
+        let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
+        let mut stmt = conn.prepare(
+            "SELECT patent_id FROM patents WHERE abstract_text IS NULL ORDER BY patent_id",
+        )?;
+        let rows = stmt.query_map([], |row| row.get(0))?;
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(row?);
+        }
+        Ok(result)
+    }
+
+    pub fn update_patent_index(
+        &self,
+        patent_id: &str,
+        abstract_text: Option<&str>,
+        legal_status: Option<&str>,
+    ) -> Result<()> {
+        let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
+        conn.execute(
+            "UPDATE patents SET abstract_text = ?2, legal_status = ?3 WHERE patent_id = ?1",
+            params![patent_id, abstract_text, legal_status],
+        )?;
+        Ok(())
+    }
+
     pub fn screen_patent(
         &self,
         patent_id: &str,
         judgment: &str,
-        legal_status: Option<&str>,
         reason: &str,
-        abstract_text: &str,
     ) -> Result<()> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         conn.execute(
-            "INSERT INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text)
-             VALUES (?1, ?2, ?3, ?4, ?5)
-             ON CONFLICT(patent_id) DO UPDATE SET judgment = ?2, legal_status = ?3, reason = ?4, abstract_text = ?5",
-            params![patent_id, judgment, legal_status, reason, abstract_text],
+            "INSERT INTO screened_patents (patent_id, judgment, reason)
+             VALUES (?1, ?2, ?3)
+             ON CONFLICT(patent_id) DO UPDATE SET judgment = ?2, reason = ?3",
+            params![patent_id, judgment, reason],
         )?;
         Ok(())
     }
@@ -444,9 +469,9 @@ impl Database {
     pub fn get_unevaluated(&self, limit: Option<usize>) -> Result<Vec<UnevaluatedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         let mut sql = String::from(
-            "SELECT s.patent_id, t.title
+            "SELECT s.patent_id, p.title
              FROM screened_patents s
-             JOIN target_patents t ON s.patent_id = t.patent_id
+             JOIN patents p ON s.patent_id = p.patent_id
              LEFT JOIN claims c ON s.patent_id = c.patent_id
              WHERE s.judgment = 'relevant' AND c.patent_id IS NULL
              ORDER BY s.patent_id",
@@ -605,9 +630,9 @@ impl Database {
     pub fn get_unanalyzed(&self, limit: Option<usize>) -> Result<Vec<UnanalyzedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         let mut sql = String::from(
-            "SELECT s.patent_id, t.title, COUNT(DISTINCT e.element_label) AS element_count
+            "SELECT s.patent_id, p.title, COUNT(DISTINCT e.element_label) AS element_count
              FROM screened_patents s
-             JOIN target_patents t ON s.patent_id = t.patent_id
+             JOIN patents p ON s.patent_id = p.patent_id
              JOIN elements e ON s.patent_id = e.patent_id
              LEFT JOIN similarities sim ON s.patent_id = sim.patent_id
                AND e.claim_number = sim.claim_number
@@ -681,9 +706,9 @@ impl Database {
     pub fn get_unresearched(&self, limit: Option<usize>) -> Result<Vec<UnresearchedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         let mut sql = String::from(
-            "SELECT s.patent_id, t.title, COUNT(DISTINCT e.element_label) AS element_count
+            "SELECT s.patent_id, p.title, COUNT(DISTINCT e.element_label) AS element_count
              FROM screened_patents s
-             JOIN target_patents t ON s.patent_id = t.patent_id
+             JOIN patents p ON s.patent_id = p.patent_id
              JOIN elements e ON s.patent_id = e.patent_id
              JOIN similarities sim ON s.patent_id = sim.patent_id
                AND e.claim_number = sim.claim_number
@@ -767,12 +792,13 @@ impl Database {
     pub fn get_patent_detail(&self, patent_id: &str) -> Result<Option<PatentDetail>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         let mut stmt = conn.prepare(
-            "SELECT t.patent_id, t.title, t.assignee, t.country, t.extra_fields,
-                    t.publication_date, t.filing_date, t.grant_date,
-                    s.judgment, s.legal_status, s.reason, s.abstract_text
-             FROM target_patents t
-             LEFT JOIN screened_patents s ON t.patent_id = s.patent_id
-             WHERE t.patent_id = ?1",
+            "SELECT p.patent_id, p.title, p.assignee, p.country, p.extra_fields,
+                    p.publication_date, p.filing_date, p.grant_date,
+                    p.abstract_text, p.legal_status,
+                    s.judgment, s.reason
+             FROM patents p
+             LEFT JOIN screened_patents s ON p.patent_id = s.patent_id
+             WHERE p.patent_id = ?1",
         )?;
         let mut rows = stmt.query(params![patent_id])?;
         match rows.next() {

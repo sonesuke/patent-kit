@@ -43,10 +43,11 @@ pub struct GetUnscreenedRequest {
 pub struct ScreenPatentRequest {
     pub patent_id: String,
     pub judgment: String, // "relevant" or "irrelevant"
-    pub legal_status: Option<String>,
     pub reason: String,
-    pub abstract_text: String,
 }
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct IndexPatentsRequest {}
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct GetUnevaluatedRequest {

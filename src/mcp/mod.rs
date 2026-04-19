@@ -96,12 +96,17 @@ fn tools() -> Vec<Tool> {
         ),
         Tool::new(
             "get_unscreened",
-            "Get patents from target_patents that have not been screened yet",
+            "Get patents that have not been screened yet",
             schema_for::<GetUnscreenedRequest>(),
         ),
         Tool::new(
+            "index_patents",
+            "Fetch patent details (abstract, legal status, claims) from Google Patents for all unindexed patents and store in database",
+            schema_for::<IndexPatentsRequest>(),
+        ),
+        Tool::new(
             "screen_patent",
-            "Screen a patent with judgment (relevant/irrelevant), reason, and abstract",
+            "Screen a patent with judgment (relevant/irrelevant) and reason",
             schema_for::<ScreenPatentRequest>(),
         ),
         Tool::new(
@@ -307,18 +312,87 @@ async fn handle_tool_call(
                     .map_err(internal_error)
             })
         }
+        "index_patents" => {
+            let patent_ids = {
+                service.ensure_db()?;
+                let guard = service.db.lock().unwrap();
+                let db = guard.as_ref().unwrap();
+                db.get_unindexed().map_err(internal_error)?
+            };
+            let mut indexed = 0usize;
+            let mut errors: Vec<String> = Vec::new();
+            for patent_id in &patent_ids {
+                let opts = SearchOptions {
+                    patent_number: Some(patent_id.clone()),
+                    ..Default::default()
+                };
+                match service.searcher.as_ref().search(&opts).await {
+                    Ok(results) => {
+                        let patent = results.patents.first();
+                        let abstract_text = patent.and_then(|p| p.abstract_text.clone());
+                        let legal_status = patent.and_then(|p| p.legal_status.clone());
+                        let claims: Vec<_> = patent
+                            .and_then(|p| p.claims.as_ref())
+                            .map(|c| {
+                                c.iter()
+                                    .enumerate()
+                                    .map(|(i, cl)| ClaimInput {
+                                        claim_number: i as i64 + 1,
+                                        claim_type: if cl.id.contains("-ind")
+                                            || cl.id.contains("independent")
+                                        {
+                                            "independent"
+                                        } else {
+                                            "dependent"
+                                        }
+                                        .to_string(),
+                                        claim_text: cl.text.clone(),
+                                    })
+                                    .collect()
+                            })
+                            .unwrap_or_default();
+                        {
+                            service.ensure_db()?;
+                            let guard = service.db.lock().unwrap();
+                            let db = guard.as_ref().unwrap();
+                            if let Err(e) = db.update_patent_index(
+                                patent_id,
+                                abstract_text.as_deref(),
+                                legal_status.as_deref(),
+                            ) {
+                                errors.push(format!("{}: {}", patent_id, e));
+                                continue;
+                            }
+                            if !claims.is_empty()
+                                && let Err(e) = db.record_claims(patent_id, &claims)
+                            {
+                                errors.push(format!("{}: claims error - {}", patent_id, e));
+                            }
+                        }
+                        indexed += 1;
+                    }
+                    Err(e) => {
+                        errors.push(format!("{}: {}", patent_id, e));
+                    }
+                }
+            }
+            if errors.is_empty() {
+                Ok(format!("Indexed {} patents", indexed))
+            } else {
+                Ok(format!(
+                    "Indexed {} patents ({} errors: {})",
+                    indexed,
+                    errors.len(),
+                    errors.join(", ")
+                ))
+            }
+        }
         "screen_patent" => {
             let req: ScreenPatentRequest = parse_args(&args)?;
             with_db!(service, db, {
-                db.screen_patent(
-                    &req.patent_id,
-                    &req.judgment,
-                    req.legal_status.as_deref(),
-                    &req.reason,
-                    &req.abstract_text,
-                )
-                .map(|_| format!("Patent {} screened as {}", req.patent_id, req.judgment))
-                .map_err(internal_error)
+                db.screen_patent(&req.patent_id, &req.judgment, &req.reason)
+                    .map(|_| format!("Patent {} screened as {}", req.patent_id, req.judgment))
+                    .map_err(internal_error)
             })
         }
         "get_unevaluated" => {

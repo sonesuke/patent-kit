@@ -65,9 +65,9 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 2. **Read Specification** (once):
    - Read `specification.md` to understand Theme, Domain, and Target Product
 
-3. **Batch Fetch Patent Data** (up to 10 patents in parallel):
-   - Split unscreened patents into batches of 10
-   - For each batch, call the `search_patents` MCP tool with `patent_number` to fetch details (do NOT use Bash or Skill)
+3. **Index Patents** (fetch abstracts and claims from Google Patents):
+   - Call the `index_patents` MCP tool directly (do NOT use Bash or Skill)
+   - This fetches abstract_text, legal_status, and claims for all unindexed patents server-side
 
 4. **Evaluate and Record** (for each patent):
 
@@ -82,7 +82,6 @@ Filter collected patents by legal status and relevance to prepare for evaluation
    - `patent_id`: "<patent_id>"
    - `judgment`: "<relevant|irrelevant>"
    - `reason`: "<LLM-generated reason>"
-   - `abstract_text`: "<abstract from fetch result>"
 
 5. **Verify Results**: Call the `get_progress` MCP tool to confirm all patents have been screened
 

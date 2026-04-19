@@ -60,14 +60,9 @@ pub enum Commands {
         /// Judgment: relevant or irrelevant
         #[arg(long)]
         judgment: String,
-        #[arg(long)]
-        legal_status: Option<String>,
         /// Reason for judgment
         #[arg(long)]
         reason: String,
-        /// Patent abstract text
-        #[arg(long)]
-        abstract_text: String,
     },
     /// Get unevaluated patents (relevant, no claims)
     GetUnevaluated {
@@ -210,19 +205,11 @@ pub async fn run() -> anyhow::Result<()> {
         Commands::ScreenPatent {
             patent_id,
             judgment,
-            legal_status,
             reason,
-            abstract_text,
         } => {
             let config = Config::load()?;
             let db = Database::open(&config.resolve_db_path())?;
-            db.screen_patent(
-                &patent_id,
-                &judgment,
-                legal_status.as_deref(),
-                &reason,
-                &abstract_text,
-            )?;
+            db.screen_patent(&patent_id, &judgment, &reason)?;
             println!("Patent {} screened: {}", patent_id, judgment);
         }
         Commands::GetUnevaluated { limit } => {

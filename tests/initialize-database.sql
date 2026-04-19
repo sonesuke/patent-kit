@@ -5,8 +5,8 @@
 PRAGMA foreign_keys = ON;
 PRAGMA journal_mode = WAL;
 
--- Create target_patents table
-CREATE TABLE IF NOT EXISTS target_patents (
+-- Create patents table
+CREATE TABLE IF NOT EXISTS patents (
     patent_id TEXT PRIMARY KEY NOT NULL CHECK(
         length(patent_id) >= 9 AND
         length(patent_id) <= 15 AND
@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS target_patents (
     title TEXT,
     country TEXT,
     assignee TEXT,
+    abstract_text TEXT,
+    legal_status TEXT,
     extra_fields TEXT,
     publication_date TEXT CHECK(
         publication_date IS NULL OR
@@ -38,29 +40,27 @@ CREATE TABLE IF NOT EXISTS target_patents (
 CREATE TABLE IF NOT EXISTS screened_patents (
     patent_id TEXT PRIMARY KEY NOT NULL,
     judgment TEXT NOT NULL CHECK(judgment IN ('relevant', 'irrelevant')),
-    legal_status TEXT,
     reason TEXT NOT NULL,
-    abstract_text TEXT NOT NULL,
     screened_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
-    FOREIGN KEY (patent_id) REFERENCES target_patents(patent_id) ON DELETE CASCADE
+    FOREIGN KEY (patent_id) REFERENCES patents(patent_id) ON DELETE CASCADE
 );
 
 -- Create progress view
 CREATE VIEW IF NOT EXISTS v_screening_progress AS
 SELECT
-    (SELECT COUNT(*) FROM target_patents) as total_targets,
+    (SELECT COUNT(*) FROM patents) as total_targets,
     (SELECT COUNT(*) FROM screened_patents) as total_screened,
     (SELECT COUNT(*) FROM screened_patents WHERE judgment = 'relevant') as relevant,
     (SELECT COUNT(*) FROM screened_patents WHERE judgment = 'irrelevant') as irrelevant,
-    (SELECT COUNT(*) FROM screened_patents WHERE legal_status IN ('Expired', 'Withdrawn')) as expired;
+    (SELECT COUNT(*) FROM patents WHERE legal_status IN ('Expired', 'Withdrawn')) as expired;
 
 -- Create timestamp triggers
-CREATE TRIGGER IF NOT EXISTS update_target_patents_timestamp
-AFTER UPDATE ON target_patents
+CREATE TRIGGER IF NOT EXISTS update_patents_timestamp
+AFTER UPDATE ON patents
 FOR EACH ROW
 BEGIN
-    UPDATE target_patents SET updated_at = datetime('now') WHERE patent_id = NEW.patent_id;
+    UPDATE patents SET updated_at = datetime('now') WHERE patent_id = NEW.patent_id;
 END;
 
 CREATE TRIGGER IF NOT EXISTS update_screened_patents_timestamp
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS claims (
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     PRIMARY KEY (patent_id, claim_number),
-    FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE
+    FOREIGN KEY (patent_id) REFERENCES patents(patent_id) ON DELETE CASCADE
 );
 
 -- Create elements table for storing claim constituent elements
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS elements (
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     PRIMARY KEY (patent_id, claim_number, element_label),
-    FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
+    FOREIGN KEY (patent_id) REFERENCES patents(patent_id) ON DELETE CASCADE,
     FOREIGN KEY (patent_id, claim_number) REFERENCES claims(patent_id, claim_number) ON DELETE CASCADE
 );
 
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS similarities (
     analyzed_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     PRIMARY KEY (patent_id, claim_number, element_label),
-    FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
+    FOREIGN KEY (patent_id) REFERENCES patents(patent_id) ON DELETE CASCADE,
     FOREIGN KEY (patent_id, claim_number) REFERENCES claims(patent_id, claim_number) ON DELETE CASCADE,
     FOREIGN KEY (patent_id, claim_number, element_label) REFERENCES elements(patent_id, claim_number, element_label) ON DELETE CASCADE
 );
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS prior_art_elements (
     researched_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     PRIMARY KEY (patent_id, claim_number, element_label, reference_id),
-    FOREIGN KEY (patent_id) REFERENCES screened_patents(patent_id) ON DELETE CASCADE,
+    FOREIGN KEY (patent_id) REFERENCES patents(patent_id) ON DELETE CASCADE,
     FOREIGN KEY (patent_id, claim_number) REFERENCES claims(patent_id, claim_number) ON DELETE CASCADE,
     FOREIGN KEY (patent_id, claim_number, element_label) REFERENCES elements(patent_id, claim_number, element_label) ON DELETE CASCADE,
     FOREIGN KEY (reference_id) REFERENCES prior_arts(reference_id) ON DELETE CASCADE
