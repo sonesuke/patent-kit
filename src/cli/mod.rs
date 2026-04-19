@@ -6,10 +6,19 @@ use google_patent_cli::core::patent_search::PatentSearch;
 
 use crate::core::config::Config;
 use crate::core::db::Database;
+use crate::core::models::CheckAssigneeResult;
+
+#[derive(clap::Args)]
+struct VerboseFlag {
+    #[arg(long, global = true)]
+    verbose: bool,
+}
 
 #[derive(Parser)]
 #[command(name = "patent-kit", about = "Patent investigation toolkit")]
 pub struct Cli {
+    #[command(flatten)]
+    verbose: VerboseFlag,
     #[command(subcommand)]
     pub command: Commands,
 }
@@ -101,7 +110,7 @@ pub async fn run() -> anyhow::Result<()> {
 
     match cli.command {
         Commands::Mcp => {
-            crate::mcp::run().await?;
+            crate::mcp::run(cli.verbose.verbose).await?;
         }
         Commands::ImportCsv { file_path } => {
             let config = Config::load()?;
@@ -122,7 +131,7 @@ pub async fn run() -> anyhow::Result<()> {
                     browser_path,
                     true,
                     false,
-                    false,
+                    cli.verbose.verbose,
                     chrome_args,
                 )
                 .await?,
@@ -156,7 +165,7 @@ pub async fn run() -> anyhow::Result<()> {
                     browser_path,
                     true,
                     false,
-                    false,
+                    cli.verbose.verbose,
                     chrome_args,
                 )
                 .await?,
@@ -167,16 +176,22 @@ pub async fn run() -> anyhow::Result<()> {
                 ..Default::default()
             };
             let results = searcher.as_ref().search(&opts).await?;
-            let mut assignees: Vec<&str> = results
-                .patents
-                .iter()
-                .filter_map(|p| p.assignee.as_deref())
-                .collect();
-            assignees.sort();
-            assignees.dedup();
-            println!("Assignee variations for '{}':", assignee);
-            for a in &assignees {
-                println!("  - {}", a);
+            let result = CheckAssigneeResult::from_top_assignees(results.top_assignees);
+            if result.variations.is_empty() {
+                println!("No assignee variations found");
+            } else {
+                println!(
+                    "Assignee variations for '{}' ({}):",
+                    assignee,
+                    result.variations.len()
+                );
+                for v in &result.variations {
+                    if v.percentage.is_empty() {
+                        println!("  - {}", v.name);
+                    } else {
+                        println!("  - {} ({})", v.name, v.percentage);
+                    }
+                }
             }
         }
         Commands::GetUnscreened { limit } => {

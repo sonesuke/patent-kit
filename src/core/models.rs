@@ -239,6 +239,33 @@ pub struct Progress {
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct AssigneeVariation {
+    pub name: String,
+    pub percentage: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct CheckAssigneeResult {
+    pub variations: Vec<AssigneeVariation>,
+}
+
+impl CheckAssigneeResult {
+    pub fn from_top_assignees(
+        top_assignees: Option<Vec<google_patent_cli::core::models::SummaryItem>>,
+    ) -> Self {
+        let variations = top_assignees
+            .unwrap_or_default()
+            .into_iter()
+            .map(|a| AssigneeVariation {
+                name: a.name,
+                percentage: a.percentage,
+            })
+            .collect();
+        Self { variations }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct PatentDetail {
     pub patent_id: String,
     pub title: Option<String>,

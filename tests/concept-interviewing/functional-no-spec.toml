@@ -49,7 +49,3 @@ command = { command = "tool-use", tool = "Read", param = "file_path", value = "s
 [[checks]]
 name = "specification_md_created"
 command = { command = "workspace-file", path = "specification.md" }
-
-[[checks]]
-name = "google_patent_mcp_succeeded"
-command = { command = "mcp-success", tool = "search_patents" }

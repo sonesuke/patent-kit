@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::Arc;
 
 use google_patent_cli::core::models::SearchOptions;
@@ -11,26 +12,45 @@ use rmcp::transport::io::stdio;
 use schemars::JsonSchema;
 
 use crate::core::db::Database;
-use crate::core::models::*;
+use crate::core::models::{CheckAssigneeResult, *};
 
 pub struct PatentKitHandler {
     pub searcher: Arc<dyn PatentSearch>,
     pub arxiv: Arc<arxiv_cli::core::ArxivClient>,
-    pub db: Arc<Database>,
+    pub db: std::sync::Mutex<Option<Database>>,
+    pub db_path: PathBuf,
 }
 
 impl PatentKitHandler {
     pub fn new(
         searcher: Arc<dyn PatentSearch>,
         arxiv: Arc<arxiv_cli::core::ArxivClient>,
-        db: Arc<Database>,
+        db_path: PathBuf,
     ) -> Self {
         Self {
             searcher,
             arxiv,
-            db,
+            db: std::sync::Mutex::new(None),
+            db_path,
         }
     }
+
+    fn ensure_db(&self) -> Result<(), rmcp::model::ErrorData> {
+        let mut guard = self.db.lock().unwrap();
+        if guard.is_none() {
+            *guard = Some(Database::open(&self.db_path).map_err(internal_error)?);
+        }
+        Ok(())
+    }
+}
+
+macro_rules! with_db {
+    ($service:expr, $db:ident, $body:expr) => {{
+        $service.ensure_db()?;
+        let _guard = $service.db.lock().unwrap();
+        let $db = _guard.as_ref().unwrap();
+        $body
+    }};
 }
 
 impl ServerHandler for PatentKitHandler {
@@ -159,9 +179,9 @@ fn schema_for<T: JsonSchema + 'static>() -> Arc<rmcp::model::JsonObject> {
 pub fn create_handler(
     searcher: Arc<dyn PatentSearch>,
     arxiv: Arc<arxiv_cli::core::ArxivClient>,
-    db: Arc<Database>,
+    db_path: PathBuf,
 ) -> Router<PatentKitHandler> {
-    let handler = PatentKitHandler::new(searcher, arxiv, db);
+    let handler = PatentKitHandler::new(searcher, arxiv, db_path);
     let mut router = Router::new(handler);
     for tool in tools() {
         let route = ToolRoute::new_dyn(tool.clone(), |ctx| {
@@ -183,11 +203,11 @@ async fn handle_tool_call(
     let result = match tool_name.as_ref() {
         "import_csv" => {
             let req: ImportCsvRequest = parse_args(&args)?;
-            service
-                .db
-                .import_csv(&req.file_path)
-                .map(|r| format!("Imported {} patents from CSV", r.count))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.import_csv(&req.file_path)
+                    .map(|r| format!("Imported {} patents from CSV", r.count))
+                    .map_err(internal_error)
+            })
         }
         "search_patents" => {
             let req: SearchPatentsRequest = parse_args(&args)?;
@@ -212,14 +232,27 @@ async fn handle_tool_call(
             };
             match service.searcher.as_ref().search(&opts).await {
                 Ok(results) => {
-                    let assignees: Vec<&str> = results
-                        .patents
-                        .iter()
-                        .filter_map(|p| p.assignee.as_deref())
-                        .collect();
-                    let unique: std::collections::HashSet<&str> = assignees.into_iter().collect();
-                    let text = unique.into_iter().collect::<Vec<_>>().join("\n");
-                    Ok(format!("Assignee variations found:\n{}", text))
+                    let result = CheckAssigneeResult::from_top_assignees(results.top_assignees);
+                    if result.variations.is_empty() {
+                        Ok("No assignee variations found".to_string())
+                    } else {
+                        let lines: Vec<String> = result
+                            .variations
+                            .iter()
+                            .map(|v| {
+                                if v.percentage.is_empty() {
+                                    format!("- {}", v.name)
+                                } else {
+                                    format!("- {} ({})", v.name, v.percentage)
+                                }
+                            })
+                            .collect();
+                        Ok(format!(
+                            "Assignee variations found ({}):\n{}",
+                            result.variations.len(),
+                            lines.join("\n")
+                        ))
+                    }
                 }
                 Err(e) => Err(internal_error(e)),
             }
@@ -268,17 +301,16 @@ async fn handle_tool_call(
         }
         "get_unscreened" => {
             let req: GetUnscreenedRequest = parse_args(&args)?;
-            service
-                .db
-                .get_unscreened(req.limit)
-                .map(|p| format_unscreened(&p))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.get_unscreened(req.limit)
+                    .map(|p| format_unscreened(&p))
+                    .map_err(internal_error)
+            })
         }
         "screen_patent" => {
             let req: ScreenPatentRequest = parse_args(&args)?;
-            service
-                .db
-                .screen_patent(
+            with_db!(service, db, {
+                db.screen_patent(
                     &req.patent_id,
                     &req.judgment,
                     req.legal_status.as_deref(),
@@ -287,76 +319,78 @@ async fn handle_tool_call(
                 )
                 .map(|_| format!("Patent {} screened as {}", req.patent_id, req.judgment))
                 .map_err(internal_error)
+            })
         }
         "get_unevaluated" => {
             let req: GetUnevaluatedRequest = parse_args(&args)?;
-            service
-                .db
-                .get_unevaluated(req.limit)
-                .map(|p| format_unevaluated(&p))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.get_unevaluated(req.limit)
+                    .map(|p| format_unevaluated(&p))
+                    .map_err(internal_error)
+            })
         }
         "record_claims" => {
             let req: RecordClaimsRequest = parse_args(&args)?;
             let db_claims: Vec<ClaimInput> = req.claims;
-            service
-                .db
-                .record_claims(&req.patent_id, &db_claims)
-                .map(|_| format!("Recorded {} claims for {}", db_claims.len(), req.patent_id))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.record_claims(&req.patent_id, &db_claims)
+                    .map(|_| format!("Recorded {} claims for {}", db_claims.len(), req.patent_id))
+                    .map_err(internal_error)
+            })
         }
         "get_claims" => {
             let req: GetClaimsRequest = parse_args(&args)?;
-            service
-                .db
-                .get_claims(&req.patent_id)
-                .map(|c| format_claims(&c))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.get_claims(&req.patent_id)
+                    .map(|c| format_claims(&c))
+                    .map_err(internal_error)
+            })
         }
         "record_elements" => {
             let req: RecordElementsRequest = parse_args(&args)?;
             let count = req.elements.len();
-            service
-                .db
-                .record_elements(&req.elements)
-                .map(|_| format!("Recorded {} elements", count))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.record_elements(&req.elements)
+                    .map(|_| format!("Recorded {} elements", count))
+                    .map_err(internal_error)
+            })
         }
         "get_elements" => {
             let req: GetElementsRequest = parse_args(&args)?;
-            service
-                .db
-                .get_elements(&req.patent_id)
-                .map(|e| format_elements(&e))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.get_elements(&req.patent_id)
+                    .map(|e| format_elements(&e))
+                    .map_err(internal_error)
+            })
         }
         "get_unanalyzed" => {
             let req: GetUnanalyzedRequest = parse_args(&args)?;
-            service
-                .db
-                .get_unanalyzed(req.limit)
-                .map(|p| format_unanalyzed(&p))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.get_unanalyzed(req.limit)
+                    .map(|p| format_unanalyzed(&p))
+                    .map_err(internal_error)
+            })
         }
         "record_similarities" => {
             let req: RecordSimilaritiesRequest = parse_args(&args)?;
             let count = req.similarities.len();
-            service
-                .db
-                .record_similarities(&req.similarities)
-                .map(|_| format!("Recorded {} similarities", count))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.record_similarities(&req.similarities)
+                    .map(|_| format!("Recorded {} similarities", count))
+                    .map_err(internal_error)
+            })
         }
-        "get_product_features" => service
-            .db
-            .get_product_features()
-            .map(|f| format_product_features(&f))
-            .map_err(internal_error),
+        "get_product_features" => {
+            with_db!(service, db, {
+                db.get_product_features()
+                    .map(|f| format_product_features(&f))
+                    .map_err(internal_error)
+            })
+        }
         "record_product_feature" => {
             let req: RecordProductFeatureRequest = parse_args(&args)?;
-            service
-                .db
-                .record_product_feature(
+            with_db!(service, db, {
+                db.record_product_feature(
                     &req.feature_name,
                     &req.description,
                     req.category.as_deref(),
@@ -364,40 +398,43 @@ async fn handle_tool_call(
                 )
                 .map(|_| format!("Recorded product feature: {}", req.feature_name))
                 .map_err(internal_error)
+            })
         }
         "get_unresearched" => {
             let req: GetUnresearchedRequest = parse_args(&args)?;
-            service
-                .db
-                .get_unresearched(req.limit)
-                .map(|p| format_unresearched(&p))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.get_unresearched(req.limit)
+                    .map(|p| format_unresearched(&p))
+                    .map_err(internal_error)
+            })
         }
         "record_prior_arts" => {
             let req: RecordPriorArtsRequest = parse_args(&args)?;
             let count = req.prior_arts.len();
-            service
-                .db
-                .record_prior_arts(&req.prior_arts)
-                .map(|_| format!("Recorded {} prior arts", count))
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.record_prior_arts(&req.prior_arts)
+                    .map(|_| format!("Recorded {} prior arts", count))
+                    .map_err(internal_error)
+            })
         }
         "get_patent_detail" => {
             let req: GetPatentDetailRequest = parse_args(&args)?;
-            service
-                .db
-                .get_patent_detail(&req.patent_id)
-                .map(|detail| match detail {
-                    Some(d) => format_patent_detail(&d),
-                    None => format!("Patent {} not found in database", req.patent_id),
-                })
-                .map_err(internal_error)
+            with_db!(service, db, {
+                db.get_patent_detail(&req.patent_id)
+                    .map(|detail| match detail {
+                        Some(d) => format_patent_detail(&d),
+                        None => format!("Patent {} not found in database", req.patent_id),
+                    })
+                    .map_err(internal_error)
+            })
         }
-        "get_progress" => service
-            .db
-            .get_progress()
-            .map(|p| format_progress(&p))
-            .map_err(internal_error),
+        "get_progress" => {
+            with_db!(service, db, {
+                db.get_progress()
+                    .map(|p| format_progress(&p))
+                    .map_err(internal_error)
+            })
+        }
         _ => Err(rmcp::model::ErrorData::invalid_params(
             format!("Unknown tool: {}", tool_name),
             None,
@@ -613,10 +650,9 @@ fn format_progress(p: &Progress) -> String {
 // Server entry point
 // ---------------------------------------------------------------------------
 
-pub async fn run() -> anyhow::Result<()> {
+pub async fn run(verbose: bool) -> anyhow::Result<()> {
     let config = crate::core::Config::load()?;
     let db_path = config.resolve_db_path();
-    let db = Arc::new(Database::open(&db_path)?);
 
     let (browser_path, chrome_args) = config.resolve_browser();
     let searcher = Arc::new(
@@ -624,7 +660,7 @@ pub async fn run() -> anyhow::Result<()> {
             browser_path.clone(),
             true,
             false,
-            false,
+            verbose,
             chrome_args.clone(),
         )
         .await?,
@@ -637,7 +673,7 @@ pub async fn run() -> anyhow::Result<()> {
     };
     let arxiv = Arc::new(arxiv_cli::core::ArxivClient::new(&arxiv_config).await?);
 
-    let router = create_handler(searcher.clone(), arxiv.clone(), db);
+    let router = create_handler(searcher.clone(), arxiv.clone(), db_path);
 
     let transport = stdio();
     let running = rmcp::service::serve_directly(router, transport, None);
@@ -653,7 +689,5 @@ pub async fn run() -> anyhow::Result<()> {
 
 fn kill_orphan_chrome() {
     use std::process::Command;
-    let _ = Command::new("pkill")
-        .args(["-f", "chromium"])
-        .output();
+    let _ = Command::new("pkill").args(["-f", "chromium"]).output();
 }

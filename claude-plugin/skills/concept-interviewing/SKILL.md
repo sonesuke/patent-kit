@@ -75,7 +75,6 @@ Extract the following information from the user's input:
 For each competitor, verify the correct "Assignee Name" used in patent databases.
 
 1. **Verify**: Call the `check_assignee` MCP tool directly. Do NOT use the Skill tool or Bash to call it.
-
    - Tool: `check_assignee`
    - Required argument: `assignee` = "<Company Name>"
    - Omit the limit parameter to get all assignee variations (default: 100)
