@@ -637,10 +637,23 @@ pub async fn run() -> anyhow::Result<()> {
     };
     let arxiv = Arc::new(arxiv_cli::core::ArxivClient::new(&arxiv_config).await?);
 
-    let router = create_handler(searcher, arxiv, db);
+    let router = create_handler(searcher.clone(), arxiv.clone(), db);
 
     let transport = stdio();
     let running = rmcp::service::serve_directly(router, transport, None);
-    running.waiting().await?;
+    let result = running.waiting().await;
+
+    drop(searcher);
+    drop(arxiv);
+    kill_orphan_chrome();
+
+    result?;
     Ok(())
+}
+
+fn kill_orphan_chrome() {
+    use std::process::Command;
+    let _ = Command::new("pkill")
+        .args(["-f", "chromium"])
+        .output();
 }
