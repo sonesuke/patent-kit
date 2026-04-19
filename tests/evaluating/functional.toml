@@ -10,7 +10,7 @@ I have a patent database with screened relevant patents and a specification read
 
 [[setup]]
 command = """
-sqlite3 patents.db < /workspaces/patent-kit/plugin/skills/investigation-preparing/references/sql/initialize-database.sql
+sqlite3 patents.db < /workspaces/patent-kit/tests/initialize-database.sql
 sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US12231380B1', 'Trigger-based transfer of conversations from a chatbot to a human agent', 'US', '2023-10-11');"
 sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US20230245651A1', 'Enabling user-centered and contextually relevant interaction', 'US', '2023-04-03');"
 sqlite3 patents.db "INSERT INTO screened_patents (patent_id, judgment, legal_status, reason, abstract_text) VALUES ('US12231380B1', 'relevant', 'Pending', 'Related to chatbot-to-human transfer mechanism', 'A system for triggering transfer of conversations from a chatbot to a human agent based on conversation context.');"
@@ -54,12 +54,12 @@ name = "evaluating_invoked"
 command = { command = "skill-invoked", skill = "evaluating" }
 
 [[checks]]
-name = "fetching_loaded"
-command = { command = "skill-loaded", skill = "investigation-fetching" }
+name = "get_unevaluated_mcp_called"
+command = { command = "mcp-success", tool = "get_unevaluated_patents" }
 
 [[checks]]
-name = "recording_loaded"
-command = { command = "skill-loaded", skill = "investigation-recording" }
+name = "record_elements_mcp_called"
+command = { command = "mcp-success", tool = "record_elements" }
 
 [[checks]]
 name = "patent_fetch_invoked"

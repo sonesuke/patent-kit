@@ -34,15 +34,15 @@ The product **does not infringe** Claim 1 because it uses a different algorithm.
 
 [[checks]]
 name = "mcp_server_loaded"
-command = { command = "mcp-loaded", server = "google-patent-cli" }
+command = { command = "mcp-loaded", server = "patent-kit" }
 
 [[checks]]
 name = "skill_loaded"
-command = { command = "skill-loaded", skill = "legal-checking" }
+command = { command = "skill-loaded", skill = "patent-kit:legal-checking" }
 
 [[checks]]
 name = "legal_checking_invoked"
-command = { command = "skill-invoked", skill = "legal-checking" }
+command = { command = "skill-invoked", skill = "patent-kit:legal-checking" }
 
 [[checks]]
 name = "test_file_read"

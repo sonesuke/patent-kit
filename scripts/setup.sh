@@ -45,7 +45,7 @@ AUTOSUGGESTIONS=$(find / -path "*/zsh-autosuggestions/zsh-autosuggestions.zsh" 2
 SYNTAX_HIGHLIGHTING=$(find / -path "*/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2>/dev/null | head -1)
 
 cat > "$HOME/.zshrc" <<OUTER
-export PATH="\$HOME/.local/bin:\$PATH"
+export PATH="\$HOME/.local/bin:\$HOME/.cargo/bin:\$PATH"
 alias claude="claude --allow-dangerously-skip-permissions"
 eval "\$(mise activate zsh)"
 
@@ -82,48 +82,16 @@ mise generate git-pre-commit
 echo "Installing skill-bench..."
 curl -fsSL https://raw.githubusercontent.com/sonesuke/skill-bench/main/scripts/setup.sh | sh
 
-# Install MCP tools
-echo "Installing MCP tools..."
-curl -fsSL https://raw.githubusercontent.com/sonesuke/google-patent-cli/main/install.sh | bash
-curl -fsSL https://raw.githubusercontent.com/sonesuke/arxiv-cli/main/install.sh | bash
-
-# Configure google-patent-cli for Docker
-mkdir -p "$HOME/.config/google-patent-cli"
-cat > "$HOME/.config/google-patent-cli/config.toml" << 'EOF'
-# Chrome browser path
+# Configure patent-kit
+mkdir -p "$HOME/.config/patent-kit"
+cat > "$HOME/.config/patent-kit/config.toml" << 'EOF'
 browser_path = "/bin/chromium"
 
-# Chrome arguments for Docker environment
 chrome_args = [
     "--no-sandbox",
     "--disable-setuid-sandbox",
     "--disable-gpu"
 ]
 EOF
-
-# Configure arxiv-cli for Docker
-mkdir -p "$HOME/.config/arxiv-cli"
-cat > "$HOME/.config/arxiv-cli/config.toml" << 'EOF'
-# Chrome browser path
-browser_path = "/bin/chromium"
-
-# Chrome arguments for Docker environment
-chrome_args = [
-    "--no-sandbox",
-    "--disable-setuid-sandbox",
-    "--disable-gpu"
-]
-EOF
-
-# Install external skills from marketplace
-if command -v claude >/dev/null 2>&1; then
-  echo "Installing external skills..."
-  claude plugin marketplace add sonesuke/google-patent-cli 2>/dev/null || echo "google-patent-cli marketplace already added or failed"
-  claude plugin marketplace add sonesuke/arxiv-cli 2>/dev/null || echo "arxiv-cli marketplace already added or failed"
-  claude plugin install google-patent-cli@google-patent-cli-marketplace 2>/dev/null || echo "google-patent-cli skills already installed or failed"
-  claude plugin install arxiv-cli@arxiv-cli-marketplace 2>/dev/null || echo "arxiv-cli skills already installed or failed"
-else
-  echo "WARNING: Claude CLI not found, skipping skill installation"
-fi
 
 echo "Setup completed."

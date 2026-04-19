@@ -38,7 +38,7 @@ Voice recognition system for smart home devices
 
 [[checks]]
 name = "mcp_server_loaded"
-command = { command = "mcp-loaded", server = "google-patent-cli" }
+command = { command = "mcp-loaded", server = "patent-kit" }
 
 [[checks]]
 name = "skill_loaded"
@@ -49,5 +49,5 @@ name = "concept_interview_invoked"
 command = { command = "skill-invoked", skill = "concept-interviewing" }
 
 [[checks]]
-name = "patent_assignee_check_not_invoked"
-command = { command = "skill-invoked", skill = "patent-assignee-check", deny = true }
+name = "check_assignee_not_called"
+command = { command = "mcp-success", tool = "check_assignee", deny = true }

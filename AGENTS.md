@@ -7,8 +7,8 @@ This repository (`patent-kit`) is a **Claude Plugin Marketplace** containing adv
 ## Architecture
 
 - `.claude-plugin/marketplace.json`: The entry point defining the marketplace metadata.
-- `plugin/`: The root directory of the `patent-kit` plugin containing `.claude-plugin/plugin.json`.
-- `plugin/skills/`: Contains all analysis skills in flat directories. Each has a `SKILL.md` conforming to Claude's Official Skill Guidelines.
+- `claude-plugin/plugin.json`: The plugin manifest declaring the `patent-kit` MCP server.
+- `claude-plugin/skills/`: Contains all analysis skills in flat directories. Each has a `SKILL.md` conforming to Claude's Official Skill Guidelines.
 
 ## Mandatory AI Agent Rules
 
