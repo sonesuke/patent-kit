@@ -1,31 +1,32 @@
 ---
 name: claim-analyzing
 description: |
-  Performs claim analysis by comparing product features against patent elements.
+  Analyzes screened patents by decomposing claims into elements and comparing against product features.
 
   Triggered when:
   - The user asks to:
+    * "evaluate the patent"
+    * "analyze claims"
     * "perform claim analysis"
     * "analyze claim elements"
-    * "analyze claims"
     * "analyze claim similarities"
     * "compare product features against patent elements"
   - The user mentions:
     * "claim analysis" with "patent" or "elements"
     * "similarity" with "elements" or "claims"
-  - `patents.db` exists with `elements` table populated and `features` table populated
+  - `patents.db` exists with screened and indexed patents
 ---
 
 # Claim Analysis
 
 ## Purpose
 
-Perform detailed claim analysis by comparing product specification against patent elements from database and recording similarity results.
+Analyze screened patents by decomposing claims into elements, comparing product features against patent elements, and recording similarity results.
 
 ## Prerequisites
 
+- `patents.db` must exist with screened and indexed patents (from screening skill)
 - `features` table must exist with product features populated
-- `patents.db` must exist with `elements` table populated (from evaluation skill)
 
 ## Constitution
 
@@ -34,14 +35,22 @@ Perform detailed claim analysis by comparing product specification against paten
 
 ### Core Principles
 
+**Element-by-Element Analysis (The Golden Rule)**:
+
+- Every claim analysis MUST test the target invention against the reference patent element by element
+- Break down inventions into Elements A, B, C
+- Find references disclosing A AND B AND C for anticipation (Novelty)
+- Do not rely on "general similarity"
+
 **Descriptive Technical Language**:
 
 - Avoid legal assertions ("invalid", "valid", "Does not satisfy")
 - Use descriptive technical language for analysis notes
 
-**MCP Tool Direct Access**:
+**Mechanical Claims Recording**:
 
-- Call MCP tools directly. Do NOT use the Skill tool or Bash to invoke them.
+- Claims are already stored in the database by `index_patents` — read them via `get_claims`
+- Do NOT re-generate or summarize claim text
 
 ## Skill Orchestration
 
@@ -52,44 +61,51 @@ Perform detailed claim analysis by comparing product specification against paten
 **Process**:
 
 1. **Get Patents to Analyze**:
-   - Call the `get_unanalyzed` MCP tool directly (do NOT use Bash or Skill):
+   - Call the `get_unevaluated` MCP tool directly (do NOT use Bash or Skill):
      - `limit`: 5
+   - If no patents returned → Claim analysis is complete
 
-2. **For each patent**, execute Steps 2a–2e in order:
+2. **For each patent**, execute Steps 2a–2d in order:
 
-   **2a. Get Data from Database**:
+   **2a. Decompose Claims into Elements**:
+   - Call the `get_claims` MCP tool to read the claim text
+   - For EACH claim (independent AND dependent):
+     1. Decompose into constituent elements based on the means/steps described in the claim text
+     2. Call the `record_elements` MCP tool:
+        - `elements`: [{ patent_id: "<patent_id>", claim_number: 1, element_label: "Element A", element_description: "..." }, ...]
+
+   **CRITICAL Rules for Element Decomposition**:
+   - Decompose ALL claims including dependent claims — do NOT skip dependent claims
+   - Do NOT reference `specification.md` during decomposition — decompose based on claim text alone
+   - Cut elements by the number of means/steps in the claim — do NOT force a specific number of elements
+
+   **2b. Check Feature Coverage**:
    - Call the `get_product_features` MCP tool to retrieve product features
-   - Call the `get_elements` MCP tool for each patent:
-     - `patent_id`: "<patent_id>"
-
-   **2b. Check Feature Coverage for Each Element**:
-   - For each patent element, check if a matching product feature exists in the results
-   - **If feature NOT found**: Do NOT record as 'absent' automatically — collect it
-   - After checking ALL elements, if any unmatched elements remain, present them to the user in a single batch using `AskUserQuestion` (max 4 questions per call, group by unique functionality — do NOT ask about duplicate capabilities across patents)
+   - Call the `get_elements` MCP tool for each patent
+   - For each patent element, check if a matching product feature exists
+   - **If feature NOT found**: Do NOT record as 'absent' automatically — collect unmatched elements and present them to the user in a single batch using `AskUserQuestion` (max 4 questions per call)
    - If positive: Call the `record_product_feature` MCP tool with `presence='present'`
    - If negative: Call the `record_product_feature` MCP tool with `presence='absent'`
 
-   **2c. Comparison Analysis**:
+   **2c. Comparison Analysis & Record Similarities**:
    - Compare product features against patent elements
    - Determine similarity level: `Significant`, `Moderate`, or `Limited`
    - Write detailed analysis notes
-
-   **2d. Record Similarities**:
-   - Call the `record_similarities` MCP tool directly (do NOT use Bash or Skill):
+   - Call the `record_similarities` MCP tool:
      - `similarities`: [{ patent_id: "<patent_id>", claim_number: 1, element_label: "Element A", similarity_level: "Significant", analysis_notes: "...", ... }]
 
-   **2e. Legal Compliance Check**:
+   **2d. Legal Compliance Check**:
    - Use `Skill: legal-checking` with request "Check the following analysis notes for legal compliance: <analysis_notes>"
    - Revise if violations found
 
-3. **Verify Results**: Call the `get_unanalyzed` MCP tool to confirm no patents remain
+3. **Repeat** from step 1 until `get_unevaluated` returns no patents
 
 ## State Management
 
 ### Initial State
 
-- Patents in `elements` table without corresponding `similarities` entries exist
+- Patents marked as `relevant` without corresponding elements/similarities entries exist
 
 ### Final State
 
-- No patents in `elements` without corresponding `similarities` entries (all analyzed)
+- No patents marked as `relevant` without corresponding elements/similarities entries (all analyzed)

@@ -476,16 +476,17 @@ impl Database {
     pub fn get_unevaluated(&self, limit: Option<usize>) -> Result<PageResult<UnevaluatedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         let total_remaining: i64 = conn.query_row(
-            "SELECT COUNT(*) FROM screened_patents s LEFT JOIN claims c ON s.patent_id = c.patent_id WHERE s.judgment = 'relevant' AND c.patent_id IS NULL",
+            "SELECT COUNT(DISTINCT s.patent_id) FROM screened_patents s JOIN claims c ON s.patent_id = c.patent_id LEFT JOIN elements e ON s.patent_id = e.patent_id WHERE s.judgment = 'relevant' AND e.patent_id IS NULL",
             [],
             |row| row.get(0),
         )?;
         let mut sql = String::from(
-            "SELECT s.patent_id, p.title
+            "SELECT DISTINCT s.patent_id, p.title
              FROM screened_patents s
              JOIN patents p ON s.patent_id = p.patent_id
-             LEFT JOIN claims c ON s.patent_id = c.patent_id
-             WHERE s.judgment = 'relevant' AND c.patent_id IS NULL
+             JOIN claims c ON s.patent_id = c.patent_id
+             LEFT JOIN elements e ON s.patent_id = e.patent_id
+             WHERE s.judgment = 'relevant' AND e.patent_id IS NULL
              ORDER BY s.patent_id",
         );
         if let Some(n) = limit {
@@ -502,7 +503,10 @@ impl Database {
         for row in rows {
             items.push(row?);
         }
-        Ok(PageResult { items, total_remaining })
+        Ok(PageResult {
+            items,
+            total_remaining,
+        })
     }
 
     // -----------------------------------------------------------------------
@@ -673,7 +677,10 @@ impl Database {
         for row in rows {
             items.push(row?);
         }
-        Ok(PageResult { items, total_remaining })
+        Ok(PageResult {
+            items,
+            total_remaining,
+        })
     }
 
     pub fn record_similarities(&self, similarities: &[SimilarityInput]) -> Result<()> {
@@ -759,7 +766,10 @@ impl Database {
         for row in rows {
             items.push(row?);
         }
-        Ok(PageResult { items, total_remaining })
+        Ok(PageResult {
+            items,
+            total_remaining,
+        })
     }
 
     pub fn record_prior_arts(&self, prior_arts: &[PriorArtInput]) -> Result<()> {
