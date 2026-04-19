@@ -17,6 +17,24 @@ MCP: patent-kit (Rust)
 2. **LLM handles judgment only**: relevance, element decomposition, similarity analysis
 3. **No external API calls during LLM turns**: data is pre-loaded into DB
 4. **Skill instructions are minimal**: just "call this tool, interpret, call that tool"
+5. **One patent at a time**: `get_unanalyzed` returns a single patent to avoid context overload
+
+---
+
+## Schema
+
+```
+patents (PK: patent_id)
+  ├── screened_patents (FK: patent_id) — judgment: relevant | irrelevant
+  ├── claims (FK: patent_id, PK: patent_id + claim_number)
+  │   └── elements (FK: patent_id + claim_number, PK: patent_id + claim_number + element_label)
+  │       └── similarities (FK: patent_id + claim_number + element_label)
+  └── prior_art_elements (FK: patent_id + claim_number + element_label)
+
+features (standalone, PK: feature_id)
+prior_arts (standalone, PK: reference_id)
+  └── prior_art_elements (FK: reference_id)
+```
 
 ---
 
@@ -24,65 +42,39 @@ MCP: patent-kit (Rust)
 
 ### Database Management
 
-#### `init_database`
-
-Initialize `patents.db` with schema. Idempotent — safe to call multiple times.
-
-```json
-{ "tool": "init_database", "arguments": {} }
-```
-
-Returns: `{ tables: ["target_patents", "screened_patents", "claims", "elements", "similarities", "features", "prior_arts"] }`
-
 #### `import_csv`
 
-Import CSV files from Google Patents into `target_patents` table.
+Import patents from a Google Patents CSV file into the `patents` table.
 
 ```json
-{ "tool": "import_csv", "arguments": { "paths": ["csv/search_results.csv"] } }
+{ "tool": "import_csv", "arguments": { "file_path": "csv/search_results.csv" } }
 ```
 
-Returns: `{ imported: 150 }`
+Returns: `"Imported 150 patents from csv/search_results.csv"`
 
 ---
 
 ### Patent Indexing
 
-#### `index_patent`
-
-Fetch a single patent from Google Patents and store in DB. Stores:
-
-- `screened_patents`: abstract_text, legal_status (judgment = NULL → unscreened)
-- `claims`: all claims with number, text, claim_type
-
-No LLM involvement. Returns abstract_text so the caller can immediately judge.
-
-```json
-{ "tool": "index_patent", "arguments": { "patent_id": "US1234567A1" } }
-```
-
-Returns:
-
-```json
-{
-  "patent_id": "US1234567A1",
-  "title": "...",
-  "abstract_text": "...",
-  "legal_status": "Pending",
-  "assignee": "Google LLC",
-  "claims_indexed": 18
-}
-```
-
 #### `index_patents`
 
-Find all patents in `target_patents` that have no entry in `screened_patents`, and index them automatically (batch version of `index_patent`). Processes sequentially with error handling.
+Find all patents in `patents` that have no entry in `screened_patents`, fetch their details (abstract, legal status, claims) from Google Patents, and store in database. Runs as a background thread — returns immediately with a count.
 
 ```json
 { "tool": "index_patents", "arguments": {} }
 ```
 
-Returns: `{ indexed: 150, errors: [] }`
+Returns: `"Indexed 150 patents (0 errors)"`
+
+#### `stop_indexing`
+
+Stop the background indexing process if it is running.
+
+```json
+{ "tool": "stop_indexing", "arguments": {} }
+```
+
+Returns: `"Indexing stopped"` or `"No indexing in progress"`
 
 ---
 
@@ -99,8 +91,6 @@ Search Google Patents. Used in targeting phase. Returns summary only (no claims)
     "query": "\"smartphone\" AND \"gesture\"",
     "assignee": ["Apple Inc."],
     "country": "US",
-    "priority_after": "2020-01-01",
-    "priority_before": "2025-01-01",
     "limit": 20
   }
 }
@@ -114,13 +104,7 @@ Returns:
   "top_assignees": [{ "name": "Apple Inc.", "percentage": "15%" }],
   "top_cpcs": [{ "name": "G06F", "percentage": "45%" }],
   "patents": [
-    {
-      "id": "US1234567A1",
-      "title": "...",
-      "snippet": "...",
-      "assignee": "Apple Inc.",
-      "url": "..."
-    }
+    { "id": "US1234567A1", "title": "...", "snippet": "...", "assignee": "Apple Inc.", "url": "..." }
   ]
 }
 ```
@@ -130,10 +114,10 @@ Returns:
 Discover assignee name variations in patent databases.
 
 ```json
-{ "tool": "check_assignee", "arguments": { "name": "Google" } }
+{ "tool": "check_assignee", "arguments": { "assignee": "Google" } }
 ```
 
-Returns: `{ variations: ["Google LLC", "Google Inc.", "Alphabet Inc."] }`
+Returns: `"Assignee variations for 'Google' (3):\n  - Google LLC (85%)\n  - Google Inc. (10%)\n  - Alphabet Inc. (5%)"`
 
 ---
 
@@ -144,14 +128,7 @@ Returns: `{ variations: ["Google LLC", "Google Inc.", "Alphabet Inc."] }`
 Search arXiv. Used in prior-art-researching.
 
 ```json
-{
-  "tool": "search_papers",
-  "arguments": {
-    "query": "neural network pruning",
-    "limit": 20,
-    "before": "2023-01-01"
-  }
-}
+{ "tool": "search_papers", "arguments": { "query": "neural network pruning", "limit": 20 } }
 ```
 
 Returns:
@@ -172,13 +149,8 @@ Returns:
 
 ```json
 {
-  "id": "2301.00001",
-  "title": "...",
-  "authors": [...],
-  "summary": "...",
-  "published_date": "2023-01-01",
-  "url": "...",
-  "pdf_url": "...",
+  "id": "2301.00001", "title": "...", "authors": [...], "summary": "...",
+  "published_date": "2023-01-01", "url": "...", "pdf_url": "...",
   "description_paragraphs": [{ "number": "0001", "text": "..." }]
 }
 ```
@@ -187,33 +159,24 @@ Returns:
 
 ### Screening
 
-#### `get_unscreened_patents`
+#### `get_unscreened`
 
-Get patents that have been indexed (abstract available) but not yet judged. Returns abstract_text so LLM can judge immediately.
+Get patents that have been indexed (abstract available) but not yet judged. Returns abstract_text so LLM can judge immediately. Includes `total_remaining` count and `unindexed_count` for patents not yet fetched.
 
 ```json
-{ "tool": "get_unscreened_patents", "arguments": { "limit": 10 } }
+{ "tool": "get_unscreened", "arguments": { "limit": 10 } }
 ```
 
 Returns:
 
 ```json
-[
-  {
-    "patent_id": "US1234567A1",
-    "title": "...",
-    "abstract_text": "...",
-    "legal_status": "Pending",
-    "assignee": "..."
-  },
-  {
-    "patent_id": "US9876543B2",
-    "title": "...",
-    "abstract_text": "...",
-    "legal_status": "Active",
-    "assignee": "..."
-  }
-]
+{
+  "patents": [
+    { "patent_id": "US1234567A1", "title": "...", "assignee": "...", "abstract_text": "..." }
+  ],
+  "total_remaining": 42,
+  "unindexed_count": 0
+}
 ```
 
 #### `screen_patent`
@@ -226,52 +189,68 @@ Record LLM's relevance judgment. Only `judgment` and `reason` come from LLM.
   "arguments": {
     "patent_id": "US1234567A1",
     "judgment": "relevant",
-    "reason": "Describes gesture-based UI for mobile devices, directly relevant to target product."
+    "reason": "Describes gesture-based UI for mobile devices."
   }
 }
 ```
 
+Returns: `"Patent US1234567A1 screened: relevant"`
+
 ---
 
-### Evaluation
+### Claim Analysis
 
-#### `get_unevaluated_patents`
+#### `get_unanalyzed`
 
-Get relevant patents that have claims but no elements. Returns claim_count so LLM knows the workload.
+Get the next patent that needs analysis. Returns exactly 1 patent. The `needs` field indicates whether the patent needs element decomposition (`"elements"`) or similarity recording (`"similarities"`). Priority: patents needing elements > patents needing similarities.
 
 ```json
-{ "tool": "get_unevaluated_patents", "arguments": { "limit": 5 } }
+{ "tool": "get_unanalyzed", "arguments": {} }
 ```
 
 Returns:
 
 ```json
-[{ "patent_id": "US1234567A1", "title": "...", "claim_count": 12 }]
+"US1234567A1 — Title — needs: elements"
 ```
+
+or `"All patents have been analyzed."` when complete.
 
 #### `get_claims`
 
-Get claims for a patent. Used by LLM for element decomposition.
+Get claims for a patent. Optionally filter by decomposition status.
 
 ```json
-{ "tool": "get_claims", "arguments": { "patent_id": "US1234567A1" } }
+{ "tool": "get_claims", "arguments": { "patent_id": "US1234567A1", "decomposed": false } }
 ```
+
+Parameters:
+- `patent_id` (required)
+- `decomposed` (optional): `false` = claims with no elements yet, `true` = claims with elements, omitted = all
 
 Returns:
 
 ```json
 [
-  {
-    "claim_number": 1,
-    "claim_type": "independent",
-    "claim_text": "1. A method comprising: ..."
-  },
-  {
-    "claim_number": 2,
-    "claim_type": "dependent",
-    "claim_text": "2. The method of claim 1, ..."
-  }
+  { "patent_id": "US1234567A1", "claim_number": 1, "claim_type": "independent", "claim_text": "1. A method comprising: ..." },
+  { "patent_id": "US1234567A1", "claim_number": 2, "claim_type": "dependent", "claim_text": "2. The method of claim 1, ..." }
 ]
+```
+
+#### `record_claims`
+
+Record claims extracted from a patent. Typically used by `index_patents` but available for manual entry.
+
+```json
+{
+  "tool": "record_claims",
+  "arguments": {
+    "patent_id": "US1234567A1",
+    "claims": [
+      { "claim_number": 1, "claim_type": "independent", "claim_text": "1. A method comprising: ..." }
+    ]
+  }
+}
 ```
 
 #### `record_elements`
@@ -282,123 +261,85 @@ Store LLM's element decomposition results.
 {
   "tool": "record_elements",
   "arguments": {
-    "patent_id": "US1234567A1",
     "elements": [
-      {
-        "claim_number": 1,
-        "label": "A",
-        "description": "A gesture recognition module that detects touch patterns"
-      },
-      {
-        "claim_number": 1,
-        "label": "B",
-        "description": "A mapping engine that translates gestures to commands"
-      },
-      {
-        "claim_number": 1,
-        "label": "C",
-        "description": "A command executor that performs mapped operations"
-      }
+      { "patent_id": "US1234567A1", "claim_number": 1, "element_label": "Element A", "element_description": "A gesture recognition module that detects touch patterns" },
+      { "patent_id": "US1234567A1", "claim_number": 1, "element_label": "Element B", "element_description": "A mapping engine that translates gestures to commands" }
     ]
   }
 }
 ```
 
----
-
-### Claim Analysis
-
-#### `get_unanalyzed_patents`
-
-Get patents that have elements but no similarities.
-
-```json
-{ "tool": "get_unanalyzed_patents", "arguments": { "limit": 5 } }
-```
-
-Returns:
-
-```json
-[{ "patent_id": "US1234567A1", "title": "...", "element_count": 9 }]
-```
+Returns: `"Recorded 2 elements for US1234567A1"`
 
 #### `get_elements`
 
-Get elements for a patent.
+Get elements for a patent. Optionally filter by claim number and analysis status.
 
 ```json
-{ "tool": "get_elements", "arguments": { "patent_id": "US1234567A1" } }
+{ "tool": "get_elements", "arguments": { "patent_id": "US1234567A1", "analyzed": false } }
+```
+
+Parameters:
+- `patent_id` (required)
+- `claim_number` (optional): filter by specific claim
+- `analyzed` (optional): `false` = elements with no similarities yet, `true` = elements with similarities, omitted = all
+
+Returns:
+
+```json
+[
+  { "patent_id": "US1234567A1", "claim_number": 1, "element_label": "Element A", "element_description": "A gesture recognition module..." },
+  { "patent_id": "US1234567A1", "claim_number": 1, "element_label": "Element B", "element_description": "A mapping engine..." }
+]
+```
+
+#### `get_product_features`
+
+Get all product-level features.
+
+```json
+{ "tool": "get_product_features", "arguments": {} }
 ```
 
 Returns:
 
 ```json
 [
-  {
-    "claim_number": 1,
-    "label": "A",
-    "description": "A gesture recognition module..."
-  },
-  { "claim_number": 1, "label": "B", "description": "A mapping engine..." }
+  { "feature_id": 1, "feature_name": "Gesture Recognition", "description": "Detects multi-touch gestures", "category": "Input", "presence": "present" }
 ]
 ```
 
-#### `query_features`
+#### `record_product_feature`
 
-Search product features by keyword matching against feature_name and description.
-
-```json
-{ "tool": "query_features", "arguments": { "search_term": "gesture" } }
-```
-
-Returns:
-
-```json
-[
-  {
-    "feature_name": "Gesture Recognition",
-    "description": "...",
-    "category": "Input",
-    "presence": "present"
-  }
-]
-```
-
-#### `record_features`
-
-Store product features (from concept-interviewing or user input).
+Record a single product-level feature.
 
 ```json
 {
-  "tool": "record_features",
+  "tool": "record_product_feature",
   "arguments": {
-    "features": [
-      {
-        "name": "Gesture Recognition",
-        "description": "Detects multi-touch gestures",
-        "category": "Input",
-        "presence": "present"
-      }
-    ]
+    "feature_name": "Gesture Recognition",
+    "description": "Detects multi-touch gestures",
+    "category": "Input",
+    "presence": "present"
   }
 }
 ```
 
 #### `record_similarities`
 
-Store LLM's similarity analysis results.
+Store LLM's similarity analysis results per element.
 
 ```json
 {
   "tool": "record_similarities",
   "arguments": {
-    "patent_id": "US1234567A1",
     "similarities": [
       {
+        "patent_id": "US1234567A1",
         "claim_number": 1,
-        "element_label": "A",
+        "element_label": "Element A",
         "similarity_level": "Significant",
-        "analysis_notes": "Product's gesture recognition module uses the same accelerometer-based approach described in the claim."
+        "analysis_notes": "Product uses the same accelerometer-based approach described in the claim."
       }
     ]
   }
@@ -409,18 +350,21 @@ Store LLM's similarity analysis results.
 
 ### Prior Art Research
 
-#### `get_unresearched_patents`
+#### `get_unresearched`
 
-Get patents with Moderate/Significant similarities that have no prior art recorded.
+Get patents with Significant/Moderate similarities that have no prior arts recorded.
 
 ```json
-{ "tool": "get_unresearched_patents", "arguments": { "limit": 5 } }
+{ "tool": "get_unresearched", "arguments": { "limit": 5 } }
 ```
 
 Returns:
 
 ```json
-[{ "patent_id": "US1234567A1", "title": "...", "high_similarity_count": 3 }]
+{
+  "items": [{ "patent_id": "US1234567A1", "title": "...", "element_count": 3 }],
+  "total_remaining": 8
+}
 ```
 
 #### `record_prior_arts`
@@ -431,18 +375,22 @@ Store prior art references with element-level claim charts.
 {
   "tool": "record_prior_arts",
   "arguments": {
-    "patent_id": "US1234567A1",
     "prior_arts": [
       {
-        "claim_number": 1,
-        "element_label": "A",
         "reference_id": "US9876543B2",
         "reference_type": "patent",
         "title": "Touch gesture recognition system",
-        "relevance_level": "Significant",
         "publication_date": "2018-06-15",
-        "analysis_notes": "Discloses accelerometer-based gesture detection...",
-        "claim_chart": "Element A → Col. 5, lines 10-25: 'The sensor module detects...'"
+        "elements": [
+          {
+            "patent_id": "US1234567A1",
+            "claim_number": 1,
+            "element_label": "Element A",
+            "relevance_level": "Significant",
+            "analysis_notes": "Discloses accelerometer-based gesture detection...",
+            "claim_chart": "Element A → Col. 5, lines 10-25: 'The sensor module detects...'"
+          }
+        ]
       }
     ]
   }
@@ -455,7 +403,7 @@ Store prior art references with element-level claim charts.
 
 #### `get_progress`
 
-Get workflow progress statistics for all phases.
+Get investigation progress summary.
 
 ```json
 { "tool": "get_progress", "arguments": {} }
@@ -465,21 +413,17 @@ Returns:
 
 ```json
 {
-  "screening": {
-    "total": 150,
-    "screened": 120,
-    "relevant": 35,
-    "irrelevant": 85
-  },
-  "evaluation": { "total": 35, "completed": 20, "remaining": 15 },
-  "claim_analysis": { "total": 20, "completed": 12, "remaining": 8 },
-  "prior_art": { "total": 8, "completed": 3, "remaining": 5 }
+  "total_targets": 150,
+  "total_screened": 120,
+  "relevant": 35,
+  "irrelevant": 85,
+  "expired": 3
 }
 ```
 
 #### `get_patent_detail`
 
-Get all data for a specific patent (used for reporting).
+Get full detail of a patent from the database.
 
 ```json
 { "tool": "get_patent_detail", "arguments": { "patent_id": "US1234567A1" } }
@@ -489,32 +433,17 @@ Returns:
 
 ```json
 {
-  "screening": {
-    "judgment": "relevant",
-    "reason": "...",
-    "legal_status": "...",
-    "abstract_text": "..."
-  },
-  "claims": [
-    { "claim_number": 1, "claim_type": "independent", "claim_text": "..." }
-  ],
-  "elements": [{ "claim_number": 1, "label": "A", "description": "..." }],
-  "similarities": [
-    {
-      "claim_number": 1,
-      "element_label": "A",
-      "similarity_level": "...",
-      "analysis_notes": "..."
-    }
-  ],
-  "prior_arts": [
-    {
-      "reference_id": "...",
-      "reference_type": "patent",
-      "title": "...",
-      "relevance_level": "..."
-    }
-  ]
+  "patent_id": "US1234567A1",
+  "title": "...",
+  "assignee": "Apple Inc.",
+  "country": "US",
+  "publication_date": "2020-01-15",
+  "filing_date": "2019-01-15",
+  "grant_date": "2021-06-01",
+  "judgment": "relevant",
+  "legal_status": "Active",
+  "reason": "...",
+  "abstract_text": "..."
 }
 ```
 
@@ -528,82 +457,84 @@ Returns:
 search_patents(assignee, keywords, dates)  ← LLM iterates queries with user
 check_assignee(name)                        ← verify assignee names
 → User downloads CSV
-import_csv(paths)                           ← one-time
+import_csv(file_path)                       ← one-time
 ```
 
 ### Screening (LLM: relevance judgment only)
 
 ```
-index_patents()                              ← MCP: fetch all + store claims
-get_unscreened_patents(limit: 10)           ← returns id + abstract
+index_patents()                             ← MCP: fetch all + store claims (background)
+get_unscreened(limit: 10)                   ← returns id + abstract + remaining counts
 LLM: read abstract → judge
 screen_patent(id, judgment, reason)          ← loop
 ```
 
-### Evaluation (LLM: element decomposition)
+### Claim Analysis — Elements (LLM: element decomposition)
 
 ```
-get_unevaluated_patents(limit: 5)        ← returns id + claim_count
-get_claims(patent_id)                       ← read claims
+get_unanalyzed()                            ← returns 1 patent, needs: "elements"
+get_claims(patent_id, decomposed: false)    ← un-decomposed claims
 LLM: decompose into elements
-record_elements(patent_id, elements)         ← loop per claim
+record_elements(elements)                   ← loop per claim
+→ get_unanalyzed() again (same patent, needs: "similarities")
 ```
 
-### Claim Analysis (LLM: similarity assessment)
+### Claim Analysis — Similarities (LLM: similarity assessment)
 
 ```
-get_unanalyzed_patents(limit: 5)
-get_elements(patent_id)
-query_features() / query_features(search_term)
+get_unanalyzed()                            ← returns 1 patent, needs: "similarities"
+get_elements(patent_id, analyzed: false)    ← un-analyzed elements
+get_product_features()                      ← existing features
 LLM: compare features vs elements → ask user if needed
-record_features(features)                    ← if new features discovered
-record_similarities(patent_id, similarities)
+record_product_feature(...)                 ← if new features discovered
+record_similarities(similarities)           ← per element
+→ Skill: legal-checking                     ← compliance review
+→ get_unanalyzed() again (next patent or "All analyzed")
 ```
 
 ### Prior Art Research (LLM: search + analysis)
 
 ```
-get_unresearched_patents(limit: 5)
-search_patents(query, dates)                 ← per element
-search_papers(query, dates)                  ← per element
-fetch_patent/paper for Grade A candidates    ← full details
+get_unresearched(limit: 5)
+search_patents(query, dates)                ← per element
+search_papers(query, dates)                 ← per element
+fetch_paper(id)                             ← for NPL candidates
 LLM: create claim charts
-record_prior_arts(patent_id, prior_arts)
+record_prior_arts(prior_arts)
 ```
 
 ### Reporting (LLM: template formatting)
 
 ```
-get_progress()                               ← overall statistics
-get_patent_detail(patent_id)                ← per-patent report
+get_progress()                              ← overall statistics
+get_patent_detail(patent_id)               ← per-patent report
 LLM: format report using template
 ```
 
 ---
 
-## Tool Summary (21 tools)
+## Tool Summary (19 tools)
 
-| Category       | Tool                       | LLM Involvement      |
-| -------------- | -------------------------- | -------------------- |
-| DB Management  | `init_database`            | None                 |
-| DB Management  | `import_csv`               | None                 |
-| Indexing       | `index_patent`             | None                 |
-| Indexing       | `index_patents`            | None                 |
-| Search         | `search_patents`           | Query crafting       |
-| Search         | `check_assignee`           | None                 |
-| Search         | `search_papers`            | Query crafting       |
-| Fetch          | `fetch_paper`              | None                 |
-| Screening      | `get_unscreened_patents`   | None                 |
-| Screening      | `screen_patent`            | Judgment only        |
-| Evaluation     | `get_unevaluated_patents`  | None                 |
-| Evaluation     | `get_claims`               | None                 |
-| Evaluation     | `record_elements`          | None (data from LLM) |
-| Claim Analysis | `get_unanalyzed_patents`   | None                 |
-| Claim Analysis | `get_elements`             | None                 |
-| Claim Analysis | `query_features`           | None                 |
-| Claim Analysis | `record_features`          | None (data from LLM) |
-| Claim Analysis | `record_similarities`      | None (data from LLM) |
-| Prior Art      | `get_unresearched_patents` | None                 |
-| Prior Art      | `record_prior_arts`        | None (data from LLM) |
-| Reporting      | `get_progress`             | None                 |
-| Reporting      | `get_patent_detail`        | None                 |
+| Category       | Tool                    | LLM Involvement      |
+| -------------- | ----------------------- | -------------------- |
+| DB Management  | `import_csv`            | None                 |
+| Indexing       | `index_patents`         | None (background)    |
+| Indexing       | `stop_indexing`         | None                 |
+| Search         | `search_patents`        | Query crafting       |
+| Search         | `check_assignee`        | None                 |
+| Search         | `search_papers`         | Query crafting       |
+| Fetch          | `fetch_paper`           | None                 |
+| Screening      | `get_unscreened`        | None                 |
+| Screening      | `screen_patent`         | Judgment only        |
+| Claim Analysis | `get_unanalyzed`        | None                 |
+| Claim Analysis | `get_claims`            | None                 |
+| Claim Analysis | `record_claims`         | None (data from LLM) |
+| Claim Analysis | `record_elements`       | None (data from LLM) |
+| Claim Analysis | `get_elements`          | None                 |
+| Claim Analysis | `get_product_features`  | None                 |
+| Claim Analysis | `record_product_feature`| None (data from LLM) |
+| Claim Analysis | `record_similarities`   | None (data from LLM) |
+| Prior Art      | `get_unresearched`      | None                 |
+| Prior Art      | `record_prior_arts`     | None (data from LLM) |
+| Reporting      | `get_progress`          | None                 |
+| Reporting      | `get_patent_detail`     | None                 |
