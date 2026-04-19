@@ -171,9 +171,7 @@ pub struct UnscreenedPatent {
     pub patent_id: String,
     pub title: String,
     pub assignee: Option<String>,
-    pub country: Option<String>,
-    pub filing_date: Option<String>,
-    pub publication_date: Option<String>,
+    pub abstract_text: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]

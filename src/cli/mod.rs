@@ -198,7 +198,7 @@ pub async fn run() -> anyhow::Result<()> {
             } else {
                 println!("Unscreened patents ({}):", patents.len());
                 for p in &patents {
-                    println!("- {} ({})", p.title, p.patent_id);
+                    println!("- {} ({}) [{}]", p.title, p.patent_id, p.assignee.as_deref().unwrap_or("N/A"));
                 }
             }
         }

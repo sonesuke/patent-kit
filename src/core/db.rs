@@ -392,10 +392,10 @@ impl Database {
     pub fn get_unscreened(&self, limit: Option<usize>) -> Result<Vec<UnscreenedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         let mut sql = String::from(
-            "SELECT p.patent_id, p.title, p.assignee, p.country, p.filing_date, p.publication_date
+            "SELECT p.patent_id, p.title, p.assignee, p.abstract_text
              FROM patents p
              LEFT JOIN screened_patents s ON p.patent_id = s.patent_id
-             WHERE s.patent_id IS NULL
+             WHERE s.patent_id IS NULL AND p.abstract_text IS NOT NULL
              ORDER BY p.patent_id",
         );
         if let Some(n) = limit {
@@ -407,9 +407,7 @@ impl Database {
                 patent_id: row.get(0)?,
                 title: row.get(1)?,
                 assignee: row.get(2)?,
-                country: row.get(3)?,
-                filing_date: row.get(4)?,
-                publication_date: row.get(5)?,
+                abstract_text: row.get(3)?,
             })
         })?;
         let mut result = Vec::new();
@@ -417,6 +415,16 @@ impl Database {
             result.push(row?);
         }
         Ok(result)
+    }
+
+    pub fn count_unindexed(&self) -> Result<i64> {
+        let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
+        let count: i64 = conn.query_row(
+            "SELECT COUNT(*) FROM patents WHERE abstract_text IS NULL",
+            [],
+            |row| row.get(0),
+        )?;
+        Ok(count)
     }
 
     pub fn get_unindexed(&self) -> Result<Vec<String>> {
@@ -446,12 +454,7 @@ impl Database {
         Ok(())
     }
 
-    pub fn screen_patent(
-        &self,
-        patent_id: &str,
-        judgment: &str,
-        reason: &str,
-    ) -> Result<()> {
+    pub fn screen_patent(&self, patent_id: &str, judgment: &str, reason: &str) -> Result<()> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         conn.execute(
             "INSERT INTO screened_patents (patent_id, judgment, reason)

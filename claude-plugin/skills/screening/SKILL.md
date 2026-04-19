@@ -7,7 +7,7 @@ description: |
   - The user asks to:
     * "screen the patents"
     * "remove noise"
-  - `patents.db` exists with `target_patents` table populated (will be prepared by this skill if missing)
+  - `patents.db` exists with `patents` table populated (will be prepared by this skill if missing)
 ---
 
 # Screening
@@ -33,10 +33,9 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
 **No Shortcut Judgment**:
 
-- You MUST fetch each patent and read the abstract before making a judgment
+- You MUST read each patent's abstract before making a judgment
 - Do NOT judge relevance based on title alone — titles can be misleading or too generic
-- Do NOT skip fetching patents to speed up processing
-- Every patent must go through the full fetch → read abstract → judge → record flow
+- Every patent must go through the read abstract → judge → record flow
 
 ## Skill Orchestration
 
@@ -50,26 +49,23 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 1. **Use the Glob tool to check if `csv/*.csv` files exist**
 2. **If CSV files exist**: Call the `import_csv` MCP tool directly (do NOT use Bash or Skill):
    - `file_path`: "csv/<filename>.csv"
-3. **Verify**: Call the `get_unscreened` MCP tool to confirm patents are available
 
-### 2. Execute Screening
+### 2. Read Specification
+
+Read `specification.md` to understand Theme, Domain, and Target Product.
+
+### 3. Screen Patents
 
 **Do NOT delegate to subagents (Agent tool)** — invoke MCP tools directly from this session.
 
-**Process**:
+**Loop**:
 
-1. **Get Patents to Screen**:
-   - Call the `get_unscreened` MCP tool directly (do NOT use Bash or Skill):
-     - `limit`: 10
+1. **Call `get_unscreened`**:
+   - If it says "N patents need indexing. Call index_patents first." → Call `index_patents`, then call `get_unscreened` again
+   - If it says "All patents have been screened." → Screening is complete
+   - Otherwise → Returns a batch of patents with ID, title, assignee, and abstract
 
-2. **Read Specification** (once):
-   - Read `specification.md` to understand Theme, Domain, and Target Product
-
-3. **Index Patents** (fetch abstracts and claims from Google Patents):
-   - Call the `index_patents` MCP tool directly (do NOT use Bash or Skill)
-   - This fetches abstract_text, legal_status, and claims for all unindexed patents server-side
-
-4. **Evaluate and Record** (for each patent):
+2. **Evaluate and Record** (for each patent in the batch):
 
    Judgment criteria (relevance only):
    - **Irrelevant**: Completely different industry from Theme/Domain
@@ -83,14 +79,18 @@ Filter collected patents by legal status and relevance to prepare for evaluation
    - `judgment`: "<relevant|irrelevant>"
    - `reason`: "<LLM-generated reason>"
 
-5. **Verify Results**: Call the `get_progress` MCP tool to confirm all patents have been screened
+3. **Repeat** from step 1 until `get_unscreened` says "All patents have been screened."
+
+### 4. Verify Results
+
+Call the `get_progress` MCP tool to confirm all patents have been screened.
 
 ## State Management
 
 ### Initial State
 
-- Patents in `target_patents` table without corresponding `screened_patents` entries exist
+- Patents in `patents` table without corresponding `screened_patents` entries exist
 
 ### Final State
 
-- No patents in `target_patents` without corresponding `screened_patents` entries (all screened)
+- No patents in `patents` without corresponding `screened_patents` entries (all screened)
