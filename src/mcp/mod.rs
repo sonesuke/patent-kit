@@ -147,6 +147,11 @@ fn tools() -> Vec<Tool> {
             schema_for::<RecordSimilaritiesRequest>(),
         ),
         Tool::new(
+            "get_similarities",
+            "Get similarity analysis results for a specific patent",
+            schema_for::<GetSimilaritiesRequest>(),
+        ),
+        Tool::new(
             "get_product_features",
             "Get all product-level features",
             schema_for::<GetProductFeaturesRequest>(),
@@ -165,6 +170,11 @@ fn tools() -> Vec<Tool> {
             "record_prior_arts",
             "Record prior art references with element-level claim charts",
             schema_for::<RecordPriorArtsRequest>(),
+        ),
+        Tool::new(
+            "get_prior_art_elements",
+            "Get prior art references for a specific patent with claim chart details",
+            schema_for::<GetPriorArtElementsRequest>(),
         ),
         Tool::new(
             "get_patent_detail",
@@ -482,10 +492,7 @@ async fn handle_tool_call(
             with_db!(service, db, {
                 db.get_unanalyzed()
                     .map(|r| match r {
-                        Some(p) => format!(
-                            "{} ({}) — needs: {}",
-                            p.title, p.patent_id, p.needs
-                        ),
+                        Some(p) => format!("{} ({}) — needs: {}", p.title, p.patent_id, p.needs),
                         None => "All patents have been analyzed.".to_string(),
                     })
                     .map_err(internal_error)
@@ -497,6 +504,14 @@ async fn handle_tool_call(
             with_db!(service, db, {
                 db.record_similarities(&req.similarities)
                     .map(|_| format!("Recorded {} similarities", count))
+                    .map_err(internal_error)
+            })
+        }
+        "get_similarities" => {
+            let req: GetSimilaritiesRequest = parse_args(&args)?;
+            with_db!(service, db, {
+                db.get_similarities(&req.patent_id)
+                    .map(|s| format_similarities(&s))
                     .map_err(internal_error)
             })
         }
@@ -534,6 +549,14 @@ async fn handle_tool_call(
             with_db!(service, db, {
                 db.record_prior_arts(&req.prior_arts)
                     .map(|_| format!("Recorded {} prior arts", count))
+                    .map_err(internal_error)
+            })
+        }
+        "get_prior_art_elements" => {
+            let req: GetPriorArtElementsRequest = parse_args(&args)?;
+            with_db!(service, db, {
+                db.get_prior_art_elements(&req.patent_id)
+                    .map(|p| format_prior_art_elements(&p))
                     .map_err(internal_error)
             })
         }
@@ -740,6 +763,37 @@ fn format_progress(p: &Progress) -> String {
         p.irrelevant,
         p.expired,
     )
+}
+
+fn format_similarities(rows: &[SimilarityRow]) -> String {
+    if rows.is_empty() {
+        return "No similarities found for this patent.".to_string();
+    }
+    let mut out = format!("Similarities ({}):\n", rows.len());
+    for r in rows {
+        let notes = r.analysis_notes.as_deref().unwrap_or("-");
+        out.push_str(&format!(
+            "- Claim {}: {} — {} ({})\n",
+            r.claim_number, r.element_label, r.similarity_level, notes
+        ));
+    }
+    out
+}
+
+fn format_prior_art_elements(rows: &[PriorArtElementRow]) -> String {
+    if rows.is_empty() {
+        return "No prior art references found for this patent.".to_string();
+    }
+    let mut out = format!("Prior Art References ({}):\n", rows.len());
+    for r in rows {
+        let relevance = r.relevance_level.as_deref().unwrap_or("-");
+        let notes = r.analysis_notes.as_deref().unwrap_or("-");
+        out.push_str(&format!(
+            "- Claim {}: {} ← {} [{}] ({}) — {}\n",
+            r.claim_number, r.element_label, r.reference_id, r.reference_type, relevance, notes
+        ));
+    }
+    out
 }
 
 // ---------------------------------------------------------------------------

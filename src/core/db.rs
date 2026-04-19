@@ -477,11 +477,7 @@ impl Database {
     // Claims
     // -----------------------------------------------------------------------
 
-    pub fn get_claims(
-        &self,
-        patent_id: &str,
-        decomposed: Option<bool>,
-    ) -> Result<Vec<ClaimRow>> {
+    pub fn get_claims(&self, patent_id: &str, decomposed: Option<bool>) -> Result<Vec<ClaimRow>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         let sql = match decomposed {
             None => "SELECT c.patent_id, c.claim_number, c.claim_type, c.claim_text
@@ -671,17 +667,19 @@ impl Database {
     pub fn get_unanalyzed(&self) -> Result<Option<UnanalyzedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
         // Priority 1: patents with claims but no elements
-        let row: Option<(String, String)> = conn.query_row(
-            "SELECT DISTINCT s.patent_id, p.title
+        let row: Option<(String, String)> = conn
+            .query_row(
+                "SELECT DISTINCT s.patent_id, p.title
              FROM screened_patents s
              JOIN patents p ON s.patent_id = p.patent_id
              JOIN claims c ON s.patent_id = c.patent_id
              LEFT JOIN elements e ON s.patent_id = e.patent_id
              WHERE s.judgment = 'relevant' AND e.patent_id IS NULL
              ORDER BY s.patent_id LIMIT 1",
-            [],
-            |row| Ok((row.get(0)?, row.get(1)?)),
-        ).ok();
+                [],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .ok();
         if let Some((patent_id, title)) = row {
             return Ok(Some(UnanalyzedPatent {
                 patent_id,
@@ -690,8 +688,9 @@ impl Database {
             }));
         }
         // Priority 2: patents with elements but no similarities
-        let row: Option<(String, String)> = conn.query_row(
-            "SELECT DISTINCT s.patent_id, p.title
+        let row: Option<(String, String)> = conn
+            .query_row(
+                "SELECT DISTINCT s.patent_id, p.title
              FROM screened_patents s
              JOIN patents p ON s.patent_id = p.patent_id
              JOIN elements e ON s.patent_id = e.patent_id
@@ -700,9 +699,10 @@ impl Database {
                AND e.element_label = sim.element_label
              WHERE s.judgment = 'relevant' AND sim.patent_id IS NULL
              ORDER BY s.patent_id LIMIT 1",
-            [],
-            |row| Ok((row.get(0)?, row.get(1)?)),
-        ).ok();
+                [],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .ok();
         if let Some((patent_id, title)) = row {
             return Ok(Some(UnanalyzedPatent {
                 patent_id,
@@ -756,6 +756,38 @@ impl Database {
     // -----------------------------------------------------------------------
     // Prior arts
     // -----------------------------------------------------------------------
+
+    pub fn get_prior_art_elements(&self, patent_id: &str) -> Result<Vec<PriorArtElementRow>> {
+        let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
+        let mut stmt = conn.prepare(
+            "SELECT pae.patent_id, pae.claim_number, pae.element_label,
+                    pa.reference_id, pa.reference_type, pa.title, pa.publication_date,
+                    pae.relevance_level, pae.analysis_notes, pae.claim_chart
+             FROM prior_art_elements pae
+             JOIN prior_arts pa ON pae.reference_id = pa.reference_id
+             WHERE pae.patent_id = ?1
+             ORDER BY pae.claim_number, pae.element_label",
+        )?;
+        let rows = stmt.query_map(params![patent_id], |row| {
+            Ok(PriorArtElementRow {
+                patent_id: row.get(0)?,
+                claim_number: row.get(1)?,
+                element_label: row.get(2)?,
+                reference_id: row.get(3)?,
+                reference_type: row.get(4)?,
+                title: row.get(5)?,
+                publication_date: row.get(6)?,
+                relevance_level: row.get(7)?,
+                analysis_notes: row.get(8)?,
+                claim_chart: row.get(9)?,
+            })
+        })?;
+        let mut result = Vec::new();
+        for row in rows {
+            result.push(row?);
+        }
+        Ok(result)
+    }
 
     pub fn get_unresearched(&self, limit: Option<usize>) -> Result<PageResult<UnresearchedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;

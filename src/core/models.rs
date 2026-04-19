@@ -85,6 +85,30 @@ pub struct ElementInput {
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct GetSimilaritiesRequest {
+    pub patent_id: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct GetPriorArtElementsRequest {
+    pub patent_id: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct PriorArtElementRow {
+    pub patent_id: String,
+    pub claim_number: i64,
+    pub element_label: String,
+    pub reference_id: String,
+    pub reference_type: String,
+    pub title: String,
+    pub publication_date: Option<String>,
+    pub relevance_level: Option<String>,
+    pub analysis_notes: Option<String>,
+    pub claim_chart: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct GetUnanalyzedRequest {}
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
