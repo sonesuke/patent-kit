@@ -60,45 +60,49 @@ Analyze screened patents by decomposing claims into elements, comparing product 
 
 **Process**:
 
-1. **Get Patents to Analyze**:
-   - Call the `get_unevaluated` MCP tool directly (do NOT use Bash or Skill):
-     - `limit`: 5
-   - If no patents returned → Claim analysis is complete
+1. **Get Next Patent**:
+   - Call the `get_unanalyzed` MCP tool directly (no parameters):
+     - If it says "All patents have been analyzed" → Analysis is complete
+     - Otherwise → Returns 1 patent with `needs: "elements"` or `needs: "similarities"`
 
-2. **For each patent**, execute Steps 2a–2d in order:
+2. **If needs: "elements"**:
 
-   **2a. Decompose Claims into Elements**:
-   - Call the `get_claims` MCP tool to read the claim text
-   - For EACH claim (independent AND dependent):
-     1. Decompose into constituent elements based on the means/steps described in the claim text
-     2. Call the `record_elements` MCP tool:
-        - `elements`: [{ patent_id: "<patent_id>", claim_number: 1, element_label: "Element A", element_description: "..." }, ...]
+   a. Call `get_claims` with `decomposed: false` to get claims that have NOT been decomposed yet
+
+   b. For EACH claim:
+      1. Read the claim text
+      2. Decompose into constituent elements based on the means/steps described in the claim text
+      3. Call `record_elements`:
+         - `elements`: [{ patent_id, claim_number, element_label, element_description }, ...]
 
    **CRITICAL Rules for Element Decomposition**:
    - Decompose ALL claims including dependent claims — do NOT skip dependent claims
    - Do NOT reference `specification.md` during decomposition — decompose based on claim text alone
    - Cut elements by the number of means/steps in the claim — do NOT force a specific number of elements
 
-   **2b. Check Feature Coverage**:
-   - Call the `get_product_features` MCP tool to retrieve product features
-   - Call the `get_elements` MCP tool for each patent
-   - For each patent element, check if a matching product feature exists
-   - **If feature NOT found**: Do NOT record as 'absent' automatically — collect unmatched elements and present them to the user in a single batch using `AskUserQuestion` (max 4 questions per call)
-   - If positive: Call the `record_product_feature` MCP tool with `presence='present'`
-   - If negative: Call the `record_product_feature` MCP tool with `presence='absent'`
+   c. **Go back to step 1** (get next patent — may return the same patent with needs: "similarities")
 
-   **2c. Comparison Analysis & Record Similarities**:
-   - Compare product features against patent elements
-   - Determine similarity level: `Significant`, `Moderate`, or `Limited`
-   - Write detailed analysis notes
-   - Call the `record_similarities` MCP tool:
-     - `similarities`: [{ patent_id: "<patent_id>", claim_number: 1, element_label: "Element A", similarity_level: "Significant", analysis_notes: "...", ... }]
+3. **If needs: "similarities"**:
 
-   **2d. Legal Compliance Check**:
-   - Use `Skill: legal-checking` with request "Check the following analysis notes for legal compliance: <analysis_notes>"
-   - Revise if violations found
+   a. Call `get_product_features` to retrieve product features
 
-3. **Repeat** from step 1 until `get_unevaluated` returns no patents
+   b. Call `get_elements` with `analyzed: false` to get elements that have NOT been analyzed yet
+
+   c. For EACH element:
+      1. Check if a matching product feature exists
+      2. If feature NOT found: present to the user using `AskUserQuestion` (max 4 questions per call, group by unique functionality)
+      3. If positive: Call `record_product_feature` with `presence='present'`
+      4. If negative: Call `record_product_feature` with `presence='absent'`
+
+   d. Determine similarity level: `Significant`, `Moderate`, or `Limited`
+
+   e. Call `record_similarities`:
+      - `similarities`: [{ patent_id, claim_number, element_label, similarity_level, analysis_notes }]
+
+   f. Use `Skill: legal-checking` with request "Check the following analysis notes for legal compliance: <analysis_notes>"
+      - Revise if violations found
+
+   g. **Go back to step 1** (get next patent)
 
 ## State Management
 

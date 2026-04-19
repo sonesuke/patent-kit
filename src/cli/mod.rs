@@ -64,11 +64,7 @@ pub enum Commands {
         #[arg(long)]
         reason: String,
     },
-    /// Get unevaluated patents (relevant, no claims)
-    GetUnevaluated {
-        #[arg(long)]
-        limit: Option<usize>,
-    },
+    /// Get the next patent needing analysis
     /// Get claims for a patent
     GetClaims {
         #[arg(value_name = "ID")]
@@ -79,11 +75,8 @@ pub enum Commands {
         #[arg(value_name = "ID")]
         patent_id: String,
     },
-    /// Get unanalyzed patents (have elements, no similarities)
-    GetUnanalyzed {
-        #[arg(long)]
-        limit: Option<usize>,
-    },
+    /// Get the next patent needing analysis
+    GetUnanalyzed,
     /// Get product-level features
     GetProductFeatures,
     /// Get unresearched patents (Significant/Moderate similarities, no prior arts)
@@ -217,23 +210,18 @@ pub async fn run() -> anyhow::Result<()> {
             db.screen_patent(&patent_id, &judgment, &reason)?;
             println!("Patent {} screened: {}", patent_id, judgment);
         }
-        Commands::GetUnevaluated { limit } => {
+        Commands::GetUnanalyzed => {
             let config = Config::load()?;
             let db = Database::open(&config.resolve_db_path())?;
-            let result = db.get_unevaluated(limit)?;
-            if result.items.is_empty() {
-                println!("No unevaluated patents");
-            } else {
-                println!("Unevaluated patents ({}):", result.total_remaining);
-                for p in &result.items {
-                    println!("- {} ({})", p.title, p.patent_id);
-                }
+            match db.get_unanalyzed()? {
+                Some(p) => println!("{} ({}) — needs: {}", p.title, p.patent_id, p.needs),
+                None => println!("All patents have been analyzed."),
             }
         }
         Commands::GetClaims { patent_id } => {
             let config = Config::load()?;
             let db = Database::open(&config.resolve_db_path())?;
-            let claims = db.get_claims(&patent_id)?;
+            let claims = db.get_claims(&patent_id, None)?;
             if claims.is_empty() {
                 println!("No claims found for {}", patent_id);
             } else {
@@ -249,7 +237,7 @@ pub async fn run() -> anyhow::Result<()> {
         Commands::GetElements { patent_id } => {
             let config = Config::load()?;
             let db = Database::open(&config.resolve_db_path())?;
-            let elements = db.get_elements(&patent_id)?;
+            let elements = db.get_elements(&patent_id, None, None)?;
             if elements.is_empty() {
                 println!("No elements found for {}", patent_id);
             } else {
@@ -258,22 +246,6 @@ pub async fn run() -> anyhow::Result<()> {
                     println!(
                         "- Claim {}: {} — {}",
                         e.claim_number, e.element_label, e.element_description
-                    );
-                }
-            }
-        }
-        Commands::GetUnanalyzed { limit } => {
-            let config = Config::load()?;
-            let db = Database::open(&config.resolve_db_path())?;
-            let result = db.get_unanalyzed(limit)?;
-            if result.items.is_empty() {
-                println!("No unanalyzed patents");
-            } else {
-                println!("Unanalyzed patents ({}):", result.total_remaining);
-                for p in &result.items {
-                    println!(
-                        "- {} ({}) — {} elements",
-                        p.title, p.patent_id, p.element_count
                     );
                 }
             }

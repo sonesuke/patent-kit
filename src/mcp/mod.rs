@@ -117,18 +117,13 @@ fn tools() -> Vec<Tool> {
             schema_for::<ScreenPatentRequest>(),
         ),
         Tool::new(
-            "get_unevaluated",
-            "Get relevant screened patents that have no claims recorded yet",
-            schema_for::<GetUnevaluatedRequest>(),
-        ),
-        Tool::new(
             "record_claims",
             "Record claims extracted from a patent",
             schema_for::<RecordClaimsRequest>(),
         ),
         Tool::new(
             "get_claims",
-            "Get claims for a specific patent",
+            "Get claims for a specific patent, optionally filtered by decomposition status",
             schema_for::<GetClaimsRequest>(),
         ),
         Tool::new(
@@ -138,12 +133,12 @@ fn tools() -> Vec<Tool> {
         ),
         Tool::new(
             "get_elements",
-            "Get recorded elements for a patent",
+            "Get recorded elements for a patent, optionally filtered by claim number or analysis status",
             schema_for::<GetElementsRequest>(),
         ),
         Tool::new(
             "get_unanalyzed",
-            "Get patents with elements but no similarity analysis",
+            "Get the next patent that needs analysis (elements decomposition or similarity recording)",
             schema_for::<GetUnanalyzedRequest>(),
         ),
         Tool::new(
@@ -449,14 +444,6 @@ async fn handle_tool_call(
                     .map_err(internal_error)
             })
         }
-        "get_unevaluated" => {
-            let req: GetUnevaluatedRequest = parse_args(&args)?;
-            with_db!(service, db, {
-                db.get_unevaluated(req.limit)
-                    .map(|r| format_unevaluated(&r))
-                    .map_err(internal_error)
-            })
-        }
         "record_claims" => {
             let req: RecordClaimsRequest = parse_args(&args)?;
             let db_claims: Vec<ClaimInput> = req.claims;
@@ -469,7 +456,7 @@ async fn handle_tool_call(
         "get_claims" => {
             let req: GetClaimsRequest = parse_args(&args)?;
             with_db!(service, db, {
-                db.get_claims(&req.patent_id)
+                db.get_claims(&req.patent_id, req.decomposed)
                     .map(|c| format_claims(&c))
                     .map_err(internal_error)
             })
@@ -486,16 +473,21 @@ async fn handle_tool_call(
         "get_elements" => {
             let req: GetElementsRequest = parse_args(&args)?;
             with_db!(service, db, {
-                db.get_elements(&req.patent_id)
+                db.get_elements(&req.patent_id, req.claim_number, req.analyzed)
                     .map(|e| format_elements(&e))
                     .map_err(internal_error)
             })
         }
         "get_unanalyzed" => {
-            let req: GetUnanalyzedRequest = parse_args(&args)?;
             with_db!(service, db, {
-                db.get_unanalyzed(req.limit)
-                    .map(|r| format_unanalyzed(&r))
+                db.get_unanalyzed()
+                    .map(|r| match r {
+                        Some(p) => format!(
+                            "{} ({}) — needs: {}",
+                            p.title, p.patent_id, p.needs
+                        ),
+                        None => "All patents have been analyzed.".to_string(),
+                    })
                     .map_err(internal_error)
             })
         }
@@ -624,20 +616,6 @@ fn format_unscreened(patents: &[UnscreenedPatent]) -> String {
     lines.join("\n")
 }
 
-fn format_unevaluated(r: &PageResult<UnevaluatedPatent>) -> String {
-    if r.items.is_empty() {
-        return "All evaluated patents have been processed.".to_string();
-    }
-    let mut lines = vec![format!(
-        "Unevaluated patents ({} remaining):",
-        r.total_remaining
-    )];
-    for p in &r.items {
-        lines.push(format!("- {} ({})", p.title, p.patent_id));
-    }
-    lines.join("\n")
-}
-
 fn format_claims(claims: &[ClaimRow]) -> String {
     if claims.is_empty() {
         return "No claims found".to_string();
@@ -661,23 +639,6 @@ fn format_elements(elements: &[ElementRow]) -> String {
         lines.push(format!(
             "- Claim {}: {} — {}",
             e.claim_number, e.element_label, e.element_description
-        ));
-    }
-    lines.join("\n")
-}
-
-fn format_unanalyzed(r: &PageResult<UnanalyzedPatent>) -> String {
-    if r.items.is_empty() {
-        return "All analyzed patents have been processed.".to_string();
-    }
-    let mut lines = vec![format!(
-        "Unanalyzed patents ({} remaining):",
-        r.total_remaining
-    )];
-    for p in &r.items {
-        lines.push(format!(
-            "- {} ({}) — {} elements",
-            p.title, p.patent_id, p.element_count
         ));
     }
     lines.join("\n")

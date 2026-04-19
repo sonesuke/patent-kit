@@ -473,52 +473,27 @@ impl Database {
     // Evaluation
     // -----------------------------------------------------------------------
 
-    pub fn get_unevaluated(&self, limit: Option<usize>) -> Result<PageResult<UnevaluatedPatent>> {
-        let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
-        let total_remaining: i64 = conn.query_row(
-            "SELECT COUNT(DISTINCT s.patent_id) FROM screened_patents s JOIN claims c ON s.patent_id = c.patent_id LEFT JOIN elements e ON s.patent_id = e.patent_id WHERE s.judgment = 'relevant' AND e.patent_id IS NULL",
-            [],
-            |row| row.get(0),
-        )?;
-        let mut sql = String::from(
-            "SELECT DISTINCT s.patent_id, p.title
-             FROM screened_patents s
-             JOIN patents p ON s.patent_id = p.patent_id
-             JOIN claims c ON s.patent_id = c.patent_id
-             LEFT JOIN elements e ON s.patent_id = e.patent_id
-             WHERE s.judgment = 'relevant' AND e.patent_id IS NULL
-             ORDER BY s.patent_id",
-        );
-        if let Some(n) = limit {
-            sql.push_str(&format!(" LIMIT {n}"));
-        }
-        let mut stmt = conn.prepare(&sql)?;
-        let rows = stmt.query_map([], |row| {
-            Ok(UnevaluatedPatent {
-                patent_id: row.get(0)?,
-                title: row.get(1)?,
-            })
-        })?;
-        let mut items = Vec::new();
-        for row in rows {
-            items.push(row?);
-        }
-        Ok(PageResult {
-            items,
-            total_remaining,
-        })
-    }
-
     // -----------------------------------------------------------------------
     // Claims
     // -----------------------------------------------------------------------
 
-    pub fn get_claims(&self, patent_id: &str) -> Result<Vec<ClaimRow>> {
+    pub fn get_claims(
+        &self,
+        patent_id: &str,
+        decomposed: Option<bool>,
+    ) -> Result<Vec<ClaimRow>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
-        let mut stmt = conn.prepare(
-            "SELECT patent_id, claim_number, claim_type, claim_text
-             FROM claims WHERE patent_id = ?1 ORDER BY claim_number",
-        )?;
+        let sql = match decomposed {
+            None => "SELECT c.patent_id, c.claim_number, c.claim_type, c.claim_text
+                     FROM claims c WHERE c.patent_id = ?1 ORDER BY c.claim_number".to_string(),
+            Some(false) => "SELECT c.patent_id, c.claim_number, c.claim_type, c.claim_text
+                            FROM claims c LEFT JOIN elements e ON c.patent_id = e.patent_id AND c.claim_number = e.claim_number
+                            WHERE c.patent_id = ?1 AND e.patent_id IS NULL ORDER BY c.claim_number".to_string(),
+            Some(true) => "SELECT DISTINCT c.patent_id, c.claim_number, c.claim_type, c.claim_text
+                           FROM claims c JOIN elements e ON c.patent_id = e.patent_id AND c.claim_number = e.claim_number
+                           WHERE c.patent_id = ?1 ORDER BY c.claim_number".to_string(),
+        };
+        let mut stmt = conn.prepare(&sql)?;
         let rows = stmt.query_map(params![patent_id], |row| {
             Ok(ClaimRow {
                 patent_id: row.get(0)?,
@@ -559,20 +534,70 @@ impl Database {
     // Elements
     // -----------------------------------------------------------------------
 
-    pub fn get_elements(&self, patent_id: &str) -> Result<Vec<ElementRow>> {
+    pub fn get_elements(
+        &self,
+        patent_id: &str,
+        claim_number: Option<i64>,
+        analyzed: Option<bool>,
+    ) -> Result<Vec<ElementRow>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
-        let mut stmt = conn.prepare(
-            "SELECT patent_id, claim_number, element_label, element_description
-             FROM elements WHERE patent_id = ?1 ORDER BY claim_number, element_label",
-        )?;
-        let rows = stmt.query_map(params![patent_id], |row| {
+        let map_row = |row: &rusqlite::Row| {
             Ok(ElementRow {
                 patent_id: row.get(0)?,
                 claim_number: row.get(1)?,
                 element_label: row.get(2)?,
                 element_description: row.get(3)?,
             })
-        })?;
+        };
+        let mut stmt;
+        let rows = match (claim_number, analyzed) {
+            (None, None) => {
+                stmt = conn.prepare(
+                    "SELECT patent_id, claim_number, element_label, element_description
+                     FROM elements WHERE patent_id = ?1 ORDER BY claim_number, element_label",
+                )?;
+                stmt.query_map(params![patent_id], map_row)?
+            }
+            (Some(cn), None) => {
+                stmt = conn.prepare(
+                    "SELECT patent_id, claim_number, element_label, element_description
+                     FROM elements WHERE patent_id = ?1 AND claim_number = ?2 ORDER BY claim_number, element_label",
+                )?;
+                stmt.query_map(params![patent_id, cn], map_row)?
+            }
+            (None, Some(false)) => {
+                stmt = conn.prepare(
+                    "SELECT e.patent_id, e.claim_number, e.element_label, e.element_description
+                     FROM elements e LEFT JOIN similarities s ON e.patent_id = s.patent_id AND e.claim_number = s.claim_number AND e.element_label = s.element_label
+                     WHERE e.patent_id = ?1 AND s.patent_id IS NULL ORDER BY e.claim_number, e.element_label",
+                )?;
+                stmt.query_map(params![patent_id], map_row)?
+            }
+            (None, Some(true)) => {
+                stmt = conn.prepare(
+                    "SELECT e.patent_id, e.claim_number, e.element_label, e.element_description
+                     FROM elements e JOIN similarities s ON e.patent_id = s.patent_id AND e.claim_number = s.claim_number AND e.element_label = s.element_label
+                     WHERE e.patent_id = ?1 ORDER BY e.claim_number, e.element_label",
+                )?;
+                stmt.query_map(params![patent_id], map_row)?
+            }
+            (Some(cn), Some(false)) => {
+                stmt = conn.prepare(
+                    "SELECT e.patent_id, e.claim_number, e.element_label, e.element_description
+                     FROM elements e LEFT JOIN similarities s ON e.patent_id = s.patent_id AND e.claim_number = s.claim_number AND e.element_label = s.element_label
+                     WHERE e.patent_id = ?1 AND e.claim_number = ?2 AND s.patent_id IS NULL ORDER BY e.claim_number, e.element_label",
+                )?;
+                stmt.query_map(params![patent_id, cn], map_row)?
+            }
+            (Some(cn), Some(true)) => {
+                stmt = conn.prepare(
+                    "SELECT e.patent_id, e.claim_number, e.element_label, e.element_description
+                     FROM elements e JOIN similarities s ON e.patent_id = s.patent_id AND e.claim_number = s.claim_number AND e.element_label = s.element_label
+                     WHERE e.patent_id = ?1 AND e.claim_number = ?2 ORDER BY e.claim_number, e.element_label",
+                )?;
+                stmt.query_map(params![patent_id, cn], map_row)?
+            }
+        };
         let mut result = Vec::new();
         for row in rows {
             result.push(row?);
@@ -643,15 +668,30 @@ impl Database {
     // Similarities
     // -----------------------------------------------------------------------
 
-    pub fn get_unanalyzed(&self, limit: Option<usize>) -> Result<PageResult<UnanalyzedPatent>> {
+    pub fn get_unanalyzed(&self) -> Result<Option<UnanalyzedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
-        let total_remaining: i64 = conn.query_row(
-            "SELECT COUNT(DISTINCT s.patent_id) FROM screened_patents s JOIN elements e ON s.patent_id = e.patent_id LEFT JOIN similarities sim ON s.patent_id = sim.patent_id AND e.claim_number = sim.claim_number AND e.element_label = sim.element_label WHERE s.judgment = 'relevant' AND sim.patent_id IS NULL",
+        // Priority 1: patents with claims but no elements
+        let row: Option<(String, String)> = conn.query_row(
+            "SELECT DISTINCT s.patent_id, p.title
+             FROM screened_patents s
+             JOIN patents p ON s.patent_id = p.patent_id
+             JOIN claims c ON s.patent_id = c.patent_id
+             LEFT JOIN elements e ON s.patent_id = e.patent_id
+             WHERE s.judgment = 'relevant' AND e.patent_id IS NULL
+             ORDER BY s.patent_id LIMIT 1",
             [],
-            |row| row.get(0),
-        )?;
-        let mut sql = String::from(
-            "SELECT s.patent_id, p.title, COUNT(DISTINCT e.element_label) AS element_count
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        ).ok();
+        if let Some((patent_id, title)) = row {
+            return Ok(Some(UnanalyzedPatent {
+                patent_id,
+                title,
+                needs: "elements".to_string(),
+            }));
+        }
+        // Priority 2: patents with elements but no similarities
+        let row: Option<(String, String)> = conn.query_row(
+            "SELECT DISTINCT s.patent_id, p.title
              FROM screened_patents s
              JOIN patents p ON s.patent_id = p.patent_id
              JOIN elements e ON s.patent_id = e.patent_id
@@ -659,28 +699,18 @@ impl Database {
                AND e.claim_number = sim.claim_number
                AND e.element_label = sim.element_label
              WHERE s.judgment = 'relevant' AND sim.patent_id IS NULL
-             GROUP BY s.patent_id
-             ORDER BY s.patent_id",
-        );
-        if let Some(n) = limit {
-            sql.push_str(&format!(" LIMIT {n}"));
+             ORDER BY s.patent_id LIMIT 1",
+            [],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        ).ok();
+        if let Some((patent_id, title)) = row {
+            return Ok(Some(UnanalyzedPatent {
+                patent_id,
+                title,
+                needs: "similarities".to_string(),
+            }));
         }
-        let mut stmt = conn.prepare(&sql)?;
-        let rows = stmt.query_map([], |row| {
-            Ok(UnanalyzedPatent {
-                patent_id: row.get(0)?,
-                title: row.get(1)?,
-                element_count: row.get(2)?,
-            })
-        })?;
-        let mut items = Vec::new();
-        for row in rows {
-            items.push(row?);
-        }
-        Ok(PageResult {
-            items,
-            total_remaining,
-        })
+        Ok(None)
     }
 
     pub fn record_similarities(&self, similarities: &[SimilarityInput]) -> Result<()> {

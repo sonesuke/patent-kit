@@ -53,13 +53,9 @@ pub struct IndexPatentsRequest {}
 pub struct StopIndexingRequest {}
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
-pub struct GetUnevaluatedRequest {
-    pub limit: Option<usize>,
-}
-
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct GetClaimsRequest {
     pub patent_id: String,
+    pub decomposed: Option<bool>,
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
@@ -89,13 +85,13 @@ pub struct ElementInput {
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
-pub struct GetUnanalyzedRequest {
-    pub limit: Option<usize>,
-}
+pub struct GetUnanalyzedRequest {}
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct GetElementsRequest {
     pub patent_id: String,
+    pub claim_number: Option<i64>,
+    pub analyzed: Option<bool>,
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
@@ -191,12 +187,6 @@ pub struct UnscreenedPatent {
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
-pub struct UnevaluatedPatent {
-    pub patent_id: String,
-    pub title: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct ClaimRow {
     pub patent_id: String,
     pub claim_number: i64,
@@ -216,7 +206,7 @@ pub struct ElementRow {
 pub struct UnanalyzedPatent {
     pub patent_id: String,
     pub title: String,
-    pub element_count: i64,
+    pub needs: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
