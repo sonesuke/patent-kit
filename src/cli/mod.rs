@@ -220,12 +220,12 @@ pub async fn run() -> anyhow::Result<()> {
         Commands::GetUnevaluated { limit } => {
             let config = Config::load()?;
             let db = Database::open(&config.resolve_db_path())?;
-            let patents = db.get_unevaluated(limit)?;
-            if patents.is_empty() {
+            let result = db.get_unevaluated(limit)?;
+            if result.items.is_empty() {
                 println!("No unevaluated patents");
             } else {
-                println!("Unevaluated patents ({}):", patents.len());
-                for p in &patents {
+                println!("Unevaluated patents ({}):", result.total_remaining);
+                for p in &result.items {
                     println!("- {} ({})", p.title, p.patent_id);
                 }
             }
@@ -265,12 +265,12 @@ pub async fn run() -> anyhow::Result<()> {
         Commands::GetUnanalyzed { limit } => {
             let config = Config::load()?;
             let db = Database::open(&config.resolve_db_path())?;
-            let patents = db.get_unanalyzed(limit)?;
-            if patents.is_empty() {
+            let result = db.get_unanalyzed(limit)?;
+            if result.items.is_empty() {
                 println!("No unanalyzed patents");
             } else {
-                println!("Unanalyzed patents ({}):", patents.len());
-                for p in &patents {
+                println!("Unanalyzed patents ({}):", result.total_remaining);
+                for p in &result.items {
                     println!(
                         "- {} ({}) — {} elements",
                         p.title, p.patent_id, p.element_count
@@ -299,12 +299,12 @@ pub async fn run() -> anyhow::Result<()> {
         Commands::GetUnresearched { limit } => {
             let config = Config::load()?;
             let db = Database::open(&config.resolve_db_path())?;
-            let patents = db.get_unresearched(limit)?;
-            if patents.is_empty() {
+            let result = db.get_unresearched(limit)?;
+            if result.items.is_empty() {
                 println!("No unresearched patents");
             } else {
-                println!("Unresearched patents ({}):", patents.len());
-                for p in &patents {
+                println!("Unresearched patents ({}):", result.total_remaining);
+                for p in &result.items {
                     println!(
                         "- {} ({}) — {} elements",
                         p.title, p.patent_id, p.element_count

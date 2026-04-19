@@ -453,7 +453,7 @@ async fn handle_tool_call(
             let req: GetUnevaluatedRequest = parse_args(&args)?;
             with_db!(service, db, {
                 db.get_unevaluated(req.limit)
-                    .map(|p| format_unevaluated(&p))
+                    .map(|r| format_unevaluated(&r))
                     .map_err(internal_error)
             })
         }
@@ -495,7 +495,7 @@ async fn handle_tool_call(
             let req: GetUnanalyzedRequest = parse_args(&args)?;
             with_db!(service, db, {
                 db.get_unanalyzed(req.limit)
-                    .map(|p| format_unanalyzed(&p))
+                    .map(|r| format_unanalyzed(&r))
                     .map_err(internal_error)
             })
         }
@@ -532,7 +532,7 @@ async fn handle_tool_call(
             let req: GetUnresearchedRequest = parse_args(&args)?;
             with_db!(service, db, {
                 db.get_unresearched(req.limit)
-                    .map(|p| format_unresearched(&p))
+                    .map(|r| format_unresearched(&r))
                     .map_err(internal_error)
             })
         }
@@ -624,12 +624,15 @@ fn format_unscreened(patents: &[UnscreenedPatent]) -> String {
     lines.join("\n")
 }
 
-fn format_unevaluated(patents: &[UnevaluatedPatent]) -> String {
-    if patents.is_empty() {
-        return "No unevaluated patents".to_string();
+fn format_unevaluated(r: &PageResult<UnevaluatedPatent>) -> String {
+    if r.items.is_empty() {
+        return "All evaluated patents have been processed.".to_string();
     }
-    let mut lines = vec![format!("Unevaluated patents ({}):", patents.len())];
-    for p in patents {
+    let mut lines = vec![format!(
+        "Unevaluated patents ({} remaining):",
+        r.total_remaining
+    )];
+    for p in &r.items {
         lines.push(format!("- {} ({})", p.title, p.patent_id));
     }
     lines.join("\n")
@@ -663,12 +666,15 @@ fn format_elements(elements: &[ElementRow]) -> String {
     lines.join("\n")
 }
 
-fn format_unanalyzed(patents: &[UnanalyzedPatent]) -> String {
-    if patents.is_empty() {
-        return "No unanalyzed patents".to_string();
+fn format_unanalyzed(r: &PageResult<UnanalyzedPatent>) -> String {
+    if r.items.is_empty() {
+        return "All analyzed patents have been processed.".to_string();
     }
-    let mut lines = vec![format!("Unanalyzed patents ({}):", patents.len())];
-    for p in patents {
+    let mut lines = vec![format!(
+        "Unanalyzed patents ({} remaining):",
+        r.total_remaining
+    )];
+    for p in &r.items {
         lines.push(format!(
             "- {} ({}) — {} elements",
             p.title, p.patent_id, p.element_count
@@ -701,12 +707,15 @@ fn format_product_features(features: &[ProductFeatureRow]) -> String {
     lines.join("\n")
 }
 
-fn format_unresearched(patents: &[UnresearchedPatent]) -> String {
-    if patents.is_empty() {
-        return "No unresearched patents".to_string();
+fn format_unresearched(r: &PageResult<UnresearchedPatent>) -> String {
+    if r.items.is_empty() {
+        return "All researched patents have been processed.".to_string();
     }
-    let mut lines = vec![format!("Unresearched patents ({}):", patents.len())];
-    for p in patents {
+    let mut lines = vec![format!(
+        "Unresearched patents ({} remaining):",
+        r.total_remaining
+    )];
+    for p in &r.items {
         lines.push(format!(
             "- {} ({}) — {} elements",
             p.title, p.patent_id, p.element_count

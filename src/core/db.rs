@@ -396,6 +396,11 @@ impl Database {
             [],
             |row| row.get(0),
         )?;
+        let total_remaining: i64 = conn.query_row(
+            "SELECT COUNT(*) FROM patents p LEFT JOIN screened_patents s ON p.patent_id = s.patent_id WHERE s.patent_id IS NULL AND p.abstract_text IS NOT NULL",
+            [],
+            |row| row.get(0),
+        )?;
         let mut sql = String::from(
             "SELECT p.patent_id, p.title, p.assignee, p.abstract_text
              FROM patents p
@@ -421,6 +426,7 @@ impl Database {
         }
         Ok(UnscreenedResult {
             patents,
+            total_remaining,
             unindexed_count,
         })
     }
@@ -467,8 +473,13 @@ impl Database {
     // Evaluation
     // -----------------------------------------------------------------------
 
-    pub fn get_unevaluated(&self, limit: Option<usize>) -> Result<Vec<UnevaluatedPatent>> {
+    pub fn get_unevaluated(&self, limit: Option<usize>) -> Result<PageResult<UnevaluatedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
+        let total_remaining: i64 = conn.query_row(
+            "SELECT COUNT(*) FROM screened_patents s LEFT JOIN claims c ON s.patent_id = c.patent_id WHERE s.judgment = 'relevant' AND c.patent_id IS NULL",
+            [],
+            |row| row.get(0),
+        )?;
         let mut sql = String::from(
             "SELECT s.patent_id, p.title
              FROM screened_patents s
@@ -487,11 +498,11 @@ impl Database {
                 title: row.get(1)?,
             })
         })?;
-        let mut result = Vec::new();
+        let mut items = Vec::new();
         for row in rows {
-            result.push(row?);
+            items.push(row?);
         }
-        Ok(result)
+        Ok(PageResult { items, total_remaining })
     }
 
     // -----------------------------------------------------------------------
@@ -628,8 +639,13 @@ impl Database {
     // Similarities
     // -----------------------------------------------------------------------
 
-    pub fn get_unanalyzed(&self, limit: Option<usize>) -> Result<Vec<UnanalyzedPatent>> {
+    pub fn get_unanalyzed(&self, limit: Option<usize>) -> Result<PageResult<UnanalyzedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
+        let total_remaining: i64 = conn.query_row(
+            "SELECT COUNT(DISTINCT s.patent_id) FROM screened_patents s JOIN elements e ON s.patent_id = e.patent_id LEFT JOIN similarities sim ON s.patent_id = sim.patent_id AND e.claim_number = sim.claim_number AND e.element_label = sim.element_label WHERE s.judgment = 'relevant' AND sim.patent_id IS NULL",
+            [],
+            |row| row.get(0),
+        )?;
         let mut sql = String::from(
             "SELECT s.patent_id, p.title, COUNT(DISTINCT e.element_label) AS element_count
              FROM screened_patents s
@@ -653,11 +669,11 @@ impl Database {
                 element_count: row.get(2)?,
             })
         })?;
-        let mut result = Vec::new();
+        let mut items = Vec::new();
         for row in rows {
-            result.push(row?);
+            items.push(row?);
         }
-        Ok(result)
+        Ok(PageResult { items, total_remaining })
     }
 
     pub fn record_similarities(&self, similarities: &[SimilarityInput]) -> Result<()> {
@@ -704,8 +720,13 @@ impl Database {
     // Prior arts
     // -----------------------------------------------------------------------
 
-    pub fn get_unresearched(&self, limit: Option<usize>) -> Result<Vec<UnresearchedPatent>> {
+    pub fn get_unresearched(&self, limit: Option<usize>) -> Result<PageResult<UnresearchedPatent>> {
         let conn = self.conn.lock().map_err(|e| Error::Other(e.to_string()))?;
+        let total_remaining: i64 = conn.query_row(
+            "SELECT COUNT(DISTINCT s.patent_id) FROM screened_patents s JOIN elements e ON s.patent_id = e.patent_id JOIN similarities sim ON s.patent_id = sim.patent_id AND e.claim_number = sim.claim_number AND e.element_label = sim.element_label LEFT JOIN prior_art_elements pae ON s.patent_id = pae.patent_id AND e.claim_number = pae.claim_number AND e.element_label = pae.element_label WHERE s.judgment = 'relevant' AND sim.similarity_level IN ('Significant', 'Moderate') AND pae.patent_id IS NULL",
+            [],
+            |row| row.get(0),
+        )?;
         let mut sql = String::from(
             "SELECT s.patent_id, p.title, COUNT(DISTINCT e.element_label) AS element_count
              FROM screened_patents s
@@ -734,11 +755,11 @@ impl Database {
                 element_count: row.get(2)?,
             })
         })?;
-        let mut result = Vec::new();
+        let mut items = Vec::new();
         for row in rows {
-            result.push(row?);
+            items.push(row?);
         }
-        Ok(result)
+        Ok(PageResult { items, total_remaining })
     }
 
     pub fn record_prior_arts(&self, prior_arts: &[PriorArtInput]) -> Result<()> {

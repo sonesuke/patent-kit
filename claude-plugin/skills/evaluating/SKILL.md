@@ -7,7 +7,7 @@ description: |
   - The user asks to:
     * "evaluate the patent"
     * "analyze claim elements"
-  - `patents.db` exists with `screened_patents` table populated
+  - `patents.db` exists with screened and indexed patents
 ---
 
 # Evaluation
@@ -18,7 +18,7 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 ## Prerequisites
 
-- `patents.db` must exist with `screened_patents` table populated (from screening skill)
+- `patents.db` must exist with screened and indexed patents (from screening skill)
 
 ## Constitution
 
@@ -36,9 +36,8 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 **Mechanical Claims Recording**:
 
-- Claims should be recorded directly from fetch results without LLM re-generation
-- Call the `search_patents` MCP tool with `patent_number` to get the full claims data (do NOT use Bash or Skill)
-- Record claims mechanically (preserving original claim text)
+- Claims are already stored in the database by `index_patents` — read them via `get_claims`
+- Do NOT re-generate or summarize claim text
 
 ## Skill Orchestration
 
@@ -51,20 +50,9 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 1. **Get Patents to Analyze**:
    - Call the `get_unevaluated` MCP tool directly (do NOT use Bash or Skill):
      - `limit`: 10
+   - If no patents returned → Evaluation is complete
 
-2. **Batch Fetch Patent Data** (up to 10 patents in parallel):
-   - Split patents into batches of 10
-   - For each patent, call the `search_patents` MCP tool with `patent_number` to get full patent details including claims (do NOT use Bash or Skill)
-
-3. **Record Claims** (for each patent — mechanical, no LLM text generation):
-   - From the fetch result, extract claims data directly
-   - Call the `record_claims` MCP tool directly (do NOT use Bash or Skill):
-     - `patent_id`: "<patent_id>"
-     - `claims`: [{ claim_number: 1, claim_type: "independent", claim_text: "<original text>" }, ...]
-   - **CRITICAL**: Use the original claim text from fetch results — do NOT pass through LLM generation which may compress or summarize long repetitive structures
-   - After recording, call `get_claims` MCP tool to verify
-
-4. **Analyze and Record Elements** (for each patent — LLM interpretation task):
+2. **Analyze and Record Elements** (for each patent — LLM interpretation task):
    - For EACH claim (independent AND dependent), execute the following:
      1. Call the `get_claims` MCP tool to read the claim text
      2. Decompose into constituent elements based on the means/steps described in the claim text
@@ -76,14 +64,14 @@ Analyze screened patents by decomposing claims into elements and storing analysi
    - Do NOT reference `specification.md` during decomposition — decompose based on claim text alone
    - Cut elements by the number of means/steps in the claim — do NOT force a specific number of elements
 
-5. **Verify Results**: Call `get_claims` and `get_elements` MCP tools to confirm all data is recorded
+3. **Repeat** from step 1 until `get_unevaluated` returns no patents
 
 ## State Management
 
 ### Initial State
 
-- Patents in `screened_patents` table marked as `relevant` without corresponding claims/elements entries exist
+- Patents marked as `relevant` in `screened_patents` without corresponding claims/elements entries exist
 
 ### Final State
 
-- No patents in `screened_patents` marked as `relevant` without corresponding claims/elements entries (all evaluated)
+- No patents marked as `relevant` without corresponding claims/elements entries (all evaluated)

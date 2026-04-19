@@ -170,8 +170,15 @@ pub struct IndexPatentsResult {
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct PageResult<T> {
+    pub items: Vec<T>,
+    pub total_remaining: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct UnscreenedResult {
     pub patents: Vec<UnscreenedPatent>,
+    pub total_remaining: i64,
     pub unindexed_count: i64,
 }
 
