@@ -6,7 +6,7 @@ use rmcp::ServerHandler;
 use rmcp::handler::server::router::Router;
 use rmcp::handler::server::router::tool::ToolRoute;
 use rmcp::handler::server::tool::ToolCallContext;
-use rmcp::model::{CallToolResult, ServerInfo, Tool};
+use rmcp::model::{CallToolResult, ServerCapabilities, ServerInfo, Tool};
 use rmcp::transport::io::stdio;
 use schemars::JsonSchema;
 
@@ -36,6 +36,7 @@ impl PatentKitHandler {
 impl ServerHandler for PatentKitHandler {
     fn get_info(&self) -> ServerInfo {
         ServerInfo {
+            capabilities: ServerCapabilities::builder().enable_tools().build(),
             instructions: Some(
                 "Patent Kit MCP server. Use the available tools to search patents, \
                  manage patent investigation workflow, and track progress."

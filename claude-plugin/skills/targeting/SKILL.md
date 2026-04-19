@@ -43,7 +43,10 @@ population for screening.
 
 ### MCP Tool Direct Access
 
-Use MCP tools directly for patent operations:
+Call the following MCP tools directly. Do NOT use the Skill tool or Bash to call them.
+
+> [!IMPORTANT]
+> When instructed to call an MCP tool, call it directly using the tool name. **NEVER** use Bash to invoke MCP tools — the MCP server is already connected and tools are available directly. Do NOT construct JSON-RPC messages or use `echo | patent-kit mcp`.
 
 - Patent search → `search_patents` MCP tool
 - Assignee check → `check_assignee` MCP tool
@@ -88,14 +91,10 @@ Show results, ask for feedback, and refine the queries together.
 ##### Phase 1: Competitor Patent Research
 
 1. **Start Broad**:
-   - Use the `search_patents` MCP tool:
-     ```
-     search_patents({
-       assignee: ["<Combined Assignees>"],
-       country: "<Country from Target Market in specification.md>",
-       limit: 20
-     })
-     ```
+   - Call the `search_patents` MCP tool directly (do NOT use Bash or Skill):
+     - `assignee`: ["<Combined Assignees>"]
+     - `country`: "<Country from Target Market in specification.md>"
+     - `limit`: 20
 
 2. **Check Volume**:
    - If total count is **under 2000**: This is a good starting point. Check the
@@ -118,7 +117,7 @@ Show results, ask for feedback, and refine the queries together.
 
 1. **Apply Keywords**:
    - Use the "Golden Keywords" discovered in Phase 1 (refer to `keywords.md`).
-   - Use the `search_patents` MCP tool with the refined query.
+   - Call the `search_patents` MCP tool with the refined query (do NOT use Bash or Skill).
 
 2. **Iterative Narrowing**:
    - Similar to Phase 1, if the count is > 2000, add more specific concept
@@ -136,10 +135,8 @@ Upon successful targeting, the user must download search results as CSV from Goo
 
 1. **Output Google Patents URL**: Present the final search query as a Google Patents URL
 2. **Wait for CSV**: Do NOT proceed until the user has placed the CSV file in the `csv/` directory.
-3. **Import CSV**: Use the `import_csv` MCP tool:
-   ```
-   import_csv({ file_path: "csv/<filename>.csv" })
-   ```
+3. **Import CSV**: Call the `import_csv` MCP tool directly (do NOT use Bash or Skill):
+   - `file_path`: "csv/<filename>.csv"
 4. After import is complete, proceed to screening.
 
 #### Step 5: Transition to Screening

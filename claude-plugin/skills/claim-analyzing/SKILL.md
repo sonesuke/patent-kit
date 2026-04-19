@@ -29,6 +29,9 @@ Perform detailed claim analysis by comparing product specification against paten
 
 ## Constitution
 
+> [!IMPORTANT]
+> When instructed to call an MCP tool, call it directly using the tool name. **NEVER** use Bash to invoke MCP tools — the MCP server is already connected and tools are available directly. Do NOT construct JSON-RPC messages or use `echo | patent-kit mcp`.
+
 ### Core Principles
 
 **Descriptive Technical Language**:
@@ -38,38 +41,33 @@ Perform detailed claim analysis by comparing product specification against paten
 
 **MCP Tool Direct Access**:
 
-- Use MCP tools directly for all database operations
-- No need to invoke intermediate skills
+- Call MCP tools directly. Do NOT use the Skill tool or Bash to invoke them.
 
 ## Skill Orchestration
 
 ### Execute Claim Analysis
 
-**Do NOT delegate to subagents (Agent tool)** — invoke MCP tools directly from this session.
+**Do NOT delegate to subagents (Agent tool)** — call MCP tools directly from this session. Do NOT use Bash or Skill to invoke MCP tools.
 
 **Process**:
 
 1. **Get Patents to Analyze**:
-   - Use the `get_unanalyzed` MCP tool:
-     ```
-     get_unanalyzed({ limit: 5 })
-     ```
+   - Call the `get_unanalyzed` MCP tool directly (do NOT use Bash or Skill):
+     - `limit`: 5
 
 2. **For each patent**, execute Steps 2a–2e in order:
 
    **2a. Get Data from Database**:
-   - Use `get_product_features` MCP tool to retrieve product features
-   - Use `get_elements` MCP tool for each patent:
-     ```
-     get_elements({ patent_id: "<patent_id>" })
-     ```
+   - Call the `get_product_features` MCP tool to retrieve product features
+   - Call the `get_elements` MCP tool for each patent:
+     - `patent_id`: "<patent_id>"
 
    **2b. Check Feature Coverage for Each Element**:
    - For each patent element, check if a matching product feature exists in the results
    - **If feature NOT found**: Do NOT record as 'absent' automatically — collect it
    - After checking ALL elements, if any unmatched elements remain, present them to the user in a single batch using `AskUserQuestion` (max 4 questions per call, group by unique functionality — do NOT ask about duplicate capabilities across patents)
-   - If positive: Use `record_product_feature` MCP tool with `presence='present'`
-   - If negative: Use `record_product_feature` MCP tool with `presence='absent'`
+   - If positive: Call the `record_product_feature` MCP tool with `presence='present'`
+   - If negative: Call the `record_product_feature` MCP tool with `presence='absent'`
 
    **2c. Comparison Analysis**:
    - Compare product features against patent elements
@@ -77,21 +75,14 @@ Perform detailed claim analysis by comparing product specification against paten
    - Write detailed analysis notes
 
    **2d. Record Similarities**:
-   - Use `record_similarities` MCP tool:
-     ```
-     record_similarities({
-       similarities: [
-         { patent_id: "<patent_id>", claim_number: 1, element_label: "Element A", similarity_level: "Significant", analysis_notes: "..." },
-         { patent_id: "<patent_id>", claim_number: 1, element_label: "Element B", similarity_level: "Limited", analysis_notes: "..." }
-       ]
-     })
-     ```
+   - Call the `record_similarities` MCP tool directly (do NOT use Bash or Skill):
+     - `similarities`: [{ patent_id: "<patent_id>", claim_number: 1, element_label: "Element A", similarity_level: "Significant", analysis_notes: "...", ... }]
 
    **2e. Legal Compliance Check**:
    - Use `Skill: legal-checking` with request "Check the following analysis notes for legal compliance: <analysis_notes>"
    - Revise if violations found
 
-3. **Verify Results**: Use `get_unanalyzed` MCP tool to confirm no patents remain
+3. **Verify Results**: Call the `get_unanalyzed` MCP tool to confirm no patents remain
 
 ## State Management
 

@@ -4,11 +4,5 @@
   "version": "0.1.0",
   "author": {
     "name": "sonesuke"
-  },
-  "mcpServers": {
-    "patent-kit": {
-      "command": "patent-kit",
-      "args": ["mcp"]
-    }
   }
 }

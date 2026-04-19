@@ -27,6 +27,9 @@ No specific prerequisites required.
 
 **Do NOT delegate to subagents (Agent tool)** — invoke Skills directly from this session.
 
+> [!IMPORTANT]
+> When instructed to call an MCP tool (e.g., `check_assignee`, `search_patents`), call it directly using the tool name. **NEVER** use Bash to invoke MCP tools — the MCP server is already connected and tools are available directly. Do NOT construct JSON-RPC messages or use `echo | patent-kit mcp`.
+
 ### Process
 
 #### Step 1: Check Existing Specification
@@ -71,12 +74,10 @@ Extract the following information from the user's input:
 
 For each competitor, verify the correct "Assignee Name" used in patent databases.
 
-1. **Verify**: Use the `check_assignee` MCP tool directly:
+1. **Verify**: Call the `check_assignee` MCP tool directly. Do NOT use the Skill tool or Bash to call it.
 
-   ```
-   check_assignee({ assignee: "<Company Name>" })
-   ```
-
+   - Tool: `check_assignee`
+   - Required argument: `assignee` = "<Company Name>"
    - Omit the limit parameter to get all assignee variations (default: 100)
    - **CRITICAL: Check MCP tool response**:
      - Verify the response does NOT contain errors

@@ -22,6 +22,9 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 
 ## Constitution
 
+> [!IMPORTANT]
+> When instructed to call an MCP tool, call it directly using the tool name. **NEVER** use Bash to invoke MCP tools — the MCP server is already connected and tools are available directly. Do NOT construct JSON-RPC messages or use `echo | patent-kit mcp`.
+
 ### Core Principles
 
 **Element-by-Element Analysis (The Golden Rule)**:
@@ -34,62 +37,46 @@ Analyze screened patents by decomposing claims into elements and storing analysi
 **Mechanical Claims Recording**:
 
 - Claims should be recorded directly from fetch results without LLM re-generation
-- Use `search_patents` MCP tool with `patent_number` to get the full claims data
+- Call the `search_patents` MCP tool with `patent_number` to get the full claims data (do NOT use Bash or Skill)
 - Record claims mechanically (preserving original claim text)
 
 ## Skill Orchestration
 
 ### Execute Evaluation
 
-**Do NOT delegate to subagents (Agent tool)** — invoke MCP tools directly from this session.
+**Do NOT delegate to subagents (Agent tool)** — call MCP tools directly from this session. Do NOT use Bash or Skill to invoke MCP tools.
 
 **Process**:
 
 1. **Get Patents to Analyze**:
-   - Use the `get_unevaluated` MCP tool:
-     ```
-     get_unevaluated({ limit: 10 })
-     ```
+   - Call the `get_unevaluated` MCP tool directly (do NOT use Bash or Skill):
+     - `limit`: 10
 
 2. **Batch Fetch Patent Data** (up to 10 patents in parallel):
    - Split patents into batches of 10
-   - For each patent, use `search_patents` MCP tool with `patent_number` to get full patent details including claims
+   - For each patent, call the `search_patents` MCP tool with `patent_number` to get full patent details including claims (do NOT use Bash or Skill)
 
 3. **Record Claims** (for each patent — mechanical, no LLM text generation):
    - From the fetch result, extract claims data directly
-   - Use the `record_claims` MCP tool:
-     ```
-     record_claims({
-       patent_id: "<patent_id>",
-       claims: [
-         { claim_number: 1, claim_type: "independent", claim_text: "<original text>" },
-         { claim_number: 2, claim_type: "dependent", claim_text: "<original text>" }
-       ]
-     })
-     ```
+   - Call the `record_claims` MCP tool directly (do NOT use Bash or Skill):
+     - `patent_id`: "<patent_id>"
+     - `claims`: [{ claim_number: 1, claim_type: "independent", claim_text: "<original text>" }, ...]
    - **CRITICAL**: Use the original claim text from fetch results — do NOT pass through LLM generation which may compress or summarize long repetitive structures
-   - After recording, verify with `get_claims` MCP tool
+   - After recording, call `get_claims` MCP tool to verify
 
 4. **Analyze and Record Elements** (for each patent — LLM interpretation task):
    - For EACH claim (independent AND dependent), execute the following:
-     1. Use `get_claims` MCP tool to read the claim text
+     1. Call the `get_claims` MCP tool to read the claim text
      2. Decompose into constituent elements based on the means/steps described in the claim text
-     3. Use `record_elements` MCP tool:
-        ```
-        record_elements({
-          elements: [
-            { patent_id: "<patent_id>", claim_number: 1, element_label: "Element A", element_description: "..." },
-            { patent_id: "<patent_id>", claim_number: 1, element_label: "Element B", element_description: "..." }
-          ]
-        })
-        ```
+     3. Call the `record_elements` MCP tool directly (do NOT use Bash or Skill):
+        - `elements`: [{ patent_id: "<patent_id>", claim_number: 1, element_label: "Element A", element_description: "..." }, ...]
 
    **CRITICAL Rules for Element Decomposition**:
    - Decompose ALL claims including dependent claims — do NOT skip dependent claims
    - Do NOT reference `specification.md` during decomposition — decompose based on claim text alone
    - Cut elements by the number of means/steps in the claim — do NOT force a specific number of elements
 
-5. **Verify Results**: Use `get_claims` and `get_elements` MCP tools to confirm all data is recorded
+5. **Verify Results**: Call `get_claims` and `get_elements` MCP tools to confirm all data is recorded
 
 ## State Management
 

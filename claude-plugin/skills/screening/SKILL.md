@@ -40,16 +40,17 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
 ## Skill Orchestration
 
+> [!IMPORTANT]
+> When instructed to call an MCP tool, call it directly using the tool name. **NEVER** use Bash to invoke MCP tools — the MCP server is already connected and tools are available directly. Do NOT construct JSON-RPC messages or use `echo | patent-kit mcp`.
+
 ### 1. Ensure Database is Ready
 
 **CRITICAL**: Before attempting any screening, ensure the database exists and is populated.
 
 1. **Use the Glob tool to check if `csv/*.csv` files exist**
-2. **If CSV files exist**: Use the `import_csv` MCP tool to import them:
-   ```
-   import_csv({ file_path: "csv/<filename>.csv" })
-   ```
-3. **Verify**: Use the `get_unscreened` MCP tool to confirm patents are available
+2. **If CSV files exist**: Call the `import_csv` MCP tool directly (do NOT use Bash or Skill):
+   - `file_path`: "csv/<filename>.csv"
+3. **Verify**: Call the `get_unscreened` MCP tool to confirm patents are available
 
 ### 2. Execute Screening
 
@@ -58,17 +59,15 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 **Process**:
 
 1. **Get Patents to Screen**:
-   - Use the `get_unscreened` MCP tool:
-     ```
-     get_unscreened({ limit: 10 })
-     ```
+   - Call the `get_unscreened` MCP tool directly (do NOT use Bash or Skill):
+     - `limit`: 10
 
 2. **Read Specification** (once):
    - Read `specification.md` to understand Theme, Domain, and Target Product
 
 3. **Batch Fetch Patent Data** (up to 10 patents in parallel):
    - Split unscreened patents into batches of 10
-   - For each batch, use the `search_patents` MCP tool with `patent_number` to fetch details
+   - For each batch, call the `search_patents` MCP tool with `patent_number` to fetch details (do NOT use Bash or Skill)
 
 4. **Evaluate and Record** (for each patent):
 
@@ -79,18 +78,13 @@ Filter collected patents by legal status and relevance to prepare for evaluation
 
    Judgment values: `relevant`, `irrelevant`
 
-   Use the `screen_patent` MCP tool to record the result:
+   Call the `screen_patent` MCP tool directly (do NOT use Bash or Skill):
+   - `patent_id`: "<patent_id>"
+   - `judgment`: "<relevant|irrelevant>"
+   - `reason`: "<LLM-generated reason>"
+   - `abstract_text`: "<abstract from fetch result>"
 
-   ```
-   screen_patent({
-     patent_id: "<patent_id>",
-     judgment: "<relevant|irrelevant>",
-     reason: "<LLM-generated reason>",
-     abstract_text: "<abstract from fetch result>"
-   })
-   ```
-
-5. **Verify Results**: Use `get_progress` MCP tool to confirm all patents have been screened
+5. **Verify Results**: Call the `get_progress` MCP tool to confirm all patents have been screened
 
 ## State Management
 
