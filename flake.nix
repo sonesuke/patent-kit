@@ -30,6 +30,7 @@
             zsh-syntax-highlighting
             coreutils
             findutils
+            procps
             gnugrep
             gnutar
             gzip
@@ -56,6 +57,7 @@
             fontconfig
             dbus
             liberation_ttf
+            cmake
             (rust-bin.stable.latest.minimal.override {
               extensions = [ "rustfmt-preview" "clippy-preview" ];
             })

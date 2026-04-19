@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "patent-kit": {
+      "command": "patent-kit",
+      "args": ["mcp"]
+    }
+  }
+}

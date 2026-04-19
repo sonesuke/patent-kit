@@ -1,7 +1,7 @@
 # Test Case: Screening Functional (with pre-seeded database)
 
 name = "functional-with-data"
-description = "Verify screening process with pre-populated target_patents in database"
+description = "Verify screening process with pre-populated patents in database"
 timeout = 300 # seconds
 
 test_prompt = """
@@ -9,12 +9,7 @@ I have a patent database with target patents and a specification ready. Please s
 """
 
 [[setup]]
-command = """
-sqlite3 patents.db < /workspaces/patent-kit/plugin/skills/investigation-preparing/references/sql/initialize-database.sql
-sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US12231380B1', 'Trigger-based transfer of conversations from a chatbot to a human agent', 'US', '2023-10-11');"
-sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US20230245651A1', 'Enabling user-centered and contextually relevant interaction', 'US', '2023-04-03');"
-sqlite3 patents.db "INSERT INTO target_patents (patent_id, title, country, publication_date) VALUES ('US11354173B2', 'Artificial intelligence-powered cloud for the financial services industry', 'US', '2021-02-11');"
-"""
+command = "patent-kit import-csv /workspaces/patent-kit/tests/screening/fixtures/test-patents.csv > /dev/null 2>&1"
 
 [[setup]]
 path = "specification.md"
@@ -57,23 +52,23 @@ name = "database_exists"
 command = { command = "workspace-file", path = "patents.db" }
 
 [[checks]]
-name = "fetching_loaded"
-command = { command = "skill-loaded", skill = "investigation-fetching" }
+name = "get_unscreened_mcp_called"
+command = { command = "mcp-success", tool = "get_unscreened" }
 
 [[checks]]
-name = "recording_loaded"
-command = { command = "skill-loaded", skill = "investigation-recording" }
+name = "screen_patent_mcp_called"
+command = { command = "mcp-success", tool = "screen_patent" }
 
 [[checks]]
-name = "patent_fetch_invoked"
-command = { command = "mcp-tool-invoked", tool = "fetch_patent" }
+name = "index_patents_mcp_called"
+command = { command = "mcp-success", tool = "index_patents" }
 
 [[checks]]
-name = "target_patents_populated"
+name = "patents_populated"
 command = {
   command = "db-query",
   db = "",
-  query = "SELECT COUNT(*) FROM target_patents;",
+  query = "SELECT COUNT(*) FROM patents;",
   expected = "3",
 }
 
@@ -86,11 +81,3 @@ command = {
   expected = "3",
 }
 
-[[checks]]
-name = "legal_status_recorded"
-command = {
-  command = "db-query",
-  db = "",
-  query = "SELECT COUNT(*) FROM screened_patents WHERE legal_status IS NOT NULL;",
-  expected = "3",
-}

@@ -63,8 +63,8 @@ name = "targeting_invoked"
 command = { command = "skill-invoked", skill = "targeting" }
 
 [[checks]]
-name = "patent_search_invoked"
-command = { command = "skill-invoked", skill = "patent-search" }
+name = "search_patents_mcp_called"
+command = { command = "mcp-success", tool = "search_patents" }
 
 [[checks]]
 name = "targeting_md_created"

@@ -21,14 +21,24 @@ description = "Setup environment inside running container (Claude CLI etc.)"
 run = "docker exec -u 1000 patent-kit bash /workspaces/patent-kit/scripts/setup.sh"
 
 [tasks.fmt]
-description = "Format files with prettier"
-run = "npx --yes prettier@3.8.1 --write ."
+description = "Format files with prettier and cargo fmt"
+run = [
+  "cargo fmt --all --",
+  "npx --yes prettier@3.8.1 --write .",
+]
 
 [tasks.pre-commit]
-description = "Pre-commit hook to format files"
-depends = ["fmt"]
+description = "Pre-commit hook: format, lint, and test"
+depends = ["fmt", "clippy", "test"]
+
+[tasks.clippy]
+description = "Run clippy lints"
+run = "cargo clippy -- -D warnings"
 
 [tasks.test]
-description = "Run skill-bench tests"
-run = "skill-bench run 'tests' --plugin-dir ./plugin --threads 4 --log ./logs"
-depends = ["fmt"]
+description = "Run Rust unit tests"
+run = "cargo test"
+
+[tasks.skill-bench]
+description = "Run skill-bench E2E tests"
+run = "command -v patent-kit >/dev/null 2>&1 || cargo install --path . && skill-bench run 'tests' --plugin-dir ./claude-plugin --threads 4 --log ./logs"
